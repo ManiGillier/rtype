@@ -1,9 +1,21 @@
 BUILD_DIR = build
 SERVER_EXEC_NAME = r-type_server
 CLIENT_EXEC_NAME = r-type_client
+DEBUG = Debug
+RELEASE = Release
 
-all:
-	mkdir -p ${BUILD_DIR} && cd ${BUILD_DIR} && cmake .. && make -s
+all: debug
+
+define build
+	cmake -B ${BUILD_DIR} -DCMAKE_BUILD_TYPE=$(1)
+	cmake --build ${BUILD_DIR} -j
+endef
+
+debug:
+	$(call build,$(DEBUG))
+
+release:
+	$(call build,$(RELEASE))
 
 lint:
 	clang-tidy $$(find . -type f -name "*.[ch]pp" | grep -v "build")
