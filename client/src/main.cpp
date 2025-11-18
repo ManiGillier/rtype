@@ -1,5 +1,4 @@
-
 auto main() -> int 
 {
-  return ;
+  return 0;
 }
