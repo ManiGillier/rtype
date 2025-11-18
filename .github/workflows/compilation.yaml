@@ -1,0 +1,44 @@
+name: Compilation
+run-name: Checking compilation
+on:
+  push:
+    branches:
+      - dev
+      - main
+  pull_request:
+    branches:
+      - "*"
+
+env:
+  EXECUTABLES: r-type_client,r-type_server
+
+jobs:
+  check_program_compilation:
+    name: check_program_compilation
+    runs-on: ubuntu-latest
+    container: epitechcontent/epitest-docker
+    steps:
+      - id: checkout
+        name: Checkout
+        uses: actions/checkout@v4
+      - id: compile
+        timeout-minutes: 10
+        name: Compilation
+        run: |
+          make 
+      - id: clean
+        name: Clean
+        run: |
+          make fclean
+      - id: do_executables_exist
+        name: Check existence of executables
+        run: |
+          IN=${{ env.EXECUTABLES }}
+          executables=$(echo $IN | tr "," "\n")
+          for exec in $executables
+          do
+          if [[ ! -x $exec ]]; then
+          echo "::error::'$exec' was not found or is not executable"
+          exit 1
+          fi
+          done
