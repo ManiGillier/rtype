@@ -8,7 +8,8 @@ all: debug
 
 define build
 	cmake -B ${BUILD_DIR} -DCMAKE_BUILD_TYPE=$(1)
-	cmake --build ${BUILD_DIR} -j
+	cmake --build ${BUILD_DIR} -j 
+	ln -s -f ${BUILD_DIR}/compile_commands.json .
 endef
 
 debug:
