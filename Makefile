@@ -18,6 +18,10 @@ fclean:
 	make -s clean
 	rm -rf ${BUILD_DIR}
 
+clean_cache:
+	make -s fclean
+	rm -rf .cpm-cache .cache
+
 re:
 	make -s fclean
 	make -s all

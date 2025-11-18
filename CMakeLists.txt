@@ -1,6 +1,10 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.15)
 
 project(R-Type LANGUAGES CXX)
+
+# cmake package manager
+include(${CMAKE_SOURCE_DIR}/cmake/CPM.cmake)
+set(CPM_SOURCE_CACHE "${CMAKE_SOURCE_DIR}/.cpm-cache")
 
 ## set std 20
 set(CMAKE_CXX_STANDARD 20)
@@ -22,5 +26,14 @@ set(CLIENT_EXEC_NAME r-type_client)
 file(GLOB_RECURSE server_src server/src/*.cpp)
 file(GLOB_RECURSE client_src client/src/*.cpp)
 
+# Raylib v5.5 package
+CPMAddPackage(
+    NAME raylib
+    GIT_REPOSITORY https://github.com/raysan5/raylib.git
+    GIT_TAG 5.5
+)
+
 add_executable(${SERVER_EXEC_NAME} ${server_src})
 add_executable(${CLIENT_EXEC_NAME} ${client_src})
+# link raylib to rtype client
+target_link_libraries(${CLIENT_EXEC_NAME} PRIVATE raylib)
