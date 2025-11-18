@@ -1,5 +1,5 @@
 
-int main(void)
+auto main() -> int 
 {
-    return 0;
+  return ;
 }
