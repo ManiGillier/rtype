@@ -31,6 +31,8 @@ CPMAddPackage(
     NAME raylib
     GIT_REPOSITORY https://github.com/raysan5/raylib.git
     GIT_TAG 5.5
+    OPTIONS
+      "BUILD_EXAMPLES OFF"
 )
 
 add_executable(${SERVER_EXEC_NAME} ${server_src})

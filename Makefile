@@ -1,7 +1,7 @@
 BUILD_DIR = build
 SERVER_EXEC_NAME = r-type_server
 CLIENT_EXEC_NAME = r-type_client
-SRC_FILES := $(shell find . -type f -name "*.[ch]pp")
+SRC_FILES := $(shell find . -type f -name "*.[ch]pp" | grep -v "build")
 
 all:
 	mkdir -p ${BUILD_DIR} && cd ${BUILD_DIR} && cmake .. && make -s
