@@ -9,6 +9,7 @@ set(CPM_SOURCE_CACHE "${CMAKE_SOURCE_DIR}/.cpm-cache")
 ## set std 20
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 ## add executable to root
@@ -23,8 +24,8 @@ set(SERVER_EXEC_NAME r-type_server)
 set(CLIENT_EXEC_NAME r-type_client)
 
 # all cpp file in src directory only
-file(GLOB_RECURSE server_src server/src/*.cpp)
-file(GLOB_RECURSE client_src client/src/*.cpp)
+file(GLOB_RECURSE server_src server/*.cpp)
+file(GLOB_RECURSE client_src client/*.cpp)
 
 # Raylib v5.5 package
 CPMAddPackage(
