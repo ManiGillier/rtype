@@ -9,17 +9,23 @@ all: debug
 define build
 	cmake -B ${BUILD_DIR} -DCMAKE_BUILD_TYPE=$(1)
 	cmake --build ${BUILD_DIR} -j 
-	ln -s -f ${BUILD_DIR}/compile_commands.json .
 endef
 
 debug:
 	$(call build,$(DEBUG))
+	ln -s -f ${BUILD_DIR}/compile_commands.json .
 
 release:
 	$(call build,$(RELEASE))
 
 lint:
 	clang-tidy $$(find . -type f -name "*.[ch]pp" | grep -v "build")
+
+doc:
+	cd doc && mdbook build
+
+open_doc:
+	cd doc && mdbook serve --open
 
 clean:
 	rm -rf ${SERVER_EXEC_NAME} ${CLIENT_EXEC_NAME}

@@ -1,8 +1,22 @@
 # R-Type
 
-# Usage
+## Documentation
+
+See the documentation [here](http://...).
+
+## How to get started
 
 ```bash
-make
-
+make release
 ```
+
+Two binaries will then be created :
+- `r-type_client`, graphical client.
+- `r-type_server`, server
+
+## Authors
+
+- Mani Gillier
+- Rayane El Janati El Idrissi
+- Hugo Poggetti
+- Maxime Huet
