@@ -21,6 +21,9 @@ release:
 lint:
 	clang-tidy $$(find . -type f -name "*.[ch]pp" | grep -v "build")
 
+format:
+	clang-format -i $$(find . -type f -name "*.[ch]pp" | grep -v "build")
+
 doc:
 	cd doc && mdbook build
 
