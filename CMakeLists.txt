@@ -27,6 +27,12 @@ set(CLIENT_EXEC_NAME r-type_client)
 # all cpp file in src directory only
 file(GLOB_RECURSE server_src server/*.cpp)
 file(GLOB_RECURSE client_src client/*.cpp)
+file(GLOB_RECURSE ecs_test_src ecs/*.cpp)
+
+# headers file
+file(GLOB_RECURSE server_src_h server/*.hpp)
+file(GLOB_RECURSE client_src_h client/*.hpp)
+file(GLOB_RECURSE ecs_test_src_h ecs/*.hpp)
 
 # Raylib v5.5 package
 CPMAddPackage(
@@ -37,7 +43,9 @@ CPMAddPackage(
       "BUILD_EXAMPLES OFF"
 )
 
-add_executable(${SERVER_EXEC_NAME} ${server_src})
-add_executable(${CLIENT_EXEC_NAME} ${client_src})
+add_executable(${SERVER_EXEC_NAME} ${server_src} ${server_src_h})
+add_executable(${CLIENT_EXEC_NAME} ${client_src} ${client_src_h})
+add_executable(ecs_test ${ecs_test_src} ${ecs_test_src_h})
 # link raylib to rtype client
 target_link_libraries(${CLIENT_EXEC_NAME} PRIVATE raylib)
+target_link_libraries(ecs_test PRIVATE raylib)

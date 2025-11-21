@@ -3,5 +3,6 @@ build
 r-type_client
 r-type_server
 .cpm-cache/
+.cache
 cpm-package-lock.cmake
 CPM_modules/
