@@ -2,3 +2,5 @@
 title = "R-Type documentation"
 authors = ["hugopoggetti"]
 language = "en"
+[build]
+build-dir = "../docs"
