@@ -2,7 +2,7 @@
 
 ## Documentation
 
-See the documentation [here](http://...).
+See the documentation [here](doc/book/index.html).
 
 ## How to get started
 

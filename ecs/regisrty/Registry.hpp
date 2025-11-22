@@ -2,6 +2,7 @@
 #define _REGISTRY_HPP_
 
 #include "../sparse_array/SparseArray.hpp"
+#include "../entity/Entity.hpp"
 #include <any>
 #include <cstddef>
 #include <functional>
@@ -9,21 +10,6 @@
 #include <typeindex>
 #include <unordered_map>
 #include <vector>
-
-class Registry;
-
-class Entity
-{
-  public:
-    explicit operator size_t() const;
-    bool operator==(Entity const& other) const;
-    bool operator!=(Entity const& other) const;
-
-  private:
-    explicit Entity(size_t id);
-    size_t _id;
-    friend class Registry;
-};
 
 class Registry
 {

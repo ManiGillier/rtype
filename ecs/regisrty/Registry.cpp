@@ -1,22 +1,5 @@
 #include "Registry.hpp"
 
-Entity::Entity(size_t id) : _id(id) {}
-
-Entity::operator size_t() const
-{
-    return _id;
-}
-
-bool Entity::operator==(Entity const& other) const
-{
-    return _id == other._id;
-}
-
-bool Entity::operator!=(Entity const& other) const
-{
-    return _id != other._id;
-}
-
 Entity Registry::spawn_entity()
 {
     if (!_dead_entities.empty()) {
