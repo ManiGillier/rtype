@@ -2,7 +2,7 @@
 
 ## Documentation
 
-See the documentation [here](docs/book/index.html).
+See the documentation [here](https://fictional-adventure-8ew2e44.pages.github.io/).
 
 ## How to get started
 
