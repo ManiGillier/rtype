@@ -29,7 +29,7 @@ SpacesInCStyleCastParentheses: false
 SpacesInParentheses: false
 SpacesInSquareBrackets: false
 
-PointerAlignment: Left
+PointerAlignment: Right
 DerivePointerAlignment: false
 
 AllowShortFunctionsOnASingleLine: Empty

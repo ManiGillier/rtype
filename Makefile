@@ -36,7 +36,7 @@ clean:
 fclean:
 	make -s clean
 	rm -rf ${BUILD_DIR}
-	rm -rf compile_commands.json index.html
+	rm -rf index.html
 
 clean_cache:
 	make -s fclean
