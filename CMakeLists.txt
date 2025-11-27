@@ -51,5 +51,9 @@ CPMAddPackage(
 
 add_executable(${SERVER_EXEC_NAME} ${server_src} ${server_src_h})
 add_executable(${CLIENT_EXEC_NAME} ${client_src} ${client_src_h})
+
+target_include_directories(${SERVER_EXEC_NAME} PUBLIC ${CMAKE_SOURCE_DIR})
+target_include_directories(${CLIENT_EXEC_NAME} PUBLIC ${CMAKE_SOURCE_DIR})
+
 # link raylib to rtype client
 target_link_libraries(${CLIENT_EXEC_NAME} PRIVATE raylib)
