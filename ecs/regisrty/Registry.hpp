@@ -6,7 +6,9 @@
 #include <any>
 #include <cstddef>
 #include <functional>
+#include <optional>
 #include <queue>
+#include <tuple>
 #include <typeindex>
 #include <unordered_map>
 #include <vector>
@@ -23,6 +25,10 @@ class Registry
     SparseArray<Component>& get_components();
     template <class Component>
     SparseArray<Component> const& get_components() const;
+
+    SparseArray<std::any>& get_components_by_id(const std::type_index &);
+    SparseArray<std::any> const&
+        get_components_by_id(const std::type_index &) const;
 
     Entity spawn_entity();
     Entity entity_from_index(std::size_t idx);
@@ -45,6 +51,16 @@ class Registry
     void add_system(Function const& f);
     void run_systems();
 
+    std::size_t max_id() const { return _next_entity_id; }
+
+    template <class... Components>
+    auto get_components_from_id(std::size_t id)
+        -> std::optional<std::tuple<Components...>>;
+
+    template <class... Components>
+    auto get_filtered_components()
+        -> std::unordered_map<std::size_t, std::tuple<Components...>>;
+
   private:
     std::unordered_map<std::type_index, std::any> _components_arrays;
     std::vector<erase_function_t> _erase_functions;
@@ -55,6 +71,36 @@ class Registry
     template <typename Function, typename... Components>
     static void call_system(Registry& reg, Function& f);
 };
+
+template <class... Components>
+auto Registry::get_components_from_id(std::size_t id)
+-> std::optional<std::tuple<Components...>>
+{
+    std::vector<std::size_t> sizes = {get_components<Components>().size()...};
+    for (auto &size : sizes)
+        if (size <= id)
+            return std::nullopt;
+    std::vector<bool> have_values = {get_components<Components>()[id].has_value()...};
+    for (auto have_value : have_values)
+        if (!have_value)
+            return std::nullopt;
+    return std::make_tuple(get_components<Components>()[id].value()...);
+}
+
+template <class... Components>
+auto Registry::get_filtered_components()
+-> std::unordered_map<std::size_t, std::tuple<Components...>>
+{
+    std::unordered_map<std::size_t, std::tuple<Components...>> map;
+
+    for (std::size_t id = 0; id < this->max_id(); id++) {
+        auto result = this->get_components_from_id<Components...>(id);
+        if (!result)
+            continue;
+        map[id] = result.value();
+    }
+    return map;
+}
 
 template <class Component>
 SparseArray<Component>& Registry::register_component()

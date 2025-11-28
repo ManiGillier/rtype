@@ -11,6 +11,7 @@ class Entity
     explicit operator size_t() const;
     bool operator==(Entity const& other) const;
     bool operator!=(Entity const& other) const;
+    std::size_t getId() { return _id; }
 
   private:
     explicit Entity(size_t id);

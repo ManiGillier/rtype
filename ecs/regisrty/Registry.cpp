@@ -31,3 +31,14 @@ void Registry::run_systems()
         system(*this);
     }
 }
+
+SparseArray<std::any>& Registry::get_components_by_id(const std::type_index &id)
+{
+    return std::any_cast<SparseArray<std::any>&>(_components_arrays[id]);
+}
+
+SparseArray<std::any> const& Registry::get_components_by_id
+(const std::type_index &id) const
+{
+    return std::any_cast<SparseArray<std::any> const&>(_components_arrays.at(id));
+}
