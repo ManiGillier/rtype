@@ -6,3 +6,4 @@ r-type_server
 .cache
 cpm-package-lock.cmake
 CPM_modules/
+*.o
