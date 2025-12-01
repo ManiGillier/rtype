@@ -13,9 +13,9 @@
 #include <ostream>
 #include <format>
 
-#define LOG std::cout << "[Jetpack] [" << std::format("{:%d/%m/%Y %H:%M:%S}", floor<std::chrono::milliseconds>(std::chrono::system_clock::now())) << "] [*] "
+#define LOG std::cout << "[R-Type Network] [" << std::format("{:%d/%m/%Y %H:%M:%S}", floor<std::chrono::milliseconds>(std::chrono::system_clock::now())) << "] [*] "
 
-#define LOG_ERR std::cerr << "[Jetpack] [" << std::format("{:%d/%m/%Y %H:%M:%S}", floor<std::chrono::milliseconds>(std::chrono::system_clock::now())) << "] [!] "
+#define LOG_ERR std::cerr << "[R-Type Network] [" << std::format("{:%d/%m/%Y %H:%M:%S}", floor<std::chrono::milliseconds>(std::chrono::system_clock::now())) << "] [!] "
 
 
 #define DEBUG LOG_ERR << __func__ << " - " << __FILE__        \

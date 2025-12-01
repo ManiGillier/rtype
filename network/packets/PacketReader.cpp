@@ -21,7 +21,6 @@
 #include "impl/PlayerPositionPacket.hpp"
 #include "impl/ScoreUpdatePacket.hpp"
 #include "impl/StartRequestPacket.hpp"
-#include "impl/MapColumnPacket.hpp"
 #include "impl/GhostPlayerPositionPacket.hpp"
 #include "impl/PlayerLostPacket.hpp"
 #include "impl/PlayerWonPacket.hpp"
@@ -94,8 +93,6 @@ Packet *PacketReader::buildPacket(char packetId)
             return new PlayerDeadPacket();
         case 6:
             return new PlayerJoinPacket();
-        case 7:
-            return new MapColumnPacket();
         case 8:
             return new PlayerWonPacket();
         case 9:

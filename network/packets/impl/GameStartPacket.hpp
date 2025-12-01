@@ -8,7 +8,7 @@
 #ifndef GAMESTARTPACKET_HPP_
     #define GAMESTARTPACKET_HPP_
 
-    #include "Packet.hpp"
+    #include "network/packets/Packet.hpp"
 
 class GameStartPacket : public Packet {
 public:

@@ -8,7 +8,7 @@
 #ifndef UPDATESCOREPACKET_HPP_
     #define UPDATESCOREPACKET_HPP_
 
-    #include "Packet.hpp"
+    #include "network/packets/Packet.hpp"
 
 class ScoreUpdatePacket : public Packet {
 public:

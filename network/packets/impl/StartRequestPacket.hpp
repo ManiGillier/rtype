@@ -8,7 +8,7 @@
 #ifndef REQUESTSTARTPACKET_HPP_
     #define REQUESTSTARTPACKET_HPP_
 
-    #include "Packet.hpp"
+    #include "network/packets/Packet.hpp"
 
 class StartRequestPacket : public Packet {
 public:

@@ -8,7 +8,7 @@
     #ifndef GHOSTSCOREUPDATEPACKET_HPP_
     #define GHOSTSCOREUPDATEPACKET_HPP_
 
-    #include "Packet.hpp"
+    #include "network/packets/Packet.hpp"
 
 class GhostScoreUpdatePacket : public Packet {
 public:

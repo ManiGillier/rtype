@@ -7,3 +7,4 @@ r-type_server
 cpm-package-lock.cmake
 CPM_modules/
 *.o
+.vscode

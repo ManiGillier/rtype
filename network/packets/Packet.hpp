@@ -40,8 +40,9 @@ enum PacketId {
 
 class Packet {
     public:
+
         uint8_t getId() const {
-            return this->packetId;
+            return (uint8_t) this->packetId;
         }
 
         Packet(int packetId) {
@@ -69,7 +70,7 @@ class Packet {
             if (writeCursor + sizeof(T) > (std::size_t) this->getSize())
                 return;
             for (char c : bw.bytes) {
-                this->data.push(c); 
+                this->data.push(c);
                 writeCursor++;
             }
         }

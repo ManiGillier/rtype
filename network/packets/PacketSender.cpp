@@ -7,7 +7,7 @@
 
 #include <iostream>
 #include <unistd.h>
-#include "Logger.hpp"
+#include "network/packets/Packet.hpp"
 #include "PacketLogger.hpp"
 #include "PacketSender.hpp"
 

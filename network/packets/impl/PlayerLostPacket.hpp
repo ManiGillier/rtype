@@ -8,7 +8,7 @@
 #ifndef PLAYERLOSTPACKET_HPP_
     #define PLAYERLOSTPACKET_HPP_
 
-    #include "PacketReader.hpp"
+    #include "network/packets/Packet.hpp"
 
 class PlayerLostPacket : public Packet {
 public:
