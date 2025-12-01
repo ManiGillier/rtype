@@ -16,7 +16,6 @@
     #include "impl/PlayerPositionPacket.hpp"
     #include "impl/ScoreUpdatePacket.hpp"
     #include "impl/StartRequestPacket.hpp"
-    #include "impl/MapColumnPacket.hpp"
     #include "impl/PlayerLostPacket.hpp"
     #include "impl/PlayerWonPacket.hpp"
 

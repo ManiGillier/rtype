@@ -33,6 +33,26 @@ set(CLIENT_EXEC_NAME r-type_client)
 file(GLOB_RECURSE server_src server/*.cpp ecs/*.cpp)
 file(GLOB_RECURSE client_src client/*.cpp ecs/*.cpp)
 
+# get all cpp files from network library
+file(GLOB_RECURSE network_src network/*.cpp)
+file(GLOB_RECURSE network_src_h network/*.hpp)
+
+# Get all subdirectories for includes
+file(GLOB_RECURSE ALL_HEADERS 
+    ${CMAKE_SOURCE_DIR}/*.hpp
+    ${CMAKE_SOURCE_DIR}/*.h
+)
+
+set(INCLUDE_DIRS "")
+foreach(HEADER ${ALL_HEADERS})
+    get_filename_component(DIR ${HEADER} DIRECTORY)
+    list(APPEND INCLUDE_DIRS ${DIR})
+endforeach()
+list(REMOVE_DUPLICATES INCLUDE_DIRS)
+
+add_library(network_lib STATIC ${network_src} ${network_src_h})
+target_include_directories(network_lib PUBLIC ${CMAKE_SOURCE_DIR} ${INCLUDE_DIRS})
+
 # headers file
 file(GLOB_RECURSE server_src_h server/*.hpp ecs/*.hpp)
 file(GLOB_RECURSE client_src_h client/*.hpp ecs/*.hpp)
@@ -52,8 +72,8 @@ CPMAddPackage(
 add_executable(${SERVER_EXEC_NAME} ${server_src} ${server_src_h})
 add_executable(${CLIENT_EXEC_NAME} ${client_src} ${client_src_h})
 
-target_include_directories(${SERVER_EXEC_NAME} PUBLIC ${CMAKE_SOURCE_DIR})
-target_include_directories(${CLIENT_EXEC_NAME} PUBLIC ${CMAKE_SOURCE_DIR})
+target_include_directories(${SERVER_EXEC_NAME} PUBLIC ${CMAKE_SOURCE_DIR} ${INCLUDE_DIRS})
+target_include_directories(${CLIENT_EXEC_NAME} PUBLIC ${CMAKE_SOURCE_DIR} ${INCLUDE_DIRS})
 
-# link raylib to rtype client
-target_link_libraries(${CLIENT_EXEC_NAME} PRIVATE raylib)
+target_link_libraries(${SERVER_EXEC_NAME} PRIVATE network_lib)
+target_link_libraries(${CLIENT_EXEC_NAME} PRIVATE network_lib raylib)

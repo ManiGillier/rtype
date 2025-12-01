@@ -40,8 +40,9 @@ enum PacketId {
 
 class Packet {
     public:
+
         uint8_t getId() const {
-            return this->packetId;
+            return (uint8_t) this->packetId;
         }
 
         Packet(int packetId) {
@@ -64,7 +65,7 @@ class Packet {
         template<typename T>
         void write(T value) {
             ByteWriter<T, (std::size_t) sizeof(T)> bw;
-
+    
             bw.value = value;
             if (writeCursor + sizeof(T) > (std::size_t) this->getSize())
                 return;
