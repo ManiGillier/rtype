@@ -10,17 +10,10 @@
 
 #include "ecs/regisrty/Registry.hpp"
 
-typedef std::size_t index_t;
-
 class GraphicalLibAPI
 {
 public:
     virtual ~GraphicalLibAPI() = default;
-
-protected:
-    // Called each frame
-    // Will use the registry to find all render items
-    virtual auto update(const Registry &) -> void;
 };
 
 #endif /* GRAPHICAL_LIB_INTERFACE_HPP */

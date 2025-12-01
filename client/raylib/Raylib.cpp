@@ -16,6 +16,12 @@ Raylib::Raylib()
     this->openGlThread = std::thread(&Raylib::init, this);
 }
 
+Raylib::~Raylib()
+{
+    if (this->openGlThread.joinable())
+        this->openGlThread.join();
+}
+
 auto Raylib::init() -> void
 {
 #if LOG_LEVEL_DEBUG
@@ -30,3 +36,11 @@ auto Raylib::init() -> void
 
     this->loop();
 }
+
+auto Raylib::loop() -> void
+{
+    while (!WindowShouldClose())
+        this->update();
+}
+
+auto Raylib::update() -> void {}

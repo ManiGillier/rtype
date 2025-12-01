@@ -20,7 +20,7 @@ public:
 private:
     auto init() -> void;
     auto loop() -> void;
-    auto update(const Registry &) -> void;
+    auto update() -> void;
 private:
     std::thread openGlThread;
     RenderWindow window;
