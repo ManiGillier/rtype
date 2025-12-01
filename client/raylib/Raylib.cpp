@@ -18,6 +18,12 @@ Raylib::Raylib()
 
 auto Raylib::init() -> void
 {
+#if LOG_LEVEL_DEBUG
+    SetTraceLogLevel(LOG_DEBUG);
+#else
+    SetTraceLogLevel(LOG_NONE);
+#endif /* DEBUG */
+
     InitWindow(this->window.getWidth(),
                this->window.getHeight(),
                this->window.getTitle());
