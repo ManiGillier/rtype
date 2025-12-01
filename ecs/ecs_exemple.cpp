@@ -2,6 +2,9 @@
 #include "zipper/IndexedZipper.hpp"
 #include "zipper/Zipper.hpp"
 #include <iostream>
+#include <tuple>
+#include <unordered_map>
+#include <utility>
 
 // here we define a component
 typedef struct Position {
@@ -10,18 +13,16 @@ typedef struct Position {
 } Position;
 
 // define system to interact with entity
-void logging_system(Registry& r, SparseArray<Position> const& positions)
+void logging_system(Registry& r,
+                    std::unordered_map<std::size_t, std::tuple<Position>> result)
 {
     (void)r;
 
-    // with indexed iterator
-    for (auto&& [i, pos] : containers::indexed_zipper(positions))
-        std::cerr << i << ": Position = { " << pos.value().x << ", "
-                  << pos.value().y << " }" << std ::endl;
-    // without index
-    for (auto&& [pos] : containers::zipper(positions))
-        std::cerr << ": Position = { " << pos.value().x << ", " << pos.value().y
-                  << " }" << std ::endl;
+    for (auto&& [i, res] : result) {
+        Position &pos = std::get<Position>(res);
+        std::cerr << i << ": Position = { " << pos.x << ", "
+                  << pos.y << " }" << std ::endl;
+    }
 }
 
 int main(void)
@@ -39,8 +40,8 @@ int main(void)
     r.emplace_component<Position>(player, 2, 23);
 
     // create system then add id to the registry
-    r.add_system<Position>(logging_system);
-    r.run_systems();
+    r.add_update_system<Position>(logging_system);
+    r.update();
     // kill player
     r.kill_entity(player);
     return 0;

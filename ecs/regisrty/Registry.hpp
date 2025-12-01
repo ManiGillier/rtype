@@ -46,10 +46,15 @@ class Registry
     void remove_component(Entity const& from);
 
     template <class... Components, typename Function>
-    void add_system(Function&& f);
+    void add_update_system(Function&& f);
     template <class... Components, typename Function>
-    void add_system(Function const& f);
-    void run_systems();
+    void add_update_system(Function const& f);
+    template <class... Components, typename Function>
+    void add_render_system(Function&& f);
+    template <class... Components, typename Function>
+    void add_render_system(Function const& f);
+    void update();
+    void render();
 
     std::size_t max_id() const { return _next_entity_id; }
 
@@ -66,10 +71,8 @@ class Registry
     std::vector<erase_function_t> _erase_functions;
     std::size_t _next_entity_id = 0;
     std::queue<size_t> _dead_entities;
-    std::vector<system_function_t> _systems;
-
-    template <typename Function, typename... Components>
-    static void call_system(Registry& reg, Function& f);
+    std::vector<system_function_t> _update_systems;
+    std::vector<system_function_t> _render_systems;
 };
 
 template <class... Components>
@@ -160,22 +163,41 @@ void Registry::remove_component(Entity const& from)
 }
 
 template <class... Components, typename Function>
-void Registry::add_system(Function&& f)
+void Registry::add_update_system(Function const& f)
 {
-    system_function_t wrapped_system =
-        [f = std::forward<Function>(f)](Registry& r) mutable {
-            f(r, r.get_components<Components>()...);
-        };
-    _systems.push_back(std::move(wrapped_system));
+    system_function_t wrapped_system = [f](Registry& r) {
+        f(r, r.get_filtered_components<Components...>());
+    };
+    _update_systems.push_back(wrapped_system);
 }
 
 template <class... Components, typename Function>
-void Registry::add_system(Function const& f)
+void Registry::add_update_system(Function&& f)
+{
+    system_function_t wrapped_system =
+        [f = std::forward<Function>(f)](Registry& r) mutable {
+            f(r, r.get_filtered_components<Components...>());
+        };
+    _update_systems.push_back(std::move(wrapped_system));
+}
+
+template <class... Components, typename Function>
+void Registry::add_render_system(Function const& f)
 {
     system_function_t wrapped_system = [f](Registry& r) {
-        f(r, r.get_components<Components>()...);
+        f(r, r.get_filtered_components<Components...>());
     };
-    _systems.push_back(wrapped_system);
+    _render_systems.push_back(wrapped_system);
+}
+
+template <class... Components, typename Function>
+void Registry::add_render_system(Function&& f)
+{
+    system_function_t wrapped_system =
+        [f = std::forward<Function>(f)](Registry& r) mutable {
+            f(r, r.get_filtered_components<Components...>());
+        };
+    _render_systems.push_back(std::move(wrapped_system));
 }
 
 #endif
