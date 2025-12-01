@@ -25,9 +25,16 @@ void Registry::kill_entity(Entity const& e)
     _dead_entities.push(id);
 }
 
-void Registry::run_systems()
+void Registry::update()
 {
-    for (auto& system : _systems) {
+    for (auto& system : _update_systems) {
+        system(*this);
+    }
+}
+
+void Registry::render()
+{
+    for (auto& system : _render_systems) {
         system(*this);
     }
 }
