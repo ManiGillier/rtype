@@ -28,8 +28,11 @@ auto Raylib::init() -> void
     InitWindow(this->window.getWidth(),
                this->window.getHeight(),
                this->window.getTitle());
+    SetTargetFPS(this->window.getFps());
 
     this->loop();
+
+    CloseWindow();
 }
 
 auto Raylib::loop() -> void
@@ -38,4 +41,7 @@ auto Raylib::loop() -> void
         this->update();
 }
 
-auto Raylib::update() -> void {}
+auto Raylib::update() -> void
+{
+    EndDrawing();
+}

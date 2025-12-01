@@ -19,16 +19,19 @@ public:
     auto getHeight() const { return this->height; }
     auto getTitle() const { return this->title.c_str(); }
     auto isMaximized() const { return this->maximized; }
+    auto getFps() const { return this->fps; }
 
     auto setWidth(window_size_type) -> void;
     auto setHeight(window_size_type) -> void;
     auto setTitle(const std::string &title) -> void;
     auto maximizeToggle() -> void;
+    auto setFps(int fps) -> void;
 private:
     window_size_type width = 800;
     window_size_type height = 600;
     std::string title = "R-Type";
     bool maximized = false;
+    int fps = 60;
 };
 
 #endif /* RENDER_WINDOW_HPP */
