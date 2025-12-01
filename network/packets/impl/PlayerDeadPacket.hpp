@@ -8,7 +8,7 @@
 #ifndef DEADPLAYERPACKET_HPP_
     #define DEADPLAYERPACKET_HPP_
 
-    #include "Packet.hpp"    
+    #include "network/packets/Packet.hpp"
 
 class PlayerDeadPacket : public Packet {
 public:

@@ -65,12 +65,12 @@ class Packet {
         template<typename T>
         void write(T value) {
             ByteWriter<T, (std::size_t) sizeof(T)> bw;
-    
+
             bw.value = value;
             if (writeCursor + sizeof(T) > (std::size_t) this->getSize())
                 return;
             for (char c : bw.bytes) {
-                this->data.push(c); 
+                this->data.push(c);
                 writeCursor++;
             }
         }

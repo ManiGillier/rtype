@@ -201,7 +201,6 @@ void SparseArray<Component>::erase(size_type pos)
 {
     if (pos < _data.size()) {
         _data[pos].reset();
-        _data[pos].resetee()
     }
 }
 

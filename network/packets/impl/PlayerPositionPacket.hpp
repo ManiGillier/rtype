@@ -8,7 +8,7 @@
 #ifndef PLAYERPOSITIONPACKET_HPP_
     #define PLAYERPOSITIONPACKET_HPP_
 
-    #include "Packet.hpp"
+    #include "network/packets/Packet.hpp"
 
 class PlayerPositionPacket : public Packet {
 public:

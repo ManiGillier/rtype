@@ -8,7 +8,7 @@
 #ifndef GHOSTPLAYERPOSITIONPACKET_HPP_
     #define GHOSTPLAYERPOSITIONPACKET_HPP_
 
-    #include "Packet.hpp"
+    #include "network/packets/Packet.hpp"
 
 class GhostPlayerPositionPacket : public Packet {
 public:

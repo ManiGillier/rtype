@@ -8,7 +8,7 @@
 #ifndef JOINPLAYERPACKET_HPP_
     #define JOINPLAYERPACKET_HPP_
 
-    #include "Packet.hpp"
+    #include "network/packets/Packet.hpp"
 
 class PlayerJoinPacket : public Packet {
 public:

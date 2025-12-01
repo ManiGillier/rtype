@@ -17,7 +17,7 @@ class PacketManager {
         PacketManager();
         ~PacketManager();
     private:
-        std::vector<w
+    
 };
 
 #endif /* !PACKETMANAGER_HPP_ */

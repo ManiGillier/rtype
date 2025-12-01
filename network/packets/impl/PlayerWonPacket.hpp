@@ -8,7 +8,7 @@
 #ifndef PLAYERWONPACKET_HPP_
     #define PLAYERWONPACKET_HPP_
 
-    #include "Packet.hpp"
+    #include "network/packets/Packet.hpp"
 
 class PlayerWonPacket : public Packet {
 public:
