@@ -22,6 +22,7 @@ public:
     ~ClientManager();
 private:
     auto registerComponents() -> void;
+    auto registerSystems() -> void;
 private:
     Registry registry;
     std::unique_ptr<GameLogicAPI> game = nullptr;

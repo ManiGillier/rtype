@@ -87,7 +87,7 @@ auto Registry::get_components_from_id(std::size_t id)
     for (auto have_value : have_values)
         if (!have_value)
             return std::nullopt;
-    return std::make_tuple(get_components<Components>()[id].value()...);
+    return std::make_tuple(std::ref(get_components<Components>()[id].value())...);
 }
 
 template <class... Components>

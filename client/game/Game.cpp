@@ -20,8 +20,14 @@ Game::~Game()
         this->gameThread.join();
 }
 
+#include "client/components/Square.hpp"
+#include "client/components/Position.hpp"
+
 auto Game::init() -> void
 {
+    Entity a = this->registry.spawn_entity();
+    this->registry.add_component<Position>(a, {50, 50});
+    this->registry.add_component<Square>(a, {50});
     this->loop();
 }
 
@@ -32,4 +38,7 @@ auto Game::loop() -> void
     }
 }
 
-auto Game::update() -> void {}
+auto Game::update() -> void
+{
+    this->registry.update();
+}

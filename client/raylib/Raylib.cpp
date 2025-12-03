@@ -45,8 +45,6 @@ auto Raylib::update() -> void
 {
     BeginDrawing();
     ClearBackground(BLACK);
-    DrawRectangle(10, 10, 10, 10, WHITE);
-    DrawRectangle(0, 10, 10, 10, WHITE);
-    DrawRectangle(10, 0, 10, 10, WHITE);
+    this->registry.render();
     EndDrawing();
 }
