@@ -1,0 +1,35 @@
+/*
+** EPITECH PROJECT, 2025
+** rtype
+** File description:
+** game
+*/
+
+#include "Game.hpp"
+#include <thread>
+
+Game::Game(Registry &r) : registry(r)
+{
+    this->gameThread = std::thread(&Game::init, this);
+}
+
+Game::~Game()
+{
+    this->shouldLoop = false;
+    if (this->gameThread.joinable())
+        this->gameThread.join();
+}
+
+auto Game::init() -> void
+{
+    this->loop();
+}
+
+auto Game::loop() -> void
+{
+    while (this->shouldLoop) {
+        this->update();
+    }
+}
+
+auto Game::update() -> void {}

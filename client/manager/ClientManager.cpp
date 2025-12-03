@@ -6,13 +6,23 @@
 */
 
 #include "ClientManager.hpp"
+#include "client/game/Game.hpp"
 #include "client/raylib/Raylib.hpp"
 
 #include <memory>
 
 ClientManager::ClientManager()
 {
+    this->registerComponents();
+    this->game = std::make_unique<Game>(this->registry);
     this->gui = std::make_unique<Raylib>(this->registry);
 }
 
 ClientManager::~ClientManager() {}
+
+#include "client/components/Position.hpp"
+
+auto ClientManager::registerComponents() -> void
+{
+    this->registry.register_component<Position>();
+}
