@@ -11,12 +11,13 @@
     #include <iostream>
     #include <vector>
     #include <memory>
+    #include <optional>
     #include "Packet.hpp"
 
 class PacketManager {
     public:
         void registerPackets();
-        const std::unique_ptr<Packet> &getPacketById(uint8_t id) const;
+        std::optional<std::unique_ptr<Packet>> getPacketById(uint8_t id) const;
         bool hasPacketById(uint8_t id) const;
     private:
         std::vector<std::unique_ptr<Packet>> packets;

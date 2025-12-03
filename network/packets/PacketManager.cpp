@@ -31,13 +31,13 @@ void PacketManager::registerPackets()
     this->packets.push_back(std::make_unique<GhostScoreUpdatePacket>());
 }
 
-const std::unique_ptr<Packet> &PacketManager::getPacketById(uint8_t id) const
+std::optional<std::unique_ptr<Packet>> PacketManager::getPacketById(uint8_t id) const
 {
     for (const std::unique_ptr<Packet> &packet : this->packets) {
         if (packet->getId() == id)
-            return packet;
+            return packet->clone();
     }
-    return nullptr;
+    return std::nullopt;
 }
 
 bool PacketManager::hasPacketById(uint8_t id) const

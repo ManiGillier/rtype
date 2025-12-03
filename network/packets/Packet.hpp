@@ -11,7 +11,7 @@
     #include <iostream>
     #include <cstdint>
     #include <queue>
-    #define PACKET_MAX_SIZE 9
+    #include <memory>
 
     #define DOUBLE_SIZE sizeof(double)
     #define INT_SIZE sizeof(int)
@@ -40,6 +40,7 @@ enum PacketId {
 
 class Packet {
     public:
+        enum PacketMode {TCP, UDP};
 
         uint8_t getId() const {
             return (uint8_t) this->packetId;
@@ -133,6 +134,7 @@ class Packet {
         virtual void serialize() = 0;
         virtual void unserialize() = 0;
         virtual const std::string getName() = 0;
+        virtual std::unique_ptr<Packet> clone() const = 0;
         virtual void display() = 0;
         virtual ~Packet() = default;
     private:
