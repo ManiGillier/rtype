@@ -11,7 +11,7 @@
 
 #include "Raylib.hpp"
 
-Raylib::Raylib()
+Raylib::Raylib(Registry &reg) : registry(reg)
 {
     this->openGlThread = std::thread(&Raylib::init, this);
 }
@@ -43,5 +43,10 @@ auto Raylib::loop() -> void
 
 auto Raylib::update() -> void
 {
+    BeginDrawing();
+    ClearBackground(BLACK);
+    DrawRectangle(10, 10, 10, 10, WHITE);
+    DrawRectangle(0, 10, 10, 10, WHITE);
+    DrawRectangle(10, 0, 10, 10, WHITE);
     EndDrawing();
 }
