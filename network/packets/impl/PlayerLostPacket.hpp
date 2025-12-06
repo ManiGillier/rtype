@@ -22,6 +22,14 @@ public:
         return "PlayerLostPacket";
     }
 
+    enum PacketMode getMode() const {
+        return PacketMode::TCP;
+    }
+
+    std::unique_ptr<Packet> clone() const {
+        return make_copy(PlayerLostPacket);
+    }
+
     void display() {
         std::cout << "None";
     }

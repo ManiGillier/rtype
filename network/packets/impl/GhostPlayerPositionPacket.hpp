@@ -52,6 +52,14 @@ public:
         return "GhostPlayerPositionPacket";
     }
 
+    enum PacketMode getMode() const {
+        return PacketMode::UDP;
+    }
+
+    std::unique_ptr<Packet> clone() const {
+        return make_copy(GhostPlayerPositionPacket);
+    }
+
     void display() {
         std::cout << "PlayerID=" << this->id
                   << ", PositionY=" << this->position;

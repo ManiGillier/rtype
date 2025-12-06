@@ -29,7 +29,7 @@ public:
     int getPlayerCount() const {
         return this->newPlayerCount;
     }
-        
+
     void setPlayerCount(int newPlayerCount) {
         this->newPlayerCount = newPlayerCount;
     }
@@ -40,6 +40,14 @@ public:
 
     int getWhoDied() const {
         return this->whoDied;
+    }
+
+    enum PacketMode getMode() const {
+        return PacketMode::TCP;
+    }
+
+    std::unique_ptr<Packet> clone() const {
+        return make_copy(PlayerDeadPacket);
     }
 
     int getSize() const {

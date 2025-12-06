@@ -40,6 +40,14 @@ public:
         return "PlayerPositionPacket";
     }
 
+    enum PacketMode getMode() const {
+        return PacketMode::UDP;
+    }
+
+    std::unique_ptr<Packet> clone() const {
+        return make_copy(PlayerPositionPacket);
+    }
+
     void display() {
         std::cout << "PositionY=" << this->position;
     }

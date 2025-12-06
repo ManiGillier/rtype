@@ -49,6 +49,14 @@ public:
         return (int) sizeof(uint32_t) + (int) sizeof(int);
     }
 
+    enum PacketMode getMode() const {
+        return PacketMode::UDP;
+    }
+
+    std::unique_ptr<Packet> clone() const {
+        return make_copy(GhostScoreUpdatePacket);
+    }
+
     const std::string getName() {
         return "GhostScoreUpdatePacket";
     }

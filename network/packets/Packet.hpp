@@ -18,6 +18,8 @@
     #define CHAR_SIZE sizeof(char)
     #define LONG_SIZE sizeof(long)
 
+    #define make_copy(TYPE) std::make_unique<TYPE>(*this)
+
 template <typename T, std::size_t S>
 union ByteWriter {
     T value;
@@ -135,6 +137,7 @@ class Packet {
         virtual void unserialize() = 0;
         virtual const std::string getName() = 0;
         virtual std::unique_ptr<Packet> clone() const = 0;
+        virtual enum PacketMode getMode() const = 0;
         virtual void display() = 0;
         virtual ~Packet() = default;
     private:
