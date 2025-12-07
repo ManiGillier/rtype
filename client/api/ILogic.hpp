@@ -12,7 +12,9 @@
 
 class ILogic {
 public:
-    virtual auto update(Registry &) -> void;
+    virtual ~ILogic() = default;
+
+    virtual auto update(Registry &) -> void = 0;
 };
 
 #endif /* GAME_LOGIC_INTERFACE_HPP */

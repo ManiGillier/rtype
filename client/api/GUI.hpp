@@ -12,6 +12,8 @@
 
 class GUI {
 public:
+    virtual ~GUI() = default;
+
     virtual auto render(Registry &) -> void = 0;
 };
 
