@@ -26,7 +26,7 @@ ClientManager::ClientManager()
 }
 ClientManager::~ClientManager()
 {
-    //this->game->join();
+    this->game->join();
     this->game.reset();
     this->gui.reset();
 }

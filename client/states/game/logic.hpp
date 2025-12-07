@@ -18,7 +18,7 @@ public:
 
     auto update(Registry &) -> void;
 private:
-    std::optional<Entity> square;
+    Entity player;
 };
 
 #endif /* IN_GAME_STATE_LOGIC_HPP */

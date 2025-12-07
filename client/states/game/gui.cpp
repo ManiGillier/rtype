@@ -7,7 +7,7 @@
 
 #include "gui.hpp"
 
-#include "client/raylib/systems/Systems.hpp"
+#include "systems/Systems.hpp"
 
 InGameStateGui::InGameStateGui(Registry &r)
 {

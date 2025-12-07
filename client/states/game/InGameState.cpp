@@ -11,12 +11,13 @@
 
 #include <memory>
 
-#include "client/raylib/systems/Systems.hpp"
+#include "systems/Systems.hpp"
 
 InGameState::InGameState()
 {
     this->reg.register_component<Position>();
     this->reg.register_component<Square>();
+    this->reg.register_component<PlayerControler>();
 
     this->gui = std::make_unique<InGameStateGui>(this->reg);
     this->logic = std::make_unique<InGameStateLogic>(this->reg);
