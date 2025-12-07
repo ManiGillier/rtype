@@ -6,7 +6,7 @@
 */
 
 #include "PacketManager.hpp"
-#include "impl/PlayerPositionPacket.hpp"
+#include "network/packets/impl/PlayerPositionPacket.hpp"
 #include "impl/StartRequestPacket.hpp"
 #include "impl/ScoreUpdatePacket.hpp"
 #include "impl/GameStartPacket.hpp"

@@ -42,8 +42,7 @@ bool PacketReader::readPacket(void)
             readData.pop();
         }
         if (!currentPacket) {
-            if (shouldLog)
-                LOG_ERR << "Received wrong packet, disconnecting " << this->_fd << std::endl;
+            LOG_ERR("Received wrong packet, disconnecting " << this->_fd << std::endl);
             return false;
         }
         std::size_t packetSize = currentPacket->getSize();
@@ -57,8 +56,7 @@ bool PacketReader::readPacket(void)
         currentPacket->setData(_arr);
         currentPacket->unserialize();
         receivedPackets.push(currentPacket);
-        if (shouldLog)
-            PacketLogger::logPacket(currentPacket,
+        PacketLogger::logPacket(currentPacket,
                  PacketLogger::PacketMethod::RECEIVED, this->_fd);
         currentPacket = nullptr;
     }

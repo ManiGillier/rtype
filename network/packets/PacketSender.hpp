@@ -18,7 +18,6 @@ public:
     void sendPacket(Packet *packet);
     void writePackets();
     std::queue<Packet *> getPackets() const;
-    inline static bool shouldLog = false;
 private:
     int _fd;
     std::queue<Packet *> packets;

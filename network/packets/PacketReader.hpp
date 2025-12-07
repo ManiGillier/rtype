@@ -18,7 +18,6 @@ public:
     bool readPacket();
     bool createBuffer(void);
     std::queue<Packet *> &getReceivedPackets();
-    inline static bool shouldLog = false;
 private:
     Packet *buildPacket(char packetId);
     std::queue<Packet *> receivedPackets; // les queues c'est banger :D (petits tricks)

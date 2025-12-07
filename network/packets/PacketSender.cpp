@@ -45,8 +45,7 @@ void PacketSender::writePackets()
             toSend.push_back(packetData.front());
             packetData.pop();
         }
-        if (shouldLog)
-            PacketLogger::logPacket(packet,
+        PacketLogger::logPacket(packet,
                 PacketLogger::PacketMethod::SENT, this->_fd);
         this->packets.pop();
     }
