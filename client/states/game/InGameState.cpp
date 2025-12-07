@@ -11,8 +11,13 @@
 
 #include <memory>
 
+#include "client/raylib/systems/Systems.hpp"
+
 InGameState::InGameState()
 {
-    this->gui = std::make_unique<InGameStateGui>();
-    this->logic = std::make_unique<InGameStateLogic>();
+    this->reg.register_component<Position>();
+    this->reg.register_component<Square>();
+
+    this->gui = std::make_unique<InGameStateGui>(this->reg);
+    this->logic = std::make_unique<InGameStateLogic>(this->reg);
 }

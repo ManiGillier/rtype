@@ -9,11 +9,16 @@
 #define IN_GAME_STATE_LOGIC_HPP
 
 #include "client/api/ILogic.hpp"
+#include <optional>
 
 class InGameStateLogic : public ILogic
 {
 public:
+    InGameStateLogic(Registry &);
+
     auto update(Registry &) -> void;
+private:
+    std::optional<Entity> square;
 };
 
 #endif /* IN_GAME_STATE_LOGIC_HPP */

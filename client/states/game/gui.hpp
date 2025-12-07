@@ -12,6 +12,8 @@
 
 class InGameStateGui : public GUI {
 public:
+    InGameStateGui(Registry &);
+
     auto render(Registry &) -> void;
 };
 

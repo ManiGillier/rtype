@@ -11,7 +11,7 @@
 
 #include "Raylib.hpp"
 
-Raylib::Raylib(Registry &reg) : registry(reg)
+Raylib::Raylib(IGameState *gameState) : gameState(gameState)
 {
     this->openGlThread = std::thread(&Raylib::init, this);
 }
@@ -45,6 +45,7 @@ auto Raylib::update() -> void
 {
     BeginDrawing();
     ClearBackground(BLACK);
-    this->registry.render();
+    if (this->gameState)
+        this->gameState->render();
     EndDrawing();
 }

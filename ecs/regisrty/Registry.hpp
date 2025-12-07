@@ -118,7 +118,7 @@ SparseArray<Component>& Registry::register_component()
 
     _erase_functions.push_back(erase_fn);
 
-    return std::any_cast<SparseArray<Component>&>(_components_arrays[type_idx]);
+    return this->get_components<Component>();
 }
 
 template <class Component>
