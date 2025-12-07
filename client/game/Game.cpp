@@ -7,6 +7,7 @@
 
 #include "Game.hpp"
 #include <thread>
+#include <unistd.h>
 
 Game::Game(IGameState *gameState) : gameState(gameState)
 {

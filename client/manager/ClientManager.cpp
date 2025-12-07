@@ -26,7 +26,9 @@ ClientManager::ClientManager()
 }
 ClientManager::~ClientManager()
 {
-    this->game->join();
+    //this->game->join();
+    this->game.reset();
+    this->gui.reset();
 }
 
 auto ClientManager::changeInternalState(std::unique_ptr<IGameState> state)
