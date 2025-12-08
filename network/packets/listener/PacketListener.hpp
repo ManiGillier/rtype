@@ -16,7 +16,9 @@ class PacketListener {
         bool addExecutor(std::unique_ptr<PacketExecutor> &executor);
         bool removeExecutor(std::unique_ptr<PacketExecutor> &executor);
         bool removeExecutor(int packetId);
+        bool executePacket(Server *server, Client *client, Packet *p) const;
         bool clearExecutors();
+        virtual ~PacketListener() = default;
         const std::vector<std::unique_ptr<PacketExecutor>> &getExecutors() const;
     private:
         std::vector<std::unique_ptr<PacketExecutor>> executors;

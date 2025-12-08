@@ -13,11 +13,12 @@
 
 class PacketSender {
 public:
-    PacketSender(int fd);
+    PacketSender(int fd = -1);
     void sendPackets(std::queue<Packet *> packets);
     void sendPacket(Packet *packet);
     void writePackets();
     std::queue<Packet *> getPackets() const;
+    void setFd(int fd);
 private:
     int _fd;
     std::queue<Packet *> packets;

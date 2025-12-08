@@ -14,22 +14,33 @@ Server::Server(int port)
     this->port = port;
 }
 
-bool Server::up() const
+bool Server::up()
 {
     LOG("Starting server at " << this->port << "..");
 
-    return false;
+    return this->upStatus;
 }
 
-bool Server::down() const
+bool Server::down()
 {
     LOG("Stopping server at " << this->port << "..");
-    return false;
+    return this->upStatus;
+}
+
+bool Server::isUp() const
+{
+    return this->upStatus;
 }
 
 void Server::loop()
 {
-    
+    if (!this->upStatus)
+        return;
+}
+
+PacketListener &Server::getPacketListener()
+{
+    return this->pl;
 }
 
 std::vector<Client> &Server::getClients()

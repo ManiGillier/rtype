@@ -107,3 +107,8 @@ std::queue<Packet *> &PacketReader::getReceivedPackets()
 {
     return this->receivedPackets;
 }
+
+void PacketReader::setFd(int fd)
+{
+    this->_fd = fd;
+}

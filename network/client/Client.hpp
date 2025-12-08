@@ -8,10 +8,16 @@
 #ifndef CLIENT_HPP_
     #define CLIENT_HPP_
 
+    #include "PacketReader.hpp"
+    #include "PacketSender.hpp"
+
+
 class Client {
     public:
-    protected:
+        
     private:
+        PacketReader packetReader;
+        PacketSender packetSender;
 };
 
 #endif /* !CLIENT_HPP_ */

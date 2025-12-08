@@ -56,3 +56,8 @@ std::queue<Packet *> PacketSender::getPackets() const
 {
     return this->packets;
 }
+
+void PacketSender::setFd(int fd)
+{
+    this->_fd = fd;
+}

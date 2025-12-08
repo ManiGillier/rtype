@@ -16,6 +16,7 @@ class PacketExecutor {
     public:
         // Server and clients are both null if its a Client Executor
         virtual bool executePacket(Server *server, Client *cl, Packet *packet) = 0;
+        virtual ~PacketExecutor() = default;
         virtual int getPacketId() const = 0;
 };
 

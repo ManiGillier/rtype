@@ -16,6 +16,7 @@
 
 class PacketManager {
     public:
+        virtual ~PacketManager() = default;
         void registerPackets();
         std::optional<std::unique_ptr<Packet>> getPacketById(uint8_t id) const;
         bool hasPacketById(uint8_t id) const;

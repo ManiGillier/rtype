@@ -14,10 +14,11 @@
 
 class PacketReader {
 public:
-    PacketReader(int fd);
+    PacketReader(int fd = -1);
     bool readPacket();
     bool createBuffer(void);
     std::queue<Packet *> &getReceivedPackets();
+    void setFd(int fd);
 private:
     Packet *buildPacket(char packetId);
     std::queue<Packet *> receivedPackets; // les queues c'est banger :D (petits tricks)
