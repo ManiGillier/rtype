@@ -23,8 +23,7 @@ class PollManager {
         void removePollables(std::vector<int> fileDescriptors);
         void updateFlags(int fileDescriptor, short newFlags);
         int getConnectionCount() const;
-        std::vector<std::unique_ptr<IPollable>> &getClients();
-        IPollable *getPollableByFileDescriptor(int fd) const;
+        std::vector<std::unique_ptr<IPollable>> &getPool();
         void pollSockets(Server *server);
     private:
         std::vector<struct pollfd> pollFds;

@@ -73,7 +73,7 @@ int PollManager::getConnectionCount() const
     return this->pollables.size();
 }
 
-std::vector<std::unique_ptr<IPollable>> &PollManager::getClients()
+std::vector<std::unique_ptr<IPollable>> &PollManager::getPollables()
 {
     return this->pollables;
 }

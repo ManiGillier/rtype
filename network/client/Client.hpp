@@ -12,7 +12,7 @@
     #include "PacketSender.hpp"
 
 
-class Client {
+class Client : public IPollable {
     public:
         
     private:
