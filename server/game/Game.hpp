@@ -6,11 +6,11 @@
 */
 
 #ifndef GAME_HPP
-#define GAME_HPP
+    #define GAME_HPP
 
 #include "../../ecs/regisrty/Registry.hpp"
 #include "../factories/EntityFactory.hpp"
-#include <map>
+#include "../player/Player.hpp"
 
 class Game {
 public:
@@ -18,8 +18,8 @@ public:
     ~Game() = default;
     void start();
     void update();
-    Entity addPlayer(/* Player *player (client abstraction) */);
-    void removePlayer(/* Player *player (client abstraction) */);
+    Entity addPlayer(const std::unique_ptr<Player> &player /* Player *player (client abstraction) */);
+    void removePlayer(const std::unique_ptr<Player> &player /* Player *player (client abstraction) */);
     Registry& getRegistry();
 
 private:
@@ -28,7 +28,7 @@ private:
 
     Registry _registry;
     EntityFactory _factory;
-    std::map<int, Entity> _players;
+    std::unordered_map<int, Entity> _players;
     std::optional<Entity> _currentBoss;
     bool _isRunning;
 };
