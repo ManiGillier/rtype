@@ -9,11 +9,6 @@
 #define ENTITY_FACTORY_HPP
 
 #include "../../ecs/regisrty/Registry.hpp"
-#include "../components/Collision.hpp"
-#include "../components/EntityType.hpp"
-#include "../components/Health.hpp"
-#include "../components/Motion.hpp"
-#include "../components/Position.hpp"
 
 class EntityFactory
 {
