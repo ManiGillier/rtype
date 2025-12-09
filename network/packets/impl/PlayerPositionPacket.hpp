@@ -44,7 +44,7 @@ public:
         return PacketMode::UDP;
     }
 
-    std::unique_ptr<Packet> clone() const {
+    std::shared_ptr<Packet> clone() const {
         return make_copy(PlayerPositionPacket);
     }
 

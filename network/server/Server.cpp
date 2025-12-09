@@ -45,10 +45,13 @@ bool Server::up()
     this->upStatus = true;
     this->fd = serverSocket;
     this->getPollManager().addPollable(
-        std::make_shared<ServerClient>(fd, this->getPollManager()));
+        std::make_shared<ServerPollable>(*this, fd));
     return this->upStatus;
 }
 
+/*
+    TODO: Erase all datas
+*/
 bool Server::down()
 {
     LOG("Stopping server at " << this->port << "..");
@@ -93,10 +96,13 @@ short ServerPollable::getFlags() const
 bool ServerPollable::receiveEvent(short revent)
 {
     int other_socket = accept(this->getFileDescriptor(), 0, 0);
+    std::shared_ptr<IPollable> createdClient = nullptr;
 
     (void) revent;
     if (other_socket < 0)
         return true;
-    this->server.getPollManager().addPollable(server.createClient(other_socket));
+    createdClient = server.createClient(other_socket);
+    this->server.getPollManager().addPollable(createdClient);
+    this->server.onClientConnect(createdClient);
     return true;
 }

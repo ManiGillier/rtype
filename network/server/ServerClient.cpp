@@ -21,6 +21,7 @@ short ServerClient::getFlags() const
 
     if (this->shouldWrite())
         flags |= POLLOUT;
+    std::cout << "POLLOUT ?! " << (flags & POLLOUT) << " because (" << this->shouldWrite() << ")" << std::endl;
     return flags;
 }
 

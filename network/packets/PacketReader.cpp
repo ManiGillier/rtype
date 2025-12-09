@@ -38,15 +38,15 @@ bool PacketReader::readPacket(void)
     while (true) {
         if (readData.empty())
             return true;
-        if (currentPacket == std::nullopt) {
+        if (currentPacket == nullptr) {
             currentPacket = PacketManager::getInstance().createPacketById(readData.front());
             readData.pop();
         }
-        if (currentPacket == std::nullopt) {
+        if (currentPacket == nullptr) {
             LOG_ERR("Received wrong packet, disconnecting " << this->_fd << std::endl);
             return false;
         }
-        std::size_t packetSize = (std::size_t) (*currentPacket)->getSize();
+        std::size_t packetSize = (std::size_t) currentPacket->getSize();
         if (packetSize > readData.size())
             return true;
         std::queue<uint8_t> _arr;
@@ -54,12 +54,12 @@ bool PacketReader::readPacket(void)
             _arr.push(readData.front());
             readData.pop();
         }
-        (*currentPacket)->setData(_arr);
-        (*currentPacket)->unserialize();
-        receivedPackets.push(*currentPacket);
-        PacketLogger::logPacket(*currentPacket,
+        currentPacket->setData(_arr);
+        currentPacket->unserialize();
+        receivedPackets.push(currentPacket);
+        PacketLogger::logPacket(currentPacket,
                  PacketLogger::PacketMethod::RECEIVED, this->_fd);
-        currentPacket = std::nullopt;
+        currentPacket = nullptr;
     }
     return true;
 }

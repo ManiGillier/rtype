@@ -12,7 +12,11 @@
     #include <network/logger/Logger.hpp>
     #include <network/poll/PollManager.hpp>
     #include <network/server/ServerClient.hpp>
+    #include <network/packets/PacketManager.hpp>
     #include <vector>
+
+    /* TMP */
+    #include <network/packets/impl/ScoreUpdatePacket.hpp>
 
 class Client;
 
@@ -49,19 +53,24 @@ class Server {
 class CustomServer : public Server {
     public:
         CustomServer(int port) : Server(port) {
-            std::cout << "Custom : " << port << std::endl;
-        };
+            return;
+        }
 
         std::shared_ptr<IPollable> createClient(int fd) {
             return std::make_shared<ServerClient>(fd, this->getPollManager());
         }
 
         void onClientConnect(std::shared_ptr<IPollable> client) {
-            LOG("Client" << client->getFileDescriptor() << " connected !");
+
+            LOG("Client [" << client->getFileDescriptor() << "] connected !");
+
+            std::shared_ptr<ServerClient> sc = std::static_pointer_cast<ServerClient>(client);
+            std::shared_ptr<Packet> p = create_packet(ScoreUpdatePacket, 69, 727, 420);
+            sc->sendPacket(p);
         }
 
         void onClientDisconnect(std::shared_ptr<IPollable> client) {
-            LOG("Client" << client->getFileDescriptor() << " disconnected !");
+            LOG("Client [" << client->getFileDescriptor() << "] disconnected !");
         }
 };
 

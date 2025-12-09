@@ -22,7 +22,7 @@ public:
     void setFd(int fd);
 private:
     std::queue<std::shared_ptr<Packet>> receivedPackets; // les queues c'est banger :D (petits tricks)
-    std::optional<std::shared_ptr<Packet>> currentPacket = std::nullopt;
+    std::shared_ptr<Packet> currentPacket = nullptr;
     std::queue<uint8_t> readData;
     int _fd;
 };

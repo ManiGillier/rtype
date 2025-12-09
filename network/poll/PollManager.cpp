@@ -78,6 +78,7 @@ std::vector<std::shared_ptr<IPollable>> &PollManager::getPool()
 void PollManager::pollSockets()
 {
     std::size_t socketSize = this->pollFds.size();
+    LOG("Connected client size: " << this->pollFds.size());
     int rc = poll(this->pollFds.data(), socketSize, -1);
     std::vector<int> toDelete;
 

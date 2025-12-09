@@ -31,13 +31,13 @@ void PacketManager::registerPackets()
     this->packets.push_back(std::make_shared<GhostScoreUpdatePacket>());
 }
 
-std::optional<std::shared_ptr<Packet>> PacketManager::createPacketById(uint8_t id) const
+std::shared_ptr<Packet> PacketManager::createPacketById(uint8_t id) const
 {
     for (const std::shared_ptr<Packet> &packet : this->packets) {
         if (packet->getId() == id)
             return packet->clone();
     }
-    return std::nullopt;
+    return nullptr;
 }
 
 bool PacketManager::hasPacketById(uint8_t id) const
