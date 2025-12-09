@@ -9,6 +9,8 @@
 #include <thread>
 #include <unistd.h>
 
+#include "client/commands/Stop.hpp"
+
 Game::Game(IGameState *gameState, CommandManager &cm)
     : commandManager(cm), gameState(gameState)
 {
@@ -32,6 +34,7 @@ auto Game::loop() -> void
     while (this->shouldLoop) {
         this->update();
     }
+    this->commandManager.sendCommandToRender<StopCommand>();
 }
 
 auto Game::update() -> void

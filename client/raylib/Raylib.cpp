@@ -8,6 +8,7 @@
 #include <raylib.h>
 #include <thread>
 
+#include "client/commands/Stop.hpp"
 
 #include "Raylib.hpp"
 
@@ -40,6 +41,7 @@ auto Raylib::loop() -> void
 {
     while (!WindowShouldClose())
         this->update();
+    this->commandManager.sendCommandToLogic<StopCommand>();
 }
 
 auto Raylib::update() -> void
