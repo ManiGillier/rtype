@@ -72,7 +72,7 @@ class Packet {
             bw.value = value;
             if (writeCursor + sizeof(T) > (std::size_t) this->getSize())
                 return;
-            for (char c : bw.bytes) {
+            for (uint8_t c : bw.bytes) {
                 this->data.push(c);
                 writeCursor++;
             }

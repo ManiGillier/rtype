@@ -19,21 +19,21 @@
 
 void PacketManager::registerPackets()
 {
-    this->packets.push_back(std::make_unique<PlayerPositionPacket>());
-    this->packets.push_back(std::make_unique<StartRequestPacket>());
-    this->packets.push_back(std::make_unique<ScoreUpdatePacket>());
-    this->packets.push_back(std::make_unique<GameStartPacket>());
-    this->packets.push_back(std::make_unique<PlayerDeadPacket>());
-    this->packets.push_back(std::make_unique<PlayerJoinPacket>());
-    this->packets.push_back(std::make_unique<PlayerWonPacket>());
-    this->packets.push_back(std::make_unique<PlayerLostPacket>());
-    this->packets.push_back(std::make_unique<GhostPlayerPositionPacket>());
-    this->packets.push_back(std::make_unique<GhostScoreUpdatePacket>());
+    this->packets.push_back(std::make_shared<PlayerPositionPacket>());
+    this->packets.push_back(std::make_shared<StartRequestPacket>());
+    this->packets.push_back(std::make_shared<ScoreUpdatePacket>());
+    this->packets.push_back(std::make_shared<GameStartPacket>());
+    this->packets.push_back(std::make_shared<PlayerDeadPacket>());
+    this->packets.push_back(std::make_shared<PlayerJoinPacket>());
+    this->packets.push_back(std::make_shared<PlayerWonPacket>());
+    this->packets.push_back(std::make_shared<PlayerLostPacket>());
+    this->packets.push_back(std::make_shared<GhostPlayerPositionPacket>());
+    this->packets.push_back(std::make_shared<GhostScoreUpdatePacket>());
 }
 
-std::optional<std::unique_ptr<Packet>> PacketManager::getPacketById(uint8_t id) const
+std::optional<std::shared_ptr<Packet>> PacketManager::createPacketById(uint8_t id) const
 {
-    for (const std::unique_ptr<Packet> &packet : this->packets) {
+    for (const std::shared_ptr<Packet> &packet : this->packets) {
         if (packet->getId() == id)
             return packet->clone();
     }
@@ -42,7 +42,7 @@ std::optional<std::unique_ptr<Packet>> PacketManager::getPacketById(uint8_t id) 
 
 bool PacketManager::hasPacketById(uint8_t id) const
 {
-    for (const std::unique_ptr<Packet> &packet : this->packets) {
+    for (const std::shared_ptr<Packet> &packet : this->packets) {
         if (packet->getId() == id)
             return true;
     }

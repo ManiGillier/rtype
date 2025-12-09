@@ -8,9 +8,10 @@
 #ifndef POLLABLE_HPP_
     #define POLLABLE_HPP_
 
-    #include "IPollable.hpp"
-    #include "PacketSender.hpp"
-    #include "PacketReader.hpp"
+    #include <network/poll/IPollable.hpp>
+    #include <network/packets/PacketReader.hpp>
+    #include <network/packets/PacketSender.hpp>
+    #include <network/poll/PollManager.hpp>
 
 class Pollable : public IPollable {
     public:

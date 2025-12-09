@@ -8,16 +8,15 @@
 #ifndef CLIENT_HPP_
     #define CLIENT_HPP_
 
-    #include "PacketReader.hpp"
-    #include "PacketSender.hpp"
+    #include <network/packets/PacketReader.hpp>
+    #include <network/packets/PacketSender.hpp>
 
-
-class Client : public IPollable {
-    public:
+// class Client : public IPollable {
+//     public:
         
-    private:
-        PacketReader packetReader;
-        PacketSender packetSender;
-};
+//     private:
+//         PacketReader packetReader;
+//         PacketSender packetSender;
+// };
 
 #endif /* !CLIENT_HPP_ */

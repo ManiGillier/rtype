@@ -5,16 +5,13 @@
 ** PollManager
 */
 
-#include "PollManager.hpp"
-#include "Server.hpp"
-#include "IPollable.hpp"
-#include "Logger.hpp"
-#include "Client.hpp"
-#include <poll.h>
-#include <unistd.h>
+#include <network/poll/PollManager.hpp>
+#include <network/server/Server.hpp>
+#include <network/poll/IPollable.hpp>
+#include <network/logger/Logger.hpp>
 #include <iostream>
 
-void PollManager::addPollable(std::unique_ptr<IPollable> &pollable)
+void PollManager::addPollable(std::shared_ptr<IPollable> pollable)
 {
     struct pollfd pollDescriptor = {
         .fd = pollable->getFileDescriptor(),
@@ -31,7 +28,7 @@ void PollManager::removePollable(int fileDescriptor)
     int pollableIndex = 0;
     int fdIndex = 0;
 
-    for (std::unique_ptr<IPollable> &pollable : this->pollables) {
+    for (std::shared_ptr<IPollable> &pollable : this->pollables) {
         if (pollable->getFileDescriptor() == fileDescriptor)
             break;
         pollableIndex++;
@@ -68,17 +65,17 @@ void PollManager::updateFlags(int fileDescriptor, short newFlags)
     }
 }
 
-int PollManager::getConnectionCount() const
+std::size_t PollManager::getConnectionCount() const
 {
     return this->pollables.size();
 }
 
-std::vector<std::unique_ptr<IPollable>> &PollManager::getPollables()
+std::vector<std::shared_ptr<IPollable>> &PollManager::getPool()
 {
     return this->pollables;
 }
 
-void PollManager::pollSockets(Server *server)
+void PollManager::pollSockets()
 {
     std::size_t socketSize = this->pollFds.size();
     int rc = poll(this->pollFds.data(), socketSize, -1);
@@ -93,7 +90,7 @@ void PollManager::pollSockets(Server *server)
             toDelete.push_back(this->pollFds[i].fd);
             continue;
         }
-        if(!this->pollables[i]->receiveEvent(this, this->pollFds[i].revents))
+        if(!this->pollables[i]->receiveEvent(this->pollFds[i].revents))
             toDelete.push_back(this->pollFds[i].fd);
         this->pollFds[i].events = this->pollables[i]->getFlags();
         this->pollFds[i].revents = 0;

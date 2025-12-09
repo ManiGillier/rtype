@@ -9,6 +9,7 @@
     #define PACKETLISTENER_HPP_
 
     #include "PacketExecutor.hpp"
+    #include <network/poll/IPollable.hpp>
     #include <vector>
 
 class PacketListener {
@@ -16,7 +17,8 @@ class PacketListener {
         bool addExecutor(std::unique_ptr<PacketExecutor> &executor);
         bool removeExecutor(std::unique_ptr<PacketExecutor> &executor);
         bool removeExecutor(int packetId);
-        bool executePacket(Server *server, Client *client, Packet *p) const;
+        bool executePacket(Server &server, std::shared_ptr<IPollable> &con,
+            std::shared_ptr<Packet> &p) const;
         bool clearExecutors();
         virtual ~PacketListener() = default;
         const std::vector<std::unique_ptr<PacketExecutor>> &getExecutors() const;

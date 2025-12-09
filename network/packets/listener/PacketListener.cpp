@@ -15,9 +15,9 @@ bool PacketListener::addExecutor(std::unique_ptr<PacketExecutor> &executor)
 
 bool PacketListener::removeExecutor(std::unique_ptr<PacketExecutor> &executor)
 {
-    for (std::size_t i = 0; i < this->executors.size(); i++) {
-        if (this->executors[i] == executor) {
-            this->executors.erase(this->executors.begin() + i);
+    for (auto it = this->executors.begin(); it != this->executors.end(); it++) {
+        if (*it == executor) {
+            this->executors.erase(it);
             return true;
         }
     }
@@ -26,22 +26,23 @@ bool PacketListener::removeExecutor(std::unique_ptr<PacketExecutor> &executor)
 
 bool PacketListener::removeExecutor(int packetId)
 {
-    for (std::size_t i = 0; i < this->executors.size(); i++) {
-        if (this->executors[i]->getPacketId() == packetId) {
-            this->executors.erase(this->executors.begin() + i);
+    for (auto it = this->executors.begin(); it != this->executors.end(); it++) {
+        if ((*it)->getPacketId() == packetId) {
+            this->executors.erase(it);
             return true;
         }
     }
     return false;
 }
 
-bool PacketListener::executePacket(Server *server, Client *client, Packet *p) const
+bool PacketListener::executePacket(Server &server, std::shared_ptr<IPollable> &con,
+    std::shared_ptr<Packet> &p) const
 {
     bool status = true;
 
     for (const std::unique_ptr<PacketExecutor> &packetExecutor : this->executors) {
         if (packetExecutor->getPacketId() == p->getId())
-            status = packetExecutor->executePacket(server, client, p) && status;
+            status = packetExecutor->executePacket(server, con, p) && status;
     }
     return status;
 }

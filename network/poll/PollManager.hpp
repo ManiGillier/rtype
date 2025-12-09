@@ -12,21 +12,24 @@ class Server;
 
     #include "IPollable.hpp"
     #include <memory>
-    #include "Client.hpp"
     #include <vector>
+
+    /* TODO: Change those to CPP includes */
+    #include <poll.h>
+    #include <unistd.h>
 
 class PollManager {
     public:
         virtual ~PollManager() = default;
-        void addPollable(std::unique_ptr<IPollable> &pollable);
+        void addPollable(std::shared_ptr<IPollable> pollable);
         void removePollable(int fileDescriptor);
         void removePollables(std::vector<int> fileDescriptors);
         void updateFlags(int fileDescriptor, short newFlags);
-        int getConnectionCount() const;
-        std::vector<std::unique_ptr<IPollable>> &getPool();
-        void pollSockets(Server *server);
+        std::size_t getConnectionCount() const;
+        std::vector<std::shared_ptr<IPollable>> &getPool();
+        void pollSockets();
     private:
         std::vector<struct pollfd> pollFds;
-        std::vector<std::unique_ptr<IPollable>> pollables;
+        std::vector<std::shared_ptr<IPollable>> pollables;
     };
 #endif /* !POLLMANAGER_HPP_ */
