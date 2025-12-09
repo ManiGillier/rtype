@@ -39,6 +39,5 @@ auto movePlayer(Registry &,
         Position &pos = *std::get<Position*>(tuple);
         pos.x += (float) dx;
         pos.y += (float) dy;
-        std::cout << pos.x << " " << pos.y << std::endl;
     }
 }
