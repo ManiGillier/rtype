@@ -20,6 +20,7 @@ public:
     void update();
     Entity addPlayer(const std::unique_ptr<Player> &player /* Player *player (client abstraction) */);
     void removePlayer(const std::unique_ptr<Player> &player /* Player *player (client abstraction) */);
+    Entity addBodss();
     Registry& getRegistry();
 
 private:
