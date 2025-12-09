@@ -18,10 +18,16 @@
 class CommandManager
 {
 public:
-    template<class CommandType, std::is_base_of<CommandType, Command>>
-    auto sendCommandToLogic(CommandType const &) -> void;
-    template<class CommandType, std::is_base_of<CommandType, Command>>
-    auto sendCommandToRender(CommandType const &) -> void;
+    template<class CommandType, class... Args>
+    auto sendCommandToLogic(Args&&... args) -> void
+    {
+        this->logicQueue.push(std::make_unique<CommandType>(args...));
+    }
+    template<class CommandType, class... Args>
+    auto sendCommandToRender(Args&&... args) -> void
+    {
+        this->renderQueue.push(std::make_unique<CommandType>(args...));
+    }
 
     auto readLogicCommands() -> std::queue<std::unique_ptr<Command>>&;
     auto readRenderCommands() -> std::queue<std::unique_ptr<Command>>&; 
