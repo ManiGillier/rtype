@@ -41,6 +41,7 @@ fclean:
 clean_cache:
 	make -s fclean
 	rm -rf .cpm-cache .cache CPM_modules cpm-package-lock.cmake
+	rm -rf compile_commands.json
 
 re:
 	make -s fclean
