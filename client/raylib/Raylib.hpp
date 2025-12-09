@@ -23,15 +23,20 @@ class Raylib : public GraphicalLibAPI {
 public:
     Raylib(IGameState *, CommandManager &);
     ~Raylib();
+
+    auto manageCommand(Command &) -> void;
+    auto manageCommands() -> void;
 private:
     auto init() -> void;
     auto loop() -> void;
     auto update() -> void;
     inline auto updateGameState(IGameState *s) -> void { this->gameState = s; }
+    auto stop() -> void;
 private:
     CommandManager &commandManager;
     std::thread openGlThread;
     RenderWindow window;
+    bool shouldStop = false;
     IGameState *gameState = nullptr;
 };
 

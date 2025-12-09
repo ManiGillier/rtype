@@ -19,7 +19,7 @@ Game::Game(IGameState *gameState, CommandManager &cm)
 
 Game::~Game()
 {
-    this->shouldLoop = false;
+    this->shouldStop = true;
     if (this->gameThread.joinable())
         this->gameThread.join();
 }
@@ -31,7 +31,7 @@ auto Game::init() -> void
 
 auto Game::loop() -> void
 {
-    while (this->shouldLoop) {
+    while (!this->shouldStop) {
         this->update();
     }
     this->commandManager.sendCommandToRender<StopCommand>();
@@ -39,6 +39,37 @@ auto Game::loop() -> void
 
 auto Game::update() -> void
 {
+    this->manageCommands();
+    if (this->shouldStop)
+        return;
     if (this->gameState)
         this->gameState->update();
+}
+
+auto Game::stop() -> void
+{
+    this->shouldStop = true;
+}
+
+auto Game::manageCommand(Command &c) -> void
+{
+    switch (c.getId()) {
+        case Command::STOP:
+            this->stop();
+            break;
+    } ;
+}
+
+#include <memory>
+
+auto Game::manageCommands() -> void
+{
+    std::queue<std::unique_ptr<Command>> commands =
+        this->commandManager.readLogicCommands();
+
+    while (!commands.empty()) {
+        std::unique_ptr<Command> command = std::move(commands.front());
+        commands.pop();
+        this->manageCommand(*command);
+    }
 }

@@ -23,15 +23,19 @@ class Game : public GameLogicAPI
 public:
     Game(IGameState *, CommandManager &);
     ~Game();
+
+    auto manageCommand(Command &) -> void;
+    auto manageCommands() -> void;
 private:
     auto init() -> void;
     auto loop() -> void;
     auto update() -> void;
+    auto stop() -> void;
     inline auto updateGameState(IGameState *s) -> void { this->gameState = s; }
     inline auto join() -> void { this->gameThread.join(); }
 private:
     CommandManager &commandManager;
-    bool shouldLoop = true;
+    bool shouldStop = false;
     std::thread gameThread;
     IGameState *gameState = nullptr;
 };

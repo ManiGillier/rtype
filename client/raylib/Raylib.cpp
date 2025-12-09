@@ -39,16 +39,47 @@ auto Raylib::init() -> void
 
 auto Raylib::loop() -> void
 {
-    while (!WindowShouldClose())
+    while (!WindowShouldClose() && !this->shouldStop)
         this->update();
     this->commandManager.sendCommandToLogic<StopCommand>();
 }
 
 auto Raylib::update() -> void
 {
+    this->manageCommands();
+    if (this->shouldStop)
+        return;
     BeginDrawing();
     ClearBackground(BLACK);
     if (this->gameState)
         this->gameState->render();
     EndDrawing();
+}
+
+auto Raylib::stop() -> void
+{
+    this->shouldStop = true;
+}
+
+auto Raylib::manageCommand(Command &c) -> void
+{
+    switch (c.getId()) {
+        case Command::STOP:
+            this->stop();
+            break;
+    } ;
+}
+
+#include <memory>
+
+auto Raylib::manageCommands() -> void
+{
+    std::queue<std::unique_ptr<Command>> commands =
+        this->commandManager.readRenderCommands();
+
+    while (!commands.empty()) {
+        std::unique_ptr<Command> command = std::move(commands.front());
+        commands.pop();
+        this->manageCommand(*command);
+    }
 }
