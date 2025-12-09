@@ -16,7 +16,7 @@
 InGameStateLogic::InGameStateLogic(IGameState &gs)
     : gameState(gs), player(gameState.getRegistry().spawn_entity())
 {
-    Registry r = gameState.getRegistry();
+    Registry &r = gameState.getRegistry();
 
     r.add_update_system<Position, PlayerControler>(movePlayer);
     r.add_component<Position>(this->player, {20, 20});

@@ -9,7 +9,8 @@
 #include <thread>
 #include <unistd.h>
 
-Game::Game(IGameState *gameState) : gameState(gameState)
+Game::Game(IGameState *gameState, CommandManager &cm)
+    : commandManager(cm), gameState(gameState)
 {
     this->gameThread = std::thread(&Game::init, this);
 }

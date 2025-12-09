@@ -11,7 +11,8 @@
 
 #include "Raylib.hpp"
 
-Raylib::Raylib(IGameState *gameState) : gameState(gameState)
+Raylib::Raylib(IGameState *gameState, CommandManager &cm)
+    : commandManager(cm), gameState(gameState)
 {
     this->openGlThread = std::thread(&Raylib::init, this);
 }

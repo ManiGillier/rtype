@@ -14,12 +14,14 @@
 
 #include "ecs/regisrty/Registry.hpp"
 
+#include "client/manager/CommandManager.hpp"
+
 #include <thread>
 
 class Game : public GameLogicAPI
 {
 public:
-    Game(IGameState *);
+    Game(IGameState *, CommandManager &);
     ~Game();
 private:
     auto init() -> void;
@@ -28,6 +30,7 @@ private:
     inline auto updateGameState(IGameState *s) -> void { this->gameState = s; }
     inline auto join() -> void { this->gameThread.join(); }
 private:
+    CommandManager &commandManager;
     bool shouldLoop = true;
     std::thread gameThread;
     IGameState *gameState = nullptr;

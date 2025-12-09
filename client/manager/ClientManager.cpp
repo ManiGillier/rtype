@@ -15,8 +15,8 @@
 
 ClientManager::ClientManager()
 {
-    this->game = std::make_unique<Game>(nullptr);
-    this->gui = std::make_unique<Raylib>(nullptr);
+    this->game = std::make_unique<Game>(nullptr, this->commandManager);
+    this->gui = std::make_unique<Raylib>(nullptr, this->commandManager);
 
     this->_gameStateFactory[IN_GAME] = [this] {
         return std::make_unique<InGameState>(*this);

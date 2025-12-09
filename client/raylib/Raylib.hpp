@@ -17,9 +17,11 @@
 
 #include "ecs/regisrty/Registry.hpp"
 
+#include "client/manager/CommandManager.hpp"
+
 class Raylib : public GraphicalLibAPI {
 public:
-    Raylib(IGameState *);
+    Raylib(IGameState *, CommandManager &);
     ~Raylib();
 private:
     auto init() -> void;
@@ -27,6 +29,7 @@ private:
     auto update() -> void;
     inline auto updateGameState(IGameState *s) -> void { this->gameState = s; }
 private:
+    CommandManager &commandManager;
     std::thread openGlThread;
     RenderWindow window;
     IGameState *gameState = nullptr;
