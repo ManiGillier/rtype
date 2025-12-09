@@ -9,8 +9,10 @@
 #define COMP_MOTION_HPP
 
 struct Motion {
-    float velocity;
-    float acceleration;
+    float velocity_x;
+    float velocity_y;
+    float acceleration_x;
+    float acceleration_y;
 };
 
 #endif /* COMP_MOTION_HPP */

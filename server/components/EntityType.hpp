@@ -11,8 +11,8 @@
 enum class EntityType {
     PLAYER,
     BOSS,
-    PLAYER_BULLET,
-    ENEMY_BULLET,
+    PLAYER_LASER,
+    BOSS_BULLET,
 };
 
 struct EntityTag {

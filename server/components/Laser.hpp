@@ -9,6 +9,7 @@
 #define COMP_LASER_HPP
 
 struct Laser {
+    int id;
     bool active;
 };
 

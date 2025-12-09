@@ -5,12 +5,12 @@
 ** position component
 */
 
-#ifndef COMP_POSITION_HPP
-#define COMP_POSITION_HPP
+#ifndef POSITION_HPP
+#define POSITION_HPP
 
 struct Position {
     float x;
     float y;
 };
 
-#endif /* COMP_POSITION_HPP */
+#endif /* POSITION_HPP */
