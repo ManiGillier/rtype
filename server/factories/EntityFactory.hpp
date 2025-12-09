@@ -18,7 +18,7 @@ class EntityFactory
 
     Entity createPlayer(void);
     Entity createBoss(void);
-    Entity createPlayerLaser(void);
+    Entity createPlayerLaser(int id);
     Entity createBossBullet(void);
 
   private:
