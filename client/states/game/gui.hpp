@@ -9,12 +9,15 @@
 #define IN_GAME_STATE_GUI_HPP
 
 #include "client/api/GUI.hpp"
+#include "client/api/IGameState.hpp"
 
 class InGameStateGui : public GUI {
 public:
-    InGameStateGui(Registry &);
+    InGameStateGui(IGameState &);
 
     auto render(Registry &) -> void;
+private:
+    IGameState &gameState;
 };
 
 #endif /* IN_GAME_STATE_GUI_HPP */

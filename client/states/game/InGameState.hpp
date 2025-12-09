@@ -9,10 +9,13 @@
 #define IN_GAME_STATE_HPP
 
 #include "client/api/IGameState.hpp"
+#include "client/manager/ClientManager.hpp"
 
 class InGameState : public IGameState {
 public:
-    InGameState();
+    InGameState(ClientManager &);
+private:
+    ClientManager &clientManager;
 };
 
 #endif /* IN_GAME_STATE_HPP */

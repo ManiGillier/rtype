@@ -9,8 +9,10 @@
 
 #include "systems/Systems.hpp"
 
-InGameStateGui::InGameStateGui(Registry &r)
+InGameStateGui::InGameStateGui(IGameState &gm) : gameState(gm)
 {
+    Registry r = gameState.getRegistry();
+
     r.add_render_system<Position, Square>(renderSquare);
 }
 

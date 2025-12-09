@@ -9,15 +9,18 @@
 #define IN_GAME_STATE_LOGIC_HPP
 
 #include "client/api/ILogic.hpp"
+#include "client/api/IGameState.hpp"
+
 #include <optional>
 
 class InGameStateLogic : public ILogic
 {
 public:
-    InGameStateLogic(Registry &);
+    InGameStateLogic(IGameState &gameState);
 
     auto update(Registry &) -> void;
 private:
+    IGameState &gameState;
     Entity player;
 };
 
