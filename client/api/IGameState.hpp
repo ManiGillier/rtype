@@ -14,6 +14,8 @@
 
 class IGameState {
 public:
+    virtual ~IGameState() = default;
+
     inline auto getRegistry() -> Registry & { return this->reg; }
     inline auto render() -> void { this->gui->render(this->getRegistry()); }
     inline auto update() -> void { this->logic->update(this->getRegistry()); }
