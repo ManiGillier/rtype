@@ -53,15 +53,16 @@ bool Server::up()
     return this->upStatus;
 }
 
-/*
-    TODO: Erase all datas
-*/
 bool Server::down()
 {
     LOG("Stopping server at " << this->port << "..");
-    if (this->upStatus)
+    if (this->upStatus) {
         shutdown(this->fd, SHUT_RDWR);
-    LOG("Could stop server at " << this->port << " !");
+        this->pm.clear();
+        this->upStatus = false;
+        LOG("Could stop server at " << this->port << " !");
+    }
+    LOG_ERR("Could not stop server: Server was not up.");
     return this->upStatus;
 }
 

@@ -63,6 +63,7 @@ bool Client::disconnect()
     close(this->fd);
     this->fd = -1;
     this->connected = false;
+    this->pm.clear();
     return true;
 }
 bool Client::isConnected() const
