@@ -5,12 +5,12 @@
 ** position component
 */
 
-#ifndef POSITION_HPP
-#define POSITION_HPP
+#ifndef COMP_VELOCITY_HPP
+#define COMP_VELOCITY_HPP
 
-struct Position {
+struct Velocity {
     float x;
     float y;
 };
 
-#endif /* POSITION_HPP */
+#endif /* COMP_VELOCITY_HPP */
