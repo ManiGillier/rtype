@@ -33,8 +33,7 @@ void Game::update()
     _registry.update();
 }
 
-Entity Game::addPlayer(const std::unique_ptr<Player>
-                           &player /* Player *player (client abstraction) */)
+Entity Game::addPlayer(std::shared_ptr<Player> &player)
 {
     Entity pl = _factory.createPlayer();
 
@@ -44,8 +43,7 @@ Entity Game::addPlayer(const std::unique_ptr<Player>
     return pl;
 }
 
-void Game::removePlayer(const std::unique_ptr<Player>
-                            &player /* Player *player (client abstraction) */)
+void Game::removePlayer(std::shared_ptr<Player> &player)
 {
     _players.erase(player->getId());
 }
@@ -53,7 +51,6 @@ void Game::removePlayer(const std::unique_ptr<Player>
 Entity Game::addBodss()
 {
     auto boss = _factory.createBoss();
-    _currentBoss = boss;
     return boss;
 }
 
@@ -81,5 +78,6 @@ void Game::initializeSystems()
     //     Systems::movement_system);
     // _registry.add_update_system<Collision, EntityTag>(
     //     Systems::collision_system);
-    // _registry.add_update_system<Position, EntityTag>(Systems::cleanup_system);
+    // _registry.add_update_system<Position,
+    // EntityTag>(Systems::cleanup_system);
 }
