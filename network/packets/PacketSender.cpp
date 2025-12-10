@@ -16,28 +16,19 @@ PacketSender::PacketSender(int fd)
     this->_fd = fd;
 }
 
-void PacketSender::sendPacket(Packet *packet)
+void PacketSender::sendPacket(std::shared_ptr<Packet> packet)
 {
     packet->clearData();
     this->packets.push(packet);
-}
-
-void PacketSender::sendPackets(std::queue<Packet *> packets)
-{
-    while (!packets.empty()) {
-        this->sendPacket(packets.front());
-        packets.pop();
-    }
 }
 
 void PacketSender::writePackets()
 {
     std::vector<uint8_t> toSend;
     std::queue<uint8_t> packetData;
-    Packet *packet = nullptr;
 
     while (!this->packets.empty()) {
-        packet = this->packets.front();
+        std::shared_ptr<Packet> &packet = this->packets.front();
         packet->serialize();
         toSend.push_back(packet->getId());
         packetData = packet->getData();
@@ -45,15 +36,19 @@ void PacketSender::writePackets()
             toSend.push_back(packetData.front());
             packetData.pop();
         }
-        if (shouldLog)
-            PacketLogger::logPacket(packet,
+        PacketLogger::logPacket(packet,
                 PacketLogger::PacketMethod::SENT, this->_fd);
         this->packets.pop();
     }
     write(this->_fd, toSend.data(), toSend.size());
 }
 
-std::queue<Packet *> PacketSender::getPackets() const
+std::queue<std::shared_ptr<Packet>> PacketSender::getPackets() const
 {
     return this->packets;
+}
+
+void PacketSender::setFd(int fd)
+{
+    this->_fd = fd;
 }

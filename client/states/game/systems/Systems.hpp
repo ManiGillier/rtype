@@ -15,12 +15,12 @@
 #include "client/components/Player.hpp"
 #include <unordered_map>
 
-auto renderSquare(Registry &,
+/*auto renderSquare(Registry &,
     std::unordered_map<std::size_t, std::tuple<Position*, Square*>>)
 -> void;
 
 auto movePlayer(Registry &,
     std::unordered_map<std::size_t, std::tuple<Position*, PlayerControler*>>)
 -> void;
-
+*/
 #endif /* RENDER_SYSTEMS_HPP */

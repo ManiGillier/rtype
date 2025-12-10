@@ -18,7 +18,7 @@ InGameStateLogic::InGameStateLogic(IGameState &gs)
 {
     Registry &r = gameState.getRegistry();
 
-    r.add_update_system<Position, PlayerControler>(movePlayer);
+    //r.add_update_system<Position, PlayerControler>(movePlayer);
     r.add_component<Position>(this->player, {20, 20});
     r.add_component<Square>(this->player, {100});
     r.add_component<PlayerControler>(this->player, {});

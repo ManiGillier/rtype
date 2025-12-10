@@ -17,7 +17,7 @@
 
 #include <iostream>
 
-auto movePlayer(Registry &,
+/*auto movePlayer(Registry &,
     std::unordered_map<std::size_t, std::tuple<Position*, PlayerControler*>> map)
 -> void
 {
@@ -41,3 +41,4 @@ auto movePlayer(Registry &,
         pos.y += (float) dy;
     }
 }
+*/

@@ -13,15 +13,14 @@
 
 class PacketSender {
 public:
-    PacketSender(int fd);
-    void sendPackets(std::queue<Packet *> packets);
-    void sendPacket(Packet *packet);
+    PacketSender(int fd = -1);
+    void sendPacket(std::shared_ptr<Packet> packet);
     void writePackets();
-    std::queue<Packet *> getPackets() const;
-    inline static bool shouldLog = false;
+    std::queue<std::shared_ptr<Packet>> getPackets() const;
+    void setFd(int fd);
 private:
     int _fd;
-    std::queue<Packet *> packets;
+    std::queue<std::shared_ptr<Packet>> packets;
 };
 
 #endif /* !PACKETSENDER_HPP_ */

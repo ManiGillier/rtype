@@ -30,10 +30,11 @@ message("-- CMake flags:" ${CMAKE_CXX_FLAGS})
 # exec name
 set(SERVER_EXEC_NAME r-type_server)
 set(CLIENT_EXEC_NAME r-type_client)
+set(NETWORK_TEST_EXEC_NAME reseauTypeTester)
 
 # all cpp file in src directory only
-file(GLOB_RECURSE server_src server/*.cpp ecs/*.cpp)
-file(GLOB_RECURSE client_src client/*.cpp ecs/*.cpp)
+file(GLOB_RECURSE server_src server/*.cpp ecs/*.cpp shared/*.cpp)
+file(GLOB_RECURSE client_src client/*.cpp ecs/*.cpp shared/*.cpp)
 
 # get all cpp files from network library
 file(GLOB_RECURSE network_src network/*.cpp)
@@ -72,3 +73,12 @@ target_include_directories(${CLIENT_EXEC_NAME} PUBLIC ${CMAKE_SOURCE_DIR})
 
 target_link_libraries(${SERVER_EXEC_NAME} PRIVATE network_lib)
 target_link_libraries(${CLIENT_EXEC_NAME} PRIVATE network_lib raylib)
+
+file(GLOB_RECURSE network_test_src network_test/src/*.cpp)
+file(GLOB_RECURSE network_test_src_h network_test/src/*.hpp)
+
+add_executable(${NETWORK_TEST_EXEC_NAME} EXCLUDE_FROM_ALL ${network_test_src} ${network_test_src_h})
+target_include_directories(${NETWORK_TEST_EXEC_NAME} PUBLIC ${CMAKE_SOURCE_DIR})
+target_link_libraries(${NETWORK_TEST_EXEC_NAME} PRIVATE network_lib)
+
+add_custom_target(reseau DEPENDS ${NETWORK_TEST_EXEC_NAME})

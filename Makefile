@@ -1,6 +1,7 @@
 BUILD_DIR = build
 SERVER_EXEC_NAME = r-type_server
 CLIENT_EXEC_NAME = r-type_client
+NETWORK_TEST_EXEC_NAME = reseauTypeTester
 DEBUG = Debug
 RELEASE = Release
 
@@ -18,6 +19,10 @@ debug:
 release:
 	$(call build,$(RELEASE))
 
+reseau:
+	cmake -B ${BUILD_DIR} -DCMAKE_BUILD_TYPE=$(DEBUG)
+	cmake --build ${BUILD_DIR} --target reseau -j
+
 lint:
 	clang-tidy $$(find . -type f -name "*.[ch]pp" | grep -v "build")
 
@@ -31,7 +36,7 @@ open_doc:
 	cd doc && mdbook serve --open
 
 clean:
-	rm -rf ${SERVER_EXEC_NAME} ${CLIENT_EXEC_NAME}
+	rm -rf ${SERVER_EXEC_NAME} ${CLIENT_EXEC_NAME} ${NETWORK_TEST_EXEC_NAME}
 
 fclean:
 	make -s clean
@@ -41,9 +46,10 @@ fclean:
 clean_cache:
 	make -s fclean
 	rm -rf .cpm-cache .cache CPM_modules cpm-package-lock.cmake
+	rm -rf compile_commands.json
 
 re:
 	make -s fclean
 	make -s all
 
-.PHONY: all lint clean fclean re doc open_doc
+.PHONY: all lint clean fclean re doc open_doc reseau
