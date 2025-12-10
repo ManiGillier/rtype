@@ -10,7 +10,7 @@
 #include <unistd.h>
 #include <poll.h>
 
-ServerClient::ServerClient(int fd, PollManager &pm) : Pollable(fd), pm(pm)
+ServerClient::ServerClient(int fd, PollManager &pm) : Pollable(fd, pm), pm(pm)
 {
     return;
 }
@@ -41,17 +41,6 @@ bool ServerClient::receiveEvent(short event)
         return true;
     }
     return true;
-}
-
-void ServerClient::sendPacket(std::shared_ptr<Packet> &p)
-{
-    this->getPacketSender().sendPacket(p);
-    this->pm.updateFlags(this->getFileDescriptor(), this->getFlags());
-}
-
-std::queue<std::shared_ptr<Packet>> &ServerClient::getReceivedPackets()
-{
-    return this->toProcess;
 }
 
 bool ServerClient::shouldWrite() const

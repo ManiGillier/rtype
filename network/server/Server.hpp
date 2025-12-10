@@ -27,6 +27,7 @@ class ServerPollable : public Pollable {
         bool receiveEvent(short revent);
     private:
         Server &server;
+        std::queue<std::shared_ptr<Packet>> toProcess;
 };
 
 class Server {
@@ -36,17 +37,18 @@ class Server {
         bool down();
         bool isUp() const;
         void loop();
-        PacketListener &getPacketListener();
+        PacketListener<Server> &getPacketListener();
         PollManager &getPollManager();
         virtual std::shared_ptr<IPollable> createClient(int fd) = 0;
         virtual void onClientConnect(std::shared_ptr<IPollable> client) = 0;
         virtual void onClientDisconnect(std::shared_ptr<IPollable> client) = 0;
+        void executePackets();
         virtual ~Server() = default;
     private:
         int port;
         int fd;
         bool upStatus = false;
-        PacketListener pl;
+        PacketListener<Server> pl;
         PollManager pm;
 };
 

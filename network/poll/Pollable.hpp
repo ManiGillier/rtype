@@ -15,7 +15,7 @@
 
 class Pollable : public IPollable {
     public:
-        Pollable(int fd) : _fd(fd), sender(fd), reader(fd) {};
+        Pollable(int fd, PollManager &pm) : _fd(fd), sender(fd), pm(pm), reader(fd) {};
 
         int getFileDescriptor() {
             return this->_fd;
@@ -37,9 +37,21 @@ class Pollable : public IPollable {
             return this->reader;
         }
 
+
+        void sendPacket(std::shared_ptr<Packet> &p) {
+            this->getPacketSender().sendPacket(p);
+            this->pm.updateFlags(this->getFileDescriptor(), this->getFlags());
+        }
+
+        std::queue<std::shared_ptr<Packet>> &getReceivedPackets() {
+            return this->toProcess;
+        }
+    protected:
+        std::queue<std::shared_ptr<Packet>> toProcess;
     private:
         int _fd;
         PacketSender sender;
+        PollManager &pm;
         PacketReader reader;
 };
 

@@ -19,6 +19,7 @@
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <bits/stdc++.h>
+#include "Server.hpp"
 
 Server::Server(int port)
 {
@@ -69,15 +70,17 @@ bool Server::isUp() const
     return this->upStatus;
 }
 
+
+
 void Server::loop()
 {
     if (!this->upStatus)
         return;
     this->getPollManager().pollSockets();
-    /* TODO : Execute packets */
+    this->executePackets();
 }
 
-PacketListener &Server::getPacketListener()
+PacketListener<Server> &Server::getPacketListener()
 {
     return this->pl;
 }
@@ -87,7 +90,20 @@ PollManager &Server::getPollManager()
     return this->pm;
 }
 
-ServerPollable::ServerPollable(Server &server, int fd) : Pollable(fd), server(server)
+void Server::executePackets()
+{
+    for (std::shared_ptr<IPollable> &p : this->getPollManager().getPool()) {
+        std::queue<std::shared_ptr<Packet>> &q = p->getReceivedPackets();
+        while (!q.empty()) {
+            std::shared_ptr<Packet> &packet = q.front();
+            this->getPacketListener().executePacket(*this, p, packet);
+            q.pop();
+        }
+    }
+}
+
+ServerPollable::ServerPollable(Server &server, int fd)
+    : Pollable(fd, server.getPollManager()), server(server)
 {
     return;
 }

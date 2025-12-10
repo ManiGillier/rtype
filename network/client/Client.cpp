@@ -70,11 +70,33 @@ bool Client::isConnected() const
     return this->connected;
 }
 
+bool Client::sendPacket(std::shared_ptr<Packet> p)
+{
+    if (!this->connected || this->getPollManager().getConnectionCount() == 0)
+        return false;
+    for (std::shared_ptr<IPollable> &pollable : this->getPollManager().getPool())
+        pollable->sendPacket(p);
+    return true;
+}
+
+void Client::executePackets()
+{
+    for (std::shared_ptr<IPollable> &p : this->getPollManager().getPool()) {
+        std::queue<std::shared_ptr<Packet>> &q = p->getReceivedPackets();
+        while (!q.empty()) {
+            std::shared_ptr<Packet> &packet = q.front();
+            this->getPacketListener().executePacket(*this, p, packet);
+            q.pop();
+        }
+    }
+}
+
 void Client::loop()
 {
     if (!this->connected)
         return;
     this->getPollManager().pollSockets();
+    this->executePackets();
 }
 
 const std::string &Client::getIp() const
@@ -92,7 +114,12 @@ PollManager &Client::getPollManager()
     return this->pm;
 }
 
-ClientPollable::ClientPollable(Client &cl, int fd) : Pollable(fd), cl(cl)
+PacketListener<Client> &Client::getPacketListener()
+{
+    return this->pl;
+}
+
+ClientPollable::ClientPollable(Client &cl, int fd) : Pollable(fd, cl.getPollManager()), cl(cl)
 {
     return;
 }
@@ -123,17 +150,6 @@ bool ClientPollable::receiveEvent(short revent)
         return true;
     }
     return true;
-}
-
-void ClientPollable::sendPacket(std::shared_ptr<Packet> &p)
-{
-    this->getPacketSender().sendPacket(p);
-    this->cl.getPollManager().updateFlags(this->getFileDescriptor(), this->getFlags());
-}
-
-std::queue<std::shared_ptr<Packet>> &ClientPollable::getReceivedPackets()
-{
-    return this->toProcess;
 }
 
 bool ClientPollable::shouldWrite() const
