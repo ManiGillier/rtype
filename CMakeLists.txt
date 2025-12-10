@@ -24,6 +24,9 @@ else ()
     set(RAYLIB_LOG_LEVEL "-DRAYLIB_LOG_LEVEL=LOG_ERROR")
 endif()
 
+option(BUILD_SERVER "Build server" ON)
+option(BUILD_CLIENT "Build client" ON)
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CPP_CC_FLAGS} ${RAYLIB_LOG_LEVEL}")
 message("-- CMake flags:" ${CMAKE_CXX_FLAGS}) 
 
@@ -56,23 +59,25 @@ file(GLOB_RECURSE client_src_h client/*.hpp ecs/*.hpp)
 list(FILTER server_src EXCLUDE REGEX "ecs_exemple\\.cpp$")
 list(FILTER client_src EXCLUDE REGEX "ecs_exemple\\.cpp$")
 
-# Raylib v5.5 package
-CPMAddPackage(
-    NAME raylib
-    GIT_REPOSITORY https://github.com/raysan5/raylib.git
-    GIT_TAG 5.5
-    OPTIONS
-      "BUILD_EXAMPLES OFF"
-)
+if(BUILD_SERVER)
+    add_executable(${SERVER_EXEC_NAME} ${server_src} ${server_src_h})
+    target_include_directories(${SERVER_EXEC_NAME} PUBLIC ${CMAKE_SOURCE_DIR})
+    target_link_libraries(${SERVER_EXEC_NAME} PRIVATE network_lib)
+endif(BUILD_SERVER)
 
-add_executable(${SERVER_EXEC_NAME} ${server_src} ${server_src_h})
-add_executable(${CLIENT_EXEC_NAME} ${client_src} ${client_src_h})
-
-target_include_directories(${SERVER_EXEC_NAME} PUBLIC ${CMAKE_SOURCE_DIR})
-target_include_directories(${CLIENT_EXEC_NAME} PUBLIC ${CMAKE_SOURCE_DIR})
-
-target_link_libraries(${SERVER_EXEC_NAME} PRIVATE network_lib)
-target_link_libraries(${CLIENT_EXEC_NAME} PRIVATE network_lib raylib)
+if (BUILD_CLIENT)
+    # Raylib v5.5 package
+    CPMAddPackage(
+        NAME raylib
+        GIT_REPOSITORY https://github.com/raysan5/raylib.git
+        GIT_TAG 5.5
+        OPTIONS
+        "BUILD_EXAMPLES OFF"
+    )
+    add_executable(${CLIENT_EXEC_NAME} ${client_src} ${client_src_h})
+    target_include_directories(${CLIENT_EXEC_NAME} PUBLIC ${CMAKE_SOURCE_DIR})
+    target_link_libraries(${CLIENT_EXEC_NAME} PRIVATE network_lib raylib)
+endif(BUILD_CLIENT)
 
 file(GLOB_RECURSE network_test_src network_test/src/*.cpp)
 file(GLOB_RECURSE network_test_src_h network_test/src/*.hpp)

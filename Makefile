@@ -4,20 +4,31 @@ CLIENT_EXEC_NAME = r-type_client
 NETWORK_TEST_EXEC_NAME = reseauTypeTester
 DEBUG = Debug
 RELEASE = Release
+ON = ON
+OFF = OFF
 
 all: debug
 
 define build
-	cmake -B ${BUILD_DIR} -DCMAKE_BUILD_TYPE=$(1)
+	cmake -B ${BUILD_DIR} \
+		-DBUILD_SERVER=$(1) \
+		-DBUILD_CLIENT=$(2) \
+		-DCMAKE_BUILD_TYPE=$(3) 
 	cmake --build ${BUILD_DIR} -j 
 endef
 
 debug:
-	$(call build,$(DEBUG))
+	$(call build,ON,ON,$(DEBUG))
 	ln -s -f ${BUILD_DIR}/compile_commands.json .
 
 release:
-	$(call build,$(RELEASE))
+	$(call build,ON,ON,$(RELEASE))
+
+server:
+	$(call build,ON,OFF,$(DEBUG))
+
+client:
+	$(call build,OFF,ON,$(DEBUG))
 
 reseau:
 	cmake -B ${BUILD_DIR} -DCMAKE_BUILD_TYPE=$(DEBUG)
@@ -52,4 +63,4 @@ re:
 	make -s fclean
 	make -s all
 
-.PHONY: all lint clean fclean re doc open_doc reseau
+.PHONY: all lint clean fclean re doc open_doc reseau server client
