@@ -1,7 +1,6 @@
-#include "game/Game.hpp"
-#include "player/Player.hpp"
+#include "Server.hpp"
+#include "network/logger/Logger.hpp"
 #include <iostream>
-#include <memory>
 #include <string>
 
 class ArgsError : public std::exception
@@ -36,11 +35,11 @@ class RType
             const std::string arg(argv[i]);
             if (i + 1 < argc || arg == "-d") {
                 if (arg == "-t") {
-                    _ticks = std::atoi(arg.c_str());
+                    _ticks = std::atoi(argv[i + 1]);
                 } else if (arg == "-p") {
-                    _port = std::atoi(arg.c_str());
+                    _port = std::atoi(argv[i + 1]);
                 } else if (arg == "-d") {
-                    _debug = true;
+                    Logger::shouldLog = true;
                 } else {
                     throw ArgsError("unexpected argument " +
                                     std::string(argv[i]));
@@ -51,12 +50,17 @@ class RType
                                 " wihtout value");
             }
         }
+        if (_ticks < 1 || _ticks > 120)
+            throw ArgsError("We’re not at the butcher’s shop; "
+                            "please try a different tick value.");
     }
 
     int displayUsage()
     {
         std::cout << "USAGE:" << std::endl;
-        std::cout << "\t ./r-type_server {-p port} [-t tick] [-d]" << std::endl;
+        std::cout << "\t ./r-type_server {-p port} [-t tick (between 1 and "
+                     "120) ] [-d]"
+                  << std::endl;
         std::cout << "\t : {} = mendatory" << std::endl;
         std::cout << "\t : [] = optional" << std::endl;
         return 0;
@@ -66,11 +70,18 @@ class RType
     {
         if (_displayUsage)
             return displayUsage();
+
+        // TODO: create an other thread for this.
+        RtypeServer server(this->_port);
+        server.up();
+
+        while (true) {
+            server.loop();
+        }
         return 0;
     }
 
   private:
-    bool _debug = false;
     int _ticks = 60;
     int _port = -1;
     bool _displayUsage = false;
