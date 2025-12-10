@@ -14,7 +14,7 @@
 #include <unordered_map>
 
 #include <raylib.h>
-
+/*
 auto renderSquare([[maybe_unused]] Registry &reg,
     std::unordered_map<std::size_t, std::tuple<Position, Square>> items)
 -> void
@@ -27,3 +27,4 @@ auto renderSquare([[maybe_unused]] Registry &reg,
                       WHITE);
     }
 }
+*/

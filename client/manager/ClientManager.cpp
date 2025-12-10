@@ -34,5 +34,5 @@ auto ClientManager::registerComponents() -> void
 
 auto ClientManager::registerSystems() -> void
 {
-    this->registry.add_render_system<Position, Square>(renderSquare);
+    //this->registry.add_render_system<Position, Square>(renderSquare);
 }
