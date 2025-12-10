@@ -1,6 +1,7 @@
 #include "Player.hpp"
+#include "network/server/ServerClient.hpp"
 
-Player::Player(int id) : _id(id) 
+Player::Player(int fd, PollManager &pm, int id) : ServerClient(fd, pm), _id(id)
 {
 }
 
