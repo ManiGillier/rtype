@@ -1,10 +1,13 @@
 #include "EntityFactory.hpp"
-#include "../components/Collision.hpp"
-#include "../components/EntityType.hpp"
-#include "../components/Health.hpp"
-#include "../components/Laser.hpp"
-#include "../components/Motion.hpp"
-#include "../components/Position.hpp"
+#include "../components/Acceleration.hpp"
+#include "../components/Damager.hpp"
+#include "../components/Resistance.hpp"
+#include "../components/Velocity.hpp"
+#include "../../shared/components/Dependence.hpp"
+#include "../../shared/components/Health.hpp"
+#include "../../shared/components/HitBox.hpp"
+#include "../../shared/components/Laser.hpp"
+#include "../../shared/components/Position.hpp"
 
 EntityFactory::EntityFactory(Registry &registry) : _registry(registry) {}
 
@@ -13,10 +16,11 @@ Entity EntityFactory::createPlayer(void)
     Entity player = _registry.spawn_entity();
 
     _registry.emplace_component<Position>(player, 50.0f, 300.0f);
+    _registry.emplace_component<Velocity>(player, 50.0f, 300.0f);
+    _registry.emplace_component<Acceleration>(player, 50.0f, 300.0f);
     _registry.emplace_component<Health>(player, 100, 100);
-    _registry.emplace_component<Motion>(player, 5.0f, 5.0f, 0.5f, 0.5);
-    _registry.emplace_component<Collision>(player, 32.0f, 32.0f);
-    _registry.emplace_component<EntityTag>(player, EntityType::PLAYER);
+    _registry.emplace_component<Resistance>(player, 50.0f);
+    _registry.emplace_component<HitBox>(player, 0.0f, 0.0f);
     return player;
 }
 
@@ -24,11 +28,12 @@ Entity EntityFactory::createBoss(void)
 {
     Entity boss = _registry.spawn_entity();
 
-    _registry.emplace_component<Position>(boss, 700.0f, 300.0f);
-    _registry.emplace_component<Health>(boss, 1000, 1000);
-    _registry.emplace_component<Motion>(boss, 5.0f, 5.0f, 0.5f, 0.5);
-    _registry.emplace_component<Collision>(boss, 64.0f, 64.0f);
-    _registry.emplace_component<EntityTag>(boss, EntityType::BOSS);
+    _registry.emplace_component<Position>(boss, 50.0f, 300.0f);
+    _registry.emplace_component<Velocity>(boss, 50.0f, 300.0f);
+    _registry.emplace_component<Acceleration>(boss, 50.0f, 300.0f);
+    _registry.emplace_component<Health>(boss, 100, 100);
+    _registry.emplace_component<Resistance>(boss, 50.0f);
+    _registry.emplace_component<HitBox>(boss, 0.0f, 0.0f);
     return boss;
 }
 
@@ -36,23 +41,21 @@ Entity EntityFactory::createPlayerLaser(int id)
 {
     Entity playerLaser = _registry.spawn_entity();
 
-    _registry.emplace_component<Position>(playerLaser, -10.0f, -10.0f);
-    _registry.emplace_component<Motion>(playerLaser, 5.0f, 5.0f, 0.5f, 0.5);
-    _registry.emplace_component<Collision>(playerLaser, 0.0f, 0.0f);
-    _registry.emplace_component<EntityTag>(playerLaser,
-                                           EntityType::PLAYER_LASER);
-    _registry.emplace_component<Laser>(playerLaser, false, id);
+    _registry.emplace_component<Dependence>(playerLaser, id);
+    _registry.emplace_component<Laser>(playerLaser, false);
+    _registry.emplace_component<Damager>(playerLaser, 10);
     return playerLaser;
 }
 
-Entity EntityFactory::createBossBullet(void)
+Entity EntityFactory::createBossBullet(int id)
 {
     Entity bossBullet = _registry.spawn_entity();
 
-    _registry.emplace_component<Position>(bossBullet, 0.0f, 0.0f);
-    _registry.emplace_component<Motion>(bossBullet, 5.0f, 5.0f, 0.5f, 0.5);
-    _registry.emplace_component<Collision>(bossBullet, 12.0f, 12.0f);
-    _registry.emplace_component<EntityTag>(bossBullet,
-                                           EntityType::BOSS_BULLET);
+    _registry.emplace_component<Position>(bossBullet, 50.0f, 300.0f);
+    _registry.emplace_component<Velocity>(bossBullet, 50.0f, 300.0f);
+    _registry.emplace_component<Acceleration>(bossBullet, 50.0f, 300.0f);
+    _registry.emplace_component<Damager>(bossBullet, 10);
+    _registry.emplace_component<HitBox>(bossBullet, 0.0f, 0.0f);
+    _registry.emplace_component<Dependence>(bossBullet, id);
     return bossBullet;
 }
