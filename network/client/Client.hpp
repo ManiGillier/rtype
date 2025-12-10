@@ -10,13 +10,18 @@
 
     #include <network/packets/PacketReader.hpp>
     #include <network/packets/PacketSender.hpp>
+    #include <string>
 
-// class Client : public IPollable {
-//     public:
-        
-//     private:
-//         PacketReader packetReader;
-//         PacketSender packetSender;
-// };
+class Client {
+    public:
+        Client(std::string ip, int port);
+        bool connect();
+        bool disconnect();
+        bool isConnected() const;
+    private:
+        std::string ip;
+        int port;
+        bool isConnected = false;
+};
 
 #endif /* !CLIENT_HPP_ */
