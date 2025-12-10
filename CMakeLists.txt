@@ -32,8 +32,8 @@ set(SERVER_EXEC_NAME r-type_server)
 set(CLIENT_EXEC_NAME r-type_client)
 
 # all cpp file in src directory only
-file(GLOB_RECURSE server_src server/*.cpp ecs/*.cpp)
-file(GLOB_RECURSE client_src client/*.cpp ecs/*.cpp)
+file(GLOB_RECURSE server_src server/*.cpp ecs/*.cpp shared/*.cpp)
+file(GLOB_RECURSE client_src client/*.cpp ecs/*.cpp shared/*.cpp)
 
 # get all cpp files from network library
 file(GLOB_RECURSE network_src network/*.cpp)
