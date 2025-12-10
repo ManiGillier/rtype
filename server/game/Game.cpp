@@ -1,10 +1,13 @@
 #include "Game.hpp"
-#include "../components/Collision.hpp"
-#include "../components/EntityType.hpp"
-#include "../components/Health.hpp"
-#include "../components/Laser.hpp"
-#include "../components/Motion.hpp"
-#include "../components/Position.hpp"
+#include "../../shared/components/Dependence.hpp"
+#include "../../shared/components/Health.hpp"
+#include "../../shared/components/HitBox.hpp"
+#include "../../shared/components/Laser.hpp"
+#include "../../shared/components/Position.hpp"
+#include "../components/Acceleration.hpp"
+#include "../components/Damager.hpp"
+#include "../components/Resistance.hpp"
+#include "../components/Velocity.hpp"
 #include "../systems/GameSystems.hpp"
 
 Game::Game() : _registry(), _factory(_registry), _isRunning(false)
@@ -61,19 +64,22 @@ Registry &Game::getRegistry()
 
 void Game::initializeComponents()
 {
-    _registry.register_component<Collision>();
-    _registry.register_component<EntityTag>();
+    _registry.register_component<Acceleration>();
+    _registry.register_component<Damager>();
+    _registry.register_component<Resistance>();
+    _registry.register_component<Velocity>();
+    _registry.register_component<Dependence>();
     _registry.register_component<Health>();
-    _registry.register_component<Motion>();
-    _registry.register_component<Position>();
+    _registry.register_component<HitBox>();
     _registry.register_component<Laser>();
+    _registry.register_component<Position>();
 }
 
 void Game::initializeSystems()
 {
-    _registry.add_update_system<Position, Motion, EntityTag>(
-        Systems::movement_system);
-    _registry.add_update_system<Collision, EntityTag>(
-        Systems::collision_system);
-    _registry.add_update_system<Position, EntityTag>(Systems::cleanup_system);
+    // _registry.add_update_system<Position, Motion, EntityTag>(
+    //     Systems::movement_system);
+    // _registry.add_update_system<Collision, EntityTag>(
+    //     Systems::collision_system);
+    // _registry.add_update_system<Position, EntityTag>(Systems::cleanup_system);
 }
