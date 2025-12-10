@@ -36,7 +36,7 @@ class ScoreUpdateExecutorServ : public PacketExecutorImpl<ScoreUpdatePacket, Ser
         (void) cl;
         LOG("WOOOHOOOO !!!!");
         packet->display();
-        return true;
+        return false;
     }
 
     int getPacketId() const {
@@ -55,7 +55,7 @@ static int client(const std::string &ip, int port)
         LOG_ERR("Could not connect to " << ip << ":" << port << ", aborting..");
         return 1;
     }
-    while (true)
+    while (cl.isConnected())
         cl.loop();
     return 0;
 }
@@ -70,7 +70,7 @@ static int server(int port)
         LOG_ERR("Could not up server to port " << port << ", aborting..");
         return 1;
     }
-    while (true)
+    while (serv.isUp())
         serv.loop();
     return 0;
 }

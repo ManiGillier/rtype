@@ -96,7 +96,8 @@ void Server::executePackets()
         std::queue<std::shared_ptr<Packet>> &q = p->getReceivedPackets();
         while (!q.empty()) {
             std::shared_ptr<Packet> &packet = q.front();
-            this->getPacketListener().executePacket(*this, p, packet);
+            if (!this->getPacketListener().executePacket(*this, p, packet))
+                this->getPollManager().removePollable(p->getFileDescriptor());
             q.pop();
         }
     }

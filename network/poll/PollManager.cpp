@@ -46,7 +46,7 @@ void PollManager::removePollable(int fileDescriptor)
 void PollManager::removePollables(std::vector<int> fileDescriptors)
 {
     for (int fileDescriptor : fileDescriptors) {
-        LOG_ERR("Client " << fileDescriptor << " disconnected." << std::endl);
+        LOG_ERR("Client " << fileDescriptor << " disconnected.");
         this->removePollable(fileDescriptor);
     }
 }

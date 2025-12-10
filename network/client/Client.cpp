@@ -95,6 +95,10 @@ void Client::loop()
 {
     if (!this->connected)
         return;
+    if (this->connected && this->getPollManager().getConnectionCount() == 0) {
+        this->connected = false;
+        return;
+    }
     this->getPollManager().pollSockets();
     this->executePackets();
 }
