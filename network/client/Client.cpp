@@ -12,7 +12,7 @@
 #include <arpa/inet.h>
 #include "Client.hpp"
 
-Client::Client(std::string ip, int port)
+Client::Client(const std::string &ip, int port)
 {
     this->ip = ip;
     this->port = port;
@@ -41,13 +41,14 @@ bool Client::connect()
     memset(&params, 0, sizeof(sockaddr));
     params.sin_family = AF_INET;
     params.sin_addr.s_addr = (in_addr_t) af;
-    params.sin_port = htons(this->port);
+    params.sin_port = (in_port_t) htons((uint16_t) this->port);
     int connectValue = ::connect(this->fd, (struct sockaddr *) &params,
                                sizeof(struct sockaddr_in));
     if (connectValue == -1) {
         return false;
     }
     this->connected = true;
+    this->pm.addPollable(std::make_shared<ClientPollable>(*this, this->fd));
     return this->connected;
 }
 
@@ -59,7 +60,6 @@ bool Client::disconnect()
         return false;
     if (this->fd == -1)
         return false;
-
     close(this->fd);
     this->fd = -1;
     this->connected = false;
@@ -70,12 +70,73 @@ bool Client::isConnected() const
     return this->connected;
 }
 
+void Client::loop()
+{
+    if (!this->connected)
+        return;
+    this->getPollManager().pollSockets();
+}
+
 const std::string &Client::getIp() const
 {
     return this->ip;
 }
 
-const int Client::getPort() const
+int Client::getPort() const
 {
     return this->port;
+}
+
+PollManager &Client::getPollManager()
+{
+    return this->pm;
+}
+
+ClientPollable::ClientPollable(Client &cl, int fd) : Pollable(fd), cl(cl)
+{
+    return;
+}
+
+short ClientPollable::getFlags() const
+{
+    short flags = POLLIN;
+
+    if (this->shouldWrite())
+        flags |= POLLOUT;
+    return flags;
+}
+
+bool ClientPollable::receiveEvent(short revent)
+{
+    if ((revent & POLLIN) != 0) {
+        if (!this->getPacketReader().readPacket())
+            return false;
+        std::queue<std::shared_ptr<Packet>> &upcomingPackets =
+            this->getPacketReader().getReceivedPackets();
+        while (!upcomingPackets.empty()) {
+            toProcess.push(upcomingPackets.front());
+            upcomingPackets.pop();
+        }
+    }
+    if (shouldWrite() && (revent & POLLOUT) != 0) {
+        this->getPacketSender().writePackets();
+        return true;
+    }
+    return true;
+}
+
+void ClientPollable::sendPacket(std::shared_ptr<Packet> &p)
+{
+    this->getPacketSender().sendPacket(p);
+    this->cl.getPollManager().updateFlags(this->getFileDescriptor(), this->getFlags());
+}
+
+std::queue<std::shared_ptr<Packet>> &ClientPollable::getReceivedPackets()
+{
+    return this->toProcess;
+}
+
+bool ClientPollable::shouldWrite() const
+{
+    return !this->getPacketSender().getPackets().empty();
 }
