@@ -12,8 +12,8 @@
 
 #include "Raylib.hpp"
 
-Raylib::Raylib(IGameState *gameState, CommandManager &cm)
-    : commandManager(cm), gameState(gameState)
+Raylib::Raylib(ClientManager &cm)
+    : clientManager(cm)
 {
     this->openGlThread = std::thread(&Raylib::init, this);
 }
@@ -41,7 +41,7 @@ auto Raylib::loop() -> void
 {
     while (!WindowShouldClose() && !this->shouldStop)
         this->update();
-    this->commandManager.sendCommandToLogic<StopCommand>();
+    this->clientManager.getCommandManager().sendCommandToLogic<StopCommand>();
 }
 
 auto Raylib::update() -> void
@@ -51,8 +51,7 @@ auto Raylib::update() -> void
         return;
     BeginDrawing();
     ClearBackground(BLACK);
-    if (this->gameState)
-        this->gameState->render();
+    this->clientManager.getState().render();
     EndDrawing();
 }
 
@@ -75,7 +74,7 @@ auto Raylib::manageCommand(Command &c) -> void
 auto Raylib::manageCommands() -> void
 {
     std::queue<std::unique_ptr<Command>> commands =
-        this->commandManager.readRenderCommands();
+        this->clientManager.getCommandManager().readRenderCommands();
 
     while (!commands.empty()) {
         std::unique_ptr<Command> command = std::move(commands.front());

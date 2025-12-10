@@ -11,8 +11,8 @@
 
 #include "client/commands/Stop.hpp"
 
-Game::Game(IGameState *gameState, CommandManager &cm)
-    : commandManager(cm), gameState(gameState)
+Game::Game(ClientManager &cm)
+    : clientManager(cm)
 {
     this->gameThread = std::thread(&Game::init, this);
 }
@@ -34,7 +34,7 @@ auto Game::loop() -> void
     while (!this->shouldStop) {
         this->update();
     }
-    this->commandManager.sendCommandToRender<StopCommand>();
+    this->clientManager.getCommandManager().sendCommandToRender<StopCommand>();
 }
 
 auto Game::update() -> void
@@ -42,8 +42,7 @@ auto Game::update() -> void
     this->manageCommands();
     if (this->shouldStop)
         return;
-    if (this->gameState)
-        this->gameState->update();
+    this->clientManager.getState().update();
 }
 
 auto Game::stop() -> void
@@ -65,7 +64,7 @@ auto Game::manageCommand(Command &c) -> void
 auto Game::manageCommands() -> void
 {
     std::queue<std::unique_ptr<Command>> commands =
-        this->commandManager.readLogicCommands();
+        this->clientManager.getCommandManager().readLogicCommands();
 
     while (!commands.empty()) {
         std::unique_ptr<Command> command = std::move(commands.front());

@@ -33,6 +33,7 @@ public:
     auto changeState(const State) -> void;
 
     auto getCommandManager() -> CommandManager &;
+    auto getState() -> IGameState & { return *this->_internal_state; }
 private:
     auto changeInternalState(std::unique_ptr<IGameState>) -> void;
 private:

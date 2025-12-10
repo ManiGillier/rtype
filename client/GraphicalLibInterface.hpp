@@ -17,7 +17,6 @@ class GraphicalLibAPI
 public:
     virtual ~GraphicalLibAPI() = default;
 
-    virtual auto updateGameState(IGameState *) -> void = 0;
     virtual auto manageCommand(Command &) -> void = 0;
     virtual auto manageCommands() -> void = 0;
 };

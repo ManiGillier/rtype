@@ -12,16 +12,14 @@
 
 #include "client/GraphicalLibInterface.hpp"
 #include "client/window/RenderWindow.hpp"
-
-#include "client/api/IGameState.hpp"
+#include "client/manager/ClientManager.hpp"
 
 #include "ecs/regisrty/Registry.hpp"
 
-#include "client/manager/CommandManager.hpp"
 
 class Raylib : public GraphicalLibAPI {
 public:
-    Raylib(IGameState *, CommandManager &);
+    Raylib(ClientManager &);
     ~Raylib();
 
     auto manageCommand(Command &) -> void;
@@ -30,14 +28,12 @@ private:
     auto init() -> void;
     auto loop() -> void;
     auto update() -> void;
-    inline auto updateGameState(IGameState *s) -> void { this->gameState = s; }
     auto stop() -> void;
 private:
-    CommandManager &commandManager;
+    ClientManager &clientManager;
     std::thread openGlThread;
     RenderWindow window;
     bool shouldStop = false;
-    IGameState *gameState = nullptr;
 };
 
 #endif // RAYLIB_H_
