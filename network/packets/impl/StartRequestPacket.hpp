@@ -19,6 +19,14 @@ public:
         return 0;
     }
 
+    enum PacketMode getMode() const {
+        return PacketMode::TCP;
+    }
+
+    std::shared_ptr<Packet> clone() const {
+        return make_copy(StartRequestPacket);
+    }
+
     const std::string getName() {
         return "StartRequestPacket";
     }

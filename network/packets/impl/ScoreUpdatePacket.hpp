@@ -20,6 +20,14 @@ public:
             this->yPosition = yPosition;
         }
 
+    enum PacketMode getMode() const {
+        return PacketMode::UDP;
+    }
+
+    std::shared_ptr<Packet> clone() const {
+        return make_copy(ScoreUpdatePacket);
+    }
+
     void serialize() {
         this->write(score);
         this->write(xPosition);

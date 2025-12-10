@@ -13,6 +13,7 @@
 #include "PacketReader.hpp"
 #include "Packet.hpp"
 #include "PacketLogger.hpp"
+#include <network/packets/PacketManager.hpp>
 
 #include "impl/GhostScoreUpdatePacket.hpp"
 #include "impl/GameStartPacket.hpp"
@@ -38,15 +39,14 @@ bool PacketReader::readPacket(void)
         if (readData.empty())
             return true;
         if (currentPacket == nullptr) {
-            currentPacket = this->buildPacket(readData.front());
+            currentPacket = PacketManager::getInstance().createPacketById(readData.front());
             readData.pop();
         }
-        if (!currentPacket) {
-            if (shouldLog)
-                LOG_ERR << "Received wrong packet, disconnecting " << this->_fd << std::endl;
+        if (currentPacket == nullptr) {
+            LOG_ERR("Received wrong packet, disconnecting " << this->_fd << std::endl);
             return false;
         }
-        std::size_t packetSize = currentPacket->getSize();
+        std::size_t packetSize = (std::size_t) currentPacket->getSize();
         if (packetSize > readData.size())
             return true;
         std::queue<uint8_t> _arr;
@@ -57,8 +57,7 @@ bool PacketReader::readPacket(void)
         currentPacket->setData(_arr);
         currentPacket->unserialize();
         receivedPackets.push(currentPacket);
-        if (shouldLog)
-            PacketLogger::logPacket(currentPacket,
+        PacketLogger::logPacket(currentPacket,
                  PacketLogger::PacketMethod::RECEIVED, this->_fd);
         currentPacket = nullptr;
     }
@@ -67,45 +66,23 @@ bool PacketReader::readPacket(void)
 
 bool PacketReader::createBuffer(void)
 {
-    std::size_t newlyReadBytes = 0;
-    char _readBuff[BUFFER_SIZE] = {0};
+    ssize_t newlyReadBytes = 0;
+    uint8_t _readBuff[BUFFER_SIZE] = {0};
 
     newlyReadBytes = read(this->_fd, _readBuff, BUFFER_SIZE);
     if (newlyReadBytes == 0)
         return false;
-    for (std::size_t i = 0; i < newlyReadBytes; i++)
+    for (ssize_t i = 0; i < newlyReadBytes; i++)
         this->readData.push(_readBuff[i]);
     return true;
 }
 
-Packet *PacketReader::buildPacket(char packetId)
-{
-    switch (packetId) {
-        case 1:
-            return new PlayerPositionPacket();
-        case 2:
-            return new StartRequestPacket();
-        case 3:
-            return new ScoreUpdatePacket();
-        case 4:
-            return new GameStartPacket();
-        case 5:
-            return new PlayerDeadPacket();
-        case 6:
-            return new PlayerJoinPacket();
-        case 8:
-            return new PlayerWonPacket();
-        case 9:
-            return new PlayerLostPacket();
-        case 10:
-            return new GhostPlayerPositionPacket();
-        case 11:
-            return new GhostScoreUpdatePacket();
-    }
-    return nullptr;
-}
-
-std::queue<Packet *> &PacketReader::getReceivedPackets()
+ std::queue<std::shared_ptr<Packet>> &PacketReader::getReceivedPackets()
 {
     return this->receivedPackets;
+}
+
+void PacketReader::setFd(int fd)
+{
+    this->_fd = fd;
 }

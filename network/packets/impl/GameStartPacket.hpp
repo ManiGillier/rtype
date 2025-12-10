@@ -40,6 +40,14 @@ public:
         return "GameStartPacket";
     }
 
+    enum PacketMode getMode() const {
+        return PacketMode::TCP;
+    }
+
+    std::shared_ptr<Packet> clone() const {
+        return make_copy(GameStartPacket);
+    }
+
     void display() {
         std::cout << "Timestamp=" << timestamp;
     }

@@ -17,7 +17,7 @@ public:
     }
 
     void serialize() {
-        this->writeInt(this->newPlayerCount);  
+        this->writeInt(this->newPlayerCount);
     }
 
     void unserialize() {
@@ -27,7 +27,7 @@ public:
     int getPlayerCount() const {
         return this->newPlayerCount;
     }
-        
+
     void setPlayerCount(int newPlayerCount) {
         this->newPlayerCount = newPlayerCount;
     }
@@ -38,6 +38,14 @@ public:
 
     const std::string getName() {
         return "PlayerJoinPacket";
+    }
+
+    enum PacketMode getMode() const {
+        return PacketMode::TCP;
+    }
+
+    std::shared_ptr<Packet> clone() const {
+        return make_copy(PlayerJoinPacket);
     }
 
     void display() {

@@ -11,12 +11,15 @@
     #include <iostream>
     #include <cstdint>
     #include <queue>
-    #define PACKET_MAX_SIZE 9
+    #include <memory>
 
     #define DOUBLE_SIZE sizeof(double)
     #define INT_SIZE sizeof(int)
     #define CHAR_SIZE sizeof(char)
     #define LONG_SIZE sizeof(long)
+
+    #define make_copy(TYPE) std::make_shared<TYPE>(*this)
+    #define create_packet(TYPE, ...) std::make_shared<TYPE>(__VA_ARGS__)
 
 template <typename T, std::size_t S>
 union ByteWriter {
@@ -40,6 +43,7 @@ enum PacketId {
 
 class Packet {
     public:
+        enum PacketMode {TCP, UDP};
 
         uint8_t getId() const {
             return (uint8_t) this->packetId;
@@ -69,7 +73,7 @@ class Packet {
             bw.value = value;
             if (writeCursor + sizeof(T) > (std::size_t) this->getSize())
                 return;
-            for (char c : bw.bytes) {
+            for (uint8_t c : bw.bytes) {
                 this->data.push(c);
                 writeCursor++;
             }
@@ -133,6 +137,8 @@ class Packet {
         virtual void serialize() = 0;
         virtual void unserialize() = 0;
         virtual const std::string getName() = 0;
+        virtual std::shared_ptr<Packet> clone() const = 0;
+        virtual enum PacketMode getMode() const = 0;
         virtual void display() = 0;
         virtual ~Packet() = default;
     private:
