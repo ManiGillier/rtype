@@ -15,13 +15,16 @@
 class Client {
     public:
         Client(std::string ip, int port);
-        // bool connect();
-        // bool disconnect();
-        // bool isConnected() const;
+        bool connect();
+        bool disconnect();
+        bool isConnected() const;
+        const std::string &getIp() const;
+        const int getPort() const;
     private:
         std::string ip;
         int port;
-        // bool connected = false;
+        int fd = -1;
+        bool connected = false;
 };
 
 #endif /* !CLIENT_HPP_ */

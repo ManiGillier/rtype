@@ -29,6 +29,8 @@ bool Server::up()
 {
     LOG("Starting server at " << this->port << "..");
 
+    if (this->upStatus)
+        return false;
     int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     int optVal = 1;
     struct sockaddr_in params;
@@ -46,6 +48,7 @@ bool Server::up()
     this->fd = serverSocket;
     this->getPollManager().addPollable(
         std::make_shared<ServerPollable>(*this, fd));
+    LOG("Could start server at " << this->port << " !");
     return this->upStatus;
 }
 
@@ -57,6 +60,7 @@ bool Server::down()
     LOG("Stopping server at " << this->port << "..");
     if (this->upStatus)
         shutdown(this->fd, SHUT_RDWR);
+    LOG("Could stop server at " << this->port << " !");
     return this->upStatus;
 }
 
