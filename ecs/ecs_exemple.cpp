@@ -1,48 +1,86 @@
-#include "./regisrty/Registry.hpp"
-#include "zipper/IndexedZipper.hpp"
-#include "zipper/Zipper.hpp"
+
+#include "manager/ClientManager.hpp"
 #include <iostream>
-#include <tuple>
-#include <unordered_map>
-#include <utility>
 
-// here we define a component
-typedef struct Position {
-    int x;
-    int y;
-} Position;
+struct A {
+    int a;
+};
 
-// define system to interact with entity
-void logging_system(Registry& r,
-                    std::unordered_map<std::size_t, std::tuple<Position>> result)
+struct B {
+    int b;
+};
+
+struct C {
+    int c;
+};
+
+#include "ecs/zipper/Zipper.hpp"
+#include "ecs/zipper/IndexedZipper.hpp"
+
+void test(Registry &reg, int i)
 {
-    (void)r;
-
-    for (auto&& [i, res] : result) {
-        Position &pos = std::get<Position>(res);
-        std::cerr << i << ": Position = { " << pos.x << ", "
-                  << pos.y << " }" << std ::endl;
-    }
+    (void) reg;
+    std::cout << "I : " << i << std::endl;
 }
 
-int main(void)
+auto main() -> int
 {
-    Registry r;
+    Registry reg;
 
-    // register all components we use
-    r.register_component<Position>();
+    reg.register_component<A>();
+    reg.register_component<B>();
+    reg.register_component<C>();
 
-    // create entity
-    Entity player = r.spawn_entity();
+    Entity a = reg.spawn_entity();
+    reg.add_component<A>(a, {0});
+    Entity ab = reg.spawn_entity();
+    reg.add_component<A>(ab, {1});
+    reg.add_component<B>(ab, {1});
+    Entity bc = reg.spawn_entity();
+    reg.add_component<B>(bc, {2});
+    reg.add_component<C>(bc, {2});
+    Entity abc = reg.spawn_entity();
+    reg.add_component<A>(abc, {3});
+    reg.add_component<B>(abc, {3});
+    reg.add_component<C>(abc, {3});
 
-    // define the components of this entity ex: player -> position, velocity,
-    // networkInfo ...
-    r.emplace_component<Position>(player, 2, 23);
+    auto &comp_a = reg.get_components<A>();
+    auto &comp_b = reg.get_components<B>();
+    auto &comp_c = reg.get_components<C>();
 
-    // create system then add id to the registry
-    r.add_update_system<Position>(logging_system);
-    r.update();
-    // kill player
-    r.kill_entity(player);
-    return 0;
+    auto a_zip = containers::zipper(comp_a);
+    auto ab_zip = containers::zipper(comp_a, comp_b);
+    auto bc_zip = containers::zipper(comp_b, comp_c);
+    auto abc_zip = containers::zipper(comp_a, comp_b, comp_c);
+
+    std::cout << "A TEST" << std::endl;
+    for (auto&& [_a] : a_zip) {
+        std::cout << "A : " << _a.value().a << std::endl;
+    }
+    std::cout << std::endl;
+    std::cout << "AB TEST" << std::endl;
+    for (auto&& [_a, _b] : ab_zip) {
+        std::cout << "A : " << _a.value().a << std::endl;
+        std::cout << "B : " << _b.value().b << std::endl;
+    }
+    std::cout << std::endl;
+    std::cout << "CB TEST" << std::endl;
+    for (auto&& [_b, _c] : bc_zip) {
+        std::cout << "B : " << _b.value().b << std::endl;
+        std::cout << "C : " << _c.value().c << std::endl;
+    }
+    std::cout << std::endl;
+    std::cout << "ABC TEST" << std::endl;
+    for (auto&& [_a, _b, _c] : abc_zip) {
+        std::cout << "A : " << _a.value().a << std::endl;
+        std::cout << "B : " << _b.value().b << std::endl;
+        std::cout << "C : " << _c.value().c << std::endl;
+    }
+
+    std::cout << std::endl;
+    std::cout << std::endl;
+
+    reg.add_global_render_system(test, 10);
+
+    reg.render();
 }
