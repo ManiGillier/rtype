@@ -62,11 +62,11 @@ class Registry
 
     template <class... Components>
     auto get_components_from_id(std::size_t id)
-        -> std::optional<std::tuple<Components...>>;
+        -> std::optional<std::tuple<Components*...>>;
 
     template <class... Components>
     auto get_filtered_components()
-        -> std::unordered_map<std::size_t, std::tuple<Components...>>;
+        -> std::unordered_map<std::size_t, std::tuple<Components*...>>;
 
   private:
     std::unordered_map<std::type_index, std::any> _components_arrays;
@@ -79,7 +79,7 @@ class Registry
 
 template <class... Components>
 auto Registry::get_components_from_id(std::size_t id)
--> std::optional<std::tuple<Components...>>
+-> std::optional<std::tuple<Components*...>>
 {
     std::vector<std::size_t> sizes = {get_components<Components>().size()...};
     for (auto &size : sizes)
@@ -89,14 +89,14 @@ auto Registry::get_components_from_id(std::size_t id)
     for (auto have_value : have_values)
         if (!have_value)
             return std::nullopt;
-    return std::make_tuple(std::ref(get_components<Components>()[id].value())...);
+    return std::make_tuple(&get_components<Components>()[id].value()...);
 }
 
 template <class... Components>
 auto Registry::get_filtered_components()
--> std::unordered_map<std::size_t, std::tuple<Components...>>
+-> std::unordered_map<std::size_t, std::tuple<Components*...>>
 {
-    std::unordered_map<std::size_t, std::tuple<Components...>> map;
+    std::unordered_map<std::size_t, std::tuple<Components*...>> map;
 
     for (std::size_t id = 0; id < this->max_id(); id++) {
         auto result = this->get_components_from_id<Components...>(id);
@@ -120,7 +120,7 @@ SparseArray<Component>& Registry::register_component()
 
     _erase_functions.push_back(erase_fn);
 
-    return std::any_cast<SparseArray<Component>&>(_components_arrays[type_idx]);
+    return this->get_components<Component>();
 }
 
 template <class Component>

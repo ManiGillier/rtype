@@ -9,30 +9,43 @@
 #include "client/game/Game.hpp"
 #include "client/raylib/Raylib.hpp"
 
+#include "client/states/game/InGameState.hpp"
+
 #include <memory>
 
 ClientManager::ClientManager()
 {
-    this->registerComponents();
-    this->registerSystems();
-    this->game = std::make_unique<Game>(this->registry);
-    this->gui = std::make_unique<Raylib>(this->registry);
+    this->game = std::make_unique<Game>(*this);
+    this->gui = std::make_unique<Raylib>(*this);
+
+    this->_gameStateFactory[IN_GAME] = [this] {
+        return std::make_unique<InGameState>(*this);
+    };
+
+    this->changeState(IN_GAME);
+}
+ClientManager::~ClientManager()
+{
+    this->game->join();
+    this->game.reset();
+    this->gui.reset();
 }
 
-ClientManager::~ClientManager() {}
-
-#include "client/components/Position.hpp"
-#include "client/components/Square.hpp"
-
-auto ClientManager::registerComponents() -> void
+auto ClientManager::changeInternalState(std::unique_ptr<IGameState> state)
+-> void
 {
-    this->registry.register_component<Position>();
-    this->registry.register_component<Square>();
+    this->_internal_state = std::move(state);
 }
 
-#include "client/raylib/systems/Systems.hpp"
-
-auto ClientManager::registerSystems() -> void
+auto ClientManager::changeState(const ClientManager::State state) -> void
 {
-    //this->registry.add_render_system<Position, Square>(renderSquare);
+    if (this->_state == state)
+        return;
+    this->changeInternalState(this->_gameStateFactory[state]());
+    this->_state = state;
+}
+
+auto ClientManager::getCommandManager() -> CommandManager &
+{
+    return this->commandManager;
 }

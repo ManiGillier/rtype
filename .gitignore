@@ -9,3 +9,4 @@ cpm-package-lock.cmake
 CPM_modules/
 *.o
 .vscode
+/vgcore*
