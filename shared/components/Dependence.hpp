@@ -9,8 +9,7 @@
 #define COMP_DEPENDENCE_HPP
 
 struct Dependence {
-    float width;
-    float height;
+    int id;
 };
 
 #endif /* COMP_DEPENDENCE_HPP */

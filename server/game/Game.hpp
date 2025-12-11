@@ -18,8 +18,8 @@ public:
     ~Game() = default;
     void start();
     void update();
-    Entity addPlayer(const std::unique_ptr<Player> &player /* Player *player (client abstraction) */);
-    void removePlayer(const std::unique_ptr<Player> &player /* Player *player (client abstraction) */);
+    Entity addPlayer(std::shared_ptr<Player> &player);
+    void removePlayer(std::shared_ptr<Player> &player);
     Entity addBodss();
     Registry& getRegistry();
 
@@ -30,7 +30,6 @@ private:
     Registry _registry;
     EntityFactory _factory;
     std::unordered_map<int, Entity> _players;
-    std::optional<Entity> _currentBoss;
     bool _isRunning;
 };
 
