@@ -21,7 +21,7 @@ public:
     auto resetEventListening() -> void;
 
     /* Both threads */
-    auto getEvent(EventId) const -> Event const &;
+    auto getEvent(EventId) const -> Event;
     auto getEvents() const -> std::map<EventId, Event> const &;
     auto lockAccess() -> void;
     auto unlockAccess() -> void;

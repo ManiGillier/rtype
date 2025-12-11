@@ -9,7 +9,7 @@
 
 auto EventManager::startListenToEvent(EventId id) -> void
 {
-    this->listenEventList.insert_or_assign(id, Event(id));
+    this->listenEventList.insert(std::make_pair(id, Event(id)));
 }
 
 auto EventManager::stopListenToEvent(EventId id) -> void
@@ -17,7 +17,7 @@ auto EventManager::stopListenToEvent(EventId id) -> void
     this->listenEventList.erase(id);
 }
 
-auto EventManager::getEvent(EventId id) const -> Event const &
+auto EventManager::getEvent(EventId id) const -> Event
 {
     return this->listenEventList.at(id);
 }
@@ -29,7 +29,9 @@ auto EventManager::getEvents() const -> std::map<EventId, Event> const &
 
 auto EventManager::setEventState(EventId id, EventState state) -> void
 {
-    this->listenEventList[id].setState(state);
+    if (!this->listenEventList.contains(id))
+        this->listenEventList.insert(std::make_pair(id, Event(id)));
+    this->listenEventList.at(id).setState(state);
 }
 
 auto EventManager::lockAccess() -> void
@@ -40,4 +42,9 @@ auto EventManager::lockAccess() -> void
 auto EventManager::unlockAccess() -> void
 {
     this->mutex.unlock();
+}
+
+auto EventManager::resetEventListening() -> void
+{
+    this->listenEventList.clear();
 }

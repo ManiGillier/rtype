@@ -15,11 +15,12 @@ class Event
 {
 public:
     Event(EventId id) : id(id) {}
+    Event(const Event &evt) : id(evt.getId()), state(evt.getState()) {}
 
     auto getId() const -> EventId { return this->id; }
 
     auto setState(EventState state) -> void { this->state = state; }
-    auto getState() -> EventState { return this->state; }
+    auto getState() const -> EventState { return this->state; }
 private:
     const EventId id;
     EventState state = EventState(false);
