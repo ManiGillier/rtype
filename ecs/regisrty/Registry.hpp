@@ -171,7 +171,7 @@ void Registry::add_update_system(Function&& f, Args&&... args)
 {
     system_function_t wrapped_system =
         [this, f = std::forward<Function>(f), args...](Registry& r) mutable {
-            f(r, containers::indexed_zipper(this->get_components<Components...>()),
+            f(r, containers::indexed_zipper(this->get_components<Components>()...),
               args...);
         };
     _update_systems.push_back(std::move(wrapped_system));
@@ -182,7 +182,7 @@ void Registry::add_render_system(Function&& f, Args&&... args)
 {
     system_function_t wrapped_system =
         [this, f = std::forward<Function>(f), args...](Registry& r) mutable {
-            f(r, containers::indexed_zipper(this->get_components<Components...>()),
+            f(r, containers::indexed_zipper(this->get_components<Components>()...),
               args...);
         };
     _render_systems.push_back(std::move(wrapped_system));
