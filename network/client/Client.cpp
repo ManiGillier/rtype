@@ -85,7 +85,7 @@ void Client::executePackets()
     for (std::shared_ptr<IPollable> &p : this->getPollManager().getPool()) {
         std::queue<std::shared_ptr<Packet>> &q = p->getReceivedPackets();
         while (!q.empty()) {
-            std::shared_ptr<Packet> &packet = q.front();
+            std::shared_ptr<Packet> packet = q.front();
             this->getPacketListener().executePacket(*this, p, packet);
             q.pop();
         }
@@ -98,7 +98,10 @@ void Client::loop()
         return;
     if (this->connected && this->getPollManager().getConnectionCount() == 0) {
         this->connected = false;
-        return;
+        if (this->fd != -1) {
+            close(this->fd);
+            this->fd = -1;
+        }
     }
     this->getPollManager().pollSockets();
     this->executePackets();

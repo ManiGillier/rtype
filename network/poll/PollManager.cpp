@@ -102,7 +102,7 @@ void PollManager::pollSockets()
 
 void PollManager::clear()
 {
-    for (struct pollfd fd : this->pollFds)
+    for (struct pollfd &fd : this->pollFds)
         close(fd.fd);
     this->pollFds.clear();
     this->pollables.clear();

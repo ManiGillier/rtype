@@ -48,7 +48,7 @@ class PacketListener {
 
             for (const std::unique_ptr<PacketExecutor<Entity>> &packetExecutor : this->executors) {
                 if (packetExecutor->getPacketId() == p->getId())
-                    status = packetExecutor->executePacket(e, con, p) && status;
+                    status &= packetExecutor->executePacket(e, con, p);
             }
             return status;
         }

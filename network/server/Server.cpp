@@ -61,10 +61,10 @@ bool Server::down()
         this->pm.clear();
         this->upStatus = false;
         LOG("Could stop server at " << this->port << " !");
-        return this->upStatus;
+        return !this->upStatus;
     }
     LOG_ERR("Could not stop server: Server was not up.");
-    return this->upStatus;
+    return !this->upStatus;
 }
 
 bool Server::isUp() const
@@ -97,7 +97,7 @@ void Server::executePackets()
     for (std::shared_ptr<IPollable> &p : this->getPollManager().getPool()) {
         std::queue<std::shared_ptr<Packet>> &q = p->getReceivedPackets();
         while (!q.empty()) {
-            std::shared_ptr<Packet> &packet = q.front();
+            std::shared_ptr<Packet> packet = q.front();
             if (!this->getPacketListener().executePacket(*this, p, packet))
                 this->getPollManager().removePollable(p->getFileDescriptor());
             q.pop();

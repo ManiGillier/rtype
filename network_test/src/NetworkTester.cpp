@@ -67,7 +67,7 @@ static int server(int port)
     serv.getPacketListener().addExecutor(std::make_unique<ScoreUpdateExecutorServ>());
     serv.up();
     if (!serv.isUp()) {
-        LOG_ERR("Could not up server to port " << port << ", aborting..");
+        LOG_ERR("Could not start server at port " << port << ", aborting..");
         return 1;
     }
     while (serv.isUp())
