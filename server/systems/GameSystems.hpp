@@ -9,6 +9,7 @@
 #define COMP_POSITION_HPP
 
 #include "../../ecs/regisrty/Registry.hpp"
+#include "../../ecs/sparse_array/SparseArray.hpp"
 #include "../../shared/components/Dependence.hpp"
 #include "../../shared/components/Health.hpp"
 #include "../../shared/components/HitBox.hpp"
@@ -21,12 +22,15 @@
 
 namespace Systems
 {
+auto movement_system(Registry &r,
+                     containers::indexed_zipper<
+                     SparseArray<Position>,
+                     SparseArray<Velocity>,
+                     SparseArray<Acceleration>
+                     > zipper,
+                     int i) -> void;
 
-auto movement_system(Registry &r) -> void;
-// bullets collision between boss and players
 auto collision_system(Registry &r) -> void;
-
-// just remove boss bullets when not on screen anymore
 auto cleanup_system(Registry &r) -> void;
 } // namespace Systems
 
