@@ -1,7 +1,8 @@
-#include "Server.hpp"
+#include "R-TypeServer.hpp"
 #include "network/logger/Logger.hpp"
 #include <iostream>
 #include <string>
+#include <thread>
 
 class ArgsError : public std::exception
 {
@@ -75,9 +76,13 @@ class RType
         RtypeServer server(this->_port);
         server.up();
 
-        while (true) {
-            server.loop();
-        }
+        auto server_loop = [](RtypeServer *server) {
+            while (1)
+                server->loop();
+        };
+
+        std::thread s(server_loop, &server);
+        s.join();
         return 0;
     }
 
