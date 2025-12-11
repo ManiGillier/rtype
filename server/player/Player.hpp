@@ -16,9 +16,12 @@ class Player : public ServerClient
     Player(int fd, PollManager &pm, int id);
     ~Player() = default;
     int getId() const;
+    void setReady();
+    bool isReady() const;
 
   private:
     int _id;
+    bool _ready;
 };
 
 #endif /* PLAYER_HPP */
