@@ -14,6 +14,9 @@
 class InGameState : public IGameState {
 public:
     InGameState(ClientManager &);
+
+    auto render() -> void;
+    auto update() -> void;
 private:
     ClientManager &clientManager;
 };

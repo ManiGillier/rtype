@@ -9,6 +9,7 @@
 #define CLIENT_MANAGER_HPP
 
 #include "CommandManager.hpp"
+#include "EventManager.hpp"
 #include "client/GameInterface.hpp"
 #include "client/GraphicalLibInterface.hpp"
 
@@ -33,11 +34,13 @@ public:
     auto changeState(const State) -> void;
 
     auto getCommandManager() -> CommandManager &;
+    auto getEventManager() -> EventManager &;
     auto getState() -> IGameState & { return *this->_internal_state; }
 private:
     auto changeInternalState(std::unique_ptr<IGameState>) -> void;
 private:
     CommandManager commandManager;
+    EventManager eventManager;
 
     std::unique_ptr<GraphicalLibAPI> gui = nullptr;
     std::unique_ptr<GameLogicAPI> game = nullptr;

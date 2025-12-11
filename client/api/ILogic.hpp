@@ -9,12 +9,13 @@
 #define GAME_LOGIC_INTERFACE_HPP
 
 #include "ecs/regisrty/Registry.hpp"
+#include "client/manager/EventManager.hpp"
 
 class ILogic {
 public:
     virtual ~ILogic() = default;
 
-    virtual auto update(Registry &) -> void = 0;
+    virtual auto update(Registry &, EventManager &) -> void = 0;
 };
 
 #endif /* GAME_LOGIC_INTERFACE_HPP */

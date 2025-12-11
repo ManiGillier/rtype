@@ -17,8 +17,8 @@ public:
     virtual ~IGameState() = default;
 
     inline auto getRegistry() -> Registry & { return this->reg; }
-    inline auto render() -> void { this->gui->render(this->getRegistry()); }
-    inline auto update() -> void { this->logic->update(this->getRegistry()); }
+    virtual auto render() -> void = 0;
+    virtual auto update() -> void = 0;
 protected:
     Registry reg;
     std::unique_ptr<GUI> gui = nullptr;
