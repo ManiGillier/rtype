@@ -22,3 +22,15 @@ InGameState::InGameState(ClientManager &cm) : clientManager(cm)
     this->gui = std::make_unique<InGameStateGui>(*this);
     this->logic = std::make_unique<InGameStateLogic>(*this);
 }
+
+auto InGameState::render() -> void
+{
+    this->gui->manageEvents(this->clientManager.getEventManager());
+    this->gui->render(this->getRegistry());
+}
+
+auto InGameState::update() -> void
+{
+    this->logic->update(this->getRegistry(),
+                        this->clientManager.getEventManager());
+}

@@ -6,6 +6,7 @@
 */
 
 #include "ClientManager.hpp"
+#include "EventManager.hpp"
 #include "client/game/Game.hpp"
 #include "client/raylib/Raylib.hpp"
 
@@ -48,4 +49,9 @@ auto ClientManager::changeState(const ClientManager::State state) -> void
 auto ClientManager::getCommandManager() -> CommandManager &
 {
     return this->commandManager;
+}
+
+auto ClientManager::getEventManager() -> EventManager &
+{
+    return this->eventManager;
 }

@@ -9,11 +9,13 @@
 #define CLIENT_GUI_HPP
 
 #include "ecs/regisrty/Registry.hpp"
+#include "client/manager/EventManager.hpp"
 
 class GUI {
 public:
     virtual ~GUI() = default;
 
+    virtual auto manageEvents(EventManager &) -> void = 0;
     virtual auto render(Registry &) -> void = 0;
 };
 

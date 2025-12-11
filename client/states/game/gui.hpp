@@ -16,6 +16,7 @@ public:
     InGameStateGui(IGameState &);
 
     auto render(Registry &) -> void;
+    auto manageEvents(EventManager &) -> void;
 private:
     IGameState &gameState;
 };
