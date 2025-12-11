@@ -22,16 +22,29 @@
 
 namespace Systems
 {
-auto movement_system(Registry &r,
-                     containers::indexed_zipper<
-                     SparseArray<Position>,
-                     SparseArray<Velocity>,
-                     SparseArray<Acceleration>
-                     > zipper,
-                     int i) -> void;
+auto movement_system(
+    Registry &r,
+    containers::indexed_zipper<SparseArray<Position>, SparseArray<Velocity>,
+                               SparseArray<Acceleration>>
+        zipper,
+    int i) -> void;
 
-auto collision_system(Registry &r) -> void;
-auto cleanup_system(Registry &r) -> void;
+auto dependence_system(
+    Registry &r,
+    containers::indexed_zipper<SparseArray<Position>, SparseArray<Dependence>,
+                               SparseArray<Laser>>
+        zipper,
+    int i) -> void;
+
+auto collision_system(
+    Registry &r,
+    containers::indexed_zipper<SparseArray<Position>, SparseArray<HitBox>>
+        zipper,
+    int i) -> void;
+
+auto cleanup_system(Registry &r,
+                    containers::indexed_zipper<SparseArray<Health>> zipper,
+                    int i) -> void;
 } // namespace Systems
 
 #endif /* COMP_POSITION_HPP */
