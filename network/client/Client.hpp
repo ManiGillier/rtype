@@ -46,7 +46,7 @@ class ClientPollable : public Pollable {
         bool receiveEvent(short revent);
     private:
         bool shouldWrite() const;
-         [[maybe_unused]] Client &cl;
+        [[maybe_unused]] Client &cl;
 };
 
 #endif /* !CLIENT_HPP_ */

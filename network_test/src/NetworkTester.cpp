@@ -30,10 +30,10 @@ class ScoreUpdateExecutor : public PacketExecutorImpl<ScoreUpdatePacket, ClientP
 
 class ScoreUpdateExecutorServ : public PacketExecutorImpl<ScoreUpdatePacket, ServerClient, Server> {
 
-    bool execute(Server &cl, std::shared_ptr<ServerClient> &con, std::shared_ptr<ScoreUpdatePacket> packet) {
+    bool execute(Server &s, std::shared_ptr<ServerClient> &con, std::shared_ptr<ScoreUpdatePacket> packet) {
         (void) con;
         (void) packet;
-        (void) cl;
+        (void) s;
         LOG("WOOOHOOOO !!!!");
         packet->display();
         return false;
@@ -82,10 +82,12 @@ int main(int argc, char **argv)
     int port = 0;
     std::string ip;
 
+    if (argc == 1)
+        return 1;
     if (!strcmp(argv[1], "client")) {
         if ((argc != 5 && argc != 4) || (argc == 5 && strcmp(argv[4], "-d")))
             return 1;
-        Logger::shouldLog = !strcmp(argv[4], "-d");
+        Logger::shouldLog = argc == 5;
         port = atoi(argv[3]);
         ip = argv[2];
         return client(ip, port);
@@ -93,7 +95,7 @@ int main(int argc, char **argv)
     if (!strcmp(argv[1], "server")) {
         if ((argc != 3 && argc != 4) || (argc == 4 && strcmp(argv[3], "-d")))
             return 1;
-        Logger::shouldLog = !strcmp(argv[3], "-d");
+        Logger::shouldLog = argc == 4;
         port = atoi(argv[2]);
         return server(port);
     }

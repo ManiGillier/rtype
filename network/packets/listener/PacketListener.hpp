@@ -43,7 +43,7 @@ class PacketListener {
         }
 
         bool executePacket(Entity &e, std::shared_ptr<IPollable> &con,
-            std::shared_ptr<Packet> &p) const {
+            std::shared_ptr<Packet> p) const {
             bool status = true;
 
             for (const std::unique_ptr<PacketExecutor<Entity>> &packetExecutor : this->executors) {

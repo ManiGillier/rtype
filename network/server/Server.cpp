@@ -61,6 +61,7 @@ bool Server::down()
         this->pm.clear();
         this->upStatus = false;
         LOG("Could stop server at " << this->port << " !");
+        return this->upStatus;
     }
     LOG_ERR("Could not stop server: Server was not up.");
     return this->upStatus;

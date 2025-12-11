@@ -27,7 +27,7 @@ Client::Client(const std::string &ip, int port)
 
 bool Client::connect()
 {
-    int af = -1;
+    struct in_addr af;
     struct sockaddr_in params;
 
     if (this->connected)
@@ -40,7 +40,7 @@ bool Client::connect()
 
     memset(&params, 0, sizeof(sockaddr));
     params.sin_family = AF_INET;
-    params.sin_addr.s_addr = (in_addr_t) af;
+    params.sin_addr = af;
     params.sin_port = (in_port_t) htons((uint16_t) this->port);
     int connectValue = ::connect(this->fd, (struct sockaddr *) &params,
                                sizeof(struct sockaddr_in));
@@ -54,7 +54,7 @@ bool Client::connect()
 
 bool Client::disconnect()
 {
-    LOG("Trying to disconnect from " << this->ip << ":" << this->port << "..")
+    LOG("Trying to disconnect from " << this->ip << ":" << this->port << "..");
 
     if (!this->connected)
         return false;
