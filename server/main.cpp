@@ -1,8 +1,10 @@
 #include "R-TypeServer.hpp"
 #include "network/logger/Logger.hpp"
 #include <iostream>
+#include <memory>
 #include <string>
 #include <thread>
+#include "./game/GameExecutor.hpp"
 
 class ArgsError : public std::exception
 {
@@ -67,29 +69,39 @@ class RType
         return 0;
     }
 
+    void networkLoop()
+    {
+        RtypeServer server(this->_port);
+        server.up();
+        server.getPacketListener().addExecutor(std::make_unique<GameExecutor>());
+
+        while (1)
+            server.loop();
+    }
+
     int launch()
     {
         if (_displayUsage)
             return displayUsage();
 
-        // TODO: create an other thread for this.
-        RtypeServer server(this->_port);
-        server.up();
-
-        auto server_loop = [](RtypeServer *server) {
-            while (1)
-                server->loop();
-        };
-
-        std::thread s(server_loop, &server);
-        s.join();
+        std::thread t_ser(&RType::networkLoop, this);
+        this->addThread(t_ser);
+        for (std::thread &th : this->_threads) {
+            th.join();
+        }
         return 0;
+    }
+
+    void addThread(std::thread &t)
+    {
+        this->_threads.push_back(std::move(t));
     }
 
   private:
     int _ticks = 60;
     int _port = -1;
     bool _displayUsage = false;
+    std::vector<std::thread> _threads;
 };
 
 int main(int argc, char **argv)
