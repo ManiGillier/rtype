@@ -9,6 +9,7 @@
     #define PACKETEXECUTOR_HPP_
 
 class Server;
+class Client;
 
     #include <network/packets/Packet.hpp>
     #include <network/poll/IPollable.hpp>
@@ -35,5 +36,13 @@ class PacketExecutorImpl : public PacketExecutor<EndType> {
 
     virtual bool execute(EndType &server, std::shared_ptr<ClientType> &con, std::shared_ptr<PacketType> packet) = 0;
 };
+
+template<typename PacketType, typename ClientType>
+class PacketExecutorImplServer :
+    public PacketExecutorImpl<PacketType, ClientType, Server> {};
+
+template<typename PacketType, typename ClientType>
+class PacketExecutorImplClient :
+    public PacketExecutorImpl<PacketType, ClientType, Client> {};
 
 #endif /* !PACKETEXECUTOR_HPP_ */
