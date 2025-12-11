@@ -16,13 +16,9 @@ class ServerClient : public Pollable {
         ServerClient(int fd, PollManager &pm);
         short getFlags() const;
         bool receiveEvent(short revent);
-        void sendPacket(std::shared_ptr<Packet> &p);
-        std::queue<std::shared_ptr<Packet>> &getReceivedPackets();
     private:
         bool shouldWrite() const;
-        PollManager &pm;
-        /* TODO: Is this the way..? */
-        std::queue<std::shared_ptr<Packet>> toProcess;
+        [[maybe_unused]] PollManager &pm;
 };
 
 #endif /* !CONNECTION_HPP_ */

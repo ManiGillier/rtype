@@ -10,6 +10,7 @@
 #include <network/poll/IPollable.hpp>
 #include <network/logger/Logger.hpp>
 #include <iostream>
+#include "PollManager.hpp"
 
 void PollManager::addPollable(std::shared_ptr<IPollable> pollable)
 {
@@ -46,7 +47,7 @@ void PollManager::removePollable(int fileDescriptor)
 void PollManager::removePollables(std::vector<int> fileDescriptors)
 {
     for (int fileDescriptor : fileDescriptors) {
-        LOG_ERR("Client " << fileDescriptor << " disconnected." << std::endl);
+        LOG_ERR("Client " << fileDescriptor << " disconnected.");
         this->removePollable(fileDescriptor);
     }
 }
@@ -97,4 +98,12 @@ void PollManager::pollSockets()
         this->pollFds[i].revents = 0;
     }
     this->removePollables(toDelete);
+}
+
+void PollManager::clear()
+{
+    for (struct pollfd &fd : this->pollFds)
+        close(fd.fd);
+    this->pollFds.clear();
+    this->pollables.clear();
 }

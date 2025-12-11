@@ -19,6 +19,7 @@
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <bits/stdc++.h>
+#include "Server.hpp"
 
 Server::Server(int port)
 {
@@ -29,6 +30,8 @@ bool Server::up()
 {
     LOG("Starting server at " << this->port << "..");
 
+    if (this->upStatus)
+        return false;
     int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     int optVal = 1;
     struct sockaddr_in params;
@@ -46,18 +49,22 @@ bool Server::up()
     this->fd = serverSocket;
     this->getPollManager().addPollable(
         std::make_shared<ServerPollable>(*this, fd));
+    LOG("Could start server at " << this->port << " !");
     return this->upStatus;
 }
 
-/*
-    TODO: Erase all datas
-*/
 bool Server::down()
 {
     LOG("Stopping server at " << this->port << "..");
-    if (this->upStatus)
+    if (this->upStatus) {
         shutdown(this->fd, SHUT_RDWR);
-    return this->upStatus;
+        this->pm.clear();
+        this->upStatus = false;
+        LOG("Could stop server at " << this->port << " !");
+        return !this->upStatus;
+    }
+    LOG_ERR("Could not stop server: Server was not up.");
+    return !this->upStatus;
 }
 
 bool Server::isUp() const
@@ -65,15 +72,17 @@ bool Server::isUp() const
     return this->upStatus;
 }
 
+
+
 void Server::loop()
 {
     if (!this->upStatus)
         return;
     this->getPollManager().pollSockets();
-    /* TODO : Execute packets */
+    this->executePackets();
 }
 
-PacketListener &Server::getPacketListener()
+PacketListener<Server> &Server::getPacketListener()
 {
     return this->pl;
 }
@@ -83,7 +92,21 @@ PollManager &Server::getPollManager()
     return this->pm;
 }
 
-ServerPollable::ServerPollable(Server &server, int fd) : Pollable(fd), server(server)
+void Server::executePackets()
+{
+    for (std::shared_ptr<IPollable> &p : this->getPollManager().getPool()) {
+        std::queue<std::shared_ptr<Packet>> &q = p->getReceivedPackets();
+        while (!q.empty()) {
+            std::shared_ptr<Packet> packet = q.front();
+            if (!this->getPacketListener().executePacket(*this, p, packet))
+                this->getPollManager().removePollable(p->getFileDescriptor());
+            q.pop();
+        }
+    }
+}
+
+ServerPollable::ServerPollable(Server &server, int fd)
+    : Pollable(fd, server.getPollManager()), server(server)
 {
     return;
 }
