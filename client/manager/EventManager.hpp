@@ -8,24 +8,29 @@
 #ifndef CLIENT_EVENT_MANAGER_HPP
 #define CLIENT_EVENT_MANAGER_HPP
 
+#include "client/event/Event.hpp"
+#include <map>
+#include <mutex>
+
 class EventManager
 {
 public:
     /* Logic thread */
-    auto startListenToEvent(/*Define event enum*/) -> void;
-    auto stopListenToEvent(/*Define event enum*/) -> void;
+    auto startListenToEvent(EventId) -> void;
+    auto stopListenToEvent(EventId) -> void;
     auto resetEventListening() -> void;
 
     /* Both threads */
-    auto getEvent(/*Define event enum*/) -> /*Define events*/ void;
-    auto getEvents() -> /*Define events*/ void;
+    auto getEvent(EventId) const -> Event const &;
+    auto getEvents() const -> std::map<EventId, Event> const &;
+    auto lockAccess() -> void;
+    auto unlockAccess() -> void;
 
     /* Render thread */
-    auto setEventState(/*Define events*/) -> void;
+    auto setEventState(EventId, EventState) -> void;
 private:
-    /* Factory for events */
-    /* Vector of events to listen to */
-    /* Event contains event state (and default one) */
+    std::mutex mutex;
+    std::map<EventId, Event> listenEventList;
 };
 
 #endif /* CLIENT_EVENT_MANAGER_HPP */
