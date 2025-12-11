@@ -6,6 +6,7 @@
 */
 
 #include "PacketManager.hpp"
+#include "network/packets/impl/GameStartPacketRequest.hpp"
 #include "network/packets/impl/PlayerPositionPacket.hpp"
 #include "impl/StartRequestPacket.hpp"
 #include "impl/ScoreUpdatePacket.hpp"
@@ -16,6 +17,7 @@
 #include "impl/PlayerLostPacket.hpp"
 #include "impl/GhostPlayerPositionPacket.hpp"
 #include "impl/GhostScoreUpdatePacket.hpp"
+#include "impl/GameStartPacketRequest.hpp"
 
 void PacketManager::registerPackets()
 {
@@ -29,6 +31,7 @@ void PacketManager::registerPackets()
     this->packets.push_back(std::make_shared<PlayerLostPacket>());
     this->packets.push_back(std::make_shared<GhostPlayerPositionPacket>());
     this->packets.push_back(std::make_shared<GhostScoreUpdatePacket>());
+    this->packets.push_back(std::make_shared<GameStartPacketRequest>());
 }
 
 std::shared_ptr<Packet> PacketManager::createPacketById(uint8_t id) const
