@@ -42,18 +42,7 @@ union test_2 {
     uint8_t value;
 };
 
-auto InGameStateLogic::update(Registry &r, EventManager &eventManager) -> void
+auto InGameStateLogic::update(Registry &r) -> void
 {
-    test test;
-    test.left = eventManager.getEvent(EventId::LEFT).getState().isActivated();
-    test.right = eventManager.getEvent(EventId::RIGHT).getState().isActivated();
-    test.up = eventManager.getEvent(EventId::UP).getState().isActivated();
-    test.down = eventManager.getEvent(EventId::DOWN).getState().isActivated();
-    test.shoot = eventManager.getEvent(EventId::SHOOT).getState().isActivated();
-    test_2 test_2;
-    test_2.test = test;
-    for (std::size_t i = 0; i < 5; i++)
-        std::cout << ((test_2.value & (1 << i)) ? "1" : "0");
-    std::cout << std::endl;
     r.update();
 }

@@ -8,16 +8,20 @@
 #ifndef PLAYER_HPP
 #define PLAYER_HPP
 
-// TODO: inherit of client network
-class Player
+#include <network/server/ServerClient.hpp>
+
+class Player : public ServerClient
 {
   public:
-    Player(int id);
+    Player(int fd, PollManager &pm, int id);
     ~Player() = default;
-    int getId() const; 
+    int getId() const;
+    void setReady();
+    bool isReady() const;
 
   private:
     int _id;
+    bool _ready;
 };
 
 #endif /* PLAYER_HPP */

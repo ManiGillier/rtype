@@ -18,7 +18,7 @@ class InGameStateLogic : public ILogic
 public:
     InGameStateLogic(IGameState &gameState);
 
-    auto update(Registry &, EventManager &) -> void;
+    auto update(Registry &) -> void;
 private:
     IGameState &gameState;
     Entity player;

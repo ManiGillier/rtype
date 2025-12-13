@@ -19,25 +19,19 @@ InGameState::InGameState(ClientManager &cm) : clientManager(cm)
     this->reg.register_component<Square>();
     this->reg.register_component<PlayerControler>();
 
-    this->clientManager.getEventManager().resetEventListening();
-    this->clientManager.getEventManager().startListenToEvent(EventId::LEFT);
-    this->clientManager.getEventManager().startListenToEvent(EventId::RIGHT);
-    this->clientManager.getEventManager().startListenToEvent(EventId::UP);
-    this->clientManager.getEventManager().startListenToEvent(EventId::DOWN);
-    this->clientManager.getEventManager().startListenToEvent(EventId::SHOOT);
-
     this->gui = std::make_unique<InGameStateGui>(*this);
     this->logic = std::make_unique<InGameStateLogic>(*this);
 }
 
-auto InGameState::render() -> void
+auto InGameState::update() -> State
 {
-    this->gui->manageEvents(this->clientManager.getEventManager());
-    this->gui->render(this->getRegistry());
+    if (this->logic)
+        this->logic->update(this->getRegistry());
+    return State::NONE;
 }
 
-auto InGameState::update() -> void
+auto InGameState::render() -> void
 {
-    this->logic->update(this->getRegistry(),
-                        this->clientManager.getEventManager());
+    if (this->gui)
+        this->gui->render(this->getRegistry());
 }

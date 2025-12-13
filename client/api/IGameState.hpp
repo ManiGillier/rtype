@@ -11,6 +11,7 @@
 #include "GUI.hpp"
 #include "ILogic.hpp"
 #include "ecs/regisrty/Registry.hpp"
+#include "client/states/State.hpp"
 
 class IGameState {
 public:
@@ -18,7 +19,7 @@ public:
 
     inline auto getRegistry() -> Registry & { return this->reg; }
     virtual auto render() -> void = 0;
-    virtual auto update() -> void = 0;
+    virtual auto update() -> State = 0;
 protected:
     Registry reg;
     std::unique_ptr<GUI> gui = nullptr;
