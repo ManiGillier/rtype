@@ -10,8 +10,11 @@
 
 #include <cstddef>
 
+#include <raylib.h>
+
 struct Square {
     float size;
+    Color color;
 };
 
 #endif /* SQUARE_COMP_HPP */

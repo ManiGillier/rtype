@@ -7,9 +7,9 @@
 
 #include "logic.hpp"
 
-#include "client/components/Position.hpp"
+#include "shared/components/Position.hpp"
+
 #include "client/components/Square.hpp"
-#include "client/components/Player.hpp"
 
 #include "systems/Systems.hpp"
 
@@ -22,10 +22,8 @@ InGameStateLogic::InGameStateLogic(IGameState &gs)
 {
     Registry &r = gameState.getRegistry();
 
-    r.add_update_system<Position, PlayerControler>(movePlayer);
     r.add_component<Position>(this->player, {20, 20});
-    r.add_component<Square>(this->player, {100});
-    r.add_component<PlayerControler>(this->player, {});
+    r.add_component<Square>(this->player, {100, WHITE});
 }
 
 struct test {

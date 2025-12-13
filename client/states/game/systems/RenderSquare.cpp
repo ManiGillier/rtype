@@ -7,7 +7,7 @@
 
 #include "ecs/regisrty/Registry.hpp"
 
-#include "client/components/Position.hpp"
+#include "shared/components/Position.hpp"
 #include "client/components/Square.hpp"
 
 #include <raylib.h>
@@ -21,6 +21,6 @@ auto renderSquare([[maybe_unused]] Registry &reg,
     for (auto &&[_, pos, square] : zip) {
         DrawRectangle((int) pos->x, (int) pos->y,
                       (int) square->size, (int) square->size,
-                      WHITE);
+                      square->color);
     }
 }
