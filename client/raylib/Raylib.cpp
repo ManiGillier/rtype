@@ -33,6 +33,7 @@ auto Raylib::isStopped() -> bool
 auto Raylib::render(IGameState &gs) -> void
 {
     BeginDrawing();
+    ClearBackground(BLACK);
     gs.render();
     EndDrawing();
 }

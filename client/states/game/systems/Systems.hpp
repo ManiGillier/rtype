@@ -15,12 +15,18 @@
 #include "client/components/Player.hpp"
 #include <unordered_map>
 
-/*auto renderSquare(Registry &,
-    std::unordered_map<std::size_t, std::tuple<Position*, Square*>>)
--> void;
+/* LOGIC SYSTEMS */
 
 auto movePlayer(Registry &,
-    std::unordered_map<std::size_t, std::tuple<Position*, PlayerControler*>>)
+    containers::indexed_zipper<SparseArray<Position>,
+                               SparseArray<PlayerControler>> zip)
 -> void;
-*/
+
+/* RENDER SYSTEMS */
+
+auto renderSquare([[maybe_unused]] Registry &reg,
+    containers::indexed_zipper<SparseArray<Position>,
+                               SparseArray<Square>> zip)
+-> void;
+
 #endif /* RENDER_SYSTEMS_HPP */
