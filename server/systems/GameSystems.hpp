@@ -19,6 +19,7 @@
 #include "../components/Damager.hpp"
 #include "../components/Resistance.hpp"
 #include "../components/Velocity.hpp"
+#include "../packet_queue/PacketQueue.hpp"
 
 namespace Systems
 {
@@ -27,24 +28,24 @@ auto movement_system(
     containers::indexed_zipper<SparseArray<Position>, SparseArray<Velocity>,
                                SparseArray<Acceleration>>
         zipper,
-    int i) -> void;
+    PacketQueue &packets) -> void;
 
 auto dependence_system(
     Registry &r,
     containers::indexed_zipper<SparseArray<Position>, SparseArray<Dependence>,
                                SparseArray<Laser>>
         zipper,
-    int i) -> void;
+    PacketQueue &packets) -> void;
 
 auto collision_system(
     Registry &r,
     containers::indexed_zipper<SparseArray<Position>, SparseArray<HitBox>>
         zipper,
-    int i) -> void;
+    PacketQueue &packets) -> void;
 
 auto cleanup_system(Registry &r,
                     containers::indexed_zipper<SparseArray<Health>> zipper,
-                    int i) -> void;
+                    PacketQueue &packets) -> void;
 } // namespace Systems
 
 #endif /* COMP_POSITION_HPP */
