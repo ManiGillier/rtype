@@ -9,24 +9,34 @@
 #define GAME_EXECUTOR_HPP
 
 #include "../player/Player.hpp"
-#include <network/packets/impl/GameStartPacketRequest.hpp>
+#include <network/packets/impl/StartRequestPacket.hpp>
 #include <network/server/Server.hpp>
+    #include <network/packets/PacketManager.hpp>
+#include <thread>
+#include <atomic>
+
+class RTypeServer;
 
 class GameExecutor
-    : public PacketExecutorImplServer<GameStartPacketRequest, Player>
+    : public PacketExecutorImplServer<StartRequestPacket, Player>
 {
   public:
-    GameExecutor() = default;
-    ~GameExecutor() = default;
+    GameExecutor(RTypeServer &server);
+    ~GameExecutor();
     bool execute(Server &server, std::shared_ptr<Player> &player,
-                 std::shared_ptr<GameStartPacketRequest> packet);
+                 std::shared_ptr<StartRequestPacket> packet);
     int getPacketId() const
     {
-        return 69;
+        return PacketId::START_GAME;
     };
 
   private:
-    bool _hasStarted = false;
+    void gameLoop();
+
+    RTypeServer &_rtypeServer;
+    std::atomic<bool> _hasStarted;
+    std::atomic<bool> _isRunning;
+    std::thread _gameThread;
 };
 
 #endif

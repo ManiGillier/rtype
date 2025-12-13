@@ -1,27 +1,64 @@
 #include "GameExecutor.hpp"
-#include <thread>
+#include "../RTypeServer.hpp"
 #include "Game.hpp"
 #include "network/logger/Logger.hpp"
+#include <chrono>
+#include <thread>
 
-// GameExecutor::GameExecutor(RtypeServer &rtype) : _rtype(rtype)
-// {
-//     return;
-// }
+GameExecutor::GameExecutor(RTypeServer &server)
+    : _rtypeServer(server), _hasStarted(false), _isRunning(false)
+{
+}
+
+GameExecutor::~GameExecutor()
+{
+    _isRunning = false;
+    if (_gameThread.joinable()) {
+        _gameThread.join();
+    }
+}
 
 bool GameExecutor::execute(Server &server, std::shared_ptr<Player> &player,
-                           std::shared_ptr<GameStartPacketRequest> packet)
+                           std::shared_ptr<StartRequestPacket> packet)
 {
     (void)server;
     (void)player;
     (void)packet;
-    LOG("caca");
-    // if (_hasStarted)
-    //     return false;
-    // std::thread gameThread = /* Commence un thread de jeu ici */
-    //
-    //     this->_rtype.addThread(gameThread);
-    //
-    // /* Un jeu a été commencé ! :O */
-    // _hasStarted = true;
+
+    // TODO: check for several player
+    if (_hasStarted) {
+        LOG("Game already started");
+        return false;
+    }
+
+    LOG("Starting game");
+    _rtypeServer.getGame().start();
+    _isRunning = true;
+    _hasStarted = true;
+    _gameThread = std::thread(&GameExecutor::gameLoop, this);
     return true;
+}
+
+void GameExecutor::gameLoop()
+{
+    Game &game = _rtypeServer.getGame();
+    int ticks = _rtypeServer.getTicks();
+    auto tickDuration = std::chrono::milliseconds(1000 / ticks);
+
+    LOG("Game loop started with: " << ticks << " ticks per second");
+
+    while (_isRunning) {
+        auto startTime = std::chrono::steady_clock::now();
+        
+        game.update();
+
+        auto endTime = std::chrono::steady_clock::now();
+        auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
+            endTime - startTime);
+        auto sleepTime = tickDuration - elapsed;
+        if (sleepTime.count() > 0) {
+            std::this_thread::sleep_for(sleepTime);
+        }
+    }
+    LOG("Game loop stopped");
 }
