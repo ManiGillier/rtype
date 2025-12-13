@@ -4,4 +4,6 @@
 auto main() -> int
 {
     ClientManager manager;
+
+    manager.launch();
 }
