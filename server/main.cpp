@@ -1,4 +1,4 @@
-#include "R-TypeServer.hpp"
+#include "RTypeServer.hpp"
 #include "network/logger/Logger.hpp"
 #include <iostream>
 #include <memory>
@@ -71,12 +71,14 @@ class RType
 
     void networkLoop()
     {
-        RtypeServer server(this->_port);
+        RTypeServer server(this->_port, this->_ticks);
         server.up();
-        server.getPacketListener().addExecutor(std::make_unique<GameExecutor>());
+        server.getPacketListener().addExecutor(std::make_unique<GameExecutor>(server));
 
-        while (1)
+        while (1) {
             server.loop();
+            server.transferPacketsToGame();
+        }
     }
 
     int launch()
