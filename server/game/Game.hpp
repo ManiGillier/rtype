@@ -11,6 +11,7 @@
 #include "../../ecs/regisrty/Registry.hpp"
 #include "../factories/EntityFactory.hpp"
 #include "../player/Player.hpp"
+#include "../packet_queue/PacketQueue.hpp"
 
 class Game {
 public:
@@ -22,6 +23,7 @@ public:
     void removePlayer(std::shared_ptr<Player> &player);
     Entity addBodss();
     Registry& getRegistry();
+    PacketQueue& getPacketQueue();
 
 private:
     void initializeComponents();
@@ -29,6 +31,7 @@ private:
 
     Registry _registry;
     EntityFactory _factory;
+    PacketQueue _packets;
     std::unordered_map<int, Entity> _players;
     bool _isRunning;
 };

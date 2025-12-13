@@ -9,7 +9,6 @@
 #include "../components/Resistance.hpp"
 #include "../components/Velocity.hpp"
 #include "../systems/GameSystems.hpp"
-#include "ecs/sparse_array/SparseArray.hpp"
 
 Game::Game() : _registry(), _factory(_registry), _isRunning(false)
 {
@@ -60,6 +59,11 @@ Registry &Game::getRegistry()
     return _registry;
 }
 
+PacketQueue &Game::getPacketQueue()
+{
+    return _packets;
+}
+
 void Game::initializeComponents()
 {
     _registry.register_component<Acceleration>();
@@ -76,11 +80,11 @@ void Game::initializeComponents()
 void Game::initializeSystems()
 {
     _registry.add_update_system<Position, Velocity, Acceleration>(
-        Systems::movement_system, 0);
+        Systems::movement_system, std::ref(_packets));
     _registry.add_update_system<Position, Dependence, Laser>(
-        Systems::dependence_system, 0);
+        Systems::dependence_system, std::ref(_packets));
     _registry.add_update_system<Position, HitBox>(
-        Systems::collision_system, 0);
+        Systems::collision_system, std::ref(_packets));
     _registry.add_update_system<Health>(
-        Systems::cleanup_system, 0);
+        Systems::cleanup_system, std::ref(_packets));
 }
