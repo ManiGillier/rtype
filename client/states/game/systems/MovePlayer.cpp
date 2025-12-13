@@ -10,20 +10,17 @@
 #include "client/components/Position.hpp"
 #include "client/components/Player.hpp"
 
-#include <tuple>
-#include <unordered_map>
-
+#include <iostream>
 #include <raylib.h>
 
-#include <iostream>
-
-/*auto movePlayer(Registry &,
-    std::unordered_map<std::size_t, std::tuple<Position*, PlayerControler*>> map)
+auto movePlayer(Registry &,
+    containers::indexed_zipper<SparseArray<Position>,
+                               SparseArray<PlayerControler>> zip)
 -> void
 {
     double dx = 0.0;
     double dy = 0.0;
-    double speed = 1.0;
+    double speed = 20.0;
 
     if (IsKeyDown(KEY_LEFT))
         dx += -speed;
@@ -35,10 +32,5 @@
         dy += speed;
     dx *= GetFrameTime();
     dy *= GetFrameTime();
-    for (auto [_, tuple] : map) {
-        Position &pos = *std::get<Position*>(tuple);
-        pos.x += (float) dx;
-        pos.y += (float) dy;
     }
 }
-*/
