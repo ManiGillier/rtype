@@ -23,6 +23,7 @@
     #include <network/packets/impl/DespawnBulletPacket.hpp>
     #include <network/packets/impl/EnemyDiedPacket.hpp>
     #include <network/packets/impl/PlayerIdPacket.hpp>
+    #include <network/packets/impl/GameOverPacket.hpp>
     // #include <network/packets/impl/ScoreUpdatePacket.hpp>
 
 class Client;
@@ -79,9 +80,6 @@ class CustomServer : public Server {
                 std::shared_ptr<Packet> p =
                     create_packet(NewPlayerPacket, 1, 2);
                 sc->sendPacket(p);
-                std::shared_ptr<Packet> p2 =
-                    create_packet(PlayerIdPacket, 1);
-                sc->sendPacket(p2);
             }
         }
 

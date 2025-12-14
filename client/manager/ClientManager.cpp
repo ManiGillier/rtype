@@ -24,7 +24,7 @@ ClientManager::ClientManager()
     };
 }
 
-auto ClientManager::changeInternalState(std::unique_ptr<IGameState> state)
+inline auto ClientManager::changeInternalState(std::unique_ptr<IGameState> state)
 -> void
 {
     this->_internal_state = std::move(state);
@@ -32,8 +32,6 @@ auto ClientManager::changeInternalState(std::unique_ptr<IGameState> state)
 
 auto ClientManager::changeState(const State state) -> void
 {
-    if (this->_state == state)
-        return;
     this->networkManager->resetExecutors();
     this->changeInternalState(this->_gameStateFactory[state]());
     this->_state = state;

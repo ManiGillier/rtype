@@ -29,6 +29,7 @@
 #include "client/network/executor/DespawnBulletExecutor.hpp"
 #include "client/network/executor/EnemyDiedExecutor.hpp"
 #include "client/network/executor/PlayerIdExecutor.hpp"
+#include "client/network/executor/GameOverExecutor.hpp"
 
 InGameStateLogic::InGameStateLogic(IGameState &gs, NetworkManager &nm)
     : gameState(gs), networkManager(nm)
@@ -46,12 +47,13 @@ InGameStateLogic::InGameStateLogic(IGameState &gs, NetworkManager &nm)
     nm.addExecutor(std::make_unique<DespawnBulletExecutor>(*this));
     nm.addExecutor(std::make_unique<EnemyDiedExecutor>(*this));
     nm.addExecutor(std::make_unique<PlayerIdExecutor>(*this));
+    nm.addExecutor(std::make_unique<GameOverExecutor>(*this));
 }
 
 auto InGameStateLogic::update(Registry &r) -> State
 {
     r.update();
-    return State::NONE;
+    return this->shouldStop ? State::END_STATE : State::NONE;
 }
 
 auto InGameStateLogic::newPlayer(std::size_t player_id, std::size_t laser_id)
@@ -113,4 +115,9 @@ auto InGameStateLogic::registerClientId(std::size_t id) -> void
 
     if (!this->clientId)
         return;
+}
+
+auto InGameStateLogic::end() -> void
+{
+    this->shouldStop = true;
 }
