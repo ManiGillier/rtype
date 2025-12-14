@@ -24,7 +24,7 @@ public:
                  [[maybe_unused]] std::shared_ptr<ClientPollable> &con,
                  [[maybe_unused]] std::shared_ptr<DespawnPlayerPacket> packet)
     {
-        this->logic.despawnPlayer(packet->getPlayerId());
+        this->logic.despawnEntity(packet->getPlayerId());
         return true;
     }
 

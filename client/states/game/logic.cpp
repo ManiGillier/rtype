@@ -89,11 +89,11 @@ auto InGameStateLogic::newBullet(std::size_t bullet_id) -> void
     r.add_component<ElementColor>(bullet, {BLUE});
 }
 
-auto InGameStateLogic::despawnPlayer(std::size_t player_id) -> void
+auto InGameStateLogic::despawnEntity(std::size_t id) -> void
 {
     Registry &r = gameState.getRegistry();
-    std::optional<std::size_t> my_id = this->sync.get_mine_from_theirs(player_id);
-    this->sync.del_with_theirs(player_id);
+    std::optional<std::size_t> my_id = this->sync.get_mine_from_theirs(id);
+    this->sync.del_with_theirs(id);
 
     if (!my_id)
         return;
