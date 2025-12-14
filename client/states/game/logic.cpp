@@ -15,6 +15,7 @@
 
 #include "shared/components/Health.hpp"
 #include "shared/components/Dependence.hpp"
+#include "shared/components/Laser.hpp"
 
 #include <iostream>
 #include <cstddef>
@@ -40,19 +41,21 @@ auto InGameStateLogic::update(Registry &r) -> void
     r.update();
 }
 
-auto InGameStateLogic::newPlayer(std::size_t id, std::size_t laser_id) -> void
+auto InGameStateLogic::newPlayer(std::size_t player_id, std::size_t laser_id)
+-> void
 {
     Registry &r = gameState.getRegistry();
     Entity player = r.spawn_entity();
     Entity laser = r.spawn_entity();
 
-    (void) id;
-    (void) laser_id;
-    // TODO: implement sync
-    r.add_component<Position>(player, {0, 0});
-    r.add_component<HitBox>(player, {0, 0});
-    r.add_component<SquareColor>(player, {WHITE});
+    this->sync.add(player.getId(), player_id);
+    this->sync.add(laser.getId(), laser_id);
+    r.add_component<Position>(player, {200, 500});
+    r.add_component<HitBox>(player, {20, 20});
+    r.add_component<ElementColor>(player, {WHITE});
     r.add_component<Health>(player, {0, 0});
 
     r.add_component<Dependence>(laser, {player.getId()});
+    r.add_component<Laser>(laser, {10, 100});
+    r.add_component<ElementColor>(laser, {GREEN});
 }

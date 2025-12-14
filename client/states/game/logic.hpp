@@ -16,6 +16,8 @@
 #include <cstddef>
 #include <optional>
 
+#include "ecs/sync/Sync.hpp"
+
 #include <vector>
 
 class InGameStateLogic : public ILogic
@@ -30,7 +32,7 @@ private:
     IGameState &gameState;
     NetworkManager &networkManager;
 
-    // TODO: implement sync
+    Sync sync;
     std::vector<Entity> players;
 };
 

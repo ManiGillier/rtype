@@ -12,7 +12,7 @@
 
 #include <raylib.h>
 
-struct SquareColor {
+struct ElementColor {
     Color color;
 };
 

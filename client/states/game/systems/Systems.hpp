@@ -22,7 +22,7 @@
 auto renderSquare([[maybe_unused]] Registry &reg,
     containers::indexed_zipper<SparseArray<Position>,
                                SparseArray<HitBox>,
-                               SparseArray<SquareColor>> zip)
+                               SparseArray<ElementColor>> zip)
 -> void;
 
 #endif /* RENDER_SYSTEMS_HPP */
