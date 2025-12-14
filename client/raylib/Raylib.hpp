@@ -8,32 +8,25 @@
 #ifndef RAYLIB_H_
 #define RAYLIB_H_
 
-#include <thread>
-
-#include "client/GraphicalLibInterface.hpp"
 #include "client/window/RenderWindow.hpp"
 #include "client/manager/ClientManager.hpp"
 
 #include "ecs/regisrty/Registry.hpp"
 
+#include "client/api/IGraphicalLibrary.hpp"
 
-class Raylib : public GraphicalLibAPI {
+class Raylib : public IGraphicalLibrary
+{
 public:
     Raylib(ClientManager &);
     ~Raylib();
 
-    auto manageCommand(Command &) -> void;
-    auto manageCommands() -> void;
-private:
-    auto init() -> void;
-    auto loop() -> void;
-    auto update() -> void;
-    auto stop() -> void;
+    auto isStopped() -> bool;
+    auto render(IGameState &) -> void;
 private:
     ClientManager &clientManager;
-    std::thread openGlThread;
     RenderWindow window;
-    bool shouldStop = false;
+    bool stopped = false;
 };
 
 #endif // RAYLIB_H_

@@ -8,13 +8,13 @@
 #ifndef CLIENT_MANAGER_HPP
 #define CLIENT_MANAGER_HPP
 
-#include "CommandManager.hpp"
-#include "client/GameInterface.hpp"
-#include "client/GraphicalLibInterface.hpp"
+#include "client/states/State.hpp"
 
 #include "ecs/regisrty/Registry.hpp"
 
 #include "client/api/IGameState.hpp"
+
+#include "client/api/IGraphicalLibrary.hpp"
 
 #include <functional>
 #include <memory>
@@ -24,23 +24,18 @@
 class ClientManager
 {
 public:
-    enum State {
-        NONE = 0,
-        IN_GAME,
-    };
     ClientManager();
-    ~ClientManager();
     auto changeState(const State) -> void;
 
-    auto getCommandManager() -> CommandManager &;
+    auto getGui() -> IGraphicalLibrary & { return *this->gui; }
     auto getState() -> IGameState & { return *this->_internal_state; }
+    auto launch() -> void;
 private:
     auto changeInternalState(std::unique_ptr<IGameState>) -> void;
+    auto loop() -> void;
+    auto unload() -> void;
 private:
-    CommandManager commandManager;
-
-    std::unique_ptr<GraphicalLibAPI> gui = nullptr;
-    std::unique_ptr<GameLogicAPI> game = nullptr;
+    std::unique_ptr<IGraphicalLibrary> gui;
 
     State _state = NONE;
     std::unique_ptr<IGameState> _internal_state = nullptr;
