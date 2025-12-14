@@ -23,6 +23,8 @@
 
 #include <network/client/Client.hpp>
 
+#include "NetworkManager.hpp"
+
 class ClientManager
 {
 public:
@@ -38,7 +40,7 @@ private:
     auto unload() -> void;
 private:
     std::unique_ptr<IGraphicalLibrary> gui;
-    std::unique_ptr<Client> client = nullptr;
+    std::unique_ptr<NetworkManager> networkManager;
 
     State _state = NONE;
     std::unique_ptr<IGameState> _internal_state = nullptr;

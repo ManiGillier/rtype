@@ -38,15 +38,18 @@ auto ClientManager::changeState(const State state) -> void
     this->_state = state;
 }
 
+#include "client/network/executor/NewPlayerExecutor.hpp"
+
 auto ClientManager::launch(int argc, char **argv) -> void
 {
     if (argc != 3)
         return;
     Logger::shouldLog = true;
-    this->client = std::make_unique<Client>(argv[1], std::atoi(argv[2]));
-    this->client->connect();
-    if (!this->client->isConnected())
-        return;
+    this->networkManager =
+        std::make_unique<NetworkManager>(argv[1], std::atoi(argv[2]));
+
+    networkManager->addExecutor(std::make_unique<NewPlayerExecutor>(*this));
+
     this->changeState(IN_GAME);
     this->loop();
 }
@@ -57,6 +60,7 @@ auto ClientManager::loop() -> void
         this->getGui().render(this->getState());
         if (this->getGui().isStopped())
             break;
+        this->networkManager->getClient().executePackets();
         State new_state = this->getState().update();
 
         if (new_state == State::END_STATE)
