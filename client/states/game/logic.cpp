@@ -33,6 +33,7 @@
 #include "client/network/executor/HealthUpdateExecutor.hpp"
 #include "client/network/executor/HitboxSizeUpdateExecutor.hpp"
 #include "client/network/executor/LaserActivateUpdateExecutor.hpp"
+#include <network/packets/impl/ClientInputsPacket.hpp>
 
 InGameStateLogic::InGameStateLogic(IGameState &gs, NetworkManager &nm)
     : gameState(gs), networkManager(nm)
@@ -59,6 +60,7 @@ InGameStateLogic::InGameStateLogic(IGameState &gs, NetworkManager &nm)
 auto InGameStateLogic::update(Registry &r) -> State
 {
     r.update();
+    this->managePlayerMovement();
     return this->shouldStop ? State::END_STATE : State::NONE;
 }
 
@@ -157,4 +159,19 @@ auto InGameStateLogic::updateLaser(std::size_t id, bool active)
     this->gameState.getRegistry().set<Laser>(id,
                                              active ? 10 : 0,
                                              active ? 100 : 0);
+}
+
+auto InGameStateLogic::managePlayerMovement() -> void
+{
+    ClientInputs clientInputs = {0};
+
+    clientInputs.value.left = IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_Q);
+    clientInputs.value.right = IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D);
+    clientInputs.value.up = IsKeyDown(KEY_UP) || IsKeyDown(KEY_Z);
+    clientInputs.value.down = IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S);
+    clientInputs.value.shoot = IsKeyDown(KEY_SPACE)
+                               || IsMouseButtonDown(MOUSE_BUTTON_LEFT);
+
+    this->networkManager
+        .sendPacket(std::make_shared<ClientInputsPacket>(clientInputs));
 }

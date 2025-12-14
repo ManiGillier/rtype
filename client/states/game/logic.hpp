@@ -26,6 +26,7 @@ public:
     InGameStateLogic(IGameState &gameState, NetworkManager &networkManager);
 
     auto update(Registry &) -> State;
+    auto managePlayerMovement() -> void;
 
     auto newPlayer(std::size_t player_id, std::size_t laser_id) -> void;
     auto newEnemy(std::size_t enemy_id) -> void;

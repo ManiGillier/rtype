@@ -25,6 +25,7 @@ public:
     auto addExecutor(std::unique_ptr<PacketExecutor<Client>>) -> void;
     auto resetExecutors() -> void;
     auto getClient() -> Client &;
+    auto sendPacket(std::shared_ptr<Packet> p) -> void;
 private:
     std::atomic<bool> shouldStop = false;
     std::unique_ptr<Client> client;
