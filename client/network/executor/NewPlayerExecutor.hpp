@@ -8,7 +8,7 @@
 #ifndef NEWPLAYER_EXECUTOR_HPP
 #define NEWPLAYER_EXECUTOR_HPP
 
-#include "client/manager/ClientManager.hpp"
+#include "client/states/game/logic.hpp"
 
 #include <iostream>
 #include <memory>
@@ -19,13 +19,13 @@ class NewPlayerExecutor : public PacketExecutorImplClient
 <NewPlayerPacket, ClientPollable>
 {
 public:
-    NewPlayerExecutor(ClientManager &cm) : clientManager(cm) {}
+    NewPlayerExecutor(InGameStateLogic &logic) : logic(logic) {}
 
     bool execute([[maybe_unused]] Client &cl,
                  [[maybe_unused]] std::shared_ptr<ClientPollable> &con,
                  [[maybe_unused]] std::shared_ptr<NewPlayerPacket> packet)
     {
-        LOG("This is a test");
+        this->logic.newPlayer(packet->getPlayerId(), packet->getLaserId());
         return true;
     }
 
@@ -33,7 +33,7 @@ public:
         return PacketId::NEW_PLAYER;
     }
 private:
-    [[maybe_unused]] ClientManager &clientManager;
+    [[maybe_unused]] InGameStateLogic &logic;
 };
 
 #endif /* NEWPLAYER_EXECUTOR_HPP */

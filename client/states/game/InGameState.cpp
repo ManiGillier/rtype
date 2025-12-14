@@ -20,7 +20,8 @@ InGameState::InGameState(ClientManager &cm) : clientManager(cm)
     this->reg.register_component<SquareColor>();
 
     this->gui = std::make_unique<InGameStateGui>(*this);
-    this->logic = std::make_unique<InGameStateLogic>(*this);
+    this->logic = std::make_unique<InGameStateLogic>
+                      (*this, this->clientManager.getNetworkManager());
 }
 
 auto InGameState::update() -> State
