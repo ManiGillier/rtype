@@ -33,6 +33,7 @@ public:
     auto despawnEntity(std::size_t id) -> void;
     auto registerClientId(std::size_t id) -> void;
     auto end() -> void;
+    auto updateHealth(std::size_t id, float health) -> void;
 private:
     IGameState &gameState;
     NetworkManager &networkManager;

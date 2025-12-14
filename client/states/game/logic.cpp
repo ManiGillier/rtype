@@ -30,6 +30,7 @@
 #include "client/network/executor/EnemyDiedExecutor.hpp"
 #include "client/network/executor/PlayerIdExecutor.hpp"
 #include "client/network/executor/GameOverExecutor.hpp"
+#include "client/network/executor/HealthUpdateExecutor.hpp"
 
 InGameStateLogic::InGameStateLogic(IGameState &gs, NetworkManager &nm)
     : gameState(gs), networkManager(nm)
@@ -48,6 +49,7 @@ InGameStateLogic::InGameStateLogic(IGameState &gs, NetworkManager &nm)
     nm.addExecutor(std::make_unique<EnemyDiedExecutor>(*this));
     nm.addExecutor(std::make_unique<PlayerIdExecutor>(*this));
     nm.addExecutor(std::make_unique<GameOverExecutor>(*this));
+    nm.addExecutor(std::make_unique<HealthUpdateExecutor>(*this));
 }
 
 auto InGameStateLogic::update(Registry &r) -> State
@@ -120,4 +122,13 @@ auto InGameStateLogic::registerClientId(std::size_t id) -> void
 auto InGameStateLogic::end() -> void
 {
     this->shouldStop = true;
+}
+
+auto InGameStateLogic::updateHealth(std::size_t id, float health) -> void
+{
+    std::optional<std::size_t> my_id = this->sync.get_mine_from_theirs(id);
+
+    if (!my_id)
+        return;
+    this->gameState.getRegistry().set<Health>(id, (int) health, 0);
 }
