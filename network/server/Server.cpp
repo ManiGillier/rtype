@@ -9,6 +9,7 @@
 #include <network/server/Server.hpp>
 #include <network/server/ServerClient.hpp>
 #include <network/server/Server.hpp>
+#include <network/packets/PacketLogger.hpp>
 #include <string>
 
 #include <poll.h>
@@ -100,6 +101,7 @@ PollManager &Server::getPollManager()
     return this->pm;
 }
 
+/* TODO: Implement logged execute on UDP */
 void Server::executePackets()
 {
     for (std::shared_ptr<IPollable> &p : this->getPollManager().getPool()) {
@@ -110,6 +112,9 @@ void Server::executePackets()
                 this->getPollManager().removePollable(p->getFileDescriptor());
             q.pop();
         }
+    }
+    for (auto &[sender, packet] : ServerUDPPollable::getUDPReceivedPackets()) {
+        this->getPacketListener().executePacket(*this, sender, packet);
     }
 }
 
@@ -149,8 +154,41 @@ short ServerUDPPollable::getFlags() const
     return POLLIN;
 }
 
-bool ServerUDPPollable::receiveEvent(short revent)
+bool ServerUDPPollable::receiveEvent(short)
 {
-    (void) revent;
+    uint8_t buffer[BUFFER_SIZE];
+    struct sockaddr_in sender;
+    socklen_t senderLen = sizeof(sender);
+    std::queue<uint8_t> dataQueue;
+    ssize_t bytesRead = recvfrom(this->getFileDescriptor(), buffer, BUFFER_SIZE, 0, 
+                                  (struct sockaddr*)&sender, &senderLen);
+    if (bytesRead <= 0)
+        return true;
+    for (ssize_t i = 0; i < bytesRead; i++)
+        dataQueue.push(buffer[i]);
+    while (!dataQueue.empty()) {
+        uint8_t packetId = dataQueue.front();
+        dataQueue.pop();
+        std::shared_ptr<Packet> packet = PacketManager::getInstance().createPacketById(packetId, Packet::PacketMode::UDP);
+        if (packet == nullptr) {
+            LOG_ERR("Received invalid packet ID: " << (int) packetId);
+            break;
+        }
+        std::size_t packetSize = (std::size_t)packet->getSize();
+        if (packetSize > dataQueue.size()) {
+            LOG_ERR("Incomplete packet received" << std::endl);
+            break;
+        }
+        std::queue<uint8_t> packetData;
+        for (std::size_t i = 0; i < packetSize; i++) {
+            packetData.push(dataQueue.front());
+            dataQueue.pop();
+        }
+        packet->setData(packetData);
+        packet->unserialize();
+        PacketLogger::logPacket(packet, PacketLogger::PacketMethod::RECEIVED,
+            this->getFileDescriptor());
+        addReceivedPacket(sender, packet);
+    }
     return true;
 }

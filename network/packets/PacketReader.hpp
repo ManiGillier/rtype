@@ -10,7 +10,7 @@
 
     #include <optional>
     #include <queue>
-    #define BUFFER_SIZE 256
+    #define BUFFER_SIZE 8192
     #include "Packet.hpp"
 
 class PacketReader {
