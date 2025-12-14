@@ -29,7 +29,10 @@ class PollManager {
         std::vector<std::shared_ptr<IPollable>> &getPool();
         void pollSockets();
         void clear();
+        void lock();
+        void unlock();
     private:
+        std::mutex mutex;
         std::vector<struct pollfd> pollFds;
         std::vector<std::shared_ptr<IPollable>> pollables;
     };

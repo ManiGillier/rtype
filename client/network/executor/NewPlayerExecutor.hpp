@@ -25,7 +25,7 @@ public:
                  [[maybe_unused]] std::shared_ptr<ClientPollable> &con,
                  [[maybe_unused]] std::shared_ptr<NewPlayerPacket> packet)
     {
-        packet->display();
+        LOG("This is a test");
         return true;
     }
 

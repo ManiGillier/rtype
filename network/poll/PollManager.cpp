@@ -85,6 +85,7 @@ void PollManager::pollSockets()
 
     if (rc < 0)
         return;
+    this->lock();
     for (std::size_t i = 0; i < socketSize; i++) {
         if (this->pollFds[i].revents == 0)
             continue;
@@ -98,6 +99,7 @@ void PollManager::pollSockets()
         this->pollFds[i].revents = 0;
     }
     this->removePollables(toDelete);
+    this->unlock();
 }
 
 void PollManager::clear()
@@ -107,3 +109,6 @@ void PollManager::clear()
     this->pollFds.clear();
     this->pollables.clear();
 }
+
+void PollManager::lock() { this->mutex.lock(); }
+void PollManager::unlock() { this->mutex.unlock(); }
