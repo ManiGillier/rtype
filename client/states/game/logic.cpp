@@ -31,6 +31,8 @@
 #include "client/network/executor/PlayerIdExecutor.hpp"
 #include "client/network/executor/GameOverExecutor.hpp"
 #include "client/network/executor/HealthUpdateExecutor.hpp"
+#include "client/network/executor/HitboxSizeUpdateExecutor.hpp"
+#include "client/network/executor/LaserActivateUpdateExecutor.hpp"
 
 InGameStateLogic::InGameStateLogic(IGameState &gs, NetworkManager &nm)
     : gameState(gs), networkManager(nm)
@@ -50,6 +52,8 @@ InGameStateLogic::InGameStateLogic(IGameState &gs, NetworkManager &nm)
     nm.addExecutor(std::make_unique<PlayerIdExecutor>(*this));
     nm.addExecutor(std::make_unique<GameOverExecutor>(*this));
     nm.addExecutor(std::make_unique<HealthUpdateExecutor>(*this));
+    nm.addExecutor(std::make_unique<HitboxSizeUpdateExecutor>(*this));
+    nm.addExecutor(std::make_unique<LaserActiveUpdateExecutor>(*this));
 }
 
 auto InGameStateLogic::update(Registry &r) -> State
@@ -131,4 +135,26 @@ auto InGameStateLogic::updateHealth(std::size_t id, float health) -> void
     if (!my_id)
         return;
     this->gameState.getRegistry().set<Health>(id, (int) health, 0);
+}
+
+auto InGameStateLogic::updateHitbox(std::size_t id, float width, float height)
+-> void
+{
+    std::optional<std::size_t> my_id = this->sync.get_mine_from_theirs(id);
+
+    if (!my_id)
+        return;
+    this->gameState.getRegistry().set<HitBox>(id, width, height);
+}
+
+auto InGameStateLogic::updateLaser(std::size_t id, bool active)
+-> void
+{
+    std::optional<std::size_t> my_id = this->sync.get_mine_from_theirs(id);
+
+    if (!my_id)
+        return;
+    this->gameState.getRegistry().set<Laser>(id,
+                                             active ? 10 : 0,
+                                             active ? 100 : 0);
 }
