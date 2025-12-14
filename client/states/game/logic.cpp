@@ -28,6 +28,7 @@
 #include "client/network/executor/DespawnPlayerExecutor.hpp"
 #include "client/network/executor/DespawnBulletExecutor.hpp"
 #include "client/network/executor/EnemyDiedExecutor.hpp"
+#include "client/network/executor/PlayerIdExecutor.hpp"
 
 InGameStateLogic::InGameStateLogic(IGameState &gs, NetworkManager &nm)
     : gameState(gs), networkManager(nm)
@@ -44,6 +45,7 @@ InGameStateLogic::InGameStateLogic(IGameState &gs, NetworkManager &nm)
     nm.addExecutor(std::make_unique<DespawnPlayerExecutor>(*this));
     nm.addExecutor(std::make_unique<DespawnBulletExecutor>(*this));
     nm.addExecutor(std::make_unique<EnemyDiedExecutor>(*this));
+    nm.addExecutor(std::make_unique<PlayerIdExecutor>(*this));
 }
 
 auto InGameStateLogic::update(Registry &r) -> void
@@ -102,4 +104,12 @@ auto InGameStateLogic::despawnEntity(std::size_t id) -> void
     if (!my_id)
         return;
     r.kill_entity(r.entity_from_index(*my_id));
+}
+
+auto InGameStateLogic::registerClientId(std::size_t id) -> void
+{
+    this->clientId = this->sync.get_mine_from_theirs(id);
+
+    if (!this->clientId)
+        return;
 }

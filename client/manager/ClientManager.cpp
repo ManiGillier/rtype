@@ -41,9 +41,10 @@ auto ClientManager::changeState(const State state) -> void
 
 auto ClientManager::launch(int argc, char **argv) -> void
 {
-    if (argc != 3)
+    if (argc != 3 && argc != 4)
         return;
-    Logger::shouldLog = true;
+    if (argc == 4 && std::string(argv[5]) == "-d")
+        Logger::shouldLog = true;
     this->networkManager =
         std::make_unique<NetworkManager>(argv[1], std::atoi(argv[2]));
 

@@ -31,11 +31,13 @@ public:
     auto newEnemy(std::size_t enemy_id) -> void;
     auto newBullet(std::size_t bullet_id) -> void;
     auto despawnEntity(std::size_t id) -> void;
+    auto registerClientId(std::size_t id) -> void;
 private:
     IGameState &gameState;
     NetworkManager &networkManager;
 
     Sync sync;
+    std::optional<std::size_t> clientId = std::nullopt;
 };
 
 #endif /* IN_GAME_STATE_LOGIC_HPP */
