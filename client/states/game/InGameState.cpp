@@ -12,12 +12,16 @@
 #include <memory>
 
 #include "systems/Systems.hpp"
+#include "shared/components/Dependence.hpp"
+#include "shared/components/Health.hpp"
 
 InGameState::InGameState(ClientManager &cm) : clientManager(cm)
 {
     this->reg.register_component<Position>();
     this->reg.register_component<HitBox>();
     this->reg.register_component<SquareColor>();
+    this->reg.register_component<Health>();
+    this->reg.register_component<Dependence>();
 
     this->gui = std::make_unique<InGameStateGui>(*this);
     this->logic = std::make_unique<InGameStateLogic>
