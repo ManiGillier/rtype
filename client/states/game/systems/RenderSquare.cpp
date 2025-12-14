@@ -21,7 +21,8 @@ auto renderSquare([[maybe_unused]] Registry &reg,
 -> void
 {
     for (auto &&[_, pos, size, square_color] : zip) {
-        DrawRectangle((int) pos->x, (int) pos->y,
+        DrawRectangle((int) (pos->x - (size->height / 2.0)),
+                      (int) (pos->y - (size->width / 2.0)),
                       (int) size->height, (int) size->width,
                       square_color->color);
     }
