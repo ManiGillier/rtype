@@ -25,6 +25,7 @@
 #include "client/network/executor/NewPlayerExecutor.hpp"
 #include "client/network/executor/NewEnemyExecutor.hpp"
 #include "client/network/executor/NewBulletExecutor.hpp"
+#include "client/network/executor/DespawnPlayerExecutor.hpp"
 
 InGameStateLogic::InGameStateLogic(IGameState &gs, NetworkManager &nm)
     : gameState(gs), networkManager(nm)
@@ -38,6 +39,7 @@ InGameStateLogic::InGameStateLogic(IGameState &gs, NetworkManager &nm)
     nm.addExecutor(std::make_unique<NewPlayerExecutor>(*this));
     nm.addExecutor(std::make_unique<NewEnemyExecutor>(*this));
     nm.addExecutor(std::make_unique<NewBulletExecutor>(*this));
+    nm.addExecutor(std::make_unique<DespawnPlayerExecutor>(*this));
 }
 
 auto InGameStateLogic::update(Registry &r) -> void
@@ -85,4 +87,15 @@ auto InGameStateLogic::newBullet(std::size_t bullet_id) -> void
     r.add_component<Position>(bullet, {250, 200});
     r.add_component<HitBox>(bullet, {10, 10});
     r.add_component<ElementColor>(bullet, {BLUE});
+}
+
+auto InGameStateLogic::despawnPlayer(std::size_t player_id) -> void
+{
+    Registry &r = gameState.getRegistry();
+    std::optional<std::size_t> my_id = this->sync.get_mine_from_theirs(player_id);
+    this->sync.del_with_theirs(player_id);
+
+    if (!my_id)
+        return;
+    r.kill_entity(r.entity_from_index(*my_id));
 }

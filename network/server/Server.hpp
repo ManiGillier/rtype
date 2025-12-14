@@ -19,6 +19,7 @@
     #include <network/packets/impl/NewPlayerPacket.hpp>
     #include <network/packets/impl/NewEnemyPacket.hpp>
     #include <network/packets/impl/NewBulletPacket.hpp>
+    #include <network/packets/impl/DespawnPlayerPacket.hpp>
     // #include <network/packets/impl/ScoreUpdatePacket.hpp>
 
 class Client;
@@ -71,8 +72,10 @@ class CustomServer : public Server {
 
             std::shared_ptr<ServerClient> sc = std::static_pointer_cast<ServerClient>(client);
 
-            std::shared_ptr<Packet> p = create_packet(NewBulletPacket, 11);
+            std::shared_ptr<Packet> p = create_packet(NewPlayerPacket, 1, 2);
             sc->sendPacket(p);
+            std::shared_ptr<Packet> p2 = create_packet(DespawnPlayerPacket, 2);
+            sc->sendPacket(p2);
         }
 
         void onClientDisconnect(std::shared_ptr<IPollable> client) {
