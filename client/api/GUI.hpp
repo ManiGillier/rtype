@@ -9,7 +9,6 @@
 #define CLIENT_GUI_HPP
 
 #include "ecs/regisrty/Registry.hpp"
-#include "client/manager/EventManager.hpp"
 
 class GUI {
 public:

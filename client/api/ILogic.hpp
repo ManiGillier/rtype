@@ -9,7 +9,6 @@
 #define GAME_LOGIC_INTERFACE_HPP
 
 #include "ecs/regisrty/Registry.hpp"
-#include "client/manager/EventManager.hpp"
 
 class ILogic {
 public:

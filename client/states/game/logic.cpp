@@ -27,20 +27,6 @@ InGameStateLogic::InGameStateLogic(IGameState &gs)
     r.add_component<SquareColor>(this->player, {WHITE});
 }
 
-struct test {
-    uint8_t left : 1;
-    uint8_t right : 1;
-    uint8_t up : 1;
-    uint8_t down : 1;
-    uint8_t shoot : 1;
-    uint8_t : 3;
-};
-
-union test_2 {
-    struct test test;
-    uint8_t value;
-};
-
 auto InGameStateLogic::update(Registry &r) -> void
 {
     r.update();
