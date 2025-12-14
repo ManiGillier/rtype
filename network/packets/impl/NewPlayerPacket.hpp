@@ -44,6 +44,9 @@ public:
     std::shared_ptr<Packet> clone() const {
         return make_copy(NewPlayerPacket);
     }
+
+    auto getPlayerId() const -> std::size_t { return this->id; }
+    auto getLaserId() const -> std::size_t { return this->laser_id; }
 private:
     std::size_t id;
     std::size_t laser_id;

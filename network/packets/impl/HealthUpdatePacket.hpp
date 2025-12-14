@@ -44,6 +44,9 @@ public:
     std::shared_ptr<Packet> clone() const {
         return make_copy(HealthUpdatePacket);
     }
+
+    auto getEntityId() const -> std::size_t { return this->id; }
+    auto getHealth() const -> float { return this->health; }
 private:
     std::size_t id;
     float health;

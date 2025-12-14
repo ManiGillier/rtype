@@ -45,6 +45,9 @@ public:
     std::shared_ptr<Packet> clone() const {
         return make_copy(LaserActiveUpdatePacket);
     }
+
+    auto getEntityId() const -> std::size_t { return this->id; }
+    auto isActive() const -> bool { return this->active; }
 private:
     std::size_t id;
     bool active;
