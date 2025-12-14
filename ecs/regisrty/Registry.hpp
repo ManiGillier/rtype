@@ -12,6 +12,7 @@
 #include <typeindex>
 #include <unordered_map>
 #include <vector>
+#include <optional>
 
 class Registry
 {
@@ -25,6 +26,16 @@ class Registry
     SparseArray<Component>& get_components();
     template <class Component>
     SparseArray<Component> const& get_components() const;
+
+    template <class Component>
+    std::optional<Component> get(Entity) const;
+    template <class Component>
+    std::optional<Component> get(std::size_t) const;
+
+    template <class Component, class... Args>
+    void set(std::size_t, Args...);
+    template <class Component, class... Args>
+    void set(Entity, Args...);
 
     SparseArray<std::any>& get_components_by_id(const std::type_index &);
     SparseArray<std::any> const&
@@ -207,5 +218,34 @@ void Registry::add_global_render_system(Function&& f, Args&&... args)
         };
     _render_systems.push_back(std::move(wrapped_system));
 }
+
+template <class Component>
+std::optional<Component> Registry::get(Entity entity) const
+{
+    return this->get<Component>(entity.getId());
+}
+
+template <class Component>
+std::optional<Component> Registry::get(std::size_t id) const
+{
+    SparseArray<Component> &arr = this->get_components<Component>();
+
+    if (arr.size() <= id)
+        return std::nullopt;
+    return arr[id];
+}
+
+template <class Component, class... Args>
+void Registry::set(Entity entity, Args... args)
+{
+    this->emplace_component<Component>(entity, args...);
+}
+
+template <class Component, class... Args>
+void Registry::set(std::size_t id, Args... args)
+{
+    this->emplace_component<Component>(this->entity_from_index(id), args...);
+}
+
 
 #endif
