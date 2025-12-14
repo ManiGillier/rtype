@@ -8,8 +8,10 @@
 #ifndef COMP_DEPENDENCE_HPP
 #define COMP_DEPENDENCE_HPP
 
+#include <cstdint>
+
 struct Dependence {
-    int id;
+    std::size_t id;
 };
 
 #endif /* COMP_DEPENDENCE_HPP */
