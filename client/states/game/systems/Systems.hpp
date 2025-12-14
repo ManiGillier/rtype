@@ -11,7 +11,8 @@
 #include "ecs/regisrty/Registry.hpp"
 
 #include "shared/components/Position.hpp"
-#include "client/components/Square.hpp"
+#include "shared/components/HitBox.hpp"
+#include "client/components/Color.hpp"
 #include <unordered_map>
 
 /* LOGIC SYSTEMS */
@@ -20,7 +21,8 @@
 
 auto renderSquare([[maybe_unused]] Registry &reg,
     containers::indexed_zipper<SparseArray<Position>,
-                               SparseArray<Square>> zip)
+                               SparseArray<HitBox>,
+                               SparseArray<SquareColor>> zip)
 -> void;
 
 #endif /* RENDER_SYSTEMS_HPP */

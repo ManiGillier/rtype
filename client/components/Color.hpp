@@ -2,19 +2,18 @@
 ** EPITECH PROJECT, 2025
 ** rtype
 ** File description:
-** square comp
+** color comp
 */
 
-#ifndef SQUARE_COMP_HPP
-#define SQUARE_COMP_HPP
+#ifndef COLOR_COMP_HPP
+#define COLOR_COMP_HPP
 
 #include <cstddef>
 
 #include <raylib.h>
 
-struct Square {
-    float size;
+struct SquareColor {
     Color color;
 };
 
-#endif /* SQUARE_COMP_HPP */
+#endif /* COLOR_COMP_HPP */

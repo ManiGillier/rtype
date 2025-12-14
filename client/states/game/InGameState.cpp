@@ -16,7 +16,8 @@
 InGameState::InGameState(ClientManager &cm) : clientManager(cm)
 {
     this->reg.register_component<Position>();
-    this->reg.register_component<Square>();
+    this->reg.register_component<HitBox>();
+    this->reg.register_component<SquareColor>();
 
     this->gui = std::make_unique<InGameStateGui>(*this);
     this->logic = std::make_unique<InGameStateLogic>(*this);

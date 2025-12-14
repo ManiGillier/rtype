@@ -9,7 +9,7 @@
 
 #include "shared/components/Position.hpp"
 
-#include "client/components/Square.hpp"
+#include "client/components/Color.hpp"
 
 #include "systems/Systems.hpp"
 
@@ -23,7 +23,8 @@ InGameStateLogic::InGameStateLogic(IGameState &gs)
     Registry &r = gameState.getRegistry();
 
     r.add_component<Position>(this->player, {20, 20});
-    r.add_component<Square>(this->player, {100, WHITE});
+    r.add_component<HitBox>(this->player, {20, 20});
+    r.add_component<SquareColor>(this->player, {WHITE});
 }
 
 struct test {
