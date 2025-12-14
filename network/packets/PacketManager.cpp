@@ -6,29 +6,40 @@
 */
 
 #include "PacketManager.hpp"
-#include "network/packets/impl/PlayerPositionPacket.hpp"
-#include "impl/StartRequestPacket.hpp"
-#include "impl/ScoreUpdatePacket.hpp"
-#include "impl/GameStartPacket.hpp"
-#include "impl/PlayerDeadPacket.hpp"
-#include "impl/PlayerJoinPacket.hpp"
-#include "impl/PlayerWonPacket.hpp"
-#include "impl/PlayerLostPacket.hpp"
-#include "impl/GhostPlayerPositionPacket.hpp"
-#include "impl/GhostScoreUpdatePacket.hpp"
+
+#include "impl/ClientInputsPacket.hpp"
+#include "impl/DespawnBulletPacket.hpp"
+#include "impl/DespawnPlayerPacket.hpp"
+#include "impl/EnemyDiedPacket.hpp"
+#include "impl/GameOverPacket.hpp"
+#include "impl/HealthUpdatePacket.hpp"
+#include "impl/HitboxSizeUpdatePacket.hpp"
+#include "impl/LaserActiveUpdatePacket.hpp"
+#include "impl/NewBulletPacket.hpp"
+#include "impl/NewEnemyPacket.hpp"
+#include "impl/NewPlayerPacket.hpp"
+#include "impl/PlayerDiedPacket.hpp"
+#include "impl/PlayerHitPacket.hpp"
+#include "impl/PlayerIdPacket.hpp"
+#include "impl/PositionUpdatePacket.hpp"
 
 void PacketManager::registerPackets()
 {
-    this->packets.push_back(std::make_shared<PlayerPositionPacket>());
-    this->packets.push_back(std::make_shared<StartRequestPacket>());
-    this->packets.push_back(std::make_shared<ScoreUpdatePacket>());
-    this->packets.push_back(std::make_shared<GameStartPacket>());
-    this->packets.push_back(std::make_shared<PlayerDeadPacket>());
-    this->packets.push_back(std::make_shared<PlayerJoinPacket>());
-    this->packets.push_back(std::make_shared<PlayerWonPacket>());
-    this->packets.push_back(std::make_shared<PlayerLostPacket>());
-    this->packets.push_back(std::make_shared<GhostPlayerPositionPacket>());
-    this->packets.push_back(std::make_shared<GhostScoreUpdatePacket>());
+    this->packets.push_back(std::make_shared<ClientInputsPacket>());
+    this->packets.push_back(std::make_shared<DespawnBulletPacket>());
+    this->packets.push_back(std::make_shared<DespawnPlayerPacket>());
+    this->packets.push_back(std::make_shared<EnemyDiedPacket>());
+    this->packets.push_back(std::make_shared<GameOverPacket>());
+    this->packets.push_back(std::make_shared<HealthUpdatePacket>());
+    this->packets.push_back(std::make_shared<HitboxSizeUpdatePacket>());
+    this->packets.push_back(std::make_shared<LaserActiveUpdatePacket>());
+    this->packets.push_back(std::make_shared<NewBulletPacket>());
+    this->packets.push_back(std::make_shared<NewEnemyPacket>());
+    this->packets.push_back(std::make_shared<NewPlayerPacket>());
+    this->packets.push_back(std::make_shared<PlayerDiedPacket>());
+    this->packets.push_back(std::make_shared<PlayerHitPacket>());
+    this->packets.push_back(std::make_shared<PlayerIdPacket>());
+    this->packets.push_back(std::make_shared<PositionUpdatePacket>());
 }
 
 std::shared_ptr<Packet> PacketManager::createPacketById(uint8_t id) const
