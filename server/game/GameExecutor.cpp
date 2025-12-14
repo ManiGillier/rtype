@@ -12,10 +12,25 @@ GameExecutor::GameExecutor(RTypeServer &server)
 
 GameExecutor::~GameExecutor()
 {
+    stop();
+    join();
+}
+
+void GameExecutor::stop()
+{
     _isRunning = false;
+}
+
+void GameExecutor::join()
+{
     if (_gameThread.joinable()) {
         _gameThread.join();
     }
+}
+
+bool GameExecutor::isRunning() const
+{
+    return _isRunning;
 }
 
 bool GameExecutor::execute(Server &server, std::shared_ptr<Player> &player,
@@ -49,8 +64,16 @@ void GameExecutor::gameLoop()
 
     while (_isRunning) {
         auto startTime = std::chrono::steady_clock::now();
-        
-        game.update();
+
+        std::vector<std::shared_ptr<Packet>> receivedPackets;
+        for (auto& pollable : _rtypeServer.getPollManager().getPool()) {
+            auto& packetQueue = pollable->getReceivedPackets();
+            while (!packetQueue.empty()) {
+                receivedPackets.push_back(packetQueue.front());
+                packetQueue.pop();
+            }
+        }
+        game.update(receivedPackets);
 
         auto endTime = std::chrono::steady_clock::now();
         auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(

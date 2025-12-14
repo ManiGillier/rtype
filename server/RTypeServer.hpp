@@ -19,7 +19,6 @@ public:
     std::shared_ptr<IPollable> createClient(int fd) override;
     void onClientConnect(std::shared_ptr<IPollable> client) override;
     void onClientDisconnect(std::shared_ptr<IPollable> client) override;
-    void transferPacketsToGame();
 
     Game& getGame();
     int getTicks() const;

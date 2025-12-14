@@ -24,10 +24,13 @@ void Game::start()
     }
 }
 
-void Game::update()
+void Game::update(std::vector<std::shared_ptr<Packet>>& receivedPackets)
 {
     if (!_isRunning)
         return;
+
+    // TODO: give packets to system 
+    (void)receivedPackets;
 
     //...
     _registry.update();
@@ -59,11 +62,6 @@ Registry &Game::getRegistry()
     return _registry;
 }
 
-PacketQueue &Game::getPacketQueue()
-{
-    return _packets;
-}
-
 void Game::initializeComponents()
 {
     _registry.register_component<Acceleration>();
@@ -80,11 +78,11 @@ void Game::initializeComponents()
 void Game::initializeSystems()
 {
     _registry.add_update_system<Position, Velocity, Acceleration>(
-        Systems::movement_system, std::ref(_packets));
+        Systems::movement_system);
     _registry.add_update_system<Position, Dependence, Laser>(
-        Systems::dependence_system, std::ref(_packets));
+        Systems::dependence_system);
     _registry.add_update_system<Position, HitBox>(
-        Systems::collision_system, std::ref(_packets));
+        Systems::collision_system);
     _registry.add_update_system<Health>(
-        Systems::cleanup_system, std::ref(_packets));
+        Systems::cleanup_system);
 }

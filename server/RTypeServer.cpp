@@ -25,20 +25,6 @@ void RTypeServer::onClientDisconnect(std::shared_ptr<IPollable> client)
     LOG("Player disconnected fd=" << client->getFileDescriptor());
 }
 
-void RTypeServer::transferPacketsToGame()
-{
-    for (std::shared_ptr<IPollable> &p : this->getPollManager().getPool()) {
-        std::queue<std::shared_ptr<Packet>> &receivedQueue =
-            p->getReceivedPackets();
-
-        std::queue<std::shared_ptr<Packet>> tempQueue = receivedQueue;
-        while (!tempQueue.empty()) {
-            _game.getPacketQueue().addReceived(tempQueue.front());
-            tempQueue.pop();
-        }
-    }
-}
-
 Game &RTypeServer::getGame()
 {
     return _game;

@@ -29,6 +29,9 @@ class GameExecutor
     {
         return PacketId::START_GAME;
     };
+    void stop();
+    void join();
+    bool isRunning() const;
 
   private:
     void gameLoop();

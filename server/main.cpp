@@ -73,11 +73,13 @@ class RType
     {
         RTypeServer server(this->_port, this->_ticks);
         server.up();
-        server.getPacketListener().addExecutor(std::make_unique<GameExecutor>(server));
+
+        auto gameExecutor = std::make_unique<GameExecutor>(server);
+        _gameExecutor = gameExecutor.get();
+        server.getPacketListener().addExecutor(std::move(gameExecutor));
 
         while (1) {
             server.loop();
-            server.transferPacketsToGame();
         }
     }
 
@@ -90,6 +92,9 @@ class RType
         this->addThread(t_ser);
         for (std::thread &th : this->_threads) {
             th.join();
+        }
+        if (_gameExecutor) {
+            _gameExecutor->join();
         }
         return 0;
     }
@@ -104,6 +109,7 @@ class RType
     int _port = -1;
     bool _displayUsage = false;
     std::vector<std::thread> _threads;
+    GameExecutor* _gameExecutor = nullptr;
 };
 
 int main(int argc, char **argv)

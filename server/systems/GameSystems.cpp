@@ -1,22 +1,20 @@
 #include "GameSystems.hpp"
 #include "shared/components/Position.hpp"
 
-namespace GameConstants {
-    constexpr float SCREEN_WIDTH = 1920.0f;
-    constexpr float SCREEN_HEIGHT = 1080.0f;
-    constexpr float ENEMY_SPAWN_INTERVAL = 2.0f;
-    constexpr float BOSS_SHOOT_COOLDOWN = 1.5f;
-    constexpr int MAX_ENEMIES = 20;
-    constexpr float BOSS_DETECTION_RANGE = 800.0f;
-    constexpr float PLAYER_SPEED = 5.0f;
-}
+namespace GameConstants
+{
+constexpr float ENEMY_SPAWN_INTERVAL = 2.0f;
+constexpr float BOSS_SHOOT_COOLDOWN = 1.5f;
+constexpr int MAX_ENEMIES = 20;
+constexpr float BOSS_DETECTION_RANGE = 800.0f;
+constexpr float PLAYER_SPEED = 5.0f;
+} // namespace GameConstants
 
 auto Systems::movement_system(
     [[maybe_unused]] Registry &r,
     containers::indexed_zipper<SparseArray<Position>, SparseArray<Velocity>,
                                SparseArray<Acceleration>>
-        zipper,
-    [[maybe_unused]] PacketQueue &packets) -> void
+        zipper) -> void
 {
     // TODO: update with new position get by server
     for (auto &&[i, pos, vel, acc] : zipper) {
@@ -31,8 +29,7 @@ auto Systems::dependence_system(
     [[maybe_unused]] Registry &r,
     containers::indexed_zipper<SparseArray<Position>, SparseArray<Dependence>,
                                SparseArray<Laser>>
-        zipper,
-    [[maybe_unused]] PacketQueue &packets) -> void
+        zipper) -> void
 {
     for (auto &&[i, pos, dep, laser] : zipper) {
         auto p_pos =
@@ -45,8 +42,7 @@ auto Systems::dependence_system(
 auto Systems::collision_system(
     [[maybe_unused]] Registry &r,
     containers::indexed_zipper<SparseArray<Position>, SparseArray<HitBox>>
-        zipper,
-    [[maybe_unused]] PacketQueue &packets) -> void
+        zipper) -> void
 {
     auto &healths = r.get_components<Health>();
     auto &damagers = r.get_components<Damager>();
@@ -54,7 +50,8 @@ auto Systems::collision_system(
 
     for (auto &&[i, pos_i, hitbox_i] : zipper) {
         for (auto &&[j, pos_j, hitbox_j] : zipper) {
-            if (i >= j) continue;
+            if (i >= j)
+                continue;
 
             bool collisionX = pos_i->x < pos_j->x + hitbox_j->width &&
                               pos_i->x + hitbox_i->width > pos_j->x;
@@ -66,7 +63,9 @@ auto Systems::collision_system(
                     int damage = damagers[i]->damage;
 
                     if (resistances[j].has_value()) {
-                        damage = static_cast<int>(static_cast<float>(damage) * (1.0f - resistances[j]->ratio));
+                        damage =
+                            static_cast<int>(static_cast<float>(damage) *
+                                             (1.0f - resistances[j]->ratio));
                     }
 
                     healths[j]->pv -= damage;
@@ -75,7 +74,9 @@ auto Systems::collision_system(
                     int damage = damagers[j]->damage;
 
                     if (resistances[i].has_value()) {
-                        damage = static_cast<int>(static_cast<float>(damage) * (1.0f - resistances[i]->ratio));
+                        damage =
+                            static_cast<int>(static_cast<float>(damage) *
+                                             (1.0f - resistances[i]->ratio));
                     }
 
                     healths[i]->pv -= damage;
@@ -85,9 +86,8 @@ auto Systems::collision_system(
     }
 }
 
-auto Systems::cleanup_system(Registry &r,
-                    containers::indexed_zipper<SparseArray<Health>> zipper,
-                    [[maybe_unused]] PacketQueue &packets) -> void
+auto Systems::cleanup_system(
+    Registry &r, containers::indexed_zipper<SparseArray<Health>> zipper) -> void
 {
     for (auto &&[i, health] : zipper) {
         if (health->pv <= 0)

@@ -11,19 +11,20 @@
 #include "../../ecs/regisrty/Registry.hpp"
 #include "../factories/EntityFactory.hpp"
 #include "../player/Player.hpp"
-#include "../packet_queue/PacketQueue.hpp"
+#include "../../network/packets/Packet.hpp"
+#include <memory>
+#include <vector>
 
 class Game {
 public:
     Game();
     ~Game() = default;
     void start();
-    void update();
+    void update(std::vector<std::shared_ptr<Packet>>& receivedPackets);
     Entity addPlayer(std::shared_ptr<Player> &player);
     void removePlayer(std::shared_ptr<Player> &player);
     Entity addBodss();
     Registry& getRegistry();
-    PacketQueue& getPacketQueue();
 
 private:
     void initializeComponents();
@@ -31,7 +32,6 @@ private:
 
     Registry _registry;
     EntityFactory _factory;
-    PacketQueue _packets;
     std::unordered_map<int, Entity> _players;
     bool _isRunning;
 };
