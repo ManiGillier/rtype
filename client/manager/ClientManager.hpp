@@ -21,6 +21,8 @@
 #include <unordered_map>
 #include <vector>
 
+#include <network/client/Client.hpp>
+
 class ClientManager
 {
 public:
@@ -29,13 +31,14 @@ public:
 
     auto getGui() -> IGraphicalLibrary & { return *this->gui; }
     auto getState() -> IGameState & { return *this->_internal_state; }
-    auto launch() -> void;
+    auto launch(int argc, char **argv) -> void;
 private:
     auto changeInternalState(std::unique_ptr<IGameState>) -> void;
     auto loop() -> void;
     auto unload() -> void;
 private:
     std::unique_ptr<IGraphicalLibrary> gui;
+    std::unique_ptr<Client> client = nullptr;
 
     State _state = NONE;
     std::unique_ptr<IGameState> _internal_state = nullptr;
