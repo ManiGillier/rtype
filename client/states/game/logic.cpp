@@ -79,7 +79,7 @@ auto InGameStateLogic::newPlayer(std::size_t player_id, std::size_t laser_id)
     r.add_component<Health>(player, {0, 0});
 
     r.add_component<Dependence>(laser, {player.getId()});
-    r.add_component<Laser>(laser, {10, 100});
+    r.add_component<Laser>(laser, {true, 30});
     r.add_component<ElementColor>(laser, {GREEN});
 }
 
@@ -151,16 +151,14 @@ auto InGameStateLogic::updateHitbox(std::size_t id, float width, float height)
     this->gameState.getRegistry().set<HitBox>(id, width, height);
 }
 
-auto InGameStateLogic::updateLaser(std::size_t id, bool active)
+auto InGameStateLogic::updateLaser(std::size_t id, bool active, float length)
 -> void
 {
     std::optional<std::size_t> my_id = this->sync.get_mine_from_theirs(id);
 
     if (!my_id)
         return;
-    this->gameState.getRegistry().set<Laser>(id,
-                                             active ? 10 : 0,
-                                             active ? 100 : 0);
+    this->gameState.getRegistry().set<Laser>(id, active, length);
 }
 
 auto InGameStateLogic::managePlayerMovement() -> void

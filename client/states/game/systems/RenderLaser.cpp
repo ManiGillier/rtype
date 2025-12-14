@@ -23,9 +23,12 @@ auto renderLaser([[maybe_unused]] Registry &reg,
 
         if (!player_pos)
             continue;
-        DrawRectangle((int) (player_pos->x - laser->width / 2),
+        if (!laser->active)
+            continue;
+        int const laser_width = 5;
+        DrawRectangle((int) (player_pos->x - (float) laser_width / 2),
                       (int) player_pos->y,
-                      (int) laser->width, (int) laser->height,
+                      laser_width, (int) laser->length,
                       color->color);
     }
 }
