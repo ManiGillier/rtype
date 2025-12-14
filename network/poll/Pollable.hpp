@@ -59,7 +59,7 @@ class Pollable : public IPollable {
             this->address = address;
         }
 
-        void sendPacket(std::shared_ptr<Packet> &p) {
+        void sendPacket(std::shared_ptr<Packet> p) {
             this->getPacketSender().sendPacket(p);
             this->pm.updateFlags(this->getFileDescriptor(), this->getFlags());
         }

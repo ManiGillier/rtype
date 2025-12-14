@@ -40,6 +40,10 @@ public:
         return "CAuthentificationPacket";
     }
 
+    uint32_t getUUID() const {
+        return this->uuid;
+    }
+
     void display() {
         std::cout << "UUID=" << uuid;
     }

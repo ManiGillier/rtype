@@ -76,11 +76,11 @@ std::vector<std::shared_ptr<IPollable>> &PollManager::getPool()
     return this->pollables;
 }
 
-void PollManager::pollSockets()
+void PollManager::pollSockets(int timeout)
 {
     std::size_t socketSize = this->pollFds.size();
     LOG("Connected client size: " << this->pollFds.size());
-    int rc = poll(this->pollFds.data(), socketSize, -1);
+    int rc = poll(this->pollFds.data(), socketSize, timeout);
     std::vector<int> toDelete;
 
     if (rc < 0)

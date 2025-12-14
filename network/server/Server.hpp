@@ -16,27 +16,9 @@
     #include <vector>
 
     #include <network/packets/impl/CAuthentificationPacket.hpp>
+    #include <network/packets/impl/AuthentifiedPacket.hpp>
 
 class Client;
-
-class AuthenticationExecutor : public
-    PacketExecutorImplServer<CAuthentificationPacket, IPollable> {
-
-    /* TODO: Check if Client already exists with given UUID */
-    bool executeUnlogged(Server &server, sockaddr_in address,
-        std::shared_ptr<CAuthentificationPacket> packet) {
-
-        (void) server;
-        (void) packet;
-        LOG(address.sin_addr.s_addr << " is trying to connect ! :O");
-
-        return true;
-    }
-
-    int getPacketId() const {
-        return PacketId::C_AUTHENTICATION_PACKET;
-    }
-};
 
 class ServerPollable : public Pollable {
     public:
@@ -109,6 +91,27 @@ class CustomServer : public Server {
         void onClientDisconnect(std::shared_ptr<IPollable> client) {
             LOG("Client [" << client->getFileDescriptor() << "] disconnected !");
         }
+};
+
+class AuthenticationExecutor : public
+    PacketExecutorImplServer<CAuthentificationPacket, IPollable> {
+
+    /* TODO: Check if Client already exists with given UUID */
+    bool executeUnlogged(Server &server, sockaddr_in address,
+        std::shared_ptr<CAuthentificationPacket> packet) {
+        for (std::shared_ptr<IPollable> &c : server.getPollManager().getPool()) {
+            if (c->getUUID() == packet->getUUID() && c->getClientAddress() == std::nullopt) {
+                c->setClientAddress(address);
+                c->sendPacket(create_packet(AuthentifiedPacket));
+                return true;
+            }
+        }
+        return false;
+    }
+
+    int getPacketId() const {
+        return PacketId::C_AUTHENTICATION_PACKET;
+    }
 };
 
 #endif /* !SERVER_HPP_ */

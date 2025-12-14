@@ -5,6 +5,8 @@
 ** Server
 */
 
+#include <network/packets/impl/SAuthentificationPacket.hpp>
+
 #include <network/logger/Logger.hpp>
 #include <network/server/Server.hpp>
 #include <network/server/ServerClient.hpp>
@@ -64,6 +66,7 @@ bool Server::up()
     return this->upStatus;
 }
 
+/* TODO: down UDP server as well */
 bool Server::down()
 {
     LOG("Stopping server at " << this->port << "..");
@@ -116,6 +119,7 @@ void Server::executePackets()
     for (auto &[sender, packet] : ServerUDPPollable::getUDPReceivedPackets()) {
         this->getPacketListener().executePacket(*this, sender, packet);
     }
+    ServerUDPPollable::getUDPReceivedPackets().clear();
 }
 
 ServerPollable::ServerPollable(Server &server, int fd)
@@ -140,6 +144,7 @@ bool ServerPollable::receiveEvent(short revent)
     createdClient = server.createClient(other_socket);
     this->server.getPollManager().addPollable(createdClient);
     this->server.onClientConnect(createdClient);
+    createdClient->sendPacket(create_packet(SAuthentificationPacket, createdClient->getUUID()));
     return true;
 }
 

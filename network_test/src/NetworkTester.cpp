@@ -9,21 +9,21 @@
 #include <network/client/Client.hpp>
 #include <network/packets/listener/PacketExecutor.hpp>
 #include <network/packets/impl/ScoreUpdatePacket.hpp>
+#include <network/packets/impl/CAuthentificationPacket.hpp>
+#include <network/packets/impl/SAuthentificationPacket.hpp>
 #include <iostream>
 #include <cstring>
 
-class ScoreUpdateExecutor : public PacketExecutorImpl<ScoreUpdatePacket, ClientPollable, Client> {
+class ScoreUpdateExecutor : public PacketExecutorImpl<SAuthentificationPacket, ClientPollable, Client> {
 
-    bool execute(Client &cl, std::shared_ptr<ClientPollable> &con, std::shared_ptr<ScoreUpdatePacket> packet) {
+    bool execute(Client &cl, std::shared_ptr<ClientPollable> con, std::shared_ptr<SAuthentificationPacket> packet) {
         (void) con;
-        (void) packet;
-        LOG("YAYYYYYY !!!!! port=" << cl.getPort());
-        cl.sendPacket(create_packet(ScoreUpdatePacket, 67, 68, 69));
+        cl.sendPacket(create_packet(CAuthentificationPacket, packet->getUUID()));
         return true;
     }
 
     int getPacketId() const {
-        return PacketId::UPDATE_SCORE;
+        return PacketId::S_AUTHENTICATION_PACKET;
     }
 
 };
@@ -49,7 +49,7 @@ static int client(const std::string &ip, int port)
 {
     Client cl(ip, port);
 
-    cl.getPacketListener().addExecutor(std::make_unique<ScoreUpdateExecutor>());
+    // cl.getPacketListener().addExecutor(std::make_unique<ScoreUpdateExecutor>());
     cl.connect();
     if (!cl.isConnected()) {
         LOG_ERR("Could not connect to " << ip << ":" << port << ", aborting..");

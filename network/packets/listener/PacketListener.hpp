@@ -10,6 +10,7 @@
 
     #include "PacketExecutor.hpp"
     #include <network/poll/IPollable.hpp>
+    #include <network/logger/Logger.hpp>
     #include <vector>
 
 template<typename Entity>
@@ -47,8 +48,9 @@ class PacketListener {
             bool status = true;
 
             for (const std::unique_ptr<PacketExecutor<Entity>> &packetExecutor : this->executors) {
-                if (packetExecutor->getPacketId() == p->getId())
+                if (packetExecutor->getPacketId() == p->getId()) {
                     status &= packetExecutor->executePacket(e, con, p);
+                }
             }
             return status;
         }
