@@ -13,6 +13,8 @@
 #include "shared/components/Position.hpp"
 #include "shared/components/HitBox.hpp"
 #include "client/components/Color.hpp"
+#include "shared/components/Laser.hpp"
+#include "shared/components/Dependence.hpp"
 #include <unordered_map>
 
 /* LOGIC SYSTEMS */
@@ -22,6 +24,12 @@
 auto renderSquare([[maybe_unused]] Registry &reg,
     containers::indexed_zipper<SparseArray<Position>,
                                SparseArray<HitBox>,
+                               SparseArray<ElementColor>> zip)
+-> void;
+
+auto renderLaser([[maybe_unused]] Registry &reg,
+    containers::indexed_zipper<SparseArray<Laser>,
+                               SparseArray<Dependence>,
                                SparseArray<ElementColor>> zip)
 -> void;
 

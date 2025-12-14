@@ -228,7 +228,7 @@ std::optional<Component> Registry::get(Entity entity) const
 template <class Component>
 std::optional<Component> Registry::get(std::size_t id) const
 {
-    SparseArray<Component> &arr = this->get_components<Component>();
+    SparseArray<Component> const &arr = this->get_components<Component>();
 
     if (arr.size() <= id)
         return std::nullopt;
