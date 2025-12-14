@@ -42,13 +42,24 @@ class PacketListener {
             return false;
         }
 
-        bool executePacket(Entity &e, std::shared_ptr<IPollable> &con,
+        bool executePacket(Entity &e, std::shared_ptr<IPollable> con,
             std::shared_ptr<Packet> p) const {
             bool status = true;
 
             for (const std::unique_ptr<PacketExecutor<Entity>> &packetExecutor : this->executors) {
                 if (packetExecutor->getPacketId() == p->getId())
                     status &= packetExecutor->executePacket(e, con, p);
+            }
+            return status;
+        }
+
+        bool executePacket(Entity &e, sockaddr_in sock,
+            std::shared_ptr<Packet> p) const {
+            bool status = true;
+
+            for (const std::unique_ptr<PacketExecutor<Entity>> &packetExecutor : this->executors) {
+                if (packetExecutor->getPacketId() == p->getId())
+                    status &= packetExecutor->executePacketUnlogged(e, sock, p);
             }
             return status;
         }

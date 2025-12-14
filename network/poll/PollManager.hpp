@@ -14,7 +14,6 @@ class Server;
     #include <memory>
     #include <vector>
 
-    /* TODO: Change those to CPP includes */
     #include <poll.h>
     #include <unistd.h>
 

@@ -11,7 +11,6 @@
 #include <network/server/Server.hpp>
 #include <string>
 
-/* TODO: FIND CPP INCLUDES AS WELL */
 #include <poll.h>
 #include <unistd.h>
 #include <poll.h>
@@ -24,8 +23,10 @@
 Server::Server(int port)
 {
     this->port = port;
+    this->getPacketListener().addExecutor(std::make_unique<AuthenticationExecutor>());
 }
 
+/* TODO: Refactor this method, HOLY TRUMP WALL */
 bool Server::up()
 {
     LOG("Starting server at " << this->port << "..");
@@ -45,10 +46,19 @@ bool Server::up()
         return this->upStatus;
     if (listen(serverSocket, SOMAXCONN) == -1)
         return this->upStatus;
+    int udpSocket = socket(AF_INET, SOCK_DGRAM, 0);
+    setsockopt(udpSocket, SOL_SOCKET, SO_REUSEADDR, &optVal, sizeof(optVal));
+    if (bind(udpSocket, (struct sockaddr *) &params, sizeof(struct sockaddr_in)) == -1) {
+        close(serverSocket);
+        return this->upStatus;
+    }
     this->upStatus = true;
     this->fd = serverSocket;
+    this->udpFd = udpSocket;
     this->getPollManager().addPollable(
         std::make_shared<ServerPollable>(*this, fd));
+    this->getPollManager().addPollable(
+        std::make_shared<ServerUDPPollable>(*this, udpFd));
     LOG("Could start server at " << this->port << " !");
     return this->upStatus;
 }
@@ -71,8 +81,6 @@ bool Server::isUp() const
 {
     return this->upStatus;
 }
-
-
 
 void Server::loop()
 {
@@ -127,5 +135,22 @@ bool ServerPollable::receiveEvent(short revent)
     createdClient = server.createClient(other_socket);
     this->server.getPollManager().addPollable(createdClient);
     this->server.onClientConnect(createdClient);
+    return true;
+}
+
+ServerUDPPollable::ServerUDPPollable(Server &server, int fd) :
+    Pollable(fd, server.getPollManager()), server(server)
+{
+    return;
+}
+
+short ServerUDPPollable::getFlags() const
+{
+    return POLLIN;
+}
+
+bool ServerUDPPollable::receiveEvent(short revent)
+{
+    (void) revent;
     return true;
 }

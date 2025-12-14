@@ -15,7 +15,8 @@
 
 class PacketReader {
 public:
-    PacketReader(int fd = -1);
+    PacketReader(int fd = -1,
+        Packet::PacketMode mode=Packet::PacketMode::TCP);
     bool readPacket();
     bool createBuffer(void);
     std::queue<std::shared_ptr<Packet>> &getReceivedPackets();
@@ -24,6 +25,7 @@ private:
     std::queue<std::shared_ptr<Packet>> receivedPackets; // les queues c'est banger :D (petits tricks)
     std::shared_ptr<Packet> currentPacket = nullptr;
     std::queue<uint8_t> readData;
+    Packet::PacketMode mode;
     int _fd;
 };
 
