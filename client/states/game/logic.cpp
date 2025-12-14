@@ -130,13 +130,15 @@ auto InGameStateLogic::end() -> void
     this->shouldStop = true;
 }
 
-auto InGameStateLogic::updateHealth(std::size_t id, float health) -> void
+auto InGameStateLogic::updateHealth(std::size_t id, float health,
+                                    float max_health) -> void
 {
     std::optional<std::size_t> my_id = this->sync.get_mine_from_theirs(id);
 
     if (!my_id)
         return;
-    this->gameState.getRegistry().set<Health>(id, (int) health, 0);
+    this->gameState.getRegistry().set<Health>(id, (int) health,
+                                              (int) max_health);
 }
 
 auto InGameStateLogic::updateHitbox(std::size_t id, float width, float height)

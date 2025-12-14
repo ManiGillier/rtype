@@ -34,7 +34,7 @@ public:
     auto despawnEntity(std::size_t id) -> void;
     auto registerClientId(std::size_t id) -> void;
     auto end() -> void;
-    auto updateHealth(std::size_t id, float health) -> void;
+    auto updateHealth(std::size_t id, float health, float max_health) -> void;
     auto updateHitbox(std::size_t id, float width, float height) -> void;
     auto updateLaser(std::size_t id, bool active) -> void;
 private:

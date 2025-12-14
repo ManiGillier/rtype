@@ -24,7 +24,8 @@ public:
                  [[maybe_unused]] std::shared_ptr<ClientPollable> &con,
                  [[maybe_unused]] std::shared_ptr<HealthUpdatePacket> packet)
     {
-        this->logic.updateHealth(packet->getEntityId(), packet->getHealth());
+        this->logic.updateHealth(packet->getEntityId(), packet->getHealth(),
+                                 packet->getMaxHealth());
         return true;
     }
 
