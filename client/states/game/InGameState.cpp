@@ -33,7 +33,7 @@ InGameState::InGameState(ClientManager &cm) : clientManager(cm)
 auto InGameState::update() -> State
 {
     if (this->logic)
-        this->logic->update(this->getRegistry());
+        return this->logic->update(this->getRegistry());
     return State::NONE;
 }
 

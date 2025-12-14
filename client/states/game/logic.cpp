@@ -48,9 +48,10 @@ InGameStateLogic::InGameStateLogic(IGameState &gs, NetworkManager &nm)
     nm.addExecutor(std::make_unique<PlayerIdExecutor>(*this));
 }
 
-auto InGameStateLogic::update(Registry &r) -> void
+auto InGameStateLogic::update(Registry &r) -> State
 {
     r.update();
+    return State::NONE;
 }
 
 auto InGameStateLogic::newPlayer(std::size_t player_id, std::size_t laser_id)
