@@ -44,5 +44,6 @@ auto Sync::del_with_theirs(std::size_t their_id) -> void
     std::optional<std::size_t> my_value = this->get_mine_from_theirs(their_id);
     this->theirs_to_mine.erase(their_id);
     if (!my_value)
+        return;
     this->mine_to_theirs.erase(*my_value);
 }
