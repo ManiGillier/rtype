@@ -23,6 +23,7 @@ public:
     auto stop() -> void;
 
     auto addExecutor(std::unique_ptr<PacketExecutor<Client>>) -> void;
+    auto resetExecutors() -> void;
     auto getClient() -> Client &;
 private:
     std::atomic<bool> shouldStop = false;

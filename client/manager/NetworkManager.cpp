@@ -47,3 +47,8 @@ auto NetworkManager::getClient() -> Client &
 {
     return *this->client;
 }
+
+auto NetworkManager::resetExecutors() -> void
+{
+    this->client->getPacketListener().clearExecutors();
+}

@@ -34,11 +34,10 @@ auto ClientManager::changeState(const State state) -> void
 {
     if (this->_state == state)
         return;
+    this->networkManager->resetExecutors();
     this->changeInternalState(this->_gameStateFactory[state]());
     this->_state = state;
 }
-
-#include "client/network/executor/NewPlayerExecutor.hpp"
 
 auto ClientManager::launch(int argc, char **argv) -> void
 {
@@ -47,8 +46,6 @@ auto ClientManager::launch(int argc, char **argv) -> void
     Logger::shouldLog = true;
     this->networkManager =
         std::make_unique<NetworkManager>(argv[1], std::atoi(argv[2]));
-
-    networkManager->addExecutor(std::make_unique<NewPlayerExecutor>(*this));
 
     this->changeState(IN_GAME);
     this->loop();
