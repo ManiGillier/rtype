@@ -16,7 +16,7 @@
     #include <vector>
 
     /* TMP */
-    #include <network/packets/impl/ScoreUpdatePacket.hpp>
+    // #include <network/packets/impl/ScoreUpdatePacket.hpp>
 
 class Client;
 
@@ -67,8 +67,8 @@ class CustomServer : public Server {
             LOG("Client [" << client->getFileDescriptor() << "] connected !");
 
             std::shared_ptr<ServerClient> sc = std::static_pointer_cast<ServerClient>(client);
-            std::shared_ptr<Packet> p = create_packet(ScoreUpdatePacket, 69, 727, 420);
-            sc->sendPacket(p);
+            // std::shared_ptr<Packet> p = create_packet(ScoreUpdatePacket, 69, 727, 420);
+            // sc->sendPacket(p);
         }
 
         void onClientDisconnect(std::shared_ptr<IPollable> client) {

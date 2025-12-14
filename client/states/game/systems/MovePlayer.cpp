@@ -15,9 +15,10 @@
 
 auto movePlayer(Registry &,
     containers::indexed_zipper<SparseArray<Position>,
-                               SparseArray<PlayerControler>> zip)
+                               SparseArray<PlayerControler>>)
 -> void
 {
+    /*
     double dx = 0.0;
     double dy = 0.0;
     double speed = 20.0;
@@ -32,5 +33,5 @@ auto movePlayer(Registry &,
         dy += speed;
     dx *= GetFrameTime();
     dy *= GetFrameTime();
-    }
+    */
 }

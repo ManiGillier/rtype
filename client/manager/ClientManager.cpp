@@ -10,6 +10,9 @@
 
 #include "client/states/game/InGameState.hpp"
 
+#include <network/logger/Logger.hpp>
+
+#include <cstdlib>
 #include <memory>
 
 ClientManager::ClientManager()
@@ -35,8 +38,15 @@ auto ClientManager::changeState(const State state) -> void
     this->_state = state;
 }
 
-auto ClientManager::launch() -> void
+auto ClientManager::launch(int argc, char **argv) -> void
 {
+    if (argc != 3)
+        return;
+    Logger::shouldLog = true;
+    this->client = std::make_unique<Client>(argv[1], std::atoi(argv[2]));
+    this->client->connect();
+    if (!this->client->isConnected())
+        return;
     this->changeState(IN_GAME);
     this->loop();
 }
