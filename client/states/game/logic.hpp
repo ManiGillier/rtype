@@ -27,13 +27,13 @@ public:
 
     auto update(Registry &) -> void;
 
-    auto newPlayer(std::size_t id, std::size_t laser_id) -> void;
+    auto newPlayer(std::size_t player_id, std::size_t laser_id) -> void;
+    auto newEnemy(std::size_t enemy_id) -> void;
 private:
     IGameState &gameState;
     NetworkManager &networkManager;
 
     Sync sync;
-    std::vector<Entity> players;
 };
 
 #endif /* IN_GAME_STATE_LOGIC_HPP */

@@ -8,29 +8,29 @@
 #include <network/server/Server.hpp>
 #include <network/client/Client.hpp>
 #include <network/packets/listener/PacketExecutor.hpp>
-#include <network/packets/impl/ScoreUpdatePacket.hpp>
+#include <network/packets/impl/NewPlayerPacket.hpp>
 #include <iostream>
 #include <cstring>
 
-class ScoreUpdateExecutor : public PacketExecutorImpl<ScoreUpdatePacket, ClientPollable, Client> {
+class ScoreUpdateExecutor : public PacketExecutorImpl<NewPlayerPacket, ClientPollable, Client> {
 
-    bool execute(Client &cl, std::shared_ptr<ClientPollable> &con, std::shared_ptr<ScoreUpdatePacket> packet) {
+    bool execute(Client &cl, std::shared_ptr<ClientPollable> &con, std::shared_ptr<NewPlayerPacket> packet) {
         (void) con;
         (void) packet;
         LOG("YAYYYYYY !!!!! port=" << cl.getPort());
-        cl.sendPacket(create_packet(ScoreUpdatePacket, 67, 68, 69));
+        cl.sendPacket(create_packet(NewPlayerPacket, 67));
         return true;
     }
 
     int getPacketId() const {
-        return PacketId::UPDATE_SCORE;
+        return PacketId::NEW_PLAYER;
     }
 
 };
 
-class ScoreUpdateExecutorServ : public PacketExecutorImpl<ScoreUpdatePacket, ServerClient, Server> {
+class ScoreUpdateExecutorServ : public PacketExecutorImpl<NewPlayerPacket, ServerClient, Server> {
 
-    bool execute(Server &s, std::shared_ptr<ServerClient> &con, std::shared_ptr<ScoreUpdatePacket> packet) {
+    bool execute(Server &s, std::shared_ptr<ServerClient> &con, std::shared_ptr<NewPlayerPacket> packet) {
         (void) con;
         (void) packet;
         (void) s;
@@ -40,7 +40,7 @@ class ScoreUpdateExecutorServ : public PacketExecutorImpl<ScoreUpdatePacket, Ser
     }
 
     int getPacketId() const {
-        return PacketId::UPDATE_SCORE;
+        return PacketId::NEW_PLAYER;
     }
 
 };
@@ -55,8 +55,10 @@ static int client(const std::string &ip, int port)
         LOG_ERR("Could not connect to " << ip << ":" << port << ", aborting..");
         return 1;
     }
-    while (cl.isConnected())
+    while (cl.isConnected()) {
         cl.loop();
+        cl.executePackets();
+    }
     return 0;
 }
 
