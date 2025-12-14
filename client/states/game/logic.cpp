@@ -24,6 +24,7 @@
 
 #include "client/network/executor/NewPlayerExecutor.hpp"
 #include "client/network/executor/NewEnemyExecutor.hpp"
+#include "client/network/executor/NewBulletExecutor.hpp"
 
 InGameStateLogic::InGameStateLogic(IGameState &gs, NetworkManager &nm)
     : gameState(gs), networkManager(nm)
@@ -36,6 +37,7 @@ InGameStateLogic::InGameStateLogic(IGameState &gs, NetworkManager &nm)
 
     nm.addExecutor(std::make_unique<NewPlayerExecutor>(*this));
     nm.addExecutor(std::make_unique<NewEnemyExecutor>(*this));
+    nm.addExecutor(std::make_unique<NewBulletExecutor>(*this));
 }
 
 auto InGameStateLogic::update(Registry &r) -> void
@@ -72,4 +74,15 @@ auto InGameStateLogic::newEnemy(std::size_t enemy_id) -> void
     r.add_component<HitBox>(enemy, {50, 50});
     r.add_component<ElementColor>(enemy, {ORANGE});
     r.add_component<Health>(enemy, {0, 0});
+}
+
+auto InGameStateLogic::newBullet(std::size_t bullet_id) -> void
+{
+    Registry &r = gameState.getRegistry();
+    Entity bullet = r.spawn_entity();
+
+    this->sync.add(bullet.getId(), bullet_id);
+    r.add_component<Position>(bullet, {250, 200});
+    r.add_component<HitBox>(bullet, {10, 10});
+    r.add_component<ElementColor>(bullet, {BLUE});
 }
