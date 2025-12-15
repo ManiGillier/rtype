@@ -22,10 +22,13 @@ public:
 
     Game& getGame();
     int getTicks() const;
+    void setStart();
+    bool canStart() const;
 
 private:
-    int _next_id;
+    std::size_t _next_id;
     int _ticks;
+    bool _canStartGame;
     Game _game;
 };
 

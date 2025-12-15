@@ -1,10 +1,11 @@
+#include "./game/GameExecutor.hpp"
+#include "./game/ClientInputsExecutor.hpp"
 #include "RTypeServer.hpp"
 #include "network/logger/Logger.hpp"
 #include <iostream>
 #include <memory>
 #include <string>
 #include <thread>
-#include "./game/GameExecutor.hpp"
 
 class ArgsError : public std::exception
 {
@@ -73,13 +74,21 @@ class RType
     {
         RTypeServer server(this->_port, this->_ticks);
         server.up();
-
-        auto gameExecutor = std::make_unique<GameExecutor>(server);
-        _gameExecutor = gameExecutor.get();
-        server.getPacketListener().addExecutor(std::move(gameExecutor));
+        server.getPacketListener().addExecutor(
+            std::make_unique<GameExecutor>(server));
+        server.getPacketListener().addExecutor(
+            std::make_unique<ClientInputsExecutor>(server));
 
         while (1) {
             server.loop();
+            if (_hasStarted) {
+                server.getGame().sendAllPackets(server);
+            }
+            if (server.canStart() && !_hasStarted) {
+                this->addThread(
+                    std::thread(&Game::loop, std::ref(server.getGame()), this->_ticks));
+                _hasStarted = !_hasStarted;
+            }
         }
     }
 
@@ -88,18 +97,13 @@ class RType
         if (_displayUsage)
             return displayUsage();
 
-        std::thread t_ser(&RType::networkLoop, this);
-        this->addThread(t_ser);
-        for (std::thread &th : this->_threads) {
+        this->addThread(std::thread(&RType::networkLoop, this));
+        for (std::thread &th : this->_threads)
             th.join();
-        }
-        if (_gameExecutor) {
-            _gameExecutor->join();
-        }
         return 0;
     }
 
-    void addThread(std::thread &t)
+    void addThread(std::thread &&t)
     {
         this->_threads.push_back(std::move(t));
     }
@@ -108,8 +112,8 @@ class RType
     int _ticks = 60;
     int _port = -1;
     bool _displayUsage = false;
+    bool _hasStarted = false;
     std::vector<std::thread> _threads;
-    GameExecutor* _gameExecutor = nullptr;
 };
 
 int main(int argc, char **argv)

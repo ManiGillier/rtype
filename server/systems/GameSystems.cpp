@@ -1,41 +1,84 @@
 #include "GameSystems.hpp"
+#include "../game/Game.hpp"
 #include "shared/components/Position.hpp"
+#include <network/logger/Logger.hpp>
+#include <network/packets/impl/PositionUpdatePacket.hpp>
 
 namespace GameConstants
 {
-constexpr float ENEMY_SPAWN_INTERVAL = 2.0f;
-constexpr float BOSS_SHOOT_COOLDOWN = 1.5f;
-constexpr int MAX_ENEMIES = 20;
-constexpr float BOSS_DETECTION_RANGE = 800.0f;
+// constexpr int width = 800;
+// constexpr int height = 600;
+// constexpr float ENEMY_SPAWN_INTERVAL = 2.0f;
+// constexpr float BOSS_SHOOT_COOLDOWN = 1.5f;
+// constexpr int MAX_ENEMIES = 20;
+// constexpr float BOSS_DETECTION_RANGE = 800.0f;
 constexpr float PLAYER_SPEED = 5.0f;
 } // namespace GameConstants
 
 auto Systems::movement_system(
     [[maybe_unused]] Registry &r,
-    containers::indexed_zipper<SparseArray<Position>, SparseArray<Velocity>,
-                               SparseArray<Acceleration>>
-        zipper) -> void
+    [[maybe_unused]] containers::indexed_zipper<
+        SparseArray<Position>, SparseArray<Velocity>, SparseArray<Acceleration>>
+        zipper,
+    [[maybe_unused]] Game &game) -> void
 {
-    // TODO: update with new position get by server
     for (auto &&[i, pos, vel, acc] : zipper) {
         pos->x += vel->x;
         pos->y += vel->y;
         vel->x += acc->x;
         vel->y += acc->y;
+        game.addPacketToSend(
+            std::make_shared<PositionUpdatePacket>(i, pos->x, pos->y));
     }
+}
+
+auto Systems::update_player_system(Registry &r,
+                                   std::shared_ptr<ClientInputsPacket> packet,
+                                   std::size_t id) -> void
+{
+    auto &positions = r.get_components<Position>();
+    auto &velocities = r.get_components<Velocity>();
+
+    if (positions.size() <= id || !positions[id].has_value())
+        return;
+    if (velocities.size() <= id || !velocities[id].has_value())
+        return;
+
+    auto inputs = packet->getInputs();
+    auto &vel = velocities[id].value();
+
+    vel.x = 0.0f;
+    vel.y = 0.0f;
+
+    if (inputs.value.left)
+        vel.x -= GameConstants::PLAYER_SPEED;
+    if (inputs.value.right)
+        vel.x += GameConstants::PLAYER_SPEED;
+    if (inputs.value.up)
+        vel.y -= GameConstants::PLAYER_SPEED;
+    if (inputs.value.down)
+        vel.y += GameConstants::PLAYER_SPEED;
+
+    auto &pos = positions[id].value();
+    pos.x += vel.x;
+    pos.y += vel.y;
+    LOG("position update");
 }
 
 auto Systems::dependence_system(
     [[maybe_unused]] Registry &r,
     containers::indexed_zipper<SparseArray<Position>, SparseArray<Dependence>,
                                SparseArray<Laser>>
-        zipper) -> void
+        zipper,
+    [[maybe_unused]] Game &game) -> void
 {
     for (auto &&[i, pos, dep, laser] : zipper) {
         auto p_pos =
             r.get_components<Position>()[static_cast<std::size_t>(dep->id)];
         pos->x = p_pos->x;
         pos->y = p_pos->y;
+        game.addPacketToSend(
+            std::make_shared<PositionUpdatePacket>(i, pos->x, pos->y));
     }
 }
 
