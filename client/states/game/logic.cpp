@@ -33,6 +33,7 @@
 #include "client/network/executor/HealthUpdateExecutor.hpp"
 #include "client/network/executor/HitboxSizeUpdateExecutor.hpp"
 #include "client/network/executor/LaserActivateUpdateExecutor.hpp"
+#include "client/network/executor/PositionUpdateExecutor.hpp"
 #include <network/packets/impl/ClientInputsPacket.hpp>
 
 InGameStateLogic::InGameStateLogic(IGameState &gs, NetworkManager &nm)
@@ -55,6 +56,7 @@ InGameStateLogic::InGameStateLogic(IGameState &gs, NetworkManager &nm)
     nm.addExecutor(std::make_unique<HealthUpdateExecutor>(*this));
     nm.addExecutor(std::make_unique<HitboxSizeUpdateExecutor>(*this));
     nm.addExecutor(std::make_unique<LaserActiveUpdateExecutor>(*this));
+    nm.addExecutor(std::make_unique<PositionUpdateExecutor>(*this));
 }
 
 auto InGameStateLogic::update(Registry &r) -> State
@@ -174,4 +176,14 @@ auto InGameStateLogic::managePlayerMovement() -> void
 
     this->networkManager
         .sendPacket(std::make_shared<ClientInputsPacket>(clientInputs));
+}
+
+auto InGameStateLogic::updatePosition(std::size_t id, float x, float y)
+-> void
+{
+    std::optional<std::size_t> my_id = this->sync.get_mine_from_theirs(id);
+
+    if (!my_id)
+        return;
+    this->gameState.getRegistry().set<Position>(id, x, y);
 }
