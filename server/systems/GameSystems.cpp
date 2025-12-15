@@ -1,13 +1,14 @@
 #include "GameSystems.hpp"
 #include "../game/Game.hpp"
+#include "shared/components/Dependence.hpp"
 #include "shared/components/Position.hpp"
 #include <network/logger/Logger.hpp>
 #include <network/packets/impl/PositionUpdatePacket.hpp>
 
 namespace GameConstants
 {
-// constexpr int width = 800;
-// constexpr int height = 600;
+constexpr float width = 800;
+constexpr float height = 600;
 // constexpr float ENEMY_SPAWN_INTERVAL = 2.0f;
 // constexpr float BOSS_SHOOT_COOLDOWN = 1.5f;
 // constexpr int MAX_ENEMIES = 20;
@@ -38,6 +39,8 @@ auto Systems::update_player_system(Registry &r,
 {
     auto &positions = r.get_components<Position>();
     auto &velocities = r.get_components<Velocity>();
+    auto &dependences = r.get_components<Dependence>();
+    auto &lasers = r.get_components<Laser>();
 
     if (positions.size() <= id || !positions[id].has_value())
         return;
@@ -62,24 +65,20 @@ auto Systems::update_player_system(Registry &r,
     auto &pos = positions[id].value();
     pos.x += vel.x;
     pos.y += vel.y;
-    LOG("position update");
-}
 
-auto Systems::dependence_system(
-    [[maybe_unused]] Registry &r,
-    containers::indexed_zipper<SparseArray<Position>, SparseArray<Dependence>,
-                               SparseArray<Laser>>
-        zipper,
-    [[maybe_unused]] Game &game) -> void
-{
-    for (auto &&[i, pos, dep, laser] : zipper) {
-        auto p_pos =
-            r.get_components<Position>()[static_cast<std::size_t>(dep->id)];
-        pos->x = p_pos->x;
-        pos->y = p_pos->y;
-        game.addPacketToSend(
-            std::make_shared<PositionUpdatePacket>(i, pos->x, pos->y));
+    for (std::size_t i = 0; i < dependences.size(); ++i) {
+        if (dependences[i].has_value() && dependences[i].value().id == id) {
+            if (i < positions.size() && positions[i].has_value()) {
+                positions[i].value().x = pos.x;
+                positions[i].value().y = pos.y;
+            }
+            if (i < lasers.size() && lasers[i].has_value()) {
+                lasers[i].value().active = inputs.value.shoot;
+                lasers[i].value().length = GameConstants::height - pos.x;
+            }
+        }
     }
+    LOG("position update");
 }
 
 auto Systems::collision_system(

@@ -37,13 +37,6 @@ auto update_player_system(Registry &r,
                           std::shared_ptr<ClientInputsPacket> packet,
                           std::size_t id) -> void;
 
-auto dependence_system(
-    Registry &r,
-    containers::indexed_zipper<SparseArray<Position>, SparseArray<Dependence>,
-                               SparseArray<Laser>>
-        zipper,
-    [[maybe_unused]] Game &game) -> void;
-
 auto collision_system(
     Registry &r,
     containers::indexed_zipper<SparseArray<Position>, SparseArray<HitBox>>

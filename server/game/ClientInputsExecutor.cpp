@@ -1,7 +1,10 @@
 #include "./ClientInputsExecutor.hpp"
 #include "../RTypeServer.hpp"
 #include "../systems/GameSystems.hpp"
+#include "network/packets/impl/LaserActiveUpdatePacket.hpp"
 #include "network/packets/impl/PositionUpdatePacket.hpp"
+#include "shared/components/Dependence.hpp"
+#include "shared/components/Laser.hpp"
 #include "shared/components/Position.hpp"
 #include <mutex>
 
@@ -40,6 +43,25 @@ bool ClientInputsExecutor::execute(Server &server,
         pollable->sendPacket(position_packet);
     }
 
+    {
+        std::lock_guard<std::mutex> lock(mutex);
+        auto &dependences = registry.get_components<Dependence>();
+        auto &lasers = registry.get_components<Laser>();
+
+        for (std::size_t i = 0; i < dependences.size(); ++i) {
+            if (dependences[i].has_value() &&
+                dependences[i].value().id == player_id &&
+                i < lasers.size() && lasers[i].has_value()) {
+
+                auto laser_packet = create_packet(LaserActiveUpdatePacket, i,
+                    lasers[i].value().active, lasers[i].value().length);
+
+                for (auto &pollable : server.getPollManager().getPool()) {
+                    pollable->sendPacket(laser_packet);
+                }
+            }
+        }
+    }
     return true;
 }
 

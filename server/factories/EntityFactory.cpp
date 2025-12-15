@@ -43,7 +43,7 @@ Entity EntityFactory::createPlayerLaser(int id)
 
     _registry.emplace_component<Position>(playerLaser, 50.0f, 300.0f);
     _registry.emplace_component<Dependence>(playerLaser, id);
-    _registry.emplace_component<Laser>(playerLaser, false);
+    _registry.emplace_component<Laser>(playerLaser, false, 15.0f);
     _registry.emplace_component<HitBox>(playerLaser, 0.0f, 0.0f);
     _registry.emplace_component<Damager>(playerLaser, 10);
     return playerLaser;
