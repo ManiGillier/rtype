@@ -50,6 +50,10 @@ public:
     std::shared_ptr<Packet> clone() const {
         return make_copy(HitboxSizeUpdatePacket);
     }
+
+    auto getEntityId() const -> std::size_t { return this->id; }
+    auto getWidth() const -> float { return this->width; }
+    auto getHeight() const -> float { return this->height; }
 private:
     std::size_t id;
     float width;

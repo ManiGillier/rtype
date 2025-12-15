@@ -15,7 +15,8 @@ InGameStateGui::InGameStateGui(IGameState &gm) : gameState(gm)
 {
     Registry &r = gameState.getRegistry();
 
-    r.add_render_system<Position, Square>(renderSquare);
+    r.add_render_system<Position, HitBox, ElementColor>(renderSquare);
+    r.add_render_system<Laser, Dependence, ElementColor>(renderLaser);
 }
 
 auto InGameStateGui::render(Registry &r) -> void

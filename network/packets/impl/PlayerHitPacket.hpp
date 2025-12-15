@@ -44,6 +44,9 @@ public:
     std::shared_ptr<Packet> clone() const {
         return make_copy(PlayerHitPacket);
     }
+
+    auto getEntityId() const -> std::size_t { return this->hit_id; }
+    auto getPlayerId() const -> std::size_t { return this->id; }
 private:
     std::size_t id;
     std::size_t hit_id;

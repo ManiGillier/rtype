@@ -98,7 +98,7 @@ class indexed_zipper
 template <class... Containers>
 indexed_zipper_iterator<Containers...>::indexed_zipper_iterator(
     iterator_tuple const& it_tuple, size_t max, bool skip_check)
-    : _current(it_tuple), _max(max), _idx(0)
+    : _current(it_tuple), _max(max), _idx(skip_check ? max : 0)
 {
     if (_idx < _max && (skip_check || !all_set(_seq))) {
         incr_all(_seq);
@@ -156,7 +156,7 @@ template <class... Containers>
 template <size_t... Is>
 bool indexed_zipper_iterator<Containers...>::all_set(std::index_sequence<Is...>)
 {
-    return ((*std::get<Is>(_current)).has_value() && ...);
+    return ((std::get<Is>(_current))->has_value() && ...);
 }
 
 template <class... Containers>

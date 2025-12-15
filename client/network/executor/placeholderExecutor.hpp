@@ -8,7 +8,7 @@
 #ifndef PLACEHOLDER_EXECUTOR_HPP
 #define PLACEHOLDER_EXECUTOR_HPP
 
-#include "client/manager/ClientManager.hpp"
+#include "client/states/game/logic.hpp"
 
 #include <memory>
 #include <network/packets/listener/PacketExecutor.hpp>
@@ -18,12 +18,13 @@ class PlaceholderExecutor : public PacketExecutorImplClient
 <PlaceholderPacket, ClientPollable>
 {
 public:
-    PlaceholderExecutor(ClientManager &cm) : clientManager(cm) {}
+    PlaceholderExecutor(InGameStateLogic &logic) : logic(logic) {}
 
     bool execute([[maybe_unused]]Client &cl,
                  [[maybe_unused]] std::shared_ptr<ClientPollable> &con,
                  [[maybe_unused]] std::shared_ptr<PlaceholderPacket> packet)
     {
+        this->logic.(packet->getEntityId());
         return true;
     }
 
@@ -31,7 +32,7 @@ public:
         return PacketId::PLACEHOLDER;
     }
 private:
-    [[maybe_unused]] ClientManager &clientManager;
+    [[maybe_unused]] InGameStateLogic &logic;
 };
 
 #endif /* PLACEHOLDER_EXECUTOR_HPP */

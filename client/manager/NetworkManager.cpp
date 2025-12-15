@@ -47,3 +47,13 @@ auto NetworkManager::getClient() -> Client &
 {
     return *this->client;
 }
+
+auto NetworkManager::resetExecutors() -> void
+{
+    this->client->getPacketListener().clearExecutors();
+}
+
+auto NetworkManager::sendPacket(std::shared_ptr<Packet> p) -> void
+{
+    this->client->sendPacket(p);
+}

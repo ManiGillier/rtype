@@ -24,7 +24,7 @@ ClientManager::ClientManager()
     };
 }
 
-auto ClientManager::changeInternalState(std::unique_ptr<IGameState> state)
+inline auto ClientManager::changeInternalState(std::unique_ptr<IGameState> state)
 -> void
 {
     this->_internal_state = std::move(state);
@@ -32,23 +32,19 @@ auto ClientManager::changeInternalState(std::unique_ptr<IGameState> state)
 
 auto ClientManager::changeState(const State state) -> void
 {
-    if (this->_state == state)
-        return;
+    this->networkManager->resetExecutors();
     this->changeInternalState(this->_gameStateFactory[state]());
     this->_state = state;
 }
 
-#include "client/network/executor/NewPlayerExecutor.hpp"
-
 auto ClientManager::launch(int argc, char **argv) -> void
 {
-    if (argc != 3)
+    if (argc != 3 && argc != 4)
         return;
-    Logger::shouldLog = true;
+    if (argc == 4 && std::string(argv[5]) == "-d")
+        Logger::shouldLog = true;
     this->networkManager =
         std::make_unique<NetworkManager>(argv[1], std::atoi(argv[2]));
-
-    networkManager->addExecutor(std::make_unique<NewPlayerExecutor>(*this));
 
     this->changeState(IN_GAME);
     this->loop();

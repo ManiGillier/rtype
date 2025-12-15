@@ -12,21 +12,28 @@
 #include <memory>
 
 #include "systems/Systems.hpp"
+#include "shared/components/Dependence.hpp"
+#include "shared/components/Health.hpp"
+#include "shared/components/Laser.hpp"
 
 InGameState::InGameState(ClientManager &cm) : clientManager(cm)
 {
     this->reg.register_component<Position>();
-    this->reg.register_component<Square>();
-    this->reg.register_component<PlayerControler>();
+    this->reg.register_component<HitBox>();
+    this->reg.register_component<ElementColor>();
+    this->reg.register_component<Health>();
+    this->reg.register_component<Dependence>();
+    this->reg.register_component<Laser>();
 
     this->gui = std::make_unique<InGameStateGui>(*this);
-    this->logic = std::make_unique<InGameStateLogic>(*this);
+    this->logic = std::make_unique<InGameStateLogic>
+                      (*this, this->clientManager.getNetworkManager());
 }
 
 auto InGameState::update() -> State
 {
     if (this->logic)
-        this->logic->update(this->getRegistry());
+        return this->logic->update(this->getRegistry());
     return State::NONE;
 }
 

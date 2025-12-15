@@ -33,6 +33,8 @@ public:
 
     auto getGui() -> IGraphicalLibrary & { return *this->gui; }
     auto getState() -> IGameState & { return *this->_internal_state; }
+    auto getNetworkManager() -> NetworkManager &
+        { return *this->networkManager; }
     auto launch(int argc, char **argv) -> void;
 private:
     auto changeInternalState(std::unique_ptr<IGameState>) -> void;

@@ -59,6 +59,8 @@ public:
     std::shared_ptr<Packet> clone() const {
         return make_copy(GameOverPacket);
     }
+
+    auto getEndGameState() const -> enum EndGameState { return this->egs; }
 private:
     enum EndGameState egs;
 };

@@ -16,6 +16,14 @@
     #include <vector>
 
     /* TMP */
+    #include <network/packets/impl/NewPlayerPacket.hpp>
+    #include <network/packets/impl/NewEnemyPacket.hpp>
+    #include <network/packets/impl/NewBulletPacket.hpp>
+    #include <network/packets/impl/DespawnPlayerPacket.hpp>
+    #include <network/packets/impl/DespawnBulletPacket.hpp>
+    #include <network/packets/impl/EnemyDiedPacket.hpp>
+    #include <network/packets/impl/PlayerIdPacket.hpp>
+    #include <network/packets/impl/GameOverPacket.hpp>
     // #include <network/packets/impl/ScoreUpdatePacket.hpp>
 
 class Client;
@@ -67,8 +75,12 @@ class CustomServer : public Server {
             LOG("Client [" << client->getFileDescriptor() << "] connected !");
 
             std::shared_ptr<ServerClient> sc = std::static_pointer_cast<ServerClient>(client);
-            // std::shared_ptr<Packet> p = create_packet(ScoreUpdatePacket, 69, 727, 420);
-            // sc->sendPacket(p);
+
+            {
+                std::shared_ptr<Packet> p =
+                    create_packet(NewPlayerPacket, 1, 2);
+                sc->sendPacket(p);
+            }
         }
 
         void onClientDisconnect(std::shared_ptr<IPollable> client) {
