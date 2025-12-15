@@ -8,16 +8,17 @@
 #include <network/server/Server.hpp>
 #include <network/client/Client.hpp>
 #include <network/packets/listener/PacketExecutor.hpp>
+#include <network/packets/impl/CAuthentificationPacket.hpp>
+#include <network/packets/impl/SAuthentificationPacket.hpp>
+#include <network/packets/impl/AuthentifiedPacket.hpp>
 #include <network/packets/impl/NewPlayerPacket.hpp>
 #include <iostream>
 #include <cstring>
 
-class ScoreUpdateExecutor : public PacketExecutorImpl<NewPlayerPacket, ClientPollable, Client> {
-
-    bool execute(Client &cl, std::shared_ptr<ClientPollable> &con, std::shared_ptr<NewPlayerPacket> packet) {
+class ScoreUpdateExecutor : public PacketExecutorImplClient<AuthentifiedPacket, ClientPollable> {
+    bool execute(Client &cl, std::shared_ptr<ClientPollable> con, std::shared_ptr<AuthentifiedPacket> packet) {
         (void) con;
         (void) packet;
-        LOG("YAYYYYYY !!!!! port=" << cl.getPort());
         cl.sendPacket(create_packet(NewPlayerPacket, 67));
         return true;
     }
@@ -29,14 +30,11 @@ class ScoreUpdateExecutor : public PacketExecutorImpl<NewPlayerPacket, ClientPol
 };
 
 class ScoreUpdateExecutorServ : public PacketExecutorImpl<NewPlayerPacket, ServerClient, Server> {
-
-    bool execute(Server &s, std::shared_ptr<ServerClient> &con, std::shared_ptr<NewPlayerPacket> packet) {
+    bool execute(Server &s, std::shared_ptr<ServerClient> con, std::shared_ptr<NewPlayerPacket> packet) {
         (void) con;
         (void) packet;
         (void) s;
-        LOG("WOOOHOOOO !!!!");
-        packet->display();
-        return false;
+        return true;
     }
 
     int getPacketId() const {

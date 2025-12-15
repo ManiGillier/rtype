@@ -22,7 +22,7 @@ public:
     NewEnemyExecutor(InGameStateLogic &logic) : logic(logic) {}
 
     bool execute([[maybe_unused]] Client &cl,
-                 [[maybe_unused]] std::shared_ptr<ClientPollable> &con,
+                 [[maybe_unused]] std::shared_ptr<ClientPollable> con,
                  [[maybe_unused]] std::shared_ptr<NewEnemyPacket> packet)
     {
         this->logic.newEnemy(packet->getEntityId());

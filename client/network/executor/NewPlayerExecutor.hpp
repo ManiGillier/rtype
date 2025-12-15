@@ -22,7 +22,7 @@ public:
     NewPlayerExecutor(InGameStateLogic &logic) : logic(logic) {}
 
     bool execute([[maybe_unused]] Client &cl,
-                 [[maybe_unused]] std::shared_ptr<ClientPollable> &con,
+                 [[maybe_unused]] std::shared_ptr<ClientPollable> con,
                  [[maybe_unused]] std::shared_ptr<NewPlayerPacket> packet)
     {
         this->logic.newPlayer(packet->getPlayerId(), packet->getLaserId());
