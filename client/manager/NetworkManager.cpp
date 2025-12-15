@@ -22,6 +22,8 @@ NetworkManager::~NetworkManager()
 
 auto NetworkManager::loop() -> void
 {
+    // TODO: Remove this temp fix
+    Logger::shouldLog = true;
     this->client->connect();
     if (!this->client->isConnected())
         return;
