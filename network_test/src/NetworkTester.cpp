@@ -10,38 +10,41 @@
 #include <network/client/Client.hpp>
 #include <network/packets/listener/PacketExecutor.hpp>
 #include <network/packets/impl/ScoreUpdatePacket.hpp>
+#include <network/packets/impl/CAuthentificationPacket.hpp>
+#include <network/packets/impl/SAuthentificationPacket.hpp>
+#include <network/packets/impl/AuthentifiedPacket.hpp>
+#include <network/packets/impl/PlayerPositionPacket.hpp>
 #include <iostream>
 #include <cstring>
 
-class ScoreUpdateExecutor : public PacketExecutorImpl<ScoreUpdatePacket, ClientPollable, Client> {
+class ScoreUpdateExecutor : public PacketExecutorImplClient<AuthentifiedPacket, ClientPollable> {
 
-    bool execute(Client &cl, std::shared_ptr<ClientPollable> &con, std::shared_ptr<ScoreUpdatePacket> packet) {
+    bool execute(Client &cl, std::shared_ptr<ClientPollable> con, std::shared_ptr<AuthentifiedPacket> packet) {
         (void) con;
         (void) packet;
-        LOG("YAYYYYYY !!!!! port=" << cl.getPort());
-        cl.sendPacket(create_packet(ScoreUpdatePacket, 67, 68, 69));
+        for (int i = 0; i < 10; i++)
+            cl.sendPacket(create_packet(PlayerPositionPacket, 69.727f));
         return true;
     }
 
     int getPacketId() const {
-        return PacketId::UPDATE_SCORE;
+        return PacketId::AUTHENTIFIED_PACKET;
     }
 
 };
 
-class ScoreUpdateExecutorServ : public PacketExecutorImpl<ScoreUpdatePacket, ServerClient, Server> {
+class ScoreUpdateExecutorServ : public PacketExecutorImplServer<PlayerPositionPacket, ServerClient> {
 
-    bool execute(Server &s, std::shared_ptr<ServerClient> &con, std::shared_ptr<ScoreUpdatePacket> packet) {
+    bool execute(Server &s, std::shared_ptr<ServerClient> con, std::shared_ptr<PlayerPositionPacket> packet) {
         (void) con;
         (void) packet;
         (void) s;
-        LOG("WOOOHOOOO !!!!");
-        packet->display();
-        return false;
+        LOG("Position [" << packet->getPosition() << "] par le client: " << con->getFileDescriptor());
+        return true;
     }
 
     int getPacketId() const {
-        return PacketId::UPDATE_SCORE;
+        return PacketId::UPDATE_POSITION;
     }
 
 };

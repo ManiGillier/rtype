@@ -15,7 +15,7 @@ class PacketLogger {
     public:
         enum PacketMethod {RECEIVED, SENT};
 
-        static void logPacket(std::shared_ptr<Packet> &packet, PacketMethod method, int fd) {
+        static void logPacket(const std::shared_ptr<Packet> &packet, PacketMethod method, int fd) {
             LOG((method == RECEIVED ? "Received" : "Sent") <<
                 " packet " << packet->getName() << " with ID " << (int) packet->getId() << " and data {");
             packet->display();

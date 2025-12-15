@@ -7,10 +7,14 @@
 
 #include <network/client/Client.hpp>
 #include <network/logger/Logger.hpp>
+#include <network/packets/PacketLogger.hpp>
+#include <network/packets/PacketManager.hpp>
 #include <unistd.h>
 #include <cstring>
 #include <arpa/inet.h>
 #include "Client.hpp"
+
+#include <network/packets/impl/CAuthentificationPacket.hpp>
 
 Client::Client(const std::string &ip, int port)
 {
@@ -23,6 +27,8 @@ Client::Client(const std::string &ip, int port)
     if (serverSocket != -1)
         setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR,
                &optVal, sizeof(optVal));
+    this->getPacketListener().addExecutor(std::make_unique<ClientAuthExecutor>());
+    this->getPacketListener().addExecutor(std::make_unique<ClientSetAuthExecutor>());
 }
 
 bool Client::connect()
@@ -47,8 +53,22 @@ bool Client::connect()
     if (connectValue == -1) {
         return false;
     }
+    this->udpSocket = socket(AF_INET, SOCK_DGRAM, 0);
+    if (this->udpSocket == -1) {
+        return false;
+    }
+    connectValue = ::connect(this->udpSocket, (struct sockaddr *) &params,
+                           sizeof(struct sockaddr_in));
+    if (connectValue == -1) {
+        close(this->udpSocket);
+        this->udpSocket = -1;
+        return false;
+    }
+
     this->connected = true;
+    this->pm.addPollable(std::make_shared<ClientPollableUDP>(*this, this->udpSocket, params));
     this->pm.addPollable(std::make_shared<ClientPollable>(*this, this->fd));
+    this->udpServerAddress = params;
     return this->connected;
 }
 
@@ -58,12 +78,15 @@ bool Client::disconnect()
 
     if (!this->connected)
         return false;
-    if (this->fd == -1)
-        return false;
-    close(this->fd);
+    if (this->fd != -1)
+        close(this->fd);
     this->fd = -1;
+    if (this->udpSocket != -1)
+        close(udpSocket);
+    this->udpSocket = -1;
     this->connected = false;
     this->pm.clear();
+    this->authentified = false;
     return true;
 }
 bool Client::isConnected() const
@@ -92,17 +115,55 @@ void Client::executePackets()
     }
 }
 
+void Client::sendUDPPackets()
+{
+    for (std::shared_ptr<IPollable> &p : this->getPollManager().getPool()) {
+        for (auto &[packet, addr] : p->getPacketsToSendUDP()) {
+            (void) addr;
+            packet->clearData();
+            packet->serialize();
+            std::vector<uint8_t> toSend;
+            toSend.push_back(packet->getId());
+            std::queue<uint8_t> packetData = packet->getData();
+            while (!packetData.empty()) {
+                toSend.push_back(packetData.front());
+                packetData.pop();
+            }
+            sendto(this->udpSocket, toSend.data(), toSend.size(), 0,
+                (struct sockaddr*)&(this->udpServerAddress), sizeof(this->udpServerAddress));
+            PacketLogger::logPacket(packet, PacketLogger::PacketMethod::SENT, this->udpSocket);
+        }
+        p->getPacketsToSendUDP().clear();
+    }
+}
+
 void Client::loop()
 {
     if (!this->connected)
         return;
-    if (this->connected && this->getPollManager().getConnectionCount() == 0) {
+    if ((this->connected && this->getPollManager().getConnectionCount() == 0) ||
+        (this->connected && this->authentified &&
+        this->getPollManager().getConnectionCount() == 1)) {
         this->connected = false;
         if (this->fd != -1) {
             close(this->fd);
             this->fd = -1;
         }
+        if (this->udpSocket != -1) {
+            close(this->udpSocket);
+            this->udpSocket = -1;
+        }
     }
+    if (!this->authentified && this->retries <= MAX_RETRIES) {
+        this->sendUDPPackets();
+        this->getPollManager().pollSockets(1000);
+        this->executePackets();
+        this->retries++;
+        if (this->uuid != 0)
+            this->sendPacket(std::make_unique<CAuthentificationPacket>(this->uuid));
+        return;
+    }
+    this->sendUDPPackets();
     this->getPollManager().pollSockets();
     this->executePackets();
 }
@@ -125,6 +186,26 @@ PollManager &Client::getPollManager()
 PacketListener<Client> &Client::getPacketListener()
 {
     return this->pl;
+}
+
+void Client::setUUID(uint32_t uuid)
+{
+    this->uuid = uuid;
+}
+
+void Client::setAuthentified(bool auth)
+{
+    this->authentified = auth;
+}
+
+bool Client::isAuthentified() const
+{
+    return this->authentified;
+}
+
+uint32_t Client::getUUID() const
+{
+    return this->uuid;
 }
 
 ClientPollable::ClientPollable(Client &cl, int fd) : Pollable(fd, cl.getPollManager()), cl(cl)
@@ -163,4 +244,55 @@ bool ClientPollable::receiveEvent(short revent)
 bool ClientPollable::shouldWrite() const
 {
     return !this->getPacketSender().getPackets().empty();
+}
+
+ClientPollableUDP::ClientPollableUDP(Client &cl, int fd,
+    sockaddr_in address) : Pollable(fd, cl.getPollManager()), cl(cl)
+{
+    this->address = address;
+}
+
+
+short ClientPollableUDP::getFlags() const
+{
+    return POLLIN;
+}
+
+bool ClientPollableUDP::receiveEvent(short)
+{
+    uint8_t buffer[BUFFER_SIZE];
+    struct sockaddr_in sender;
+    socklen_t senderLen = sizeof(sender);
+    std::queue<uint8_t> dataQueue;
+    ssize_t bytesRead = recvfrom(this->getFileDescriptor(), buffer, BUFFER_SIZE, 0,
+                                  (struct sockaddr*)&sender, &senderLen);
+    if (bytesRead <= 0)
+        return true;
+    for (ssize_t i = 0; i < bytesRead; i++)
+        dataQueue.push(buffer[i]);
+    while (!dataQueue.empty()) {
+        uint8_t packetId = dataQueue.front();
+        dataQueue.pop();
+        std::shared_ptr<Packet> packet = PacketManager::getInstance().createPacketById(packetId, Packet::PacketMode::UDP);
+        if (packet == nullptr) {
+            LOG_ERR("Received invalid packet ID: " << (int) packetId);
+            break;
+        }
+        std::size_t packetSize = (std::size_t)packet->getSize();
+        if (packetSize > dataQueue.size()) {
+            LOG_ERR("Incomplete packet received with ID (" << (int) packetId << ")");
+            break;
+        }
+        std::queue<uint8_t> packetData;
+        for (std::size_t i = 0; i < packetSize; i++) {
+            packetData.push(dataQueue.front());
+            dataQueue.pop();
+        }
+        packet->setData(packetData);
+        packet->unserialize();
+        PacketLogger::logPacket(packet, PacketLogger::PacketMethod::RECEIVED,
+            this->getFileDescriptor());
+        addReceivedPacket(sender, packet);
+    }
+    return true;
 }
