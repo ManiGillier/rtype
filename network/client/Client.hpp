@@ -74,7 +74,7 @@ class ClientPollable : public Pollable {
         Client &cl;
 };
 
-class ClientPollableUDP : public Pollable {
+class ClientPollableUDP : public ClientPollable {
     public:
         ClientPollableUDP(Client &cl, int fd, sockaddr_in address);
         short getFlags() const;

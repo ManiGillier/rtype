@@ -66,7 +66,8 @@ bool Client::connect()
     }
 
     this->connected = true;
-    this->pm.addPollable(std::make_shared<ClientPollableUDP>(*this, this->udpSocket, params));
+    this->pm.addPollable( std::make_shared<ClientPollableUDP>(*this,
+        this->udpSocket, params));
     this->pm.addPollable(std::make_shared<ClientPollable>(*this, this->fd));
     this->udpServerAddress = params;
     return this->connected;
@@ -114,6 +115,12 @@ void Client::executePackets()
             q.pop();
         }
     }
+    for (auto &[addr, packet] : ClientPollableUDP::getUDPReceivedPackets()) {
+        this->getPacketListener().executePacket(*this,
+            this->getPollManager().getPollableByAddress(this->udpServerAddress),
+            packet);
+    }
+    ClientPollableUDP::getUDPReceivedPackets().clear();
     this->getPollManager().unlock();
 }
 
@@ -247,9 +254,10 @@ bool ClientPollable::shouldWrite() const
 }
 
 ClientPollableUDP::ClientPollableUDP(Client &cl, int fd,
-    sockaddr_in address) : Pollable(fd, cl.getPollManager()), cl(cl)
+    sockaddr_in address) : ClientPollable(cl, fd), cl(cl)
 {
     this->address = address;
+    this->setClientAddress(address);
 }
 
 
