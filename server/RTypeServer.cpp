@@ -49,9 +49,14 @@ void RTypeServer::onClientDisconnect(std::shared_ptr<IPollable> client)
     auto player = std::static_pointer_cast<Player>(client);
     LOG("Player id=" << player->getId());
 
-    std::shared_ptr<Packet> p =
+    std::shared_ptr<Packet> playerDisconnect =
         create_packet(DespawnPlayerPacket, player->getId());
-    player->sendPacket(p);
+
+    for (std::shared_ptr<IPollable> &c : this->getPollManager().getPool()) {
+        std::shared_ptr<ServerClient> clientToNotify =
+            std::static_pointer_cast<ServerClient>(c);
+        clientToNotify->sendPacket(playerDisconnect);
+    }
     LOG("Player disconnected fd=" << client->getFileDescriptor());
 }
 
