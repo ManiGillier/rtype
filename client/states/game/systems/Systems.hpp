@@ -10,17 +10,27 @@
 
 #include "ecs/regisrty/Registry.hpp"
 
-#include "client/components/Position.hpp"
-#include "client/components/Square.hpp"
-#include "client/components/Player.hpp"
+#include "shared/components/Position.hpp"
+#include "shared/components/HitBox.hpp"
+#include "client/components/Color.hpp"
+#include "shared/components/Laser.hpp"
+#include "shared/components/Dependence.hpp"
 #include <unordered_map>
 
-/*auto renderSquare(Registry &,
-    std::unordered_map<std::size_t, std::tuple<Position*, Square*>>)
+/* LOGIC SYSTEMS */
+
+/* RENDER SYSTEMS */
+
+auto renderSquare([[maybe_unused]] Registry &reg,
+    containers::indexed_zipper<SparseArray<Position>,
+                               SparseArray<HitBox>,
+                               SparseArray<ElementColor>> zip)
 -> void;
 
-auto movePlayer(Registry &,
-    std::unordered_map<std::size_t, std::tuple<Position*, PlayerControler*>>)
+auto renderLaser([[maybe_unused]] Registry &reg,
+    containers::indexed_zipper<SparseArray<Laser>,
+                               SparseArray<Dependence>,
+                               SparseArray<ElementColor>> zip)
 -> void;
-*/
+
 #endif /* RENDER_SYSTEMS_HPP */

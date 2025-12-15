@@ -34,7 +34,7 @@ class indexed_zipper_iterator
     friend containers::indexed_zipper<Containers...>;
 
   private:
-    indexed_zipper_iterator(iterator_tuple const& it_tuple, size_t max);
+    indexed_zipper_iterator(iterator_tuple const& it_tuple, size_t max, bool skip_check = false);
 
   public:
     indexed_zipper_iterator(indexed_zipper_iterator const& z) = default;
@@ -97,10 +97,10 @@ class indexed_zipper
 
 template <class... Containers>
 indexed_zipper_iterator<Containers...>::indexed_zipper_iterator(
-    iterator_tuple const& it_tuple, size_t max)
-    : _current(it_tuple), _max(max), _idx(0)
+    iterator_tuple const& it_tuple, size_t max, bool skip_check)
+    : _current(it_tuple), _max(max), _idx(skip_check ? max : 0)
 {
-    if (_idx < _max && !all_set(_seq)) {
+    if (_idx < _max && (skip_check || !all_set(_seq))) {
         incr_all(_seq);
     }
 }
@@ -156,7 +156,7 @@ template <class... Containers>
 template <size_t... Is>
 bool indexed_zipper_iterator<Containers...>::all_set(std::index_sequence<Is...>)
 {
-    return ((*std::get<Is>(_current)).has_value() && ...);
+    return ((std::get<Is>(_current))->has_value() && ...);
 }
 
 template <class... Containers>
@@ -185,7 +185,7 @@ template <class... Containers>
 typename indexed_zipper<Containers...>::iterator
 indexed_zipper<Containers...>::end()
 {
-    return iterator(_end, _size);
+    return iterator(_end, _size, true);
 }
 
 template <class... Containers>

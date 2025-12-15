@@ -38,9 +38,9 @@ class Client {
         void setAuthentified(bool auth);
         bool isAuthentified() const;
         uint32_t getUUID()  const;
+        void executePackets();
     private:
         void sendUDPPackets();
-        void executePackets();
         std::string ip;
         int port;
         int udpSocket;

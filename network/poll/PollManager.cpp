@@ -103,6 +103,7 @@ std::vector<std::shared_ptr<IPollable>> PollManager::pollSockets(int timeout)
 
     if (rc < 0)
         return {};
+    this->lock();
     for (std::size_t i = 0; i < socketSize; i++) {
         if (this->pollFds[i].revents == 0)
             continue;
@@ -115,7 +116,9 @@ std::vector<std::shared_ptr<IPollable>> PollManager::pollSockets(int timeout)
         this->pollFds[i].events = this->pollables[i]->getFlags();
         this->pollFds[i].revents = 0;
     }
-    return this->removePollables(toDelete);
+    auto toReturn = this->removePollables(toDelete);
+    this->unlock();
+    return toReturn;
 }
 
 void PollManager::clear()
@@ -125,3 +128,6 @@ void PollManager::clear()
     this->pollFds.clear();
     this->pollables.clear();
 }
+
+void PollManager::lock() { this->mutex.lock(); }
+void PollManager::unlock() { this->mutex.unlock(); }

@@ -29,7 +29,10 @@ class PollManager {
         std::shared_ptr<IPollable> getPollableByAddress(sockaddr_in s);
         std::vector<std::shared_ptr<IPollable>> pollSockets(int timeout=-1);
         void clear();
+        void lock();
+        void unlock();
     private:
+        std::mutex mutex;
         std::vector<struct pollfd> pollFds;
         std::vector<std::shared_ptr<IPollable>> pollables;
     };

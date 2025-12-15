@@ -9,8 +9,8 @@
 #define COMP_LASER_HPP
 
 struct Laser {
-    float width;
-    float height;
+    bool active;
+    float length;
 };
 
 #endif /* COMP_LASER_HPP */

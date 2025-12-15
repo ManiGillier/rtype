@@ -7,25 +7,23 @@
 
 #include "ecs/regisrty/Registry.hpp"
 
-#include "client/components/Position.hpp"
-#include "client/components/Square.hpp"
-
-#include <tuple>
-#include <unordered_map>
+#include "shared/components/Position.hpp"
+#include "shared/components/HitBox.hpp"
+#include "client/components/Color.hpp"
 
 #include <raylib.h>
 
-/*
+
 auto renderSquare([[maybe_unused]] Registry &reg,
-    std::unordered_map<std::size_t, std::tuple<Position*, Square*>> items)
+    containers::indexed_zipper<SparseArray<Position>,
+                               SparseArray<HitBox>,
+                               SparseArray<ElementColor>> zip)
 -> void
 {
-    for (auto &&[i, item] : items) {
-        Position &pos = *std::get<Position*>(item);
-        Square &square = *std::get<Square*>(item);
-        DrawRectangle((int) pos.x, (int) pos.y,
-                      (int) square.size, (int) square.size,
-                      WHITE);
+    for (auto &&[_, pos, size, square_color] : zip) {
+        DrawRectangle((int) (pos->x - (size->height / 2.0)),
+                      (int) (pos->y - (size->width / 2.0)),
+                      (int) size->height, (int) size->width,
+                      square_color->color);
     }
 }
-*/

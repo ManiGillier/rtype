@@ -15,17 +15,6 @@
 #include "PacketLogger.hpp"
 #include <network/packets/PacketManager.hpp>
 
-#include "impl/GhostScoreUpdatePacket.hpp"
-#include "impl/GameStartPacket.hpp"
-#include "impl/PlayerDeadPacket.hpp"
-#include "impl/PlayerJoinPacket.hpp"
-#include "impl/PlayerPositionPacket.hpp"
-#include "impl/ScoreUpdatePacket.hpp"
-#include "impl/StartRequestPacket.hpp"
-#include "impl/GhostPlayerPositionPacket.hpp"
-#include "impl/PlayerLostPacket.hpp"
-#include "impl/PlayerWonPacket.hpp"
-
 PacketReader::PacketReader(int fd, Packet::PacketMode mode)
 {
     this->_fd = fd;

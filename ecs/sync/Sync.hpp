@@ -9,13 +9,16 @@
 #define ECS_SYNC_HPP
 
 #include <map>
+#include <optional>
 
 class Sync
 {
 public:
     auto add(std::size_t my_id, std::size_t their_id) -> void;
-    auto get_mine_from_theirs(std::size_t their_id) const -> std::size_t;
-    auto get_theirs_from_mine(std::size_t my_id) const -> std::size_t;
+    auto get_mine_from_theirs(std::size_t their_id) const
+        -> std::optional<std::size_t>;
+    auto get_theirs_from_mine(std::size_t my_id) const
+        -> std::optional<std::size_t>;
     auto del_with_mine(std::size_t my_id) -> void;
     auto del_with_theirs(std::size_t their_id) -> void;
 private:

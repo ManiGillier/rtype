@@ -12,6 +12,7 @@
 #include "ILogic.hpp"
 #include "ecs/regisrty/Registry.hpp"
 #include "client/states/State.hpp"
+#include <cstddef>
 
 class IGameState {
 public:
