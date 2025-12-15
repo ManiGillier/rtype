@@ -91,7 +91,8 @@ void Server::loop()
     if (!this->upStatus)
         return;
     this->sendUDPPackets();
-    this->getPollManager().pollSockets();
+    for (std::shared_ptr<IPollable> pd : this->getPollManager().pollSockets())
+        this->onClientDisconnect(pd);
     this->executePackets();
 }
 

@@ -58,7 +58,7 @@ class ServerUDPPollable : public Pollable {
         }
 
     private:
-        Server &server;
+        [[maybe_unused]] Server &server;
 };
 
 class Server {

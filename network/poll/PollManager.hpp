@@ -21,13 +21,13 @@ class PollManager {
     public:
         virtual ~PollManager() = default;
         void addPollable(std::shared_ptr<IPollable> pollable);
-        void removePollable(int fileDescriptor);
-        void removePollables(std::vector<int> fileDescriptors);
+        std::shared_ptr<IPollable> removePollable(int fileDescriptor);
+        std::vector<std::shared_ptr<IPollable>> removePollables(std::vector<int> fileDescriptors);
         void updateFlags(int fileDescriptor, short newFlags);
         std::size_t getConnectionCount() const;
         std::vector<std::shared_ptr<IPollable>> &getPool();
         std::shared_ptr<IPollable> getPollableByAddress(sockaddr_in s);
-        void pollSockets(int timeout=-1);
+        std::vector<std::shared_ptr<IPollable>> pollSockets(int timeout=-1);
         void clear();
     private:
         std::vector<struct pollfd> pollFds;

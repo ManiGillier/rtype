@@ -264,7 +264,7 @@ bool ClientPollableUDP::receiveEvent(short)
     struct sockaddr_in sender;
     socklen_t senderLen = sizeof(sender);
     std::queue<uint8_t> dataQueue;
-    ssize_t bytesRead = recvfrom(this->getFileDescriptor(), buffer, BUFFER_SIZE, 0, 
+    ssize_t bytesRead = recvfrom(this->getFileDescriptor(), buffer, BUFFER_SIZE, 0,
                                   (struct sockaddr*)&sender, &senderLen);
     if (bytesRead <= 0)
         return true;
