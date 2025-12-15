@@ -28,7 +28,7 @@ class Client {
         bool connect();
         bool disconnect();
         bool isConnected() const;
-        bool sendPacket(std::shared_ptr<Packet> p);
+        bool sendPacket(std::shared_ptr<Packet> p, bool wakeUpPoll=true);
         void loop();
         const std::string &getIp() const;
         int getPort() const;
@@ -60,11 +60,13 @@ class ClientPollable : public Pollable {
         short getFlags() const;
         bool receiveEvent(short revent);
 
-        void sendPacket(std::shared_ptr<Packet> p) {
+        void sendPacket(std::shared_ptr<Packet> p, bool wakeUpPoll=true) {
             if (p->getMode() == Packet::PacketMode::TCP) {
                 this->getPacketSender().sendPacket(p);
                 this->cl.getPollManager().
                     updateFlags(this->getFileDescriptor(), this->getFlags());
+                if (wakeUpPoll)
+                    cl.getPollManager().wakeUp();
             }
         }
     private:
@@ -90,14 +92,17 @@ class ClientPollableUDP : public Pollable {
             getUDPReceivedPackets().push_back(std::make_tuple(address, p));
         }
 
-        void sendPacket(std::shared_ptr<Packet> p) {
-            if (p->getMode() == Packet::PacketMode::UDP)
+        void sendPacket(std::shared_ptr<Packet> p, bool wakeUpPoll=true) {
+            if (p->getMode() == Packet::PacketMode::UDP) {
                 toProcessUDP.emplace_back(p, this->getClientAddress());
+                if (wakeUpPoll)
+                    cl.getPollManager().wakeUp();
+            }
         }
 
     private:
         sockaddr_in address;
-        [[maybe_unused]] Client &cl;
+        Client &cl;
 };
 
 class ClientAuthExecutor :
