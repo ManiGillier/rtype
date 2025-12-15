@@ -68,6 +68,16 @@ auto Systems::update_player_system(Registry &r,
     pos.x += vel.x;
     pos.y += vel.y;
 
+    // Limit player position to map boundaries
+    if (pos.x < 0.0f)
+        pos.x = 0.0f;
+    if (pos.x > GameConstants::width)
+        pos.x = GameConstants::width;
+    if (pos.y < 0.0f)
+        pos.y = 0.0f;
+    if (pos.y > GameConstants::height)
+        pos.y = GameConstants::height;
+
     for (std::size_t i = 0; i < dependences.size(); ++i) {
         if (dependences[i].has_value() && dependences[i].value().id == id) {
             if (i < positions.size() && positions[i].has_value()) {
