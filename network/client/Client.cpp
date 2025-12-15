@@ -86,6 +86,7 @@ bool Client::disconnect()
     this->udpSocket = -1;
     this->connected = false;
     this->pm.clear();
+    this->authentified = false;
     return true;
 }
 bool Client::isConnected() const
@@ -97,11 +98,8 @@ bool Client::sendPacket(std::shared_ptr<Packet> p)
 {
     if (!this->connected || this->getPollManager().getConnectionCount() == 0)
         return false;
-    if (p->getMode() == Packet::PacketMode::TCP)
-        for (std::shared_ptr<IPollable> &pollable : this->getPollManager().getPool())
-            pollable->sendPacket(p);
-    else
-        ClientPollableUDP::addUDPPacketToSend(p);
+    for (std::shared_ptr<IPollable> &pollable : this->getPollManager().getPool())
+        pollable->sendPacket(p);
     return true;
 }
 
@@ -119,28 +117,33 @@ void Client::executePackets()
 
 void Client::sendUDPPackets()
 {
-    for (std::shared_ptr<Packet> &packet : ClientPollableUDP::getUDPPacketsToSend()) {
-        packet->clearData();
-        packet->serialize();
-        std::vector<uint8_t> toSend;
-        toSend.push_back(packet->getId());
-        std::queue<uint8_t> packetData = packet->getData();
-        while (!packetData.empty()) {
-            toSend.push_back(packetData.front());
-            packetData.pop();
+    for (std::shared_ptr<IPollable> &p : this->getPollManager().getPool()) {
+        for (auto &[packet, addr] : p->getPacketsToSendUDP()) {
+            (void) addr;
+            packet->clearData();
+            packet->serialize();
+            std::vector<uint8_t> toSend;
+            toSend.push_back(packet->getId());
+            std::queue<uint8_t> packetData = packet->getData();
+            while (!packetData.empty()) {
+                toSend.push_back(packetData.front());
+                packetData.pop();
+            }
+            sendto(this->udpSocket, toSend.data(), toSend.size(), 0,
+                (struct sockaddr*)&(this->udpServerAddress), sizeof(this->udpServerAddress));
+            PacketLogger::logPacket(packet, PacketLogger::PacketMethod::SENT, this->udpSocket);
         }
-        sendto(this->udpSocket, toSend.data(), toSend.size(), 0,
-               nullptr, sizeof(this->udpServerAddress));
-        PacketLogger::logPacket(packet, PacketLogger::PacketMethod::SENT, this->udpSocket);
+        p->getPacketsToSendUDP().clear();
     }
-    ClientPollableUDP::getUDPPacketsToSend().clear();
 }
 
 void Client::loop()
 {
     if (!this->connected)
         return;
-    if (this->connected && this->getPollManager().getConnectionCount() == 0) {
+    if ((this->connected && this->getPollManager().getConnectionCount() == 0) ||
+        (this->connected && this->authentified &&
+        this->getPollManager().getConnectionCount() == 1)) {
         this->connected = false;
         if (this->fd != -1) {
             close(this->fd);
@@ -158,6 +161,7 @@ void Client::loop()
         this->retries++;
         if (this->uuid != 0)
             this->sendPacket(std::make_unique<CAuthentificationPacket>(this->uuid));
+        return;
     }
     this->sendUDPPackets();
     this->getPollManager().pollSockets();
@@ -276,7 +280,7 @@ bool ClientPollableUDP::receiveEvent(short)
         }
         std::size_t packetSize = (std::size_t)packet->getSize();
         if (packetSize > dataQueue.size()) {
-            LOG_ERR("Incomplete packet received" << std::endl);
+            LOG_ERR("Incomplete packet received with ID (" << (int) packetId << ")");
             break;
         }
         std::queue<uint8_t> packetData;

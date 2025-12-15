@@ -11,36 +11,39 @@
 #include <network/packets/impl/ScoreUpdatePacket.hpp>
 #include <network/packets/impl/CAuthentificationPacket.hpp>
 #include <network/packets/impl/SAuthentificationPacket.hpp>
+#include <network/packets/impl/AuthentifiedPacket.hpp>
+#include <network/packets/impl/PlayerPositionPacket.hpp>
 #include <iostream>
 #include <cstring>
 
-class ScoreUpdateExecutor : public PacketExecutorImpl<SAuthentificationPacket, ClientPollable, Client> {
+class ScoreUpdateExecutor : public PacketExecutorImplClient<AuthentifiedPacket, ClientPollable> {
 
-    bool execute(Client &cl, std::shared_ptr<ClientPollable> con, std::shared_ptr<SAuthentificationPacket> packet) {
+    bool execute(Client &cl, std::shared_ptr<ClientPollable> con, std::shared_ptr<AuthentifiedPacket> packet) {
         (void) con;
-        cl.sendPacket(create_packet(CAuthentificationPacket, packet->getUUID()));
+        (void) packet;
+        for (int i = 0; i < 10; i++)
+            cl.sendPacket(create_packet(PlayerPositionPacket, 69.727f));
         return true;
     }
 
     int getPacketId() const {
-        return PacketId::S_AUTHENTICATION_PACKET;
+        return PacketId::AUTHENTIFIED_PACKET;
     }
 
 };
 
-class ScoreUpdateExecutorServ : public PacketExecutorImpl<ScoreUpdatePacket, ServerClient, Server> {
+class ScoreUpdateExecutorServ : public PacketExecutorImplServer<PlayerPositionPacket, ServerClient> {
 
-    bool execute(Server &s, std::shared_ptr<ServerClient> &con, std::shared_ptr<ScoreUpdatePacket> packet) {
+    bool execute(Server &s, std::shared_ptr<ServerClient> con, std::shared_ptr<PlayerPositionPacket> packet) {
         (void) con;
         (void) packet;
         (void) s;
-        LOG("WOOOHOOOO !!!!");
-        packet->display();
-        return false;
+        LOG("Position [" << packet->getPosition() << "] par le client: " << con->getFileDescriptor());
+        return true;
     }
 
     int getPacketId() const {
-        return PacketId::UPDATE_SCORE;
+        return PacketId::UPDATE_POSITION;
     }
 
 };
@@ -49,7 +52,7 @@ static int client(const std::string &ip, int port)
 {
     Client cl(ip, port);
 
-    // cl.getPacketListener().addExecutor(std::make_unique<ScoreUpdateExecutor>());
+    cl.getPacketListener().addExecutor(std::make_unique<ScoreUpdateExecutor>());
     cl.connect();
     if (!cl.isConnected()) {
         LOG_ERR("Could not connect to " << ip << ":" << port << ", aborting..");

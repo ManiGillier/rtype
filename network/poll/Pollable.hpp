@@ -60,15 +60,26 @@ class Pollable : public IPollable {
         }
 
         void sendPacket(std::shared_ptr<Packet> p) {
-            this->getPacketSender().sendPacket(p);
-            this->pm.updateFlags(this->getFileDescriptor(), this->getFlags());
+            if (p->getMode() == Packet::PacketMode::TCP) {
+                this->getPacketSender().sendPacket(p);
+                this->pm.updateFlags(this->getFileDescriptor(), this->getFlags());
+            } else {
+                toProcessUDP.emplace_back(p, this->getClientAddress());
+            }
         }
 
         std::queue<std::shared_ptr<Packet>> &getReceivedPackets() {
             return this->toProcess;
         }
+
+        std::vector<std::tuple<std::shared_ptr<Packet>,
+            std::optional<sockaddr_in>>> &getPacketsToSendUDP() {
+                return this->toProcessUDP;
+        }
+
     protected:
         std::queue<std::shared_ptr<Packet>> toProcess;
+        std::vector<std::tuple<std::shared_ptr<Packet>, std::optional<sockaddr_in>>> toProcessUDP;
     private:
         std::optional<sockaddr_in> address = std::nullopt;
         uint32_t uuid;

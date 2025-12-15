@@ -59,9 +59,17 @@ class ClientPollable : public Pollable {
         ClientPollable(Client &cl, int fd);
         short getFlags() const;
         bool receiveEvent(short revent);
+
+        void sendPacket(std::shared_ptr<Packet> p) {
+            if (p->getMode() == Packet::PacketMode::TCP) {
+                this->getPacketSender().sendPacket(p);
+                this->cl.getPollManager().
+                    updateFlags(this->getFileDescriptor(), this->getFlags());
+            }
+        }
     private:
         bool shouldWrite() const;
-        [[maybe_unused]] Client &cl;
+        Client &cl;
 };
 
 class ClientPollableUDP : public Pollable {
@@ -82,14 +90,9 @@ class ClientPollableUDP : public Pollable {
             getUDPReceivedPackets().push_back(std::make_tuple(address, p));
         }
 
-        static std::vector<std::shared_ptr<Packet>> &getUDPPacketsToSend()
-        {
-            static std::vector<std::shared_ptr<Packet>> packets;
-            return packets;
-        }
-
-        static void addUDPPacketToSend( std::shared_ptr<Packet> p) {
-            getUDPPacketsToSend().push_back(p);
+        void sendPacket(std::shared_ptr<Packet> p) {
+            if (p->getMode() == Packet::PacketMode::UDP)
+                toProcessUDP.emplace_back(p, this->getClientAddress());
         }
 
     private:
@@ -114,13 +117,13 @@ public:
 };
 
 class ClientSetAuthExecutor :
-    public PacketExecutorImpl<AuthentifiedPacket, ClientPollable,
-        Client> {
+    public PacketExecutorImplClient<AuthentifiedPacket, ClientPollable> {
 public:
     bool execute(Client &cl, std::shared_ptr<ClientPollable> con, std::shared_ptr<AuthentifiedPacket> packet) {
         (void) con;
         (void) packet;
         cl.setAuthentified(true);
+        LOG("Client is now authentified !");
         return true;
     }
 

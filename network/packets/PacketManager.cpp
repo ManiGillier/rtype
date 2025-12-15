@@ -23,7 +23,7 @@
 
 void PacketManager::registerPackets()
 {
-    this->packets.push_back(std::make_shared<ScoreUpdatePacket>());
+    this->packets.push_back(std::make_shared<PlayerPositionPacket>());
     this->packets.push_back(std::make_shared<SAuthentificationPacket>());
     this->packets.push_back(std::make_shared<CAuthentificationPacket>());
     this->packets.push_back(std::make_shared<AuthentifiedPacket>());

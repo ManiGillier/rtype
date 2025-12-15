@@ -26,6 +26,8 @@ class IPollable {
         virtual void setClientAddress(std::optional<sockaddr_in> address) = 0;
         virtual void sendPacket(std::shared_ptr<Packet> p) = 0;
         virtual std::queue<std::shared_ptr<Packet>> &getReceivedPackets() = 0;
+        virtual std::vector<std::tuple<std::shared_ptr<Packet>,
+            std::optional<sockaddr_in>>> &getPacketsToSendUDP() = 0;
 };
 
 #endif /* !IPOLLABLE_HPP_ */

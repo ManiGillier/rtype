@@ -76,6 +76,20 @@ std::vector<std::shared_ptr<IPollable>> &PollManager::getPool()
     return this->pollables;
 }
 
+std::shared_ptr<IPollable> PollManager::getPollableByAddress(sockaddr_in s)
+{
+    for (std::shared_ptr<IPollable> &p : this->getPool()) {
+        std::optional<sockaddr_in> addr = p->getClientAddress();
+        if (addr.has_value()) {
+            if (addr.value().sin_addr.s_addr == s.sin_addr.s_addr &&
+                addr.value().sin_port == s.sin_port) {
+                return p;
+            }
+        }
+    }
+    return nullptr;
+}
+
 void PollManager::pollSockets(int timeout)
 {
     std::size_t socketSize = this->pollFds.size();

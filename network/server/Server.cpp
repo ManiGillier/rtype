@@ -90,6 +90,7 @@ void Server::loop()
 {
     if (!this->upStatus)
         return;
+    this->sendUDPPackets();
     this->getPollManager().pollSockets();
     this->executePackets();
 }
@@ -117,9 +118,37 @@ void Server::executePackets()
         }
     }
     for (auto &[sender, packet] : ServerUDPPollable::getUDPReceivedPackets()) {
-        this->getPacketListener().executePacket(*this, sender, packet);
+        std::shared_ptr<IPollable> client = this->getPollManager().getPollableByAddress(sender);
+
+        if (!client)
+            this->getPacketListener().executePacket(*this, sender, packet);
+        else if (!this->getPacketListener().executePacket(*this, client, packet))
+            this->getPollManager().removePollable(client->getFileDescriptor());
     }
     ServerUDPPollable::getUDPReceivedPackets().clear();
+}
+
+void Server::sendUDPPackets()
+{
+    for (std::shared_ptr<IPollable> &p : this->getPollManager().getPool()) {
+        for (auto &[packet, addr] : p->getPacketsToSendUDP()) {
+            if (addr == std::nullopt)
+                continue;
+            packet->clearData();
+            packet->serialize();
+            std::vector<uint8_t> toSend;
+            toSend.push_back(packet->getId());
+            std::queue<uint8_t> packetData = packet->getData();
+            while (!packetData.empty()) {
+                toSend.push_back(packetData.front());
+                packetData.pop();
+            }
+            sendto(this->udpFd, toSend.data(), toSend.size(), 0,
+                (struct sockaddr*)&(addr.value()), sizeof(addr.value()));
+            PacketLogger::logPacket(packet, PacketLogger::PacketMethod::SENT, this->udpFd);
+        }
+        p->getPacketsToSendUDP().clear();
+    }
 }
 
 ServerPollable::ServerPollable(Server &server, int fd)
@@ -181,7 +210,7 @@ bool ServerUDPPollable::receiveEvent(short)
         }
         std::size_t packetSize = (std::size_t)packet->getSize();
         if (packetSize > dataQueue.size()) {
-            LOG_ERR("Incomplete packet received" << std::endl);
+            LOG_ERR("Incomplete packet received with ID (" << (int) packetId << ")");
             break;
         }
         std::queue<uint8_t> packetData;

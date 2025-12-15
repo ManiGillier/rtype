@@ -47,6 +47,16 @@ class ServerUDPPollable : public Pollable {
             getUDPReceivedPackets().push_back(std::make_tuple(address, p));
         }
 
+        static std::vector<std::tuple<sockaddr_in, std::shared_ptr<Packet>>> &getUDPPacketsToSend()
+        {
+            static std::vector<std::tuple<sockaddr_in, std::shared_ptr<Packet>>> packets;
+            return packets;
+        }
+
+        static void addUDPPacketToSend(sockaddr_in address, std::shared_ptr<Packet> p) {
+            getUDPPacketsToSend().push_back(std::make_tuple(address, p));
+        }
+
     private:
         Server &server;
 };
@@ -63,9 +73,10 @@ class Server {
         virtual std::shared_ptr<IPollable> createClient(int fd) = 0;
         virtual void onClientConnect(std::shared_ptr<IPollable> client) = 0;
         virtual void onClientDisconnect(std::shared_ptr<IPollable> client) = 0;
-        void executePackets();
         virtual ~Server() = default;
     private:
+        void executePackets();
+        void sendUDPPackets();
         int port;
         int fd;
         int udpFd;
@@ -96,17 +107,15 @@ class CustomServer : public Server {
 class AuthenticationExecutor : public
     PacketExecutorImplServer<CAuthentificationPacket, IPollable> {
 
-    /* TODO: Check if Client already exists with given UUID */
     bool executeUnlogged(Server &server, sockaddr_in address,
         std::shared_ptr<CAuthentificationPacket> packet) {
         for (std::shared_ptr<IPollable> &c : server.getPollManager().getPool()) {
             if (c->getUUID() == packet->getUUID() && c->getClientAddress() == std::nullopt) {
                 c->setClientAddress(address);
                 c->sendPacket(create_packet(AuthentifiedPacket));
-                return true;
             }
         }
-        return false;
+        return true;
     }
 
     int getPacketId() const {

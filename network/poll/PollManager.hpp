@@ -26,6 +26,7 @@ class PollManager {
         void updateFlags(int fileDescriptor, short newFlags);
         std::size_t getConnectionCount() const;
         std::vector<std::shared_ptr<IPollable>> &getPool();
+        std::shared_ptr<IPollable> getPollableByAddress(sockaddr_in s);
         void pollSockets(int timeout=-1);
         void clear();
     private:
