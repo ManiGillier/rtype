@@ -11,17 +11,39 @@
 #include "client/api/ILogic.hpp"
 #include "client/api/IGameState.hpp"
 
+#include "client/manager/NetworkManager.hpp"
+
+#include <cstddef>
 #include <optional>
+
+#include "ecs/sync/Sync.hpp"
+
+#include <vector>
 
 class InGameStateLogic : public ILogic
 {
 public:
-    InGameStateLogic(IGameState &gameState);
+    InGameStateLogic(IGameState &gameState, NetworkManager &networkManager);
 
-    auto update(Registry &) -> void;
+    auto update(Registry &) -> State;
+    auto managePlayerMovement() -> void;
+
+    auto newPlayer(std::size_t player_id, std::size_t laser_id) -> void;
+    auto newEnemy(std::size_t enemy_id) -> void;
+    auto newBullet(std::size_t bullet_id) -> void;
+    auto despawnEntity(std::size_t id) -> void;
+    auto registerClientId(std::size_t id) -> void;
+    auto end() -> void;
+    auto updateHealth(std::size_t id, float health, float max_health) -> void;
+    auto updateHitbox(std::size_t id, float width, float height) -> void;
+    auto updateLaser(std::size_t id, bool active, float length) -> void;
 private:
     IGameState &gameState;
-    Entity player;
+    NetworkManager &networkManager;
+
+    Sync sync;
+    std::optional<std::size_t> clientId = std::nullopt;
+    bool shouldStop = false;
 };
 
 #endif /* IN_GAME_STATE_LOGIC_HPP */

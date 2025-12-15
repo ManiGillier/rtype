@@ -1,9 +1,9 @@
 
 #include "manager/ClientManager.hpp"
 
-auto main() -> int
+auto main(int ac, char **av) -> int
 {
     ClientManager manager;
 
-    manager.launch();
+    manager.launch(ac, av);
 }

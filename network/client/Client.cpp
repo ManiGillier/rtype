@@ -105,6 +105,7 @@ bool Client::sendPacket(std::shared_ptr<Packet> p)
 
 void Client::executePackets()
 {
+    this->getPollManager().lock();
     for (std::shared_ptr<IPollable> &p : this->getPollManager().getPool()) {
         std::queue<std::shared_ptr<Packet>> &q = p->getReceivedPackets();
         while (!q.empty()) {
@@ -113,6 +114,7 @@ void Client::executePackets()
             q.pop();
         }
     }
+    this->getPollManager().unlock();
 }
 
 void Client::sendUDPPackets()
@@ -165,7 +167,6 @@ void Client::loop()
     }
     this->sendUDPPackets();
     this->getPollManager().pollSockets();
-    this->executePackets();
 }
 
 const std::string &Client::getIp() const
