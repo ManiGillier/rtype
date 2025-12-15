@@ -20,7 +20,8 @@ class PacketManager {
         PacketManager& operator=(const PacketManager&) = delete;
         virtual ~PacketManager() = default;
         void registerPackets();
-        std::shared_ptr<Packet> createPacketById(uint8_t id) const;
+        std::shared_ptr<Packet> createPacketById(uint8_t id,
+            Packet::PacketMode mode) const;
         bool hasPacketById(uint8_t id) const;
 
         static PacketManager& getInstance() {

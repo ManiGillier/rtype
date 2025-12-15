@@ -26,9 +26,10 @@
 #include "impl/PlayerLostPacket.hpp"
 #include "impl/PlayerWonPacket.hpp"
 
-PacketReader::PacketReader(int fd)
+PacketReader::PacketReader(int fd, Packet::PacketMode mode)
 {
     this->_fd = fd;
+    this->mode = mode;
 }
 
 bool PacketReader::readPacket(void)
@@ -39,7 +40,7 @@ bool PacketReader::readPacket(void)
         if (readData.empty())
             return true;
         if (currentPacket == nullptr) {
-            currentPacket = PacketManager::getInstance().createPacketById(readData.front());
+            currentPacket = PacketManager::getInstance().createPacketById(readData.front(), this->mode);
             readData.pop();
         }
         if (currentPacket == nullptr) {
