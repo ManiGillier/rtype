@@ -43,7 +43,7 @@ auto collision_system(
         zipper) -> void;
 
 auto cleanup_system(Registry &r,
-                    containers::indexed_zipper<SparseArray<Health>> zipper)
+                    containers::indexed_zipper<SparseArray<Health>> zipper, Game &game)
     -> void;
 } // namespace Systems
 

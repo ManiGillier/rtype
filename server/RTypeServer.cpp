@@ -1,7 +1,8 @@
 #include "RTypeServer.hpp"
-#include "network/server/Server.hpp"
-#include "network/packets/impl/PlayerIdPacket.hpp"
+#include "network/packets/impl/DespawnPlayerPacket.hpp"
 #include "network/packets/impl/NewPlayerPacket.hpp"
+#include "network/packets/impl/PlayerIdPacket.hpp"
+#include "network/server/Server.hpp"
 #include "player/Player.hpp"
 #include <memory>
 
@@ -23,16 +24,16 @@ void RTypeServer::onClientConnect(std::shared_ptr<IPollable> client)
     // add player to get his entity id
     auto [e_player, e_laser] = _game.addPlayer();
 
-    LOG("Player added to game with id=" << e_player.getId() << " and laser_id=" << e_laser.getId());
+    LOG("Player added to game with id=" << e_player.getId()
+                                        << " and laser_id=" << e_laser.getId());
 
     // send back is entity id
     std::shared_ptr<ServerClient> sc =
         std::static_pointer_cast<ServerClient>(client);
-    std::shared_ptr<Packet> p =
-        create_packet(PlayerIdPacket, e_player.getId());
+    std::shared_ptr<Packet> p = create_packet(PlayerIdPacket, e_player.getId());
     sc->sendPacket(p);
 
-    // create player 
+    // create player
     std::shared_ptr<Packet> newPlayerPacket =
         create_packet(NewPlayerPacket, e_player.getId(), e_laser.getId());
 
@@ -47,6 +48,10 @@ void RTypeServer::onClientDisconnect(std::shared_ptr<IPollable> client)
 {
     auto player = std::static_pointer_cast<Player>(client);
     LOG("Player id=" << player->getId());
+
+    std::shared_ptr<Packet> p =
+        create_packet(DespawnPlayerPacket, player->getId());
+    player->sendPacket(p);
     LOG("Player disconnected fd=" << client->getFileDescriptor());
 }
 
