@@ -94,12 +94,12 @@ bool Client::isConnected() const
     return this->connected;
 }
 
-bool Client::sendPacket(std::shared_ptr<Packet> p)
+bool Client::sendPacket(std::shared_ptr<Packet> p, bool wakeUpPoll)
 {
     if (!this->connected || this->getPollManager().getConnectionCount() == 0)
         return false;
     for (std::shared_ptr<IPollable> &pollable : this->getPollManager().getPool())
-        pollable->sendPacket(p);
+        pollable->sendPacket(p, wakeUpPoll);
     return true;
 }
 
@@ -159,7 +159,6 @@ void Client::loop()
     if (!this->authentified && this->retries <= MAX_RETRIES) {
         this->sendUDPPackets();
         this->getPollManager().pollSockets(1000);
-        this->executePackets();
         this->retries++;
         if (this->uuid != 0)
             this->sendPacket(std::make_unique<CAuthentificationPacket>(this->uuid));

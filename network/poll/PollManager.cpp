@@ -10,7 +10,20 @@
 #include <network/poll/IPollable.hpp>
 #include <network/logger/Logger.hpp>
 #include <iostream>
+#include <network/poll/WakeUpPollable.hpp>
 #include "PollManager.hpp"
+
+#include <sys/eventfd.h>
+#include <unistd.h>
+
+PollManager::PollManager()
+{
+    std::shared_ptr<IPollable> eventPollable = std::make_shared<WakeUpPollable>(*this,
+        eventfd(0, EFD_NONBLOCK));
+
+    this->addPollable(eventPollable);
+    this->eventFd = eventPollable->getFileDescriptor();
+}
 
 void PollManager::addPollable(std::shared_ptr<IPollable> pollable)
 {
@@ -98,7 +111,10 @@ std::vector<std::shared_ptr<IPollable>> PollManager::pollSockets(int timeout)
 {
     std::size_t socketSize = this->pollFds.size();
     LOG("Connected client size: " << this->pollFds.size());
+
+    isPolling.store(true);
     int rc = poll(this->pollFds.data(), socketSize, timeout);
+    isPolling.store(false);
     std::vector<int> toDelete;
 
     if (rc < 0)
@@ -119,6 +135,14 @@ std::vector<std::shared_ptr<IPollable>> PollManager::pollSockets(int timeout)
     auto toReturn = this->removePollables(toDelete);
     this->unlock();
     return toReturn;
+}
+
+void PollManager::wakeUp()
+{
+    if (isPolling.load()) {
+        uint64_t value = 1;
+        write(this->eventFd, &value, sizeof(value));
+    }
 }
 
 void PollManager::clear()
