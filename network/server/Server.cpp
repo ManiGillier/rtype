@@ -109,6 +109,7 @@ PollManager &Server::getPollManager()
 /* TODO: Implement logged execute on UDP */
 void Server::executePackets()
 {
+    this->getPollManager().lock();
     for (std::shared_ptr<IPollable> &p : this->getPollManager().getPool()) {
         std::queue<std::shared_ptr<Packet>> &q = p->getReceivedPackets();
         while (!q.empty()) {
@@ -127,11 +128,15 @@ void Server::executePackets()
             this->getPollManager().removePollable(client->getFileDescriptor());
     }
     ServerUDPPollable::getUDPReceivedPackets().clear();
+    this->getPollManager().unlock();
 }
 
 void Server::sendUDPPackets()
 {
-    for (std::shared_ptr<IPollable> &p : this->getPollManager().getPool()) {
+    std::lock_guard<std::mutex> lck (this->udpLock);
+    std::vector<std::shared_ptr<IPollable>> pool = this->getPollManager().getPool();
+
+    for (std::shared_ptr<IPollable> &p : pool) {
         for (auto &[packet, addr] : p->getPacketsToSendUDP()) {
             if (addr == std::nullopt)
                 continue;
@@ -195,7 +200,7 @@ bool ServerUDPPollable::receiveEvent(short)
     struct sockaddr_in sender;
     socklen_t senderLen = sizeof(sender);
     std::queue<uint8_t> dataQueue;
-    ssize_t bytesRead = recvfrom(this->getFileDescriptor(), buffer, BUFFER_SIZE, 0, 
+    ssize_t bytesRead = recvfrom(this->getFileDescriptor(), buffer, BUFFER_SIZE, 0,
                                   (struct sockaddr*)&sender, &senderLen);
     if (bytesRead <= 0)
         return true;
@@ -227,3 +232,4 @@ bool ServerUDPPollable::receiveEvent(short)
     }
     return true;
 }
+

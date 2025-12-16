@@ -126,6 +126,8 @@ void Client::executePackets()
 
 void Client::sendUDPPackets()
 {
+    std::lock_guard<std::mutex> lck (this->udpLockSend);
+
     for (std::shared_ptr<IPollable> &p : this->getPollManager().getPool()) {
         for (auto &[packet, addr] : p->getPacketsToSendUDP()) {
             (void) addr;

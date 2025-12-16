@@ -7,10 +7,12 @@
 
 #include <network/logger/Logger.hpp>
 #include <network/server/ServerClient.hpp>
+#include <network/server/Server.hpp>
 #include <unistd.h>
 #include <poll.h>
+#include "ServerClient.hpp"
 
-ServerClient::ServerClient(int fd, PollManager &pm) : Pollable(fd, pm), pm(pm)
+ServerClient::ServerClient(int fd, Server &s) : Pollable(fd, s.getPollManager()), serv(s)
 {
     return;
 }
@@ -41,6 +43,20 @@ bool ServerClient::receiveEvent(short event)
         return true;
     }
     return true;
+}
+
+void ServerClient::sendPacket(std::shared_ptr<Packet> p, bool wakeUpPoll)
+{
+    if (p->getMode() == Packet::PacketMode::TCP) {
+        this->getPacketSender().sendPacket(p);
+        this->serv.getPollManager().updateFlags(this->getFileDescriptor(),
+        this->getFlags());
+    } else {
+        std::lock_guard<std::mutex> lck(this->serv.udpLock);
+        toProcessUDP.emplace_back(p, this->getClientAddress());
+    }
+    if (wakeUpPoll)
+        this->serv.getPollManager().wakeUp();
 }
 
 bool ServerClient::shouldWrite() const

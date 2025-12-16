@@ -14,6 +14,7 @@
     #include <network/server/ServerClient.hpp>
     #include <network/packets/PacketManager.hpp>
     #include <vector>
+    #include <mutex>
 
     /* TMP */
     #include <network/packets/impl/NewPlayerPacket.hpp>
@@ -83,6 +84,7 @@ class Server {
         virtual void onClientConnect(std::shared_ptr<IPollable> client) = 0;
         virtual void onClientDisconnect(std::shared_ptr<IPollable> client) = 0;
         virtual ~Server() = default;
+        std::mutex udpLock;
     private:
         void executePackets();
         void sendUDPPackets();
@@ -101,7 +103,7 @@ class CustomServer : public Server {
         }
 
         std::shared_ptr<IPollable> createClient(int fd) {
-            return std::make_shared<ServerClient>(fd, this->getPollManager());
+            return std::make_shared<ServerClient>(fd, *this);
         }
 
         void onClientConnect(std::shared_ptr<IPollable> client) {

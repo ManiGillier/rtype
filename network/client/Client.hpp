@@ -14,6 +14,7 @@
     #include <network/poll/PollManager.hpp>
     #include <network/poll/Pollable.hpp>
     #include <string>
+    #include <mutex>
 
     #include <network/packets/impl/SAuthentificationPacket.hpp>
     #include <network/packets/impl/AuthentifiedPacket.hpp>
@@ -39,6 +40,7 @@ class Client {
         bool isAuthentified() const;
         uint32_t getUUID()  const;
         void executePackets();
+        std::mutex udpLockSend;
     private:
         void sendUDPPackets();
         std::string ip;
@@ -94,6 +96,7 @@ class ClientPollableUDP : public ClientPollable {
 
         void sendPacket(std::shared_ptr<Packet> p, bool wakeUpPoll=true) {
             if (p->getMode() == Packet::PacketMode::UDP) {
+                std::lock_guard<std::mutex> lck (cl.udpLockSend);
                 toProcessUDP.emplace_back(p, this->getClientAddress());
                 if (wakeUpPoll)
                     cl.getPollManager().wakeUp();
