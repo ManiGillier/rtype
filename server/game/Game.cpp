@@ -11,6 +11,7 @@
 #include "../components/Velocity.hpp"
 #include "../systems/GameSystems.hpp"
 #include "network/logger/Logger.hpp"
+#include "network/packets/impl/HitboxSizeUpdatePacket.hpp"
 #include "network/server/Server.hpp"
 #include <chrono>
 #include <iostream>
@@ -30,9 +31,18 @@ void Game::start()
     if (!_isRunning) {
         std::this_thread::sleep_for(std::chrono::milliseconds(200));
         for (auto const &[p_id, l_id] : _players) {
+            auto hitBox = _registry.get<HitBox>(p_id);
             std::shared_ptr<Packet> newPlayerPacket =
                 create_packet(NewPlayerPacket, p_id, l_id);
+
             this->sendPackets(newPlayerPacket);
+
+            if (hitBox.has_value()) {
+                std::shared_ptr<Packet> HitBoxSize =
+                    create_packet(HitboxSizeUpdatePacket, p_id, hitBox->width,
+                                  hitBox->height);
+                this->sendPackets(HitBoxSize);
+            }
         }
         _isRunning = true;
     }
@@ -109,8 +119,14 @@ void Game::initializeSystems()
             Systems::movement_system, std::ref(*this));
     _registry.add_update_system<Position, Laser>(Systems::update_laser_system,
                                                  std::ref(*this));
+    _registry.add_update_system<Position, HitBox>(Systems::collision_system);
     _registry.add_update_system<Health>(Systems::cleanup_system,
                                         std::ref(*this));
+}
+
+std::unordered_map<std::size_t, std::size_t> & Game::getPlayers()
+{
+    return this->_players;
 }
 
 void Game::sendPackets(std::shared_ptr<Packet> packet)

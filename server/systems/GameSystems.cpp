@@ -3,10 +3,13 @@
 #include "ecs/sparse_array/SparseArray.hpp"
 #include "network/packets/impl/DespawnPlayerPacket.hpp"
 #include "network/packets/impl/LaserActiveUpdatePacket.hpp"
+#include "server/components/Damager.hpp"
 #include "shared/components/Dependence.hpp"
 #include "shared/components/Position.hpp"
 #include <memory>
 #include <network/logger/Logger.hpp>
+#include <network/packets/impl/DespawnBulletPacket.hpp>
+#include <network/packets/impl/HealthUpdatePacket.hpp>
 #include <network/packets/impl/PlayerDiedPacket.hpp>
 #include <network/packets/impl/PositionUpdatePacket.hpp>
 
@@ -65,9 +68,8 @@ auto Systems::movement_system(
         } else if (out->canGoOutside &&
                    (pos->x < 0.0f || pos->x > GameConstants::width ||
                     pos->y < 0.0f || pos->y > GameConstants::height)) {
-            LOG("CAN go outside ima bullet");
             r.kill_entity(r.entity_from_index(i));
-            game.sendPackets(std::make_shared<DespawnPlayerPacket>(i));
+            game.sendPackets(std::make_shared<DespawnBulletPacket>(i));
             continue;
         }
         game.sendPackets(
@@ -130,15 +132,11 @@ auto Systems::update_player_system(Registry &r,
     LOG("position update");
 }
 
-auto Systems::collision_system(
-    [[maybe_unused]] Registry &r,
-    containers::indexed_zipper<SparseArray<Position>, SparseArray<HitBox>>
-        zipper) -> void
+auto Systems::collision_system([[maybe_unused]] Registry &r,
+                               [[maybe_unused]] containers::indexed_zipper<
+                                   SparseArray<Position>, SparseArray<HitBox>>
+                                   zipper) -> void
 {
-    auto &healths = r.get_components<Health>();
-    auto &damagers = r.get_components<Damager>();
-    auto &resistances = r.get_components<Resistance>();
-
     for (auto &&[i, pos_i, hitbox_i] : zipper) {
         for (auto &&[j, pos_j, hitbox_j] : zipper) {
             if (i >= j)
@@ -150,27 +148,29 @@ auto Systems::collision_system(
                               pos_i->y + hitbox_i->height > pos_j->y;
 
             if (collisionX && collisionY) {
-                if (damagers[i].has_value() && healths[j].has_value()) {
-                    int damage = damagers[i]->damage;
+                if (r.get<Damager>(i).has_value() &&
+                    r.get<Health>(j).has_value()) {
+                    int damage = r.get<Damager>(i)->damage;
 
-                    if (resistances[j].has_value()) {
-                        damage =
-                            static_cast<int>(static_cast<float>(damage) *
-                                             (1.0f - resistances[j]->ratio));
-                    }
-
-                    healths[j]->pv -= damage;
+                    // if (r.get<Resistance>(j).has_value()) {
+                    //     damage = static_cast<int>(
+                    //         static_cast<float>(damage) *
+                    //         (1.0f - r.get<Resistance>(j)->ratio));
+                    // }
+                    r.set<Health>(j, r.get<Health>(j)->pv - damage, 100);
+                    LOG("TOUCHED");
                 }
-                if (damagers[j].has_value() && healths[i].has_value()) {
-                    int damage = damagers[j]->damage;
+                if (r.get<Damager>(j).has_value() &&
+                    r.get<Health>(i).has_value()) {
+                    int damage = r.get<Damager>(j)->damage;
 
-                    if (resistances[i].has_value()) {
-                        damage =
-                            static_cast<int>(static_cast<float>(damage) *
-                                             (1.0f - resistances[i]->ratio));
-                    }
-
-                    healths[i]->pv -= damage;
+                    // if (r.get<Resistance>(i).has_value()) {
+                    //     damage = static_cast<int>(
+                    //         static_cast<float>(damage) *
+                    //         (1.0f - r.get<Resistance>(i)->ratio));
+                    // }
+                    r.set<Health>(i, r.get<Health>(i)->pv - damage, 100);
+                    LOG("TOUCHED");
                 }
             }
         }
@@ -182,9 +182,20 @@ auto Systems::cleanup_system(
     [[maybe_unused]] Game &game) -> void
 {
     for (auto &&[i, health] : zipper) {
+        LOG("player pv = " << health->pv << " max pv = " << health->max_pv);
+        if (game.getPlayers().empty()) {
+            LOG("all player died");
+            exit(10);
+            //TODO: game over
+        }
         if (health->pv <= 0) {
             r.kill_entity(r.entity_from_index(i));
+            if (game.getPlayers().contains(i))
+                game.getPlayers().erase(i);
             game.sendPackets(std::make_shared<PlayerDiedPacket>(i));
+            game.sendPackets(std::make_shared<DespawnPlayerPacket>(i));
+            continue;
         }
+        game.sendPackets(std::make_shared<HealthUpdatePacket>(i, health->pv));
     }
 }

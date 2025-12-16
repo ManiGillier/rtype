@@ -28,6 +28,7 @@ class Game
     Registry &getRegistry();
     std::mutex &getRegistryMutex();
     EntityFactory &getFactory();
+    std::unordered_map<std::size_t, std::size_t> &getPlayers();
     void sendPackets(std::shared_ptr<Packet> packet);
 
   private:

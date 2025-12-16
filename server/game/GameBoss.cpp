@@ -1,5 +1,7 @@
 #include "GameBoss.hpp"
 #include "Game.hpp"
+#include "network/packets/impl/HitboxSizeUpdatePacket.hpp"
+#include "shared/components/HitBox.hpp"
 #include "shared/components/Position.hpp"
 #include <chrono>
 #include <memory>
@@ -31,6 +33,14 @@ bool GameBoss::newBoss()
     _curBoss = this->_game.getFactory().createBoss();
     this->_game.sendPackets(
         std::make_shared<NewEnemyPacket>(_curBoss->getId()));
+
+    auto hitBox = this->_game.getRegistry().get<HitBox>(_curBoss->getId());
+    if (hitBox.has_value()) {
+        std::shared_ptr<Packet> HitBoxSize =
+            create_packet(HitboxSizeUpdatePacket, _curBoss->getId(),
+                          hitBox->width, hitBox->height);
+        this->_game.sendPackets(HitBoxSize);
+    }
     return true;
 }
 
@@ -51,6 +61,13 @@ bool GameBoss::shoot()
     auto e = this->_game.getFactory().createBossBullet(
         static_cast<int>(_curBoss->getId()), boss->x, boss->y);
     this->_game.sendPackets(std::make_shared<NewBulletPacket>(e.getId()));
+
+    auto hitBox = this->_game.getRegistry().get<HitBox>(e.getId());
+    if (hitBox.has_value()) {
+        std::shared_ptr<Packet> HitBoxSize = create_packet(
+            HitboxSizeUpdatePacket, e.getId(), hitBox->width, hitBox->height);
+        this->_game.sendPackets(HitBoxSize);
+    }
     _lastShoot = now;
     return true;
 }
