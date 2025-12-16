@@ -7,6 +7,8 @@ on:
     branches:
       - dev
       - main
+      - ci
+      - ci-test
 jobs:
   push-on-main:
     if: startsWith(github.ref, 'refs/tags/')
@@ -16,20 +18,20 @@ jobs:
     container: epitechcontent/epitest-docker
     steps:
       - uses: actions/checkout@v4
-      - run: git push origin dev:main
-  create-a-releases:
-    needs: push-on-main
-    if: startsWith(github.ref, 'refs/tags/')
-    runs-on: ubuntu-latest
-    container: epitechcontent/epitest-docker
-    steps:
-      - uses: actions/checkout@v4
-      - name: Compile
-        run: make
-      - name: Create Release
-        uses: softprops/action-gh-release@v1
-        with:
-          name: ${{ github.ref_name }}
-          files: |
-            r-type_server
-            r-type_client
+      - run: git push origin ci:ci-test
+  # create-a-releases:
+  #   needs: push-on-main
+  #   if: startsWith(github.ref, 'refs/tags/')
+  #   runs-on: ubuntu-latest
+  #   container: epitechcontent/epitest-docker
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Compile
+  #       run: make
+  #     - name: Create Release
+  #       uses: softprops/action-gh-release@v1
+  #       with:
+  #         name: ${{ github.ref_name }}
+  #         files: |
+  #           r-type_server
+  #           r-type_client
