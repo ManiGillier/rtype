@@ -2,6 +2,7 @@
 #include "../RTypeServer.hpp"
 #include "network/logger/Logger.hpp"
 #include "network/packets/impl/StartGamePacket.hpp"
+#include <memory>
 
 GameExecutor::GameExecutor(RTypeServer &server)
     : _rtypeServer(server), _hasStarted(false)
@@ -11,15 +12,20 @@ GameExecutor::GameExecutor(RTypeServer &server)
 bool GameExecutor::execute(Server &server, std::shared_ptr<Player> player,
                            std::shared_ptr<StartGamePacket> packet)
 {
-    (void)server;
     (void)player;
     (void)packet;
 
-    // TODO: check for several player
-    if (_hasStarted) {
-        LOG("Game already started");
+    auto &pool = server.getPollManager().getPool();
+    if (pool.size() > 10 || _hasStarted) {
+        LOG("Can't start game (already started or too much player -> "
+            << pool.size() << ")");
         return false;
     }
     _hasStarted = true;
+    _rtypeServer.setStart();
+
+    auto startPacket = create_packet(StartGamePacket);
+    for (auto &pollable : server.getPollManager().getPool())
+        pollable->sendPacket(startPacket);
     return true;
 }

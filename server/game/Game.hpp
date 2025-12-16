@@ -6,27 +6,30 @@
 */
 
 #ifndef GAME_HPP
-    #define GAME_HPP
+#define GAME_HPP
 
 #include "../../ecs/regisrty/Registry.hpp"
-#include "../factories/EntityFactory.hpp"
 #include "../../network/packets/Packet.hpp"
+#include "../factories/EntityFactory.hpp"
+#include "ecs/entity/Entity.hpp"
 #include <memory>
-#include <vector>
 #include <mutex>
+#include <unordered_map>
+#include <vector>
 
-class Game {
-public:
+class Game
+{
+  public:
     Game(class Server &server);
     ~Game() = default;
     void start();
     void loop(int ticks);
     std::pair<Entity, Entity> addPlayer();
-    Registry& getRegistry();
-    std::mutex& getRegistryMutex();
+    Registry &getRegistry();
+    std::mutex &getRegistryMutex();
     void sendPackets(std::shared_ptr<Packet> packet);
 
-private:
+  private:
     void initializeComponents();
     void initializeSystems();
 
@@ -34,6 +37,7 @@ private:
     EntityFactory _factory;
     bool _isRunning;
     class Server &_server;
+    std::unordered_map<std::size_t, std::size_t> _players;
     std::mutex _registryMutex;
 };
 
