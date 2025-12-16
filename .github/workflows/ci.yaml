@@ -17,7 +17,7 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      - run: git push origin ci:ci-test
+      - run: git push origin HEAD:ci-test
   # create-a-releases:
   #   needs: push-on-main
   #   if: startsWith(github.ref, 'refs/tags/')
