@@ -139,7 +139,7 @@ auto InGameStateLogic::updateHealth(std::size_t id, float health,
 
     if (!my_id)
         return;
-    this->gameState.getRegistry().set<Health>(id, (int) health,
+    this->gameState.getRegistry().set<Health>(*my_id, (int) health,
                                               (int) max_health);
 }
 
@@ -150,7 +150,7 @@ auto InGameStateLogic::updateHitbox(std::size_t id, float width, float height)
 
     if (!my_id)
         return;
-    this->gameState.getRegistry().set<HitBox>(id, width, height);
+    this->gameState.getRegistry().set<HitBox>(*my_id, width, height);
 }
 
 auto InGameStateLogic::updateLaser(std::size_t id, bool active, float length)
@@ -160,7 +160,7 @@ auto InGameStateLogic::updateLaser(std::size_t id, bool active, float length)
 
     if (!my_id)
         return;
-    this->gameState.getRegistry().set<Laser>(id, active, length);
+    this->gameState.getRegistry().set<Laser>(*my_id, active, length);
 }
 
 auto InGameStateLogic::managePlayerMovement() -> void
