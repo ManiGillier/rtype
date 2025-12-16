@@ -50,8 +50,8 @@ public:
     }
 
     auto getEntityId() const -> std::size_t { return this->id; }
-    auto getYPos() const -> float { return this->x; }
-    auto getXPos() const -> float { return this->y; }
+    auto getXPos() const -> float { return this->x; }
+    auto getYPos() const -> float { return this->y; }
 private:
     std::size_t id;
     float x;
