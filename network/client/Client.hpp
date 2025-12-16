@@ -96,6 +96,8 @@ class ClientPollableUDP : public ClientPollable {
 
         void sendPacket(std::shared_ptr<Packet> p, bool wakeUpPoll=true) {
             if (p->getMode() == Packet::PacketMode::UDP) {
+                if (!cl.isAuthentified() && p->getId() != PacketId::C_AUTHENTICATION_PACKET)
+                    return;
                 std::lock_guard<std::mutex> lck (cl.udpLockSend);
                 toProcessUDP.emplace_back(p, this->getClientAddress());
                 if (wakeUpPoll)
