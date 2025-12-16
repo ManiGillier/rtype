@@ -18,7 +18,7 @@ public:
     auto update() -> State;
     auto render() -> void;
 private:
-    ClientManager &clientManager;
+    [[maybe_unused]] ClientManager &clientManager;
 };
 
 #endif /* IN_GAME_STATE_HPP */

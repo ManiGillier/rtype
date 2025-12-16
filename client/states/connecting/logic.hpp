@@ -29,12 +29,12 @@ public:
 
     auto notifyAuthentified() -> void;
 private:
-    IGameState &gameState;
-    NetworkManager &networkManager;
+    [[maybe_unused]] IGameState &gameState;
+    [[maybe_unused]] NetworkManager &networkManager;
 
-    State nextState = State::NONE;
-    Sync sync;
-    bool shouldStop = false;
+    [[maybe_unused]] State nextState = State::NONE;
+    [[maybe_unused]] Sync sync;
+    [[maybe_unused]] bool shouldStop = false;
 };
 
 #endif /* CONNECTING_STATE_LOGIC_HPP */

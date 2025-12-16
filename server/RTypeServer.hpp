@@ -26,7 +26,7 @@ public:
     bool canStart() const;
 
 private:
-    std::size_t _next_id;
+    [[maybe_unused]] std::size_t _next_id;
     int _ticks;
     bool _canStartGame;
     Game _game;

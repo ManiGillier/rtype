@@ -22,12 +22,12 @@ public:
 
     auto render(Registry &) -> void;
 private:
-    NetworkManager &networkManager;
-    IGameState &gameState;
-    InGameStateLogic &logic;
-    TextureManager textureManager;
-    SoundManager soundManager;
-    Entity background;
+    [[maybe_unused]] NetworkManager &networkManager;
+    [[maybe_unused]] IGameState &gameState;
+    [[maybe_unused]] InGameStateLogic &logic;
+    [[maybe_unused]] TextureManager textureManager;
+    [[maybe_unused]] SoundManager soundManager;
+    [[maybe_unused]] Entity background;
 };
 
 #endif /* IN_GAME_STATE_GUI_HPP */
