@@ -24,6 +24,8 @@ InGameState::InGameState(ClientManager &cm) : clientManager(cm)
     this->reg.register_component<Health>();
     this->reg.register_component<Dependence>();
     this->reg.register_component<Laser>();
+    this->reg.register_component<HorizontalTiling>();
+    this->reg.register_component<TextureComp>();
 
     this->gui = std::make_unique<InGameStateGui>(*this);
     this->logic = std::make_unique<InGameStateLogic>
