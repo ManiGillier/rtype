@@ -38,6 +38,9 @@ public:
     auto updateHitbox(std::size_t id, float width, float height) -> void;
     auto updateLaser(std::size_t id, bool active, float length) -> void;
     auto updatePosition(std::size_t id, float x, float y) -> void;
+    auto getPlayerId() -> std::optional<std::size_t> & {
+        return this->clientId;
+    }
 private:
     IGameState &gameState;
     NetworkManager &networkManager;
@@ -45,6 +48,7 @@ private:
     Sync sync;
     std::optional<std::size_t> clientId = std::nullopt;
     bool shouldStop = false;
+    std::size_t playerId = 0;
 };
 
 #endif /* IN_GAME_STATE_LOGIC_HPP */

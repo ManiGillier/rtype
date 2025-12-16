@@ -19,6 +19,9 @@
 #include "client/components/Texture.hpp"
 #include "shared/components/Laser.hpp"
 #include "shared/components/Dependence.hpp"
+#include "client/components/PlayerId.hpp"
+#include "client/manager/SoundManager.hpp"
+#include <optional>
 #include <unordered_map>
 
 /* LOGIC SYSTEMS */
@@ -47,6 +50,15 @@ auto renderHTiledTexture([[maybe_unused]] Registry &r,
     containers::indexed_zipper<SparseArray<HorizontalTiling>,
                                SparseArray<TextureComp>> zip,
     TextureManager &manager)
+-> void;
+
+auto laserSound([[maybe_unused]] Registry &r, SoundManager &soundManager)
+-> void;
+
+auto renderPlayerId([[maybe_unused]] Registry &reg,
+    containers::indexed_zipper<SparseArray<Position>,
+                               SparseArray<PlayerId>> zip,
+                    std::optional<std::size_t> &my_id)
 -> void;
 
 #endif /* RENDER_SYSTEMS_HPP */

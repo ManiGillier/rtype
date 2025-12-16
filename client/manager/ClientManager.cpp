@@ -10,7 +10,9 @@
 
 #include "client/states/game/InGameState.hpp"
 #include "client/states/lobby/LobbyState.hpp"
+#include "client/states/connecting/ConnectingState.hpp"
 
+#include <iostream>
 #include <network/logger/Logger.hpp>
 
 #include <cstdlib>
@@ -20,6 +22,9 @@ ClientManager::ClientManager()
 {
     this->gui = std::make_unique<Raylib>(*this);
 
+    this->_gameStateFactory[AUTHENTIFICATION] = [this] {
+        return std::make_unique<ConnectingState>(*this);
+    };
     this->_gameStateFactory[LOBBY] = [this] {
         return std::make_unique<LobbyState>(*this);
     };
@@ -43,20 +48,26 @@ auto ClientManager::changeState(const State state) -> void
 
 auto ClientManager::launch(int argc, char **argv) -> void
 {
-    if (argc != 3 && argc != 4)
+    if (argc != 3 && argc != 4) {
+        std::cerr << "Usage:" << std::endl
+        << argv[0] << "\tip port [-d]" << std::endl;
         return;
+    }
     if (argc == 4 && std::string(argv[5]) == "-d")
         Logger::shouldLog = true;
     this->networkManager =
         std::make_unique<NetworkManager>(argv[1], std::atoi(argv[2]));
 
-    this->changeState(LOBBY);
+    LOG("Starting game.");
+    this->changeState(AUTHENTIFICATION);
     this->loop();
 }
 
 auto ClientManager::loop() -> void
 {
     while (true) {
+        if (this->networkManager->isStopped())
+            break;
         this->getGui().render(this->getState());
         if (this->getGui().isStopped())
             break;
@@ -73,8 +84,7 @@ auto ClientManager::loop() -> void
 
 auto ClientManager::unload() -> void
 {
-    this->_internal_state.reset();
-    this->_state = END_STATE;
+    LOG("Unloading.");
     this->gui.reset();
     this->getNetworkManager().stop();
 }
