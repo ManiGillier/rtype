@@ -12,6 +12,7 @@
 #include <unistd.h>
 #include <cstring>
 #include <arpa/inet.h>
+#include <netdb.h>
 #include "Client.hpp"
 
 #include <network/packets/impl/CAuthentificationPacket.hpp>
@@ -27,13 +28,13 @@ Client::Client(const std::string &ip, int port)
     if (serverSocket != -1)
         setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR,
                &optVal, sizeof(optVal));
-    this->getPacketListener().addExecutor(std::make_unique<ClientAuthExecutor>());
-    this->getPacketListener().addExecutor(std::make_unique<ClientSetAuthExecutor>());
+    this->getPacketListener().addPersistentExecutor(std::make_unique<ClientAuthExecutor>());
+    this->getPacketListener().addPersistentExecutor(std::make_unique<ClientSetAuthExecutor>());
 }
 
 bool Client::connect()
 {
-    struct in_addr af;
+    struct addrinfo hints, *res;
     struct sockaddr_in params;
 
     if (this->connected)
@@ -41,33 +42,26 @@ bool Client::connect()
     LOG("Trying to connect to " << ip << ":" << port << "..");
     if (this->fd == -1)
         return false;
-    if (inet_pton(AF_INET, this->ip.c_str(), &af) != 1)
-        return this->connected;
-
-    memset(&params, 0, sizeof(sockaddr));
-    params.sin_family = AF_INET;
-    params.sin_addr = af;
-    params.sin_port = (in_port_t) htons((uint16_t) this->port);
-    int connectValue = ::connect(this->fd, (struct sockaddr *) &params,
-                               sizeof(struct sockaddr_in));
-    if (connectValue == -1) {
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_STREAM;
+    std::string port_str = std::to_string(this->port);
+    if (getaddrinfo(this->ip.c_str(), port_str.c_str(), &hints, &res) != 0)
         return false;
-    }
+    memcpy(&params, res->ai_addr, sizeof(sockaddr_in));
+    freeaddrinfo(res);
+    if (::connect(this->fd, reinterpret_cast<sockaddr*>(&params), sizeof(sockaddr_in)) == -1)
+        return false;
     this->udpSocket = socket(AF_INET, SOCK_DGRAM, 0);
-    if (this->udpSocket == -1) {
+    if (this->udpSocket == -1)
         return false;
-    }
-    connectValue = ::connect(this->udpSocket, (struct sockaddr *) &params,
-                           sizeof(struct sockaddr_in));
-    if (connectValue == -1) {
+    if (::connect(this->udpSocket, reinterpret_cast<sockaddr*>(&params), sizeof(sockaddr_in)) == -1) {
         close(this->udpSocket);
         this->udpSocket = -1;
         return false;
     }
-
     this->connected = true;
-    this->pm.addPollable( std::make_shared<ClientPollableUDP>(*this,
-        this->udpSocket, params));
+    this->pm.addPollable(std::make_shared<ClientPollableUDP>(*this, this->udpSocket, params));
     this->pm.addPollable(std::make_shared<ClientPollable>(*this, this->fd));
     this->udpServerAddress = params;
     return this->connected;
@@ -88,6 +82,7 @@ bool Client::disconnect()
     this->connected = false;
     this->pm.clear();
     this->authentified = false;
+    this->getPacketListener().clearExecutors();
     return true;
 }
 bool Client::isConnected() const
@@ -152,9 +147,9 @@ void Client::loop()
 {
     if (!this->connected)
         return;
-    if ((this->connected && this->getPollManager().getConnectionCount() == 0) ||
+    if ((this->connected && this->getPollManager().getConnectionCount() == 1) ||
         (this->connected && this->authentified &&
-        this->getPollManager().getConnectionCount() == 1)) {
+        this->getPollManager().getConnectionCount() == 2)) {
         this->connected = false;
         if (this->fd != -1) {
             close(this->fd);
