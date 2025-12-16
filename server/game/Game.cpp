@@ -98,7 +98,14 @@ void Game::initializeSystems()
 
 void Game::sendPackets(std::shared_ptr<Packet> packet)
 {
-    for (auto &pollable : _server.getPollManager().getPool()) {
+    std::vector<std::shared_ptr<IPollable>> pollables;
+    {
+        _server.getPollManager().lock();
+        pollables = _server.getPollManager().getPool();
+        _server.getPollManager().unlock();
+    }
+
+    for (auto &pollable : pollables) {
         pollable->sendPacket(packet);
     }
 }
