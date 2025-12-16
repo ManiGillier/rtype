@@ -19,7 +19,7 @@ public:
     auto update() -> State;
     auto render() -> void;
 private:
-    ClientManager &clientManager;
+    [[maybe_unused]] ClientManager &clientManager;
 };
 
 #endif /* CLIENT_CONNECTING_STATE_HPP */

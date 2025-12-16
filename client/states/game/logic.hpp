@@ -42,13 +42,13 @@ public:
         return this->clientId;
     }
 private:
-    IGameState &gameState;
-    NetworkManager &networkManager;
+    [[maybe_unused]] IGameState &gameState;
+    [[maybe_unused]] NetworkManager &networkManager;
 
-    Sync sync;
-    std::optional<std::size_t> clientId = std::nullopt;
-    bool shouldStop = false;
-    std::size_t playerId = 0;
+    [[maybe_unused]] Sync sync;
+    [[maybe_unused]] std::optional<std::size_t> clientId = std::nullopt;
+    [[maybe_unused]] bool shouldStop = false;
+    [[maybe_unused]] std::size_t playerId = 0;
 };
 
 #endif /* IN_GAME_STATE_LOGIC_HPP */
