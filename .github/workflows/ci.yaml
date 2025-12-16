@@ -6,8 +6,10 @@ on:
       - 'B*.*.*'
     branches:
       - dev
+      - main
 jobs:
   push-on-main:
+    if: github.ref == 'refs/heads/dev'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -15,3 +17,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: git push origin dev:main
+  create-a-releases:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    container: epitechcontent/epitest-docker
+    steps:
+      - name: Compile
+        run: make
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            r-type_server
+            r-type_client
