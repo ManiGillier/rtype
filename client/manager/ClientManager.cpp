@@ -11,6 +11,7 @@
 #include "client/states/game/InGameState.hpp"
 #include "client/states/lobby/LobbyState.hpp"
 
+#include <iostream>
 #include <network/logger/Logger.hpp>
 
 #include <cstdlib>
@@ -43,13 +44,17 @@ auto ClientManager::changeState(const State state) -> void
 
 auto ClientManager::launch(int argc, char **argv) -> void
 {
-    if (argc != 3 && argc != 4)
+    if (argc != 3 && argc != 4) {
+        std::cerr << "Usage:" << std::endl
+        << argv[0] << "\tip port [-d]" << std::endl;
         return;
+    }
     if (argc == 4 && std::string(argv[5]) == "-d")
         Logger::shouldLog = true;
     this->networkManager =
         std::make_unique<NetworkManager>(argv[1], std::atoi(argv[2]));
 
+    LOG("Starting game.");
     this->changeState(LOBBY);
     this->loop();
 }
@@ -57,6 +62,8 @@ auto ClientManager::launch(int argc, char **argv) -> void
 auto ClientManager::loop() -> void
 {
     while (true) {
+        if (this->networkManager->isStopped())
+            break;
         this->getGui().render(this->getState());
         if (this->getGui().isStopped())
             break;
@@ -73,6 +80,7 @@ auto ClientManager::loop() -> void
 
 auto ClientManager::unload() -> void
 {
+    LOG("Unloading.");
     this->_internal_state.reset();
     this->_state = END_STATE;
     this->gui.reset();
