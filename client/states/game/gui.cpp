@@ -7,6 +7,7 @@
 
 #include "gui.hpp"
 
+#include "logic.hpp"
 #include "systems/Systems.hpp"
 
 #include <functional>
@@ -16,8 +17,9 @@
 #include "client/network/executor/NewPlayerSoundExecutor.hpp"
 #include "client/network/executor/DespawnPlayerSoundExecutor.hpp"
 
-InGameStateGui::InGameStateGui(IGameState &gm, NetworkManager &nm)
-    : networkManager(nm), gameState(gm),
+InGameStateGui::InGameStateGui(IGameState &gm, NetworkManager &nm,
+                               InGameStateLogic &logic)
+    : networkManager(nm), gameState(gm), logic(logic),
       background(gm.getRegistry().spawn_entity())
 {
     Registry &r = gameState.getRegistry();
@@ -31,6 +33,8 @@ InGameStateGui::InGameStateGui(IGameState &gm, NetworkManager &nm)
 
     r.add_render_system<Position, HitBox, ElementColor>(renderSquare);
     r.add_render_system<Laser, Dependence, ElementColor>(renderLaser);
+    r.add_render_system<Position, PlayerId>(renderPlayerId,
+                                            this->logic.getPlayerId());
 
     r.add_component<HorizontalTiling>(background, {2, 0, -50});
     r.add_component<TextureComp>(background, {"client/assets/background.jpg"});
