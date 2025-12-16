@@ -2,19 +2,19 @@
 ** EPITECH PROJECT, 2025
 ** rtype
 ** File description:
-** lobby state gui
+** connecting state gui
 */
 
 #include "gui.hpp"
 #include <raylib.h>
 
-LobbyStateGui::LobbyStateGui(IGameState &gs) : gameState(gs)
+ConnectingStateGui::ConnectingStateGui(IGameState &gs) : gameState(gs)
 {
 }
 
-auto LobbyStateGui::render(Registry &r) -> void
+auto ConnectingStateGui::render(Registry &r) -> void
 {
-    const char *txt = "When ready, press <SPACE>";
+    const char *txt = "Authentification... Please wait!";
     const int fontSize = 40;
     const int width = MeasureText(txt, fontSize);
 

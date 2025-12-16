@@ -79,6 +79,8 @@ auto InGameStateLogic::newPlayer(std::size_t player_id, std::size_t laser_id)
     r.add_component<HitBox>(player, {20, 20});
     r.add_component<ElementColor>(player, {WHITE});
     r.add_component<Health>(player, {0, 0});
+    r.add_component<PlayerId>(player, {this->playerId});
+    this->playerId++;
 
     r.add_component<Dependence>(laser, {player.getId()});
     r.add_component<Laser>(laser, {true, 30});

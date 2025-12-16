@@ -26,17 +26,20 @@ auto NetworkManager::loop() -> void
     Logger::shouldLog = true;
     this->client->connect();
     if (!this->client->isConnected())
-        return;
+        LOG_ERR("Failed to connect to server.");
     while (!this->shouldStop && this->client->isConnected()) {
         this->client->loop();
         if (!this->client->isConnected())
             break;
     }
+    LOG("Connection ended.");
+    this->shouldStop = true;
 }
 
 auto NetworkManager::stop() -> void
 {
     this->shouldStop = true;
+    this->client->getPollManager().wakeUp();
 }
 
 auto NetworkManager::addExecutor(std::unique_ptr<PacketExecutor<Client>> exec)
