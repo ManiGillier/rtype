@@ -30,7 +30,7 @@ auto Systems::movement_system(
         pos->y += vel->y;
         vel->x += acc->x;
         vel->y += acc->y;
-        // 
+        //
         // game.addPacketToSend(
         //     std::make_shared<PositionUpdatePacket>(i, pos->x, pos->y));
     }
@@ -61,9 +61,9 @@ auto Systems::update_player_system(Registry &r,
     if (inputs.value.right)
         vel.x += GameConstants::PLAYER_SPEED;
     if (inputs.value.up)
-        vel.y -= GameConstants::PLAYER_SPEED;
-    if (inputs.value.down)
         vel.y += GameConstants::PLAYER_SPEED;
+    if (inputs.value.down)
+        vel.y -= GameConstants::PLAYER_SPEED;
 
     auto &pos = positions[id].value();
     pos.x += vel.x;
@@ -87,7 +87,7 @@ auto Systems::update_player_system(Registry &r,
             }
             if (i < lasers.size() && lasers[i].has_value()) {
                 lasers[i].value().active = inputs.value.shoot;
-                lasers[i].value().length = GameConstants::height - pos.x;
+                lasers[i].value().length = GameConstants::height - pos.y;
             }
         }
     }
