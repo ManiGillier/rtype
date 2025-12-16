@@ -1,4 +1,4 @@
-name: a
+name: ci
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
       - main
 jobs:
   push-on-main:
-    if: github.ref == 'refs/heads/dev'
+    if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -18,7 +18,8 @@ jobs:
       - uses: actions/checkout@v4
       - run: git push origin dev:main
   create-a-releases:
-    if: github.ref == 'refs/heads/main'
+    needs: push-on-main
+    if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     container: epitechcontent/epitest-docker
     steps:
@@ -27,6 +28,7 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
+          name: ${{ github.ref_name }}
           files: |
             r-type_server
             r-type_client
