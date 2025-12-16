@@ -19,6 +19,7 @@
 #include "client/components/Texture.hpp"
 #include "shared/components/Laser.hpp"
 #include "shared/components/Dependence.hpp"
+#include "client/manager/SoundManager.hpp"
 #include <unordered_map>
 
 /* LOGIC SYSTEMS */
@@ -47,6 +48,9 @@ auto renderHTiledTexture([[maybe_unused]] Registry &r,
     containers::indexed_zipper<SparseArray<HorizontalTiling>,
                                SparseArray<TextureComp>> zip,
     TextureManager &manager)
+-> void;
+
+auto laserSound([[maybe_unused]] Registry &r, SoundManager &soundManager)
 -> void;
 
 #endif /* RENDER_SYSTEMS_HPP */

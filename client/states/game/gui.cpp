@@ -37,6 +37,10 @@ InGameStateGui::InGameStateGui(IGameState &gm, NetworkManager &nm)
 
     this->soundManager.loadSound("client/assets/new_player.mp3");
     this->soundManager.loadSound("client/assets/despawn_player.mp3");
+    this->soundManager.loadSound("client/assets/laser.mp3");
+
+    r.add_global_render_system(laserSound, std::ref(this->soundManager));
+
     nm.addExecutor(std::make_unique<NewPlayerSoundExecutor>
                        (std::ref(this->soundManager)));
     nm.addExecutor(std::make_unique<DespawnPlayerSoundExecutor>
