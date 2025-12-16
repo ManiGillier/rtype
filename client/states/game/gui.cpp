@@ -9,10 +9,16 @@
 
 #include "systems/Systems.hpp"
 
+#include <functional>
+#include <memory>
 #include <raylib.h>
 
-InGameStateGui::InGameStateGui(IGameState &gm) : gameState(gm),
-    background(gm.getRegistry().spawn_entity())
+#include "client/network/executor/NewPlayerSoundExecutor.hpp"
+#include "client/network/executor/DespawnPlayerSoundExecutor.hpp"
+
+InGameStateGui::InGameStateGui(IGameState &gm, NetworkManager &nm)
+    : networkManager(nm), gameState(gm),
+      background(gm.getRegistry().spawn_entity())
 {
     Registry &r = gameState.getRegistry();
 
@@ -22,11 +28,19 @@ InGameStateGui::InGameStateGui(IGameState &gm) : gameState(gm),
         (animateTiling, std::ref(this->textureManager));
     r.add_render_system<HorizontalTiling, TextureComp>
         (renderHTiledTexture, std::ref(this->textureManager));
+
     r.add_render_system<Position, HitBox, ElementColor>(renderSquare);
     r.add_render_system<Laser, Dependence, ElementColor>(renderLaser);
 
     r.add_component<HorizontalTiling>(background, {2, 0, -50});
     r.add_component<TextureComp>(background, {"client/assets/background.jpg"});
+
+    this->soundManager.loadSound("client/assets/new_player.mp3");
+    this->soundManager.loadSound("client/assets/despawn_player.mp3");
+    nm.addExecutor(std::make_unique<NewPlayerSoundExecutor>
+                       (std::ref(this->soundManager)));
+    nm.addExecutor(std::make_unique<DespawnPlayerSoundExecutor>
+                       (std::ref(this->soundManager)));
 }
 
 auto InGameStateGui::render(Registry &r) -> void
