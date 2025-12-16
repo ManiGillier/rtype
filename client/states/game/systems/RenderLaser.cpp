@@ -18,6 +18,7 @@ auto renderLaser([[maybe_unused]] Registry &reg,
                                SparseArray<ElementColor>> zip)
 -> void
 {
+    int height = GetRenderHeight();
     for (auto &&[_, laser, ref, color] : zip) {
         std::optional<Position> player_pos = reg.get<Position>(ref->id);
 
@@ -27,7 +28,7 @@ auto renderLaser([[maybe_unused]] Registry &reg,
             continue;
         int const laser_width = 5;
         DrawRectangle((int) (player_pos->x - (float) laser_width / 2),
-                      (int) player_pos->y,
+                      height - (int) player_pos->y - (int) laser->length,
                       laser_width, (int) laser->length,
                       color->color);
     }
