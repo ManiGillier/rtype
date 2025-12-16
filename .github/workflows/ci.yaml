@@ -23,6 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     container: epitechcontent/epitest-docker
     steps:
+      - uses: actions/checkout@v4
       - name: Compile
         run: make
       - name: Create Release
