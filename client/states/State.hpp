@@ -10,6 +10,7 @@
 
 enum State {
    NONE = 0,
+   AUTHENTIFICATION,
    LOBBY,
    IN_GAME,
    END_STATE = -1

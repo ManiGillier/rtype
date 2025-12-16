@@ -5,8 +5,8 @@
 ** raylib
 */
 
-#include <raylib.h>
 #include <thread>
+#include <raylib.h>
 
 #include "Raylib.hpp"
 
@@ -22,12 +22,13 @@ Raylib::Raylib(ClientManager &cm)
 
 Raylib::~Raylib()
 {
+    this->stopped = true;
     CloseWindow();
 }
 
 auto Raylib::isStopped() -> bool
 {
-    return WindowShouldClose();
+    return WindowShouldClose() || this->stopped;
 }
 
 auto Raylib::render(IGameState &gs) -> void
