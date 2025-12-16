@@ -13,14 +13,14 @@
 class Player : public ServerClient
 {
   public:
-    Player(int fd, PollManager &pm, int id);
+    Player(int fd, PollManager &pm, std::size_t id);
     ~Player() = default;
-    int getId() const;
+    std::size_t getId() const;
     void setReady();
     bool isReady() const;
 
   private:
-    int _id;
+    std::size_t _id;
     bool _ready;
 };
 

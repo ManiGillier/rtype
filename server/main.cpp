@@ -1,6 +1,9 @@
-#include "R-TypeServer.hpp"
+#include "./game/GameExecutor.hpp"
+#include "./game/ClientInputsExecutor.hpp"
+#include "RTypeServer.hpp"
 #include "network/logger/Logger.hpp"
 #include <iostream>
+#include <memory>
 #include <string>
 #include <thread>
 
@@ -67,29 +70,47 @@ class RType
         return 0;
     }
 
+    void networkLoop()
+    {
+        RTypeServer server(this->_port, this->_ticks);
+        server.up();
+        server.getPacketListener().addExecutor(
+            std::make_unique<GameExecutor>(server));
+        server.getPacketListener().addExecutor(
+            std::make_unique<ClientInputsExecutor>(server));
+
+        while (1) {
+            server.loop();
+            if (server.canStart() && !_hasStarted) {
+                this->addThread(
+                    std::thread(&Game::loop, std::ref(server.getGame()), this->_ticks));
+                _hasStarted = !_hasStarted;
+            }
+        }
+    }
+
     int launch()
     {
         if (_displayUsage)
             return displayUsage();
 
-        // TODO: create an other thread for this.
-        RtypeServer server(this->_port);
-        server.up();
-
-        auto server_loop = [](RtypeServer *server) {
-            while (1)
-                server->loop();
-        };
-
-        std::thread s(server_loop, &server);
-        s.join();
+        this->addThread(std::thread(&RType::networkLoop, this));
+        for (std::thread &th : this->_threads)
+            th.join();
         return 0;
+    }
+
+    void addThread(std::thread &&t)
+    {
+        this->_threads.push_back(std::move(t));
     }
 
   private:
     int _ticks = 60;
     int _port = -1;
     bool _displayUsage = false;
+    bool _hasStarted = false;
+    std::vector<std::thread> _threads;
 };
 
 int main(int argc, char **argv)

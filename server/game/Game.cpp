@@ -9,9 +9,13 @@
 #include "../components/Resistance.hpp"
 #include "../components/Velocity.hpp"
 #include "../systems/GameSystems.hpp"
-#include "ecs/sparse_array/SparseArray.hpp"
+#include "network/logger/Logger.hpp"
+#include "network/server/Server.hpp"
+#include <chrono>
+#include <thread>
 
-Game::Game() : _registry(), _factory(_registry), _isRunning(false)
+Game::Game(class Server &server)
+    : _registry(), _factory(_registry), _isRunning(false), _server(server)
 {
     initializeComponents();
     initializeSystems();
@@ -20,44 +24,51 @@ Game::Game() : _registry(), _factory(_registry), _isRunning(false)
 void Game::start()
 {
     if (!_isRunning) {
-        this->addBodss();
         _isRunning = true;
     }
 }
 
-void Game::update()
+void Game::loop(int ticks)
 {
+    this->start();
     if (!_isRunning)
         return;
+    auto tickDuration = std::chrono::milliseconds(1000 / ticks);
 
-    //...
-    _registry.update();
+    LOG("Game loop started with: " << ticks << " ticks per second");
+
+    while (_isRunning) {
+        auto startTime = std::chrono::steady_clock::now();
+        {
+            std::lock_guard<std::mutex> lock(_registryMutex);
+            _registry.update();
+        }
+        auto endTime = std::chrono::steady_clock::now();
+        auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
+            endTime - startTime);
+        auto sleepTime = tickDuration - elapsed;
+        if (sleepTime.count() > 0) {
+            std::this_thread::sleep_for(sleepTime);
+        }
+    }
 }
 
-Entity Game::addPlayer(std::shared_ptr<Player> &player)
+std::pair<Entity, Entity> Game::addPlayer()
 {
     Entity pl = _factory.createPlayer();
+    Entity laser = _factory.createPlayerLaser(static_cast<int>(pl.getId()));
 
-    // can't use for now need network class
-    _players.emplace(player->getId(), std::move(pl));
-    _factory.createPlayerLaser(static_cast<int>(pl.getId()));
-    return pl;
-}
-
-void Game::removePlayer(std::shared_ptr<Player> &player)
-{
-    _players.erase(player->getId());
-}
-
-Entity Game::addBodss()
-{
-    auto boss = _factory.createBoss();
-    return boss;
+    return {pl, laser};
 }
 
 Registry &Game::getRegistry()
 {
     return _registry;
+}
+
+std::mutex &Game::getRegistryMutex()
+{
+    return _registryMutex;
 }
 
 void Game::initializeComponents()
@@ -75,12 +86,26 @@ void Game::initializeComponents()
 
 void Game::initializeSystems()
 {
-    _registry.add_update_system<Position, Velocity, Acceleration>(
-        Systems::movement_system, 0);
-    _registry.add_update_system<Position, Dependence, Laser>(
-        Systems::dependence_system, 0);
-    _registry.add_update_system<Position, HitBox>(
-        Systems::collision_system, 0);
-    _registry.add_update_system<Health>(
-        Systems::cleanup_system, 0);
+    // _registry.add_update_system<Position, Velocity, Acceleration>(
+    //     Systems::movement_system, std::ref(*this));
+    // _registry.add_update_system<Position, Dependence, Laser>(
+    //     Systems::dependence_system, std::ref(*this));
+    // _registry.add_update_system<Position, HitBox>(
+    //     Systems::collision_system);
+    // _registry.add_update_system<Health>(
+    //     Systems::cleanup_system);
+}
+
+void Game::sendPackets(std::shared_ptr<Packet> packet)
+{
+    std::vector<std::shared_ptr<IPollable>> pollables;
+    {
+        _server.getPollManager().lock();
+        pollables = _server.getPollManager().getPool();
+        _server.getPollManager().unlock();
+    }
+
+    for (auto &pollable : pollables) {
+        pollable->sendPacket(packet);
+    }
 }

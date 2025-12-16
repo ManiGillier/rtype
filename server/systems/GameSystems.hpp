@@ -19,6 +19,10 @@
 #include "../components/Damager.hpp"
 #include "../components/Resistance.hpp"
 #include "../components/Velocity.hpp"
+#include <network/packets/PacketManager.hpp>
+#include <network/packets/impl/ClientInputsPacket.hpp>
+
+class Game;
 
 namespace Systems
 {
@@ -27,24 +31,20 @@ auto movement_system(
     containers::indexed_zipper<SparseArray<Position>, SparseArray<Velocity>,
                                SparseArray<Acceleration>>
         zipper,
-    int i) -> void;
+    Game &game) -> void;
 
-auto dependence_system(
-    Registry &r,
-    containers::indexed_zipper<SparseArray<Position>, SparseArray<Dependence>,
-                               SparseArray<Laser>>
-        zipper,
-    int i) -> void;
+auto update_player_system(Registry &r,
+                          std::shared_ptr<ClientInputsPacket> packet,
+                          std::size_t id) -> void;
 
 auto collision_system(
     Registry &r,
     containers::indexed_zipper<SparseArray<Position>, SparseArray<HitBox>>
-        zipper,
-    int i) -> void;
+        zipper) -> void;
 
 auto cleanup_system(Registry &r,
-                    containers::indexed_zipper<SparseArray<Health>> zipper,
-                    int i) -> void;
+                    containers::indexed_zipper<SparseArray<Health>> zipper, Game &game)
+    -> void;
 } // namespace Systems
 
 #endif /* COMP_POSITION_HPP */

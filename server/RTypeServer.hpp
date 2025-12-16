@@ -12,16 +12,23 @@
 #include <network/server/Server.hpp>
 #include <memory>
 
-class RtypeServer : public Server
+class RTypeServer : public Server
 {
 public:
-    RtypeServer(int port);
+    RTypeServer(int port, int ticks);
     std::shared_ptr<IPollable> createClient(int fd) override;
     void onClientConnect(std::shared_ptr<IPollable> client) override;
     void onClientDisconnect(std::shared_ptr<IPollable> client) override;
 
+    Game& getGame();
+    int getTicks() const;
+    void setStart();
+    bool canStart() const;
+
 private:
-    int _next_id;
+    std::size_t _next_id;
+    int _ticks;
+    bool _canStartGame;
     Game _game;
 };
 

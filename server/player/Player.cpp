@@ -1,12 +1,12 @@
 #include "Player.hpp"
 #include "network/server/ServerClient.hpp"
 
-Player::Player(int fd, PollManager &pm, int id)
+Player::Player(int fd, PollManager &pm, std::size_t id)
     : ServerClient(fd, pm), _id(id), _ready(false)
 {
 }
 
-int Player::getId() const
+std::size_t Player::getId() const
 {
     return _id;
 }

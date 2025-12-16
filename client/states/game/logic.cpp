@@ -183,7 +183,8 @@ auto InGameStateLogic::updatePosition(std::size_t id, float x, float y)
 {
     std::optional<std::size_t> my_id = this->sync.get_mine_from_theirs(id);
 
-    if (!my_id)
+    if (!my_id) {
         return;
-    this->gameState.getRegistry().set<Position>(id, x, y);
+    }
+    this->gameState.getRegistry().set<Position>(*my_id, x, y);
 }

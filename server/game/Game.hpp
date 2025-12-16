@@ -10,18 +10,21 @@
 
 #include "../../ecs/regisrty/Registry.hpp"
 #include "../factories/EntityFactory.hpp"
-#include "../player/Player.hpp"
+#include "../../network/packets/Packet.hpp"
+#include <memory>
+#include <vector>
+#include <mutex>
 
 class Game {
 public:
-    Game();
+    Game(class Server &server);
     ~Game() = default;
     void start();
-    void update();
-    Entity addPlayer(std::shared_ptr<Player> &player);
-    void removePlayer(std::shared_ptr<Player> &player);
-    Entity addBodss();
+    void loop(int ticks);
+    std::pair<Entity, Entity> addPlayer();
     Registry& getRegistry();
+    std::mutex& getRegistryMutex();
+    void sendPackets(std::shared_ptr<Packet> packet);
 
 private:
     void initializeComponents();
@@ -29,8 +32,9 @@ private:
 
     Registry _registry;
     EntityFactory _factory;
-    std::unordered_map<int, Entity> _players;
     bool _isRunning;
+    class Server &_server;
+    std::mutex _registryMutex;
 };
 
 #endif /* GAME_HPP */

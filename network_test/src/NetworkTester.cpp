@@ -5,6 +5,7 @@
 ** NetworkTester
 */
 
+#include "network/packets/impl/GameStartPacketRequest.hpp"
 #include <network/server/Server.hpp>
 #include <network/client/Client.hpp>
 #include <network/packets/listener/PacketExecutor.hpp>
@@ -49,6 +50,7 @@ static int client(const std::string &ip, int port)
 
     cl.getPacketListener().addExecutor(std::make_unique<ScoreUpdateExecutor>());
     cl.connect();
+    cl.sendPacket(create_packet(GameStartPacketRequest));
     if (!cl.isConnected()) {
         LOG_ERR("Could not connect to " << ip << ":" << port << ", aborting..");
         return 1;
