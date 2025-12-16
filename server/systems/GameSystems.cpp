@@ -1,6 +1,7 @@
 #include "GameSystems.hpp"
 #include "../game/Game.hpp"
 #include "ecs/sparse_array/SparseArray.hpp"
+#include "network/packets/impl/DespawnPlayerPacket.hpp"
 #include "network/packets/impl/LaserActiveUpdatePacket.hpp"
 #include "shared/components/Dependence.hpp"
 #include "shared/components/Position.hpp"
@@ -20,17 +21,32 @@ constexpr float height = 600;
 constexpr float PLAYER_SPEED = 5.0f;
 } // namespace GameConstants
 
-auto Systems:: movement_system(
+auto Systems::movement_system(
     [[maybe_unused]] Registry &r,
     containers::indexed_zipper<SparseArray<Position>, SparseArray<Velocity>,
                                SparseArray<Acceleration>,
-    SparseArray<OutsideBoundaries>> zipper, Game &game) -> void
+                               SparseArray<OutsideBoundaries>>
+        zipper,
+    Game &game) -> void
 {
-    for (auto &&[i, pos, vel, acc, _] : zipper) {
+    for (auto &&[i, pos, vel, acc, out] : zipper) {
         pos->x += vel->x;
         pos->y += vel->y;
         vel->x = acc->x;
         vel->y = acc->y;
+        if (!out->canGoOutside) {
+            if (pos->x < 0.0f)
+                pos->x = 0.0f;
+            if (pos->x > GameConstants::width)
+                pos->x = GameConstants::width;
+            if (pos->y < 0.0f)
+                pos->y = 0.0f;
+            if (pos->y > GameConstants::height)
+                pos->y = GameConstants::height;
+        } else {
+            game.sendPackets(
+                std::make_shared<DespawnPlayerPacket>(i));
+        }
         game.sendPackets(
             std::make_shared<PositionUpdatePacket>(i, pos->x, pos->y));
     }
@@ -75,14 +91,6 @@ auto Systems::update_player_system(Registry &r,
         vel.y -= GameConstants::PLAYER_SPEED;
 
     auto &pos = positions[id].value();
-    // if (pos.x < 0.0f)
-    //     pos.x = 0.0f;
-    // if (pos.x > GameConstants::width)
-    //     pos.x = GameConstants::width;
-    // if (pos.y < 0.0f)
-    //     pos.y = 0.0f;
-    // if (pos.y > GameConstants::height)
-    //     pos.y = GameConstants::height;
 
     for (std::size_t i = 0; i < dependences.size(); ++i) {
         if (dependences[i].has_value() && dependences[i].value().id == id) {

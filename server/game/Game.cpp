@@ -27,7 +27,7 @@ Game::Game(class Server &server)
 void Game::start()
 {
     if (!_isRunning) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
         for (auto const &[p_id, l_id] : _players) {
             std::shared_ptr<Packet> newPlayerPacket =
                 create_packet(NewPlayerPacket, p_id, l_id);
@@ -88,6 +88,7 @@ void Game::initializeComponents()
     _registry.register_component<Resistance>();
     _registry.register_component<Velocity>();
     _registry.register_component<Dependence>();
+    _registry.register_component<OutsideBoundaries>();
     _registry.register_component<Health>();
     _registry.register_component<HitBox>();
     _registry.register_component<Laser>();
