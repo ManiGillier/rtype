@@ -72,6 +72,7 @@ class Packet {
         void clearData() {
             while (!this->data.empty())
                 data.pop();
+            this->writeCursor = 0;
         }
 
         template<typename T>
