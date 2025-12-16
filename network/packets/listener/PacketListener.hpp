@@ -23,6 +23,11 @@ class PacketListener {
             return true;
         }
 
+        bool addPersistentExecutor(std::unique_ptr<PacketExecutor<Entity>> executor) {
+            this->persistentExecutors.push_back(std::move(executor));
+            return true;
+        }
+
         bool removeExecutor(std::unique_ptr<PacketExecutor<Entity>> &executor) {
             for (auto it = this->executors.begin(); it != this->executors.end(); it++) {
                 if (*it == executor) {
@@ -52,6 +57,11 @@ class PacketListener {
                     status &= packetExecutor->executePacket(e, con, p);
                 }
             }
+            for (const std::unique_ptr<PacketExecutor<Entity>> &packetExecutor : this->persistentExecutors) {
+                if (packetExecutor->getPacketId() == p->getId()) {
+                    status &= packetExecutor->executePacket(e, con, p);
+                }
+            }
             return status;
         }
 
@@ -63,6 +73,11 @@ class PacketListener {
                 if (packetExecutor->getPacketId() == p->getId())
                     status &= packetExecutor->executePacketUnlogged(e, sock, p);
             }
+            for (const std::unique_ptr<PacketExecutor<Entity>> &packetExecutor : this->persistentExecutors) {
+                if (packetExecutor->getPacketId() == p->getId()) {
+                    status &= packetExecutor->executePacketUnlogged(e, sock, p);
+                }
+            }
             return status;
         }
 
@@ -71,12 +86,17 @@ class PacketListener {
             return true;
         }
 
-        const std::vector<std::unique_ptr<PacketExecutor<Entity>>> &getExecutors() const {
+        const std::vector<std::unique_ptr<PacketExecutor<Entity>>> getExecutors() const {
             return this->executors;
+        }
+
+        const std::vector<std::unique_ptr<PacketExecutor<Entity>>> getPersistentExecutors() const {
+            return this->persistentExecutors;
         }
 
     private:
         std::vector<std::unique_ptr<PacketExecutor<Entity>>> executors;
+        std::vector<std::unique_ptr<PacketExecutor<Entity>>> persistentExecutors;
 };
 
 #endif /* !PACKETLISTENER_HPP_ */

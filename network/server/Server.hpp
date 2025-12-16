@@ -73,7 +73,7 @@ class ServerUDPPollable : public Pollable {
 
 class Server {
     public:
-        Server(int port);
+        Server(int port, int maxConnections=10);
         bool up();
         bool down();
         bool isUp() const;
@@ -83,6 +83,7 @@ class Server {
         virtual std::shared_ptr<IPollable> createClient(int fd) = 0;
         virtual void onClientConnect(std::shared_ptr<IPollable> client) = 0;
         virtual void onClientDisconnect(std::shared_ptr<IPollable> client) = 0;
+        int getMaxConnections() const;
         virtual ~Server() = default;
         std::mutex udpLock;
     private:
@@ -93,6 +94,7 @@ class Server {
         int udpFd;
         bool upStatus = false;
         PacketListener<Server> pl;
+        int maxConnections;
         PollManager pm;
 };
 

@@ -16,6 +16,7 @@
 
 #include <poll.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include <poll.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -23,10 +24,11 @@
 #include <bits/stdc++.h>
 #include "Server.hpp"
 
-Server::Server(int port)
+Server::Server(int port, int maxConnections)
 {
     this->port = port;
-    this->getPacketListener().addExecutor(std::make_unique<AuthenticationExecutor>());
+    this->maxConnections = maxConnections;
+    this->getPacketListener().addPersistentExecutor(std::make_unique<AuthenticationExecutor>());
 }
 
 /* TODO: Refactor this method, HOLY TRUMP WALL */
@@ -63,6 +65,7 @@ bool Server::up()
     this->getPollManager().addPollable(
         std::make_shared<ServerUDPPollable>(*this, udpFd));
     LOG("Could start server at " << this->port << " !");
+    this->maxConnections += (int) this->getPollManager().getPool().size();
     return this->upStatus;
 }
 
@@ -72,7 +75,9 @@ bool Server::down()
     LOG("Stopping server at " << this->port << "..");
     if (this->upStatus) {
         shutdown(this->fd, SHUT_RDWR);
+        shutdown(this->udpFd, SHUT_RDWR);
         this->pm.clear();
+        this->getPacketListener().clearExecutors();
         this->upStatus = false;
         LOG("Could stop server at " << this->port << " !");
         return !this->upStatus;
@@ -106,7 +111,11 @@ PollManager &Server::getPollManager()
     return this->pm;
 }
 
-/* TODO: Implement logged execute on UDP */
+int Server::getMaxConnections() const
+{
+    return this->maxConnections;
+}
+
 void Server::executePackets()
 {
     std::vector<int> toRemove;
@@ -174,12 +183,20 @@ short ServerPollable::getFlags() const
 
 bool ServerPollable::receiveEvent(short revent)
 {
+    if (this->server.getPollManager().getPool().size() >
+        (std::size_t) this->server.getMaxConnections())
+        return true;
     int other_socket = accept(this->getFileDescriptor(), 0, 0);
     std::shared_ptr<IPollable> createdClient = nullptr;
 
     (void) revent;
     if (other_socket < 0)
         return true;
+    int flags = fcntl(other_socket, F_GETFL, 0);
+    if (flags == -1 || fcntl(other_socket, F_SETFL, flags | O_NONBLOCK) == -1) {
+        close(other_socket);
+        return true;
+    }
     createdClient = server.createClient(other_socket);
     this->server.getPollManager().addPollable(createdClient);
     this->server.onClientConnect(createdClient);
