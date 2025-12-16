@@ -105,7 +105,7 @@ void Game::initializeSystems()
 
 void Game::sendPackets(std::shared_ptr<Packet> packet)
 {
-    std::vector<std::shared_ptr<IPollable>> pollables =
+    std::vector<std::shared_ptr<IPollable>> &pollables =
         _server.getPollManager().getPool();
     for (auto &pollable : pollables) {
         pollable->sendPacket(packet);
