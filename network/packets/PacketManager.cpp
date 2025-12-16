@@ -24,6 +24,7 @@
 #include "impl/PlayerHitPacket.hpp"
 #include "impl/PlayerIdPacket.hpp"
 #include "impl/PositionUpdatePacket.hpp"
+#include "network/packets/impl/StartGamePacket.hpp"
 
 void PacketManager::registerPackets()
 {
@@ -45,6 +46,7 @@ void PacketManager::registerPackets()
     this->packets.push_back(std::make_shared<SAuthentificationPacket>());
     this->packets.push_back(std::make_shared<CAuthentificationPacket>());
     this->packets.push_back(std::make_shared<AuthentifiedPacket>());
+    this->packets.push_back(std::make_shared<StartGamePacket>());
 }
 
 std::shared_ptr<Packet> PacketManager::createPacketById(uint8_t id, Packet::PacketMode mode) const
