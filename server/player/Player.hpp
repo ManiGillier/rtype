@@ -8,20 +8,18 @@
 #ifndef PLAYER_HPP
 #define PLAYER_HPP
 
-#include <network/server/ServerClient.hpp>
+#include "network/server/Server.hpp"
+#include "network/server/Server.hpp"
 
 class Player : public ServerClient
 {
   public:
-    Player(int fd, PollManager &pm, std::size_t id);
+    Player(int fd, Server &s, std::size_t id);
     ~Player() = default;
     std::size_t getId() const;
-    void setReady();
-    bool isReady() const;
 
   private:
     std::size_t _id;
-    bool _ready;
 };
 
 #endif /* PLAYER_HPP */

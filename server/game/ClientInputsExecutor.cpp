@@ -39,9 +39,8 @@ bool ClientInputsExecutor::execute(Server &server,
         create_packet(PositionUpdatePacket, player_id, updated_position.x,
                       updated_position.y);
 
-    for (auto &pollable : server.getPollManager().getPool()) {
+    for (auto &pollable : server.getPollManager().getPool())
         pollable->sendPacket(position_packet);
-    }
 
     {
         std::lock_guard<std::mutex> lock(mutex);
@@ -50,11 +49,11 @@ bool ClientInputsExecutor::execute(Server &server,
 
         for (std::size_t i = 0; i < dependences.size(); ++i) {
             if (dependences[i].has_value() &&
-                dependences[i].value().id == player_id &&
-                i < lasers.size() && lasers[i].has_value()) {
-
+                dependences[i].value().id == player_id && i < lasers.size() &&
+                lasers[i].has_value()) {
                 auto laser_packet = create_packet(LaserActiveUpdatePacket, i,
-                    lasers[i].value().active, lasers[i].value().length);
+                                                  lasers[i].value().active,
+                                                  lasers[i].value().length);
 
                 for (auto &pollable : server.getPollManager().getPool()) {
                     pollable->sendPacket(laser_packet);
