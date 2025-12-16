@@ -14,7 +14,8 @@
 #include <chrono>
 #include <thread>
 
-Game::Game(class Server &server) : _registry(), _factory(_registry), _isRunning(false), _server(server)
+Game::Game(class Server &server)
+    : _registry(), _factory(_registry), _isRunning(false), _server(server)
 {
     initializeComponents();
     initializeSystems();
