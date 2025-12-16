@@ -10,8 +10,8 @@
 
 enum State {
    NONE = 0,
+   LOBBY,
    IN_GAME,
-   /* Other states goes here */
    END_STATE = -1
 };
 

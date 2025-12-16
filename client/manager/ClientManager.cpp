@@ -9,6 +9,7 @@
 #include "client/raylib/Raylib.hpp"
 
 #include "client/states/game/InGameState.hpp"
+#include "client/states/lobby/LobbyState.hpp"
 
 #include <network/logger/Logger.hpp>
 
@@ -19,6 +20,9 @@ ClientManager::ClientManager()
 {
     this->gui = std::make_unique<Raylib>(*this);
 
+    this->_gameStateFactory[LOBBY] = [this] {
+        return std::make_unique<LobbyState>(*this);
+    };
     this->_gameStateFactory[IN_GAME] = [this] {
         return std::make_unique<InGameState>(*this);
     };
@@ -46,7 +50,7 @@ auto ClientManager::launch(int argc, char **argv) -> void
     this->networkManager =
         std::make_unique<NetworkManager>(argv[1], std::atoi(argv[2]));
 
-    this->changeState(IN_GAME);
+    this->changeState(LOBBY);
     this->loop();
 }
 
