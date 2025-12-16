@@ -11,6 +11,8 @@
 #include "client/api/GUI.hpp"
 #include "client/api/IGameState.hpp"
 
+#include "client/manager/TextureManager.hpp"
+
 class InGameStateGui : public GUI {
 public:
     InGameStateGui(IGameState &);
@@ -18,6 +20,8 @@ public:
     auto render(Registry &) -> void;
 private:
     IGameState &gameState;
+    TextureManager textureManager;
+    Entity background;
 };
 
 #endif /* IN_GAME_STATE_GUI_HPP */
