@@ -1,5 +1,6 @@
 #include "GameSystems.hpp"
 #include "../game/Game.hpp"
+#include "network/packets/impl/LaserActiveUpdatePacket.hpp"
 #include "shared/components/Dependence.hpp"
 #include "shared/components/Position.hpp"
 #include <memory>
@@ -28,11 +29,22 @@ auto Systems::movement_system(
     for (auto &&[i, pos, vel, acc] : zipper) {
         pos->x += vel->x;
         pos->y += vel->y;
-        vel->x += acc->x;
-        vel->y += acc->y;
-        //
-        // game.addPacketToSend(
-        //     std::make_shared<PositionUpdatePacket>(i, pos->x, pos->y));
+        vel->x = acc->x;
+        vel->y = acc->y;
+        game.sendPackets(
+            std::make_shared<PositionUpdatePacket>(i, pos->x, pos->y));
+    }
+}
+
+auto Systems::update_laser_system(
+    [[maybe_unused]] Registry &r,
+    containers::indexed_zipper<SparseArray<Position>, SparseArray<Laser>>
+        zipper,
+    Game &game) -> void
+{
+    for (auto &&[i, pos, laser] : zipper) {
+        game.sendPackets(create_packet(LaserActiveUpdatePacket, i,
+                                       laser->active, laser->length));
     }
 }
 
@@ -53,9 +65,6 @@ auto Systems::update_player_system(Registry &r,
     auto inputs = packet->getInputs();
     auto &vel = velocities[id].value();
 
-    vel.x = 0.0f;
-    vel.y = 0.0f;
-
     if (inputs.value.left)
         vel.x -= GameConstants::PLAYER_SPEED;
     if (inputs.value.right)
@@ -66,18 +75,14 @@ auto Systems::update_player_system(Registry &r,
         vel.y -= GameConstants::PLAYER_SPEED;
 
     auto &pos = positions[id].value();
-    pos.x += vel.x;
-    pos.y += vel.y;
-
-    // Limit player position to map boundaries
-    if (pos.x < 0.0f)
-        pos.x = 0.0f;
-    if (pos.x > GameConstants::width)
-        pos.x = GameConstants::width;
-    if (pos.y < 0.0f)
-        pos.y = 0.0f;
-    if (pos.y > GameConstants::height)
-        pos.y = GameConstants::height;
+    // if (pos.x < 0.0f)
+    //     pos.x = 0.0f;
+    // if (pos.x > GameConstants::width)
+    //     pos.x = GameConstants::width;
+    // if (pos.y < 0.0f)
+    //     pos.y = 0.0f;
+    // if (pos.y > GameConstants::height)
+    //     pos.y = GameConstants::height;
 
     for (std::size_t i = 0; i < dependences.size(); ++i) {
         if (dependences[i].has_value() && dependences[i].value().id == id) {
@@ -148,7 +153,7 @@ auto Systems::cleanup_system(
     for (auto &&[i, health] : zipper) {
         if (health->pv <= 0) {
             r.kill_entity(r.entity_from_index(i));
-            // game.addPacketToSend(std::make_shared<PlayerDiedPacket>(i));
+            game.sendPackets(std::make_shared<PlayerDiedPacket>(i));
         }
     }
 }

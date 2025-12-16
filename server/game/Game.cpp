@@ -12,11 +12,9 @@
 #include "network/logger/Logger.hpp"
 #include "network/server/Server.hpp"
 #include <chrono>
+#include <iostream>
 #include <thread>
 #include <utility>
-#include <iostream>
-#include <chrono>
-#include <thread>
 
 Game::Game(class Server &server)
     : _registry(), _factory(_registry), _isRunning(false), _server(server)
@@ -97,25 +95,18 @@ void Game::initializeComponents()
 
 void Game::initializeSystems()
 {
-    // _registry.add_update_system<Position, Velocity, Acceleration>(
-    //     Systems::movement_system, std::ref(*this));
-    // _registry.add_update_system<Position, Dependence, Laser>(
-    //     Systems::dependence_system, std::ref(*this));
-    // _registry.add_update_system<Position, HitBox>(
-    //     Systems::collision_system);
-    // _registry.add_update_system<Health>(
-    //     Systems::cleanup_system);
+    _registry.add_update_system<Position, Velocity, Acceleration>(
+        Systems::movement_system, std::ref(*this));
+    _registry.add_update_system<Position, Laser>(Systems::update_laser_system,
+                                                 std::ref(*this));
+    _registry.add_update_system<Health>(Systems::cleanup_system,
+                                        std::ref(*this));
 }
 
 void Game::sendPackets(std::shared_ptr<Packet> packet)
 {
-    std::vector<std::shared_ptr<IPollable>> pollables;
-    {
-        _server.getPollManager().lock();
-        pollables = _server.getPollManager().getPool();
-        _server.getPollManager().unlock();
-    }
-
+    std::vector<std::shared_ptr<IPollable>> pollables =
+        _server.getPollManager().getPool();
     for (auto &pollable : pollables) {
         pollable->sendPacket(packet);
     }

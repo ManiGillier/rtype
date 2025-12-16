@@ -1,5 +1,5 @@
-#include "./game/GameExecutor.hpp"
-#include "./game/ClientInputsExecutor.hpp"
+#include "./executor/GameExecutor.hpp"
+#include "./executor/ClientInputsExecutor.hpp"
 #include "RTypeServer.hpp"
 #include "network/logger/Logger.hpp"
 #include <iostream>
@@ -67,7 +67,7 @@ class RType
                   << std::endl;
         std::cout << "\t : {} = mendatory" << std::endl;
         std::cout << "\t : [] = optional" << std::endl;
-        return 0;
+        exit(0);
     }
 
     void networkLoop()
@@ -82,8 +82,8 @@ class RType
         while (1) {
             server.loop();
             if (server.canStart() && !_hasStarted) {
-                this->addThread(
-                    std::thread(&Game::loop, std::ref(server.getGame()), this->_ticks));
+                this->addThread(std::thread(
+                    &Game::loop, std::ref(server.getGame()), this->_ticks));
                 _hasStarted = !_hasStarted;
             }
         }

@@ -37,14 +37,20 @@ auto update_player_system(Registry &r,
                           std::shared_ptr<ClientInputsPacket> packet,
                           std::size_t id) -> void;
 
+auto update_laser_system(
+    Registry &r,
+    containers::indexed_zipper<SparseArray<Position>, SparseArray<Laser>>
+        zipper,
+    Game &game) -> void;
+
 auto collision_system(
     Registry &r,
     containers::indexed_zipper<SparseArray<Position>, SparseArray<HitBox>>
         zipper) -> void;
 
 auto cleanup_system(Registry &r,
-                    containers::indexed_zipper<SparseArray<Health>> zipper, Game &game)
-    -> void;
+                    containers::indexed_zipper<SparseArray<Health>> zipper,
+                    Game &game) -> void;
 } // namespace Systems
 
 #endif /* COMP_POSITION_HPP */
