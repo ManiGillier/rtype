@@ -19,7 +19,7 @@ Entity EntityFactory::createPlayer(void)
     _registry.emplace_component<Position>(player, 400.0f, 300.0f);
     _registry.emplace_component<Velocity>(player, 5.0f, 5.0f);
     _registry.emplace_component<Acceleration>(player, 0.0f, 0.0f);
-    _registry.emplace_component<OutsideBoundaries>(player, false);
+    _registry.emplace_component<OutsideBoundaries>(player, false, -1.0, -1.0);
     _registry.emplace_component<Health>(player, 100, 100);
     _registry.emplace_component<Resistance>(player, 10.0f);
     _registry.emplace_component<HitBox>(player, 0.0f, 0.0f);
@@ -30,10 +30,10 @@ Entity EntityFactory::createBoss(void)
 {
     Entity boss = _registry.spawn_entity();
 
-    _registry.emplace_component<Position>(boss, 50.0f, 300.0f);
-    _registry.emplace_component<Velocity>(boss, 5.0f, 5.0f);
-    _registry.emplace_component<Acceleration>(boss, 5.0f, 5.0f);
-    _registry.emplace_component<OutsideBoundaries>(boss, false);
+    _registry.emplace_component<Position>(boss, 50.0f, 500.0f);
+    _registry.emplace_component<Velocity>(boss, 3.0f, 0.0f);
+    _registry.emplace_component<Acceleration>(boss, 3.0f, 0.0f);
+    _registry.emplace_component<OutsideBoundaries>(boss, false, 20.0f, 780.0f);
     _registry.emplace_component<Health>(boss, 100, 100);
     _registry.emplace_component<Resistance>(boss, 50.0f);
     _registry.emplace_component<HitBox>(boss, 0.0f, 0.0f);
@@ -52,14 +52,14 @@ Entity EntityFactory::createPlayerLaser(int id)
     return playerLaser;
 }
 
-Entity EntityFactory::createBossBullet(int id)
+Entity EntityFactory::createBossBullet(int id, float x, float y)
 {
     Entity bossBullet = _registry.spawn_entity();
 
-    _registry.emplace_component<Position>(bossBullet, 50.0f, 300.0f);
-    _registry.emplace_component<Velocity>(bossBullet, 5.0f, 5.0f);
-    _registry.emplace_component<Acceleration>(bossBullet, 5.0f, 5.0f);
-    _registry.emplace_component<OutsideBoundaries>(bossBullet, true);
+    _registry.emplace_component<Position>(bossBullet, x, y);
+    _registry.emplace_component<Velocity>(bossBullet, 0.0f, -10.0f);
+    _registry.emplace_component<Acceleration>(bossBullet, 0.0f, -10.0f);
+    _registry.emplace_component<OutsideBoundaries>(bossBullet, true, -1.0, -1.0);
     _registry.emplace_component<Damager>(bossBullet, 10);
     _registry.emplace_component<HitBox>(bossBullet, 0.0f, 0.0f);
     _registry.emplace_component<Dependence>(bossBullet, id);

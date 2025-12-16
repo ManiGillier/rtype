@@ -19,7 +19,7 @@ class EntityFactory
     Entity createPlayer(void);
     Entity createBoss(void);
     Entity createPlayerLaser(int id);
-    Entity createBossBullet(int id);
+    Entity createBossBullet(int id, float x, float y);
 
   private:
     Registry &_registry;

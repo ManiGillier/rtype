@@ -18,7 +18,8 @@
 #include <utility>
 
 Game::Game(class Server &server)
-    : _registry(), _factory(_registry), _isRunning(false), _server(server)
+    : _registry(), _factory(_registry), _isRunning(false), _server(server),
+      _gameBoss(*this)
 {
     initializeComponents();
     initializeSystems();
@@ -51,6 +52,7 @@ void Game::loop(int ticks)
         {
             std::lock_guard<std::mutex> lock(_registryMutex);
             _registry.update();
+            _gameBoss.update();
         }
         auto endTime = std::chrono::steady_clock::now();
         auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -69,6 +71,11 @@ std::pair<Entity, Entity> Game::addPlayer()
 
     _players.emplace(pl.getId(), laser.getId());
     return {pl, laser};
+}
+
+EntityFactory &Game::getFactory()
+{
+    return this->_factory;
 }
 
 Registry &Game::getRegistry()

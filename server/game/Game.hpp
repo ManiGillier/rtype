@@ -12,6 +12,7 @@
 #include "../../network/packets/Packet.hpp"
 #include "../factories/EntityFactory.hpp"
 #include "ecs/entity/Entity.hpp"
+#include "GameBoss.hpp"
 #include <memory>
 #include <mutex>
 #include <unordered_map>
@@ -26,6 +27,7 @@ class Game
     std::pair<Entity, Entity> addPlayer();
     Registry &getRegistry();
     std::mutex &getRegistryMutex();
+    EntityFactory &getFactory();
     void sendPackets(std::shared_ptr<Packet> packet);
 
   private:
@@ -36,6 +38,7 @@ class Game
     EntityFactory _factory;
     bool _isRunning;
     class Server &_server;
+    GameBoss _gameBoss;
     std::unordered_map<std::size_t, std::size_t> _players;
     std::mutex _registryMutex;
 };

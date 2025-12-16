@@ -34,7 +34,7 @@ auto Systems::movement_system(
         pos->y += vel->y;
         vel->x = acc->x;
         vel->y = acc->y;
-        if (!out->canGoOutside) {
+        if (!out->canGoOutside && out->min == -1.0f) {
             if (pos->x < 0.0f)
                 pos->x = 0.0f;
             if (pos->x > GameConstants::width)
@@ -43,9 +43,32 @@ auto Systems::movement_system(
                 pos->y = 0.0f;
             if (pos->y > GameConstants::height)
                 pos->y = GameConstants::height;
-        } else {
-            game.sendPackets(
-                std::make_shared<DespawnPlayerPacket>(i));
+        } else if (!out->canGoOutside && out->min != -1.0f) {
+            if (pos->x < out->min) {
+                pos->x = out->min;
+                vel->x = std::abs(vel->x);
+                acc->x = std::abs(acc->x);
+            } else if (pos->x > out->max) {
+                pos->x = out->max;
+                vel->x = -std::abs(vel->x);
+                acc->x = -std::abs(acc->x);
+            }
+            if (pos->y < out->min) {
+                pos->y = out->min;
+                vel->y = std::abs(vel->y);
+                acc->y = std::abs(acc->y);
+            } else if (pos->y > out->max) {
+                pos->y = out->max;
+                vel->y = -std::abs(vel->y);
+                acc->y = -std::abs(acc->y);
+            }
+        } else if (out->canGoOutside &&
+                   (pos->x < 0.0f || pos->x > GameConstants::width ||
+                    pos->y < 0.0f || pos->y > GameConstants::height)) {
+            LOG("CAN go outside ima bullet");
+            r.kill_entity(r.entity_from_index(i));
+            game.sendPackets(std::make_shared<DespawnPlayerPacket>(i));
+            continue;
         }
         game.sendPackets(
             std::make_shared<PositionUpdatePacket>(i, pos->x, pos->y));

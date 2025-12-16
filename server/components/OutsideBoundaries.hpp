@@ -10,6 +10,8 @@
 
 struct OutsideBoundaries {
     bool canGoOutside;
+    float min;
+    float max;
 };
 
 #endif /* COMP_OUTSIDE_BOUNDARIES_HPP */
