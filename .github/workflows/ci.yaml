@@ -1,0 +1,17 @@
+name: a
+
+on:
+  push:
+    tags:
+      - 'B*.*.*'
+    branches:
+      - dev
+jobs:
+  push-on-main:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    container: epitechcontent/epitest-docker
+    steps:
+      - uses: actions/checkout@v4
+      - run: git push origin dev:main
