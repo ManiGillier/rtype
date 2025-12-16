@@ -16,7 +16,7 @@ std::shared_ptr<IPollable> RTypeServer::createClient(int fd)
 {
     // add player to get his entity id
     auto [e_player, _] = _game.addPlayer();
-    return std::make_shared<Player>(fd, this->getPollManager(),
+    return std::make_shared<Player>(fd, *this,
                                     e_player.getId());
 }
 
