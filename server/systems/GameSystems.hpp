@@ -17,6 +17,7 @@
 #include "../../shared/components/Position.hpp"
 #include "../components/Acceleration.hpp"
 #include "../components/Damager.hpp"
+#include "../components/OutsideBoundaries.hpp"
 #include "../components/Resistance.hpp"
 #include "../components/Velocity.hpp"
 #include <network/packets/PacketManager.hpp>
@@ -29,9 +30,8 @@ namespace Systems
 auto movement_system(
     Registry &r,
     containers::indexed_zipper<SparseArray<Position>, SparseArray<Velocity>,
-                               SparseArray<Acceleration>>
-        zipper,
-    Game &game) -> void;
+                               SparseArray<Acceleration>,
+    SparseArray<OutsideBoundaries>> zipper, Game &game) -> void;
 
 auto update_player_system(Registry &r,
                           std::shared_ptr<ClientInputsPacket> packet,

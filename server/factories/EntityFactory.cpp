@@ -3,6 +3,7 @@
 #include "../components/Damager.hpp"
 #include "../components/Resistance.hpp"
 #include "../components/Velocity.hpp"
+#include "../components/OutsideBoundaries.hpp"
 #include "../../shared/components/Dependence.hpp"
 #include "../../shared/components/Health.hpp"
 #include "../../shared/components/HitBox.hpp"
@@ -18,6 +19,7 @@ Entity EntityFactory::createPlayer(void)
     _registry.emplace_component<Position>(player, 400.0f, 300.0f);
     _registry.emplace_component<Velocity>(player, 5.0f, 5.0f);
     _registry.emplace_component<Acceleration>(player, 0.0f, 0.0f);
+    _registry.emplace_component<OutsideBoundaries>(player, false);
     _registry.emplace_component<Health>(player, 100, 100);
     _registry.emplace_component<Resistance>(player, 10.0f);
     _registry.emplace_component<HitBox>(player, 0.0f, 0.0f);
@@ -31,6 +33,7 @@ Entity EntityFactory::createBoss(void)
     _registry.emplace_component<Position>(boss, 50.0f, 300.0f);
     _registry.emplace_component<Velocity>(boss, 5.0f, 5.0f);
     _registry.emplace_component<Acceleration>(boss, 5.0f, 5.0f);
+    _registry.emplace_component<OutsideBoundaries>(boss, false);
     _registry.emplace_component<Health>(boss, 100, 100);
     _registry.emplace_component<Resistance>(boss, 50.0f);
     _registry.emplace_component<HitBox>(boss, 0.0f, 0.0f);
@@ -56,6 +59,7 @@ Entity EntityFactory::createBossBullet(int id)
     _registry.emplace_component<Position>(bossBullet, 50.0f, 300.0f);
     _registry.emplace_component<Velocity>(bossBullet, 5.0f, 5.0f);
     _registry.emplace_component<Acceleration>(bossBullet, 5.0f, 5.0f);
+    _registry.emplace_component<OutsideBoundaries>(bossBullet, true);
     _registry.emplace_component<Damager>(bossBullet, 10);
     _registry.emplace_component<HitBox>(bossBullet, 0.0f, 0.0f);
     _registry.emplace_component<Dependence>(bossBullet, id);

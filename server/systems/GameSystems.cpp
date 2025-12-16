@@ -1,5 +1,6 @@
 #include "GameSystems.hpp"
 #include "../game/Game.hpp"
+#include "ecs/sparse_array/SparseArray.hpp"
 #include "network/packets/impl/LaserActiveUpdatePacket.hpp"
 #include "shared/components/Dependence.hpp"
 #include "shared/components/Position.hpp"
@@ -19,14 +20,13 @@ constexpr float height = 600;
 constexpr float PLAYER_SPEED = 5.0f;
 } // namespace GameConstants
 
-auto Systems::movement_system(
+auto Systems:: movement_system(
     [[maybe_unused]] Registry &r,
-    [[maybe_unused]] containers::indexed_zipper<
-        SparseArray<Position>, SparseArray<Velocity>, SparseArray<Acceleration>>
-        zipper,
-    [[maybe_unused]] Game &game) -> void
+    containers::indexed_zipper<SparseArray<Position>, SparseArray<Velocity>,
+                               SparseArray<Acceleration>,
+    SparseArray<OutsideBoundaries>> zipper, Game &game) -> void
 {
-    for (auto &&[i, pos, vel, acc] : zipper) {
+    for (auto &&[i, pos, vel, acc, _] : zipper) {
         pos->x += vel->x;
         pos->y += vel->y;
         vel->x = acc->x;

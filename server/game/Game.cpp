@@ -6,6 +6,7 @@
 #include "../../shared/components/Position.hpp"
 #include "../components/Acceleration.hpp"
 #include "../components/Damager.hpp"
+#include "../components/OutsideBoundaries.hpp"
 #include "../components/Resistance.hpp"
 #include "../components/Velocity.hpp"
 #include "../systems/GameSystems.hpp"
@@ -95,8 +96,9 @@ void Game::initializeComponents()
 
 void Game::initializeSystems()
 {
-    _registry.add_update_system<Position, Velocity, Acceleration>(
-        Systems::movement_system, std::ref(*this));
+    _registry
+        .add_update_system<Position, Velocity, Acceleration, OutsideBoundaries>(
+            Systems::movement_system, std::ref(*this));
     _registry.add_update_system<Position, Laser>(Systems::update_laser_system,
                                                  std::ref(*this));
     _registry.add_update_system<Health>(Systems::cleanup_system,
