@@ -14,6 +14,9 @@
 #include <chrono>
 #include <thread>
 #include <utility>
+#include <iostream>
+#include <chrono>
+#include <thread>
 
 Game::Game(class Server &server)
     : _registry(), _factory(_registry), _isRunning(false), _server(server)
@@ -25,6 +28,7 @@ Game::Game(class Server &server)
 void Game::start()
 {
     if (!_isRunning) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
         for (auto const &[p_id, l_id] : _players) {
             std::shared_ptr<Packet> newPlayerPacket =
                 create_packet(NewPlayerPacket, p_id, l_id);

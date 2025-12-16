@@ -7,13 +7,17 @@
 #include <memory>
 
 RTypeServer::RTypeServer(int port, int ticks)
-    : Server(port), _next_id(0), _ticks(ticks), _canStartGame(false), _game(*this)
+    : Server(port), _next_id(0), _ticks(ticks), _canStartGame(false),
+      _game(*this)
 {
 }
 
 std::shared_ptr<IPollable> RTypeServer::createClient(int fd)
 {
-    return std::make_shared<Player>(fd, this->getPollManager(), _next_id++);
+    // add player to get his entity id
+    auto [e_player, _] = _game.addPlayer();
+    return std::make_shared<Player>(fd, this->getPollManager(),
+                                    e_player.getId());
 }
 
 void RTypeServer::onClientConnect(std::shared_ptr<IPollable> client)
@@ -21,16 +25,12 @@ void RTypeServer::onClientConnect(std::shared_ptr<IPollable> client)
     LOG("Player connected fd=" << client->getFileDescriptor());
 
     auto player = std::static_pointer_cast<Player>(client);
-    // add player to get his entity id
-    auto [e_player, e_laser] = _game.addPlayer();
 
-    LOG("Player added to game with id=" << e_player.getId()
-                                        << " and laser_id=" << e_laser.getId());
-
+    LOG("Player added to game with id=" << player->getId());
     // send back is entity id
     std::shared_ptr<ServerClient> sc =
         std::static_pointer_cast<ServerClient>(client);
-    std::shared_ptr<Packet> p = create_packet(PlayerIdPacket, e_player.getId());
+    std::shared_ptr<Packet> p = create_packet(PlayerIdPacket, player->getId());
     sc->sendPacket(p);
 }
 
