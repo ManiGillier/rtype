@@ -30,8 +30,9 @@ auto Systems::movement_system(
         pos->y += vel->y;
         vel->x += acc->x;
         vel->y += acc->y;
-        game.addPacketToSend(
-            std::make_shared<PositionUpdatePacket>(i, pos->x, pos->y));
+        // 
+        // game.addPacketToSend(
+        //     std::make_shared<PositionUpdatePacket>(i, pos->x, pos->y));
     }
 }
 
@@ -142,12 +143,12 @@ auto Systems::collision_system(
 
 auto Systems::cleanup_system(
     Registry &r, containers::indexed_zipper<SparseArray<Health>> zipper,
-    Game &game) -> void
+    [[maybe_unused]] Game &game) -> void
 {
     for (auto &&[i, health] : zipper) {
         if (health->pv <= 0) {
             r.kill_entity(r.entity_from_index(i));
-            game.addPacketToSend(std::make_shared<PlayerDiedPacket>(i));
+            // game.addPacketToSend(std::make_shared<PlayerDiedPacket>(i));
         }
     }
 }

@@ -14,7 +14,7 @@
 #include <chrono>
 #include <thread>
 
-Game::Game() : _registry(), _factory(_registry), _isRunning(false)
+Game::Game(class Server &server) : _registry(), _factory(_registry), _isRunning(false), _server(server)
 {
     initializeComponents();
     initializeSystems();
@@ -95,22 +95,9 @@ void Game::initializeSystems()
     //     Systems::cleanup_system);
 }
 
-void Game::sendAllPackets(Server &server)
+void Game::sendPackets(std::shared_ptr<Packet> packet)
 {
-    std::vector<std::shared_ptr<Packet>> packets_to_send;
-    {
-        std::lock_guard<std::mutex> lock(_registryMutex);
-        packets_to_send.swap(_packet_to_send);
+    for (auto &pollable : _server.getPollManager().getPool()) {
+        pollable->sendPacket(packet);
     }
-    for (auto &packet : packets_to_send) {
-        for (auto &pollable : server.getPollManager().getPool()) {
-            pollable->sendPacket(packet);
-        }
-    }
-}
-
-void Game::addPacketToSend(std::shared_ptr<Packet> packet)
-{
-    std::lock_guard<std::mutex> lock(_registryMutex);
-    _packet_to_send.push_back(packet);
 }

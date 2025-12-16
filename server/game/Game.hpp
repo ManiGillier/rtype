@@ -17,15 +17,14 @@
 
 class Game {
 public:
-    Game();
+    Game(class Server &server);
     ~Game() = default;
     void start();
     void loop(int ticks);
     std::pair<Entity, Entity> addPlayer();
     Registry& getRegistry();
     std::mutex& getRegistryMutex();
-    void sendAllPackets(class Server& server);
-    void addPacketToSend(std::shared_ptr<Packet> packet);
+    void sendPackets(std::shared_ptr<Packet> packet);
 
 private:
     void initializeComponents();
@@ -33,8 +32,8 @@ private:
 
     Registry _registry;
     EntityFactory _factory;
-    std::vector<std::shared_ptr<Packet>> _packet_to_send;
     bool _isRunning;
+    class Server &_server;
     std::mutex _registryMutex;
 };
 

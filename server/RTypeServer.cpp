@@ -7,7 +7,7 @@
 #include <memory>
 
 RTypeServer::RTypeServer(int port, int ticks)
-    : Server(port), _next_id(0), _ticks(ticks), _canStartGame(false)
+    : Server(port), _next_id(0), _ticks(ticks), _canStartGame(false), _game(*this)
 {
 }
 

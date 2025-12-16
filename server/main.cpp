@@ -81,9 +81,6 @@ class RType
 
         while (1) {
             server.loop();
-            if (_hasStarted) {
-                server.getGame().sendAllPackets(server);
-            }
             if (server.canStart() && !_hasStarted) {
                 this->addThread(
                     std::thread(&Game::loop, std::ref(server.getGame()), this->_ticks));
