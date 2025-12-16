@@ -109,13 +109,15 @@ PollManager &Server::getPollManager()
 /* TODO: Implement logged execute on UDP */
 void Server::executePackets()
 {
+    std::vector<int> toRemove;
+
     this->getPollManager().lock();
     for (std::shared_ptr<IPollable> &p : this->getPollManager().getPool()) {
         std::queue<std::shared_ptr<Packet>> &q = p->getReceivedPackets();
         while (!q.empty()) {
             std::shared_ptr<Packet> packet = q.front();
             if (!this->getPacketListener().executePacket(*this, p, packet))
-                this->getPollManager().removePollable(p->getFileDescriptor());
+                toRemove.push_back(p->getFileDescriptor());
             q.pop();
         }
     }
@@ -125,9 +127,11 @@ void Server::executePackets()
         if (!client)
             this->getPacketListener().executePacket(*this, sender, packet);
         else if (!this->getPacketListener().executePacket(*this, client, packet))
-            this->getPollManager().removePollable(client->getFileDescriptor());
+            toRemove.push_back(client->getFileDescriptor());
     }
     ServerUDPPollable::getUDPReceivedPackets().clear();
+    for (int fdClient : toRemove)
+        this->getPollManager().removePollable(fdClient);
     this->getPollManager().unlock();
 }
 

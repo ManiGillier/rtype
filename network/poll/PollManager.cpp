@@ -41,21 +41,27 @@ std::shared_ptr<IPollable> PollManager::removePollable(int fileDescriptor)
 {
     int pollableIndex = 0;
     int fdIndex = 0;
+    int pollableIndexReal = -1;
+    int fdIndexReal = -1;
     std::shared_ptr<IPollable> toReturn = nullptr;
 
     for (std::shared_ptr<IPollable> &pollable : this->pollables) {
         if (pollable->getFileDescriptor() == fileDescriptor)
-            break;
+            pollableIndexReal = pollableIndex;
         pollableIndex++;
     }
     for (struct pollfd m : this->pollFds) {
         if (m.fd == fileDescriptor)
-            break;
+            fdIndexReal = fdIndex;
         fdIndex++;
     }
-    toReturn = this->pollables[(std::size_t) pollableIndex];
-    this->pollFds.erase(this->pollFds.begin() + fdIndex);
-    this->pollables.erase(this->pollables.begin() + pollableIndex);
+    if (pollableIndexReal != -1) {
+        toReturn = this->pollables[(std::size_t) pollableIndexReal];
+        this->pollables.erase(this->pollables.begin() + pollableIndexReal);
+    }
+    if (fdIndexReal != -1) {
+        this->pollFds.erase(this->pollFds.begin() + fdIndexReal);
+    }
     close(fileDescriptor);
     return toReturn;
 }
