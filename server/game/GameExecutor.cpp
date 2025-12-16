@@ -21,7 +21,7 @@ bool GameExecutor::execute(Server &server, std::shared_ptr<Player> player,
     }
     auto &pool = server.getPollManager().getPool();
     if (pool.size() < 2 || pool.size() > 10) {
-        LOG("Can't to start game (need at least 2 and max 10, got "
+        LOG("Can't start game (need at least 2 and max 10, got "
             << pool.size() << ")");
         return false;
     }

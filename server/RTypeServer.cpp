@@ -32,16 +32,6 @@ void RTypeServer::onClientConnect(std::shared_ptr<IPollable> client)
         std::static_pointer_cast<ServerClient>(client);
     std::shared_ptr<Packet> p = create_packet(PlayerIdPacket, e_player.getId());
     sc->sendPacket(p);
-
-    // create player
-    std::shared_ptr<Packet> newPlayerPacket =
-        create_packet(NewPlayerPacket, e_player.getId(), e_laser.getId());
-
-    for (std::shared_ptr<IPollable> &c : this->getPollManager().getPool()) {
-        std::shared_ptr<ServerClient> clientToNotify =
-            std::static_pointer_cast<ServerClient>(c);
-        clientToNotify->sendPacket(newPlayerPacket);
-    }
 }
 
 void RTypeServer::onClientDisconnect(std::shared_ptr<IPollable> client)

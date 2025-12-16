@@ -13,6 +13,7 @@
 #include "network/server/Server.hpp"
 #include <chrono>
 #include <thread>
+#include <utility>
 
 Game::Game(class Server &server)
     : _registry(), _factory(_registry), _isRunning(false), _server(server)
@@ -24,6 +25,11 @@ Game::Game(class Server &server)
 void Game::start()
 {
     if (!_isRunning) {
+        for (auto const &[p_id, l_id] : _players) {
+            std::shared_ptr<Packet> newPlayerPacket =
+                create_packet(NewPlayerPacket, p_id, l_id);
+            this->sendPackets(newPlayerPacket);
+        }
         _isRunning = true;
     }
 }
@@ -58,6 +64,7 @@ std::pair<Entity, Entity> Game::addPlayer()
     Entity pl = _factory.createPlayer();
     Entity laser = _factory.createPlayerLaser(static_cast<int>(pl.getId()));
 
+    _players.emplace(pl.getId(), laser.getId());
     return {pl, laser};
 }
 
