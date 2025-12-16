@@ -15,7 +15,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    container: epitechcontent/epitest-docker
     steps:
       - uses: actions/checkout@v4
       - run: git push origin ci:ci-test
