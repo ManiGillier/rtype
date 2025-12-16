@@ -39,6 +39,7 @@ auto NetworkManager::loop() -> void
 auto NetworkManager::stop() -> void
 {
     this->shouldStop = true;
+    this->client->getPollManager().wakeUp();
 }
 
 auto NetworkManager::addExecutor(std::unique_ptr<PacketExecutor<Client>> exec)

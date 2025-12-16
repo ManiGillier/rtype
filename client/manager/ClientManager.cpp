@@ -81,8 +81,6 @@ auto ClientManager::loop() -> void
 auto ClientManager::unload() -> void
 {
     LOG("Unloading.");
-    this->_internal_state.reset();
-    this->_state = END_STATE;
     this->gui.reset();
     this->getNetworkManager().stop();
 }
