@@ -15,13 +15,9 @@ bool GameExecutor::execute(Server &server, std::shared_ptr<Player> player,
     (void)player;
     (void)packet;
 
-    if (_hasStarted) {
-        LOG("Game already started");
-        return false;
-    }
     auto &pool = server.getPollManager().getPool();
-    if (pool.size() < 2 || pool.size() > 10) {
-        LOG("Can't start game (need at least 2 and max 10, got "
+    if (pool.size() > 10 || _hasStarted) {
+        LOG("Can't start game (already started or too much player -> "
             << pool.size() << ")");
         return false;
     }
