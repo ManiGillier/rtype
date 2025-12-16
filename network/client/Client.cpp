@@ -239,6 +239,7 @@ bool ClientPollable::receiveEvent(short revent)
         }
     }
     if (shouldWrite() && (revent & POLLOUT) != 0) {
+        std::lock_guard<std::mutex> lck (cl.tcpLockSend);
         this->getPacketSender().writePackets();
         return true;
     }

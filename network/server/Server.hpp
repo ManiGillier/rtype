@@ -89,6 +89,7 @@ class Server {
         int getMaxConnections() const;
         virtual ~Server() = default;
         std::mutex udpLock;
+        std::mutex tcpLock;
     private:
         void executePackets();
         void sendUDPPackets();
