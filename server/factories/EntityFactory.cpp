@@ -33,10 +33,10 @@ Entity EntityFactory::createEnemy(int waveNumber)
     Entity enemy = _registry.spawn_entity();
 
     int baseHealth = 60 + (waveNumber * 20);
-    float speed = 2.0f + (static_cast<float>(waveNumber) * 0.3f);
+    float speed = 2.0f + (static_cast<float>(waveNumber + rand() % 20) * 0.3f);
 
     float randomX = 600.0f + static_cast<float>(rand() % 100);
-    float bottomY = 480.0f + static_cast<float>(rand() % 90);
+    float bottomY = 300.0f + static_cast<float>(rand() % 300);
 
     _registry.emplace_component<Position>(enemy, randomX, bottomY);
     _registry.emplace_component<Velocity>(enemy, -speed, 0.0f);
@@ -55,9 +55,8 @@ Entity EntityFactory::createBoss(int waveNumber)
     Entity boss = _registry.spawn_entity();
 
     int bossHealth = 200 + ( waveNumber * 100);
-    float bossSpeed = 3.0f + (static_cast<float>(waveNumber) * 0.3f);
-
-    float randomX = 300.0f + static_cast<float>(rand() % 200);
+    float bossSpeed = 3.0f + (static_cast<float>(waveNumber + rand() % 20) * 0.3f);
+    float randomX = 600.0f + static_cast<float>(rand() % 100);
     float bottomY = 500.0f;
 
     _registry.emplace_component<Position>(boss, randomX, bottomY);
