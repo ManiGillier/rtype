@@ -16,6 +16,7 @@
 #include <network/packets/impl/PlayerDiedPacket.hpp>
 #include <network/packets/impl/PositionUpdatePacket.hpp>
 #include <vector>
+#include <set>
 
 namespace GameConstants
 {
@@ -68,8 +69,8 @@ auto Systems::movement_system(
         } else if (out->canGoOutside &&
                    (pos->x < 0.0f || pos->x > GameConstants::width ||
                     pos->y < 0.0f || pos->y > GameConstants::height)) {
-            r.kill_entity(r.entity_from_index(i));
             game.sendPackets(std::make_shared<DespawnBulletPacket>(i));
+            r.kill_entity(r.entity_from_index(i));
             continue;
         }
         game.sendPackets(
@@ -159,8 +160,9 @@ auto Systems::collision_system([[maybe_unused]] Registry &r,
                     auto laser_i = r.get<Laser>(i);
                     if (laser_i.has_value() && !laser_i->active)
                         continue;
-                    if (!laser_i.has_value())
+                    if (!laser_i.has_value()) {
                         to_kill.push_back(i);
+                    }
 
                     int damage = damager_i->damage;
                     // if (r.get<Resistance>(j).has_value()) {
@@ -181,8 +183,9 @@ auto Systems::collision_system([[maybe_unused]] Registry &r,
                     auto laser_j = r.get<Laser>(j);
                     if (laser_j.has_value() && !laser_j->active)
                         continue;
-                    if (!laser_j.has_value())
+                    if (!laser_j.has_value()) {
                         to_kill.push_back(j);
+                    }
                     int damage = damager_j->damage;
                     // if (r.get<Resistance>(i).has_value()) {
                     //     damage = static_cast<int>(
@@ -194,9 +197,12 @@ auto Systems::collision_system([[maybe_unused]] Registry &r,
             }
         }
     }
+    // BORDEL REMOVE DUPLICATES !!!
+    std::set<int> s( to_kill.begin(), to_kill.end() );
+    to_kill.assign( s.begin(), s.end() );
     for (auto &it : to_kill) {
-        r.kill_entity(r.entity_from_index(it));
         game.sendPackets(std::make_shared<DespawnBulletPacket>(it));
+        r.kill_entity(r.entity_from_index(it));
     }
 }
 
@@ -204,6 +210,8 @@ auto Systems::cleanup_system(
     Registry &r, containers::indexed_zipper<SparseArray<Health>> zipper,
     [[maybe_unused]] Game &game) -> void
 {
+    std::vector<std::size_t> to_kill;
+
     for (auto &&[i, health] : zipper) {
         if (game.getPlayers().empty()) {
             LOG("all player died");
@@ -225,18 +233,32 @@ auto Systems::cleanup_system(
                             game.sendPackets(std::make_shared<HealthUpdatePacket>(playerId, newHealth));
                         }
                     }
+                    game.sendPackets(std::make_shared<DespawnPlayerPacket>(i));
                     game.getGameBoss().removeBoss(i);
+                    to_kill.push_back(i);
+                    // r.kill_entity(r.entity_from_index(i));
                 } else {
+                    game.sendPackets(std::make_shared<DespawnPlayerPacket>(i));
                     game.getGameBoss().removeEnemy(i);
+                    to_kill.push_back(i);
+                    // r.kill_entity(r.entity_from_index(i));
                 }
+                continue;
             }
-            r.kill_entity(r.entity_from_index(i));
+            game.sendPackets(std::make_shared<PlayerDiedPacket>(i));
+                    game.sendPackets(std::make_shared<DespawnPlayerPacket>(i));
             if (game.getPlayers().contains(i))
                 game.getPlayers().erase(i);
-            game.sendPackets(std::make_shared<PlayerDiedPacket>(i));
-            game.sendPackets(std::make_shared<DespawnPlayerPacket>(i));
+            to_kill.push_back(i);
+            // r.kill_entity(r.entity_from_index(i));
             continue;
         }
         game.sendPackets(std::make_shared<HealthUpdatePacket>(i, health->pv));
+    }
+    // BORDEL REMOVE DUPLICATES !!!
+    std::set<int> s( to_kill.begin(), to_kill.end() );
+    to_kill.assign( s.begin(), s.end() );
+    for (auto &i : to_kill) {
+        r.kill_entity(r.entity_from_index(i));
     }
 }

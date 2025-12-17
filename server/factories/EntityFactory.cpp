@@ -35,8 +35,8 @@ Entity EntityFactory::createEnemy(int waveNumber)
     int baseHealth = 60 + (waveNumber * 20);
     float speed = 2.0f + (static_cast<float>(waveNumber) * 0.3f);
 
-    float randomX = 100.0f + static_cast<float>(rand() % 600);
-    float bottomY = 480.0f + static_cast<float>(rand() % 40);
+    float randomX = 600.0f + static_cast<float>(rand() % 100);
+    float bottomY = 480.0f + static_cast<float>(rand() % 90);
 
     _registry.emplace_component<Position>(enemy, randomX, bottomY);
     _registry.emplace_component<Velocity>(enemy, -speed, 0.0f);
