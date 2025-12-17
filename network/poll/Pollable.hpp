@@ -76,7 +76,7 @@ class Pollable : public IPollable {
         uint32_t uuid;
         int _fd;
         PacketSender sender;
-        PollManager &pm;
+        [[maybe_unused]] PollManager &pm;
         PacketReader reader;
 };
 
