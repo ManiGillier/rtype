@@ -35,6 +35,7 @@ class ServerPollable : public Pollable {
         ServerPollable(Server &server, int fd);
         short getFlags() const;
         bool receiveEvent(short revent);
+        void sendPacket(std::shared_ptr<Packet> p, bool wakeUpPoll=true) {(void) p; (void) wakeUpPoll; }
     private:
         Server &server;
 };
@@ -44,6 +45,8 @@ class ServerUDPPollable : public Pollable {
         ServerUDPPollable(Server &server, int fd);
         short getFlags() const;
         bool receiveEvent(short revent);
+        void sendPacket(std::shared_ptr<Packet> p, bool wakeUpPoll=true) {(void) p;
+            (void) wakeUpPoll; }
 
         /* TODO: Change this system for part 2 */
 
@@ -86,6 +89,7 @@ class Server {
         int getMaxConnections() const;
         virtual ~Server() = default;
         std::mutex udpLock;
+        std::mutex tcpLock;
     private:
         void executePackets();
         void sendUDPPackets();

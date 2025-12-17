@@ -1,5 +1,5 @@
-#include "./game/GameExecutor.hpp"
-#include "./game/ClientInputsExecutor.hpp"
+#include "./executor/GameExecutor.hpp"
+#include "./executor/ClientInputsExecutor.hpp"
 #include "RTypeServer.hpp"
 #include "network/logger/Logger.hpp"
 #include <iostream>
@@ -58,6 +58,7 @@ class RType
             throw ArgsError("We’re not at the butcher’s shop; "
                             "please try a different tick value.");
     }
+    ~RType() = default;
 
     int displayUsage()
     {
@@ -67,25 +68,32 @@ class RType
                   << std::endl;
         std::cout << "\t : {} = mendatory" << std::endl;
         std::cout << "\t : [] = optional" << std::endl;
-        return 0;
+        exit(0);
     }
 
     void networkLoop()
     {
         RTypeServer server(this->_port, this->_ticks);
-        server.up();
+        if (!server.up()) {
+            LOG_ERR("Can't connect");
+            return;
+        }
         server.getPacketListener().addExecutor(
             std::make_unique<GameExecutor>(server));
         server.getPacketListener().addExecutor(
             std::make_unique<ClientInputsExecutor>(server));
 
-        while (1) {
+        std::thread gameThread;
+        while (server.getRunning()) {
             server.loop();
             if (server.canStart() && !_hasStarted) {
-                this->addThread(
-                    std::thread(&Game::loop, std::ref(server.getGame()), this->_ticks));
+                gameThread = std::thread(
+                    &Game::loop, std::ref(server.getGame()), this->_ticks);
                 _hasStarted = !_hasStarted;
             }
+        }
+        if (gameThread.joinable()) {
+            gameThread.join();
         }
     }
 

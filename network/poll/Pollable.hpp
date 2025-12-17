@@ -59,17 +59,6 @@ class Pollable : public IPollable {
             this->address = address;
         }
 
-        void sendPacket(std::shared_ptr<Packet> p, bool wakeUpPoll=true) {
-            if (p->getMode() == Packet::PacketMode::TCP) {
-                this->getPacketSender().sendPacket(p);
-                this->pm.updateFlags(this->getFileDescriptor(), this->getFlags());
-            } else {
-                toProcessUDP.emplace_back(p, this->getClientAddress());
-            }
-            if (wakeUpPoll)
-                pm.wakeUp();
-        }
-
         std::queue<std::shared_ptr<Packet>> &getReceivedPackets() {
             return this->toProcess;
         }
@@ -87,7 +76,7 @@ class Pollable : public IPollable {
         uint32_t uuid;
         int _fd;
         PacketSender sender;
-        PollManager &pm;
+        [[maybe_unused]] PollManager &pm;
         PacketReader reader;
 };
 

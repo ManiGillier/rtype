@@ -39,6 +39,7 @@ bool ServerClient::receiveEvent(short event)
         }
     }
     if (shouldWrite() && (event & POLLOUT) != 0) {
+        std::lock_guard<std::mutex> lck(this->serv.tcpLock);
         this->getPacketSender().writePackets();
         return true;
     }
@@ -48,9 +49,10 @@ bool ServerClient::receiveEvent(short event)
 void ServerClient::sendPacket(std::shared_ptr<Packet> p, bool wakeUpPoll)
 {
     if (p->getMode() == Packet::PacketMode::TCP) {
+        std::lock_guard<std::mutex> lck(this->serv.tcpLock);
         this->getPacketSender().sendPacket(p);
         this->serv.getPollManager().updateFlags(this->getFileDescriptor(),
-        this->getFlags());
+            this->getFlags());
     } else {
         std::lock_guard<std::mutex> lck(this->serv.udpLock);
         toProcessUDP.emplace_back(p, this->getClientAddress());

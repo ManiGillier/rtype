@@ -41,6 +41,7 @@ class Client {
         uint32_t getUUID()  const;
         void executePackets();
         std::mutex udpLockSend;
+        std::mutex tcpLockSend;
     private:
         void sendUDPPackets();
         std::string ip;
@@ -64,6 +65,7 @@ class ClientPollable : public Pollable {
 
         void sendPacket(std::shared_ptr<Packet> p, bool wakeUpPoll=true) {
             if (p->getMode() == Packet::PacketMode::TCP) {
+                std::lock_guard<std::mutex> lck (cl.tcpLockSend);
                 this->getPacketSender().sendPacket(p);
                 this->cl.getPollManager().
                     updateFlags(this->getFileDescriptor(), this->getFlags());

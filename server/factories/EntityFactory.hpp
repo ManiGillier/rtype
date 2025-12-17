@@ -17,9 +17,11 @@ class EntityFactory
     ~EntityFactory() = default;
 
     Entity createPlayer(void);
-    Entity createBoss(void);
+    Entity createEnemy(int waveNumber);
+    Entity createBoss(int waveNumber);
     Entity createPlayerLaser(int id);
-    Entity createBossBullet(int id);
+    Entity createBossBullet(int id, float x, float y);
+    Entity createEnemyBullet(int id, float x, float y);
 
   private:
     Registry &_registry;
