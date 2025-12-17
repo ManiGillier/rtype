@@ -1,0 +1,251 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Client - R-Type documentation</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <base href="../">
+
+        <link rel="stylesheet" href="book.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <link rel="shortcut icon" href="favicon.png">
+
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme -->
+        
+
+        
+
+        <!-- Fetch Clipboard.js from CDN but have a local fallback -->
+        <script src="https://cdn.jsdelivr.net/clipboard.js/1.6.1/clipboard.min.js"></script>
+        <script>
+            if (typeof Clipboard == 'undefined') {
+                document.write(unescape("%3Cscript src='clipboard.min.js'%3E%3C/script%3E"));
+            }
+        </script>
+
+        <!-- Fetch JQuery from CDN but have a local fallback -->
+        <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+        <script>
+            if (typeof jQuery == 'undefined') {
+                document.write(unescape("%3Cscript src='jquery.js'%3E%3C/script%3E"));
+            }
+        </script>
+
+        <!-- Fetch store.js from local - TODO add CDN when 2.x.x is available on cdnjs -->
+        <script src="store.js"></script>
+
+    </head>
+    <body class="light">
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme = store.get('mdbook-theme');
+            if (theme === null || theme === undefined) { theme = 'light'; }
+            $('body').removeClass().addClass(theme);
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var sidebar = store.get('mdbook-sidebar');
+            if (sidebar === "hidden") { $("html").addClass("sidebar-hidden") }
+            else if (sidebar === "visible") { $("html").addClass("sidebar-visible") }
+        </script>
+
+        <div id="sidebar" class="sidebar">
+            <ul class="chapter"><li class="affix"><a href="../../README.html">Introduction</a></li><li><a href="./build.html"><strong>1.</strong> Build Project</a></li><li><a href="./client/README.html" class="active"><strong>2.</strong> Client</a></li><li><a href="./server/README.html"><strong>3.</strong> Server</a></li><li><a href="./network/README.html"><strong>4.</strong> Network</a></li><li><a href="./ecs.html"><strong>5.</strong> Develop with our ECS</a></li></ul>
+        </div>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page" tabindex="-1">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div class="left-buttons">
+                        <i id="sidebar-toggle" class="fa fa-bars" title="Toggle sidebar"></i>
+                        <i id="theme-toggle" class="fa fa-paint-brush" title="Change theme"></i>
+                    </div>
+
+                    <h1 class="menu-title">R-Type documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html">
+                            <i id="print-button" class="fa fa-print" title="Print this book"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="content" class="content">
+                    <a class="header" href="./client/README.html#client-documentation" id="client-documentation"><h1>Client Documentation</h1></a>
+<a class="header" href="./client/README.html#summary" id="summary"><h1>Summary</h1></a>
+<p>The client represent the playable part of the project.</p>
+<p>A client must connect to a given running server to work.</p>
+<p>It has a Graphical User Interface to allow a human to play the game.</p>
+<a class="header" href="./client/README.html#architecture" id="architecture"><h1>Architecture</h1></a>
+<p>The client is composed of two parts:</p>
+<ul>
+<li><a href="./client/README.html#gui--logic">The GUI &amp; Logic</a><br />
+This is where all of the logic and rendering happen.</li>
+<li><a href="./client/README.html#network">The Network</a><br />
+This is where all communications with the server happen.</li>
+</ul>
+<p>The client is not responsible to determine anything except for user inputs.<br />
+The position of the player is even determined by the server itself.</p>
+<a class="header" href="./client/README.html#gui--logic" id="gui--logic"><h2>Gui &amp; Logic</h2></a>
+<p>This part of a client is defined as a state machine.</p>
+<p>In can be in one of those states:</p>
+<ul>
+<li><a href="./client/README.html#connection-state">Connection</a></li>
+<li><a href="./client/README.html#in-lobby-state">Lobby</a></li>
+<li><a href="./client/README.html#in-game-state">Game</a></li>
+</ul>
+<a class="header" href="./client/README.html#connection-state" id="connection-state"><h3>Connection state</h3></a>
+<p>Inside the connection state, the client is preparing the connections with the server.<br />
+It first connect with a TCP socket, and then setups a UDP connection (and this is where the loading time arise).</p>
+<p>It is separated from the rest to forbid interaction while this crucial step is still processing.</p>
+<a class="header" href="./client/README.html#in-lobby-state" id="in-lobby-state"><h3>In lobby state</h3></a>
+<p>When connected, you are added to a lobby.<br />
+This is where you wait for your friends to connect to join the game together.</p>
+<p>Inside the lobby, you have the possibility to request the start of the game, and force every player in the lobby to switch to the game state.</p>
+<a class="header" href="./client/README.html#in-game-state" id="in-game-state"><h3>In game state</h3></a>
+<p>Finally, the real state. The one where you can play.</p>
+<p>This state starts with a loading time. This is unfortunate, as we wanted to have a dedicated state for loading all ressources before connecting to the game. It will be added in the future !</p>
+<p>Here you have the possibility to see other players, enemies, bullets and, of course, to interact and play the game with you controls.</p>
+<a class="header" href="./client/README.html#composition-of-each-state" id="composition-of-each-state"><h3>Composition of each state</h3></a>
+<p>We are using an Entity Component System to make the game work. Both rendering and logic parts are using this ECS.</p>
+<p>Given that, every state has it's own separated entities, components and systems.<br />
+For example, the game state has a system dedicated to showing a bullet on the screen, whilst the connecting state really don't have any bullets !</p>
+<p>The GUI is then separated from the LOGIC, via two interfaces.</p>
+<ol>
+<li>GUI
+Inside this part, all of the rendering logic happen. We define every rendering systems, as well as rendering-related responses to network packets.</li>
+<li>Logic
+There we enter the logic side, like managing player inputs, deleting entities, instanciating new bullets, and so on.<br />
+We have responses to server requests via the networking interface in this part.</li>
+</ol>
+<p>Technically we do have a last state, the GAME OVER state, but it is really a very quick deconnection state, as we do not have a game over screen yet.</p>
+<a class="header" href="./client/README.html#network" id="network"><h2>Network</h2></a>
+<p>The client utilizes network in an extensive manner, as it needs it for almost everything !<br />
+Indeed, almost nothing is determined by the client itself for now, and it is uncapable of even computing the position of the player.<br />
+Thus, it needs to receive those informations from the server.</p>
+<p>We can differentiate three kind of communication between the server and the client :</p>
+<ol>
+<li><strong>Mandatory connection communications</strong><br />
+This include the authentification of the UDP socket for example.</li>
+<li><strong>Ponctual events</strong><br />
+For example, when a player is killed, or an enemy spawns.</li>
+<li><strong>Continuous datastream</strong><br />
+For example, player and enemy positions, player inputs.</li>
+</ol>
+<p>The architecture with executors that totally abstracts differentiation between types of packet make it fairly easy to understand how to implement a reaction to a give packet.</p>
+<a class="header" href="./client/README.html#managers" id="managers"><h2>Managers</h2></a>
+<ul>
+<li><strong>Client Manager</strong><br />
+The client itself is manager through a <code>ClientManager</code>.<br />
+This class creates all the necessary subclasses and managers to launch the game, connect to the server and close everything without memory leaks.<br />
+It hosts the principal game loop and the state machine, and calls the subsequent update and render methods from a given state. It is responsible for the state change, although determined by the state themselves.</li>
+<li><strong>Network Manager</strong><br />
+The network manager inits the network thread. Inside this thread runs the network main loop, in change of calling the network library methods to connect to the server, poll events and send them.<br />
+This manager also handles request of deconnections.</li>
+<li><strong>Sound Manager</strong><br />
+The sound manager is a specific GUI manager that loads, plays and unloads sound files into memory.<br />
+It serves as a cache to avoid loading the same sound file multiple times.</li>
+<li><strong>Texture Manager</strong><br />
+The Texture manager does the same thing as the sound manager, but adapted for images loaded as GPU textures.</li>
+</ul>
+<a class="header" href="./client/README.html#graphical-library" id="graphical-library"><h1>Graphical library</h1></a>
+<p>For our graphical library, we chose <a href="https://www.raylib.com/">Raylib</a>.</p>
+<p>It offers multiple advantages compared to other libraries:</p>
+<ol>
+<li><strong>SFML</strong>
+<ul>
+<li>The raylib offers a higher level management of operations, with a lot of underlying global variables, offering nice and straightforward function calls.</li>
+<li>The SFML, although having the nice advantage of being adapted to Object Oriented Programming, tends to be more difficult to use because of the need to keep track of all variables created. It may be preferable to have the variables in hand, but in our case with the ECS and state machine, we chose to have hidden variables.</li>
+</ul>
+</li>
+<li><strong>SDL</strong>
+<ul>
+<li>The SDL is a low-level graphical library. We did not wanted to go too deep in that rabbit hole, and we stuck to the Raylib, offering higher level implementation.</li>
+</ul>
+</li>
+<li><strong>Direct OpenGl calls</strong>
+<ul>
+<li>I'm not even gonna explain why we did not chose that path.</li>
+</ul>
+</li>
+</ol>
+<p>The Raylib is a really good graphical library, but we may encounter some problem with it, namely :</p>
+<ul>
+<li>It is not really adapted to Object Oriented Programming.<br />
+Indeed, it is not at all constructed with classes, and rely solely on direct calls to global funtions.</li>
+</ul>
+<a class="header" href="./client/README.html#diagrams" id="diagrams"><h1>Diagrams</h1></a>
+<a class="header" href="./client/README.html#client-architecture-diagram" id="client-architecture-diagram"><h2>Client architecture diagram</h2></a>
+<p><img src="./arch.png" alt="Client architecture" /></p>
+
+                </div>
+
+                <!-- Mobile navigation buttons -->
+                
+                    <a rel="prev" href="./build.html" class="mobile-nav-chapters previous" title="Previous chapter">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a rel="next" href="./server/README.html" class="mobile-nav-chapters next" title="Next chapter">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+
+            </div>
+
+            
+                <a href="./build.html" class="nav-chapters previous" title="You can navigate through the chapters using the arrow keys">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+            
+
+            
+                <a href="./server/README.html" class="nav-chapters next" title="You can navigate through the chapters using the arrow keys">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            
+
+        </div>
+
+
+        <!-- Local fallback for Font Awesome -->
+        <script>
+            if ($(".fa").css("font-family") !== "FontAwesome") {
+                $('<link rel="stylesheet" type="text/css" href="_FontAwesome/css/font-awesome.css">').prependTo('head');
+            }
+        </script>
+
+        <!-- Livereload script (if served using the cli tool) -->
+        
+
+        
+
+        
+
+        
+
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS script -->
+        
+
+    </body>
+</html>
