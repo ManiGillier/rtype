@@ -20,7 +20,7 @@ RéseauType comes with its own logging packet system, logging every received and
 # Architecture
 
 RéseauType is composed of five parts:
-- [Packets] (#packets)
+- [Packets](#packets)
   Packets are the data being sent from the server to the clients and vice-versa. Serialised in binary, those can be sent either via TCP or UDP.
 - [The Server](#the-server)  
   Creates & starts a RéseauType server (TCP/UDP) that can automatically write, receive, and execute packets.
