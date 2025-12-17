@@ -32,6 +32,7 @@ Game::Game(class Server &server)
 void Game::start()
 {
     if (!_isRunning) {
+        this->_server.setConnect(false);
         std::this_thread::sleep_for(std::chrono::milliseconds(200));
         for (auto const &[p_id, l_id] : _players) {
             auto hitBox = _registry.get<HitBox>(p_id);

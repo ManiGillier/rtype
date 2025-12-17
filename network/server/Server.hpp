@@ -8,7 +8,8 @@
 #ifndef SERVER_HPP_
     #define SERVER_HPP_
 
-    #include <network/packets/listener/PacketListener.hpp>
+    #include <atomic>
+#include <network/packets/listener/PacketListener.hpp>
     #include <network/logger/Logger.hpp>
     #include <network/poll/PollManager.hpp>
     #include <network/server/ServerClient.hpp>
@@ -87,6 +88,8 @@ class Server {
         virtual void onClientConnect(std::shared_ptr<IPollable> client) = 0;
         virtual void onClientDisconnect(std::shared_ptr<IPollable> client) = 0;
         int getMaxConnections() const;
+        bool canConnect() const; 
+        void setConnect(bool c);
         virtual ~Server() = default;
         std::mutex udpLock;
         std::mutex tcpLock;
@@ -100,6 +103,7 @@ class Server {
         PacketListener<Server> pl;
         int maxConnections;
         PollManager pm;
+        std::atomic<bool>enableConnection{true};
 };
 
 class CustomServer : public Server {
