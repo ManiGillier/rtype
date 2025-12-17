@@ -118,5 +118,5 @@ Indeed, it is not at all constructed with classes, and rely solely on direct cal
 
 # Diagrams
 
-## Client architecture diagram
+## Client architecture diagramv
 ![Client architecture](./arch.png)
