@@ -74,7 +74,10 @@ class RType
     void networkLoop()
     {
         RTypeServer server(this->_port, this->_ticks);
-        server.up();
+        if (!server.up()) {
+            LOG_ERR("Can't connect");
+            return;
+        }
         server.getPacketListener().addExecutor(
             std::make_unique<GameExecutor>(server));
         server.getPacketListener().addExecutor(
