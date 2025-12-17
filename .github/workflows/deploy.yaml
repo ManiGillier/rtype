@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Compile
-        run: make
+        run: make release
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
