@@ -1,0 +1,784 @@
+
+
+
+
+Network Working Group                                         M. Gillier
+Internet-Draft                                                          
+Intended status: Experimental                               R. El Janati
+Expires: 20 June 2026                                                   
+                                                                 M. Huet
+                                                                        
+                                                             H. Poggetti
+                                                        17 December 2025
+
+
+              Really-Triumphal Yanked Protocol Esperances
+
+Abstract
+
+   This document describes the binary network protocol used in the
+   interpretation of the R-Type game made by the said authors.  It
+   defines client-to-server and server-to-client communications.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on 20 June 2026.
+
+Copyright Notice
+
+   Copyright (c) 2025 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents (https://trustee.ietf.org/
+   license-info) in effect on the date of publication of this document.
+   Please review these documents carefully, as they describe your rights
+   and restrictions with respect to this document.
+
+
+
+
+
+
+Gillier, et al.           Expires 20 June 2026                  [Page 1]
+
+Internet-Draft                   R-Type                    December 2025
+
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
+     1.1.  Requirements Language . . . . . . . . . . . . . . . . . .   2
+     1.2.  Context . . . . . . . . . . . . . . . . . . . . . . . . .   3
+     1.3.  Motivations . . . . . . . . . . . . . . . . . . . . . . .   3
+     1.4.  Protocol overview . . . . . . . . . . . . . . . . . . . .   3
+   2.  Definitions . . . . . . . . . . . . . . . . . . . . . . . . .   3
+   3.  Connection  . . . . . . . . . . . . . . . . . . . . . . . . .   3
+   4.  Disconnection . . . . . . . . . . . . . . . . . . . . . . . .   4
+   5.  Packets . . . . . . . . . . . . . . . . . . . . . . . . . . .   4
+     5.1.  Structure of a packet . . . . . . . . . . . . . . . . . .   4
+     5.2.  List of packets . . . . . . . . . . . . . . . . . . . . .   4
+       5.2.1.  Server Authentification . . . . . . . . . . . . . . .   4
+       5.2.2.  Client Authentification . . . . . . . . . . . . . . .   5
+       5.2.3.  Authentified  . . . . . . . . . . . . . . . . . . . .   5
+       5.2.4.  Start Game packet . . . . . . . . . . . . . . . . . .   6
+       5.2.5.  New Player  . . . . . . . . . . . . . . . . . . . . .   6
+       5.2.6.  Player Id . . . . . . . . . . . . . . . . . . . . . .   7
+       5.2.7.  New Enemy . . . . . . . . . . . . . . . . . . . . . .   7
+       5.2.8.  New Bullet  . . . . . . . . . . . . . . . . . . . . .   7
+       5.2.9.  Enemy Died  . . . . . . . . . . . . . . . . . . . . .   8
+       5.2.10. Player Died . . . . . . . . . . . . . . . . . . . . .   8
+       5.2.11. Despawn Bullet  . . . . . . . . . . . . . . . . . . .   8
+       5.2.12. Despawn Player  . . . . . . . . . . . . . . . . . . .   9
+       5.2.13. Player Hit  . . . . . . . . . . . . . . . . . . . . .   9
+       5.2.14. Hitbox Size Update  . . . . . . . . . . . . . . . . .  10
+       5.2.15. Game Over . . . . . . . . . . . . . . . . . . . . . .  10
+       5.2.16. Health Update . . . . . . . . . . . . . . . . . . . .  11
+       5.2.17. Laser Active Update . . . . . . . . . . . . . . . . .  11
+       5.2.18. Position Update . . . . . . . . . . . . . . . . . . .  12
+       5.2.19. Client Inputs . . . . . . . . . . . . . . . . . . . .  12
+   6.  Game logic  . . . . . . . . . . . . . . . . . . . . . . . . .  13
+   7.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  13
+   8.  Security Considerations . . . . . . . . . . . . . . . . . . .  13
+   9.  Normative References  . . . . . . . . . . . . . . . . . . . .  13
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  13
+
+1.  Introduction
+
+1.1.  Requirements Language
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in
+   BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
+
+
+
+
+Gillier, et al.           Expires 20 June 2026                  [Page 2]
+
+Internet-Draft                   R-Type                    December 2025
+
+
+1.2.  Context
+
+   At the EuroPean Institute of TECHnology (EPITECH), there is a project
+   called "R-Type".
+   The goal is to make a multiplayer game with a greatly implemented
+   architecture.
+
+1.3.  Motivations
+
+   This document was created to allow precise definition for the
+   communication protocol used in the multiplayer game "R-Type"
+   mentionned in the context above.
+
+1.4.  Protocol overview
+
+   This protocol is a binary protocol.
+   It is TCP [STD7] & UDP [RFC768] based and totally asyncronous.
+
+2.  Definitions
+
+   The "Server" is a single program responsible of handling one or
+   multiple "Clients".
+   The term "Player" MAY be used as a replacement of the term "Client",
+   but this is context-dependant.
+   The "Client" is a single program responsible of connecting to the
+   server in order to represent the game itself.
+   A "Packet" is a short data structure of well-defined size.  It is
+   exchanged between the server and the clients.  A packet MUST NOT be
+   exchanged between clients.
+   NO direct communication SHOULD interface clients.
+   The "Game" represents the "R-Type" game that the "Server" and
+   "Clients" represent together.
+   This game is a syncronized multiplayer one, where different clients
+   can connect and play together.
+   Each client represents a player that can move up, down, left or
+   right.
+   A player is composed of a "Laser".
+
+3.  Connection
+
+   The client MUST init the connection in order to join a game.
+   The server MUST accept all connections on a given port before the
+   game starts.
+   A client MAY disconnect at any time.
+
+
+
+
+
+
+
+Gillier, et al.           Expires 20 June 2026                  [Page 3]
+
+Internet-Draft                   R-Type                    December 2025
+
+
+4.  Disconnection
+
+   The server CAN disconnect a client at any time, for any reason.
+   If a client disconnects, or a client is disconnected, the server MUST
+   aknowledge this, and react accordingly with regards to the state of
+   the game.
+   The server MUST inform all of the connected clients of the
+   disconnection.
+
+5.  Packets
+
+5.1.  Structure of a packet
+
+   A packet consists of:
+   - A single index byte, later referenced as the "index".
+   - Multiple data bytes, later referenced as the "data".
+   For integer-type data, the endianness SHOULD be determined as
+   network-byte-order (as defined in the IP specification) [RFC791].
+   The index defines the size of the data.
+   The data is a group of multiple variables, defined and ordered solely
+   by the index.
+   The type of the variables is also defined by the index.  A packet is
+   unidirectionnal.  It can either be sent by the client, and
+   receptionned by the server, or sent by the server, and receptionned
+   by the targeted client.
+   A packet COULD be used bidirectionally, but it SHOULD be limited to
+   strict cases defined in this document.  A packet MAY be sent
+   separated, but they SHOULD be sent in one piece.
+   Any receiver of packets MUST handle the case of incomplete packet
+   reception.  If an incomplete packet is received, the receiver MUST
+   wait for the full packet to arrive before processing it.
+   Alternatively, the receiver MAY discard any non-complete packets,
+   especially those sent over UDP.
+
+5.2.  List of packets
+
+5.2.1.  Server Authentification
+
+   When a client connects, it MUST open a TCP and a UDP connection to
+   the server, and this packet SHOULD be used by the server to associate
+   the client to those two connections.
+
+   This packet MUST:
+   - Be sent over TCP.
+   - Be sent by the server to the client.
+
+   This packet SHOULD be sent when:
+   - A client just connected over TCP and UDP
+
+
+
+Gillier, et al.           Expires 20 June 2026                  [Page 4]
+
+Internet-Draft                   R-Type                    December 2025
+
+
+   This packet MUST have the following data:
+   - Index:0x11
+   - Data size: 8 bytes
+   - Data description:
+   > - Unsigned 64 bits integer: A Unique User Identifier, linked to the
+   client.
+
+   The server MUST choose the UUID.  The client MUST answer to this
+   packet with the Client Authentification packet.
+
+5.2.2.  Client Authentification
+
+   This packet MUST:
+   - Be an answer to a Server Authentification packet.
+   We will refer to the Unique User Identifier stored in the Server
+   Authentification packet as the "UUID".
+   - Be sent over UDP.
+   - Be sent by the client to the server.
+
+   This packet MUST have the following data:
+   - Index:0x10
+   - Data size: 8 bytes
+   - Data description:
+   > - Unsigned 64 bits integer: the "UUID" of the Server
+   Authentification packet.
+
+   The server MUST verify that the "UUID" of this packet is conform with
+   the one he chose.  The server SHOULD answer this packet with the
+   Authentified packet.
+
+5.2.3.  Authentified
+
+   This packet MUST:
+   - Be an answer to a correct Client Authentification packet.
+   - Be sent over TCP.
+   - Be sent by the server to the client.
+
+   This packet MUST have the following data:
+   - Index:0x12
+   - Data size: 0 bytes
+   - Data description: None
+
+   No other than the three authentification packets SHOULD be exchanged
+   between a client and the server until the client is considered
+   Authentified and received this packet.
+
+
+
+
+
+
+Gillier, et al.           Expires 20 June 2026                  [Page 5]
+
+Internet-Draft                   R-Type                    December 2025
+
+
+5.2.4.  Start Game packet
+
+   This packet is bidirectional.
+
+   This packet MUST:
+   - Be sent over TCP.
+
+   This packet MUST have the following data:
+   - Index:0x13
+   - Data size: 0 bytes
+   - Data description: None
+
+   This packet SHOULD be sent by the client to the server when:
+   - The client decides to start the game.
+
+   This packet SHOULD be sent by the server to all of the authentified
+   clients when:
+   - An authentified client decided to start the game by sending this
+   same packet.
+
+   The server SHOULD discard this packet when sent by a player already
+   inside of a game.
+   The server SHOULD discard this packet if it doesn't authorize opening
+   a new game.
+
+   The client SHOULD NOT discard this packet.
+
+5.2.5.  New Player
+
+   This packet MUST:
+   - Be sent over TCP.
+   - Be sent by the server to all clients in the current game.
+
+   This packet SHOULD be sent whenever a new client joins a game, to all
+   client already in the game, and the client joining itself.
+   When a new client joins, this packet SHOULD be sent to this client to
+   signify already present players.
+   All players MAY join the game at the same time if the server choose
+   to not allow joining already started games.
+
+   This packet MUST have the following data:
+   - Index:0x03
+   - Data size: 16 bytes
+   - Data description:
+   > - Unsigned 64 bits integer: A unique identifier representing the
+   player.
+   > - Unsigned 64 bits integer: A unique identifier representing the
+   player's laser.
+
+
+
+Gillier, et al.           Expires 20 June 2026                  [Page 6]
+
+Internet-Draft                   R-Type                    December 2025
+
+
+   The identifiers SHOULD be determined by the server only.
+
+   A client receiving this packet SHOULD instantiate data to allow
+   rendering of the new player mentionned.
+
+5.2.6.  Player Id
+
+   This packet MUST:
+   - Be sent over TCP.
+   - Be sent by the server to a specific client.
+
+   This packet SHOULD be used to notify a client of his own player
+   identifier.
+   This packet MAY be used by the client to change it's behaviour by
+   knowing that a specific player represents himself.
+
+   This packet MUST have the following data:
+   - Index:0x01 - Data size: 8 bytes
+   - Data description:
+   > - Unsigned 64 bits integer: The player unique identifier.
+
+5.2.7.  New Enemy
+
+   This packet MUST:
+   - Be sent over TCP.
+   - Be sent by the server to all clients in the current game.
+
+   This packet SHOULD be sent by the server to notify the instantiation
+   of a new enemy in the game.
+
+   This packet MUST have the following data:
+   - Index:0x05
+   - Data size: 8 bytes
+   - Data description:
+   > - Unsigned 64 bits integer: The enemy unique identifier.
+
+5.2.8.  New Bullet
+
+   This packet MUST:
+   - Be sent over TCP.
+   - Be sent by the server to all clients in the current game.
+
+   This packet SHOULD be sent by the server to notify the instantiation
+   of a new bullet in the game.
+
+
+
+
+
+
+
+Gillier, et al.           Expires 20 June 2026                  [Page 7]
+
+Internet-Draft                   R-Type                    December 2025
+
+
+   This packet MUST have the following data:
+   - Index:0x04
+   - Data size: 8 bytes
+   - Data description:
+   > - Unsigned 64 bits integer: The bullet unique identifier.
+
+5.2.9.  Enemy Died
+
+   This packet MUST:
+   - Be sent over TCP.
+   - Be sent by the server to all clients in the current game.
+
+   This packet MAY be sent by the server to notify the death of an
+   enemy.
+   This packet MAY be used by the client to remove an enemy from his
+   internal datas.
+
+   This packet MUST have the following data:
+   - Index:0x0A
+   - Data size: 8 bytes
+   - Data description:
+   > - Unsigned 64 bits integer: The enemy unique identifier.
+
+5.2.10.  Player Died
+
+   This packet MUST:
+   - Be sent over TCP.
+   - Be sent by the server to all clients in the current game.
+
+   This packet MAY be sent by the server to notify the death of a
+   player.
+   This packet MAY be used by the client to remove an enemy from his
+   internal datas, or to show a ghost of the ancient player.
+
+   This packet MUST have the following data:
+   - Index:0x07
+   - Data size: 8 bytes
+   - Data description:
+   > - Unsigned 64 bits integer: The player unique identifier.
+
+5.2.11.  Despawn Bullet
+
+   This packet MUST:
+   - Be sent over TCP.
+   - Be sent by the server to all clients in the current game.
+
+
+
+
+
+
+Gillier, et al.           Expires 20 June 2026                  [Page 8]
+
+Internet-Draft                   R-Type                    December 2025
+
+
+   This packet MAY be sent by the server to notify the disappearance of
+   a bullet.
+   This packet CAN be sent by the server to notify the disappearance of
+   any entity via his unique identifier, but it is not a good practice.
+   This packet MAY be used by the client to remove the bullet from his
+   datas.
+
+   This packet MUST have the following data:
+   - Index:0x09
+   - Data size: 8 bytes
+   - Data description:
+   > - Unsigned 64 bits integer: The bullet unique identifier.
+
+5.2.12.  Despawn Player
+
+   This packet MUST:
+   - Be sent over TCP.
+   - Be sent by the server to all clients in the current game.
+
+   This packet MUST be sent by the server to notify the disconnection of
+   a player.  This packet MAY be used by the client to remove the bullet
+   from his datas.
+
+   This packet MUST have the following data:
+   - Index:0x08
+   - Data size: 8 bytes
+   - Data description:
+   > - Unsigned 64 bits integer: The player unique identifier.
+
+5.2.13.  Player Hit
+
+   This packet MUST:
+   - Be sent over TCP.
+   - Be sent by the server to the targeted client.
+
+   This packet SHOULD be sent by the server to notify a client that he
+   has been hit in the game.
+   This packet CAN be used by the client to play some special behaviour
+   in case of a hit.
+   In case of a general hit (meaning that the player was hit without
+   having it caused by an entity), the server SHOULD set the hit entity
+   unique identifier to be equal to the player unique identifier.
+
+
+
+
+
+
+
+
+
+Gillier, et al.           Expires 20 June 2026                  [Page 9]
+
+Internet-Draft                   R-Type                    December 2025
+
+
+   This packet MUST have the following data:
+   - Index:0x06
+   - Data size: 16 bytes
+   - Data description:
+   > - Unsigned 64 bits integer: The player unique identifier.
+   > - Unsigned 64 bits integer: The entity (that hit) unique
+   identifier.
+
+5.2.14.  Hitbox Size Update
+
+   This packet MUST:
+   - Be sent over TCP.
+   - Be sent by the server to all clients in the game.
+
+   This packet SHOULD be sent by the server to inform the client of the
+   hitboxes sizes.
+   It MAY be sent right after sending the instantiating packet of an
+   entity having a hitbox.
+   It MAY be sent before the sending of an instantiating packet for the
+   said entity.
+
+   This packet MUST have the following data:
+   - Index:0x0E
+   - Data size: 16 bytes
+   - Data description:
+   > - Unsigned 64 bits integer: The entity unique identifier.
+   > - 32 bits Floating point number [IEEE754]: The width of the hitbox
+   in unit.
+   > - 32 bits Floating point number [IEEE754]: The height of the hitbox
+   in unit.
+
+5.2.15.  Game Over
+
+   This packet MUST:
+   - Be sent over TCP.
+   - Be sent by the server to all client in the game.
+
+   This packet MUST be sent by the server to inform all clients that a
+   game has ended.
+   The server SHOULD provide the right state.
+
+
+
+
+
+
+
+
+
+
+
+Gillier, et al.           Expires 20 June 2026                 [Page 10]
+
+Internet-Draft                   R-Type                    December 2025
+
+
+   This packet MUST have the following data:
+   - Index:0x0B
+   - Data size: 1 byte
+   - Data description:
+   > - Unsigned 8bits integer: The state of the game that SHOULD be
+   represented by one of those values:
+   > - Win: 1.
+   > - Loose: 2.
+
+5.2.16.  Health Update
+
+   This packet MUST:
+   - Be sent over UDP.
+   - Be sent by the server to all client in the game.
+
+   This packet CAN be sent by the server to inform players of the health
+   status of different entities, like enemies or other players.
+
+   This packet MUST have the following data:
+   - Index:0x0D
+   - Data size: 16 bytes
+   - Data description:
+   > - Unsigned 64 bits integer: The entity unique identifier.
+   > - 32 bits Floating point number [IEEE754]: The current health in
+   health units.
+   > - 32 bits Floating point number [IEEE754]: The maximum health in
+   health units.
+
+   As it is a UDP packet, it SHOULD be sent as a stream at a server-
+   defined rate.  This packet SHOULD not only be triggered when a health
+   modification occurs.  This packet COULD be triggered when a health
+   modification occurs, as long as it is also triggered at a server-
+   defined rate, different from zero.
+
+5.2.17.  Laser Active Update
+
+   This packet MUST:
+   - Be sent over UDP.
+   - Be sent by the server to all client in the game.
+
+   This packet CAN be sent by the server to inform players of the laser
+   status of a player in the game.
+
+   This packet MUST have the following data:
+   - Index:0x0F
+   - Data size: 13 bytes
+   - Data description:
+   > - Unsigned 64 bits integer: The entity unique identifier.
+
+
+
+Gillier, et al.           Expires 20 June 2026                 [Page 11]
+
+Internet-Draft                   R-Type                    December 2025
+
+
+   > - Unsigned 8 bits integer: Boolean describing the state of
+   activation of the player laser.
+   > - 32 bits Floating point number [IEEE754]: The player laser size in
+   units, activated or not.
+
+   The unactivated size of the laser is UNDEFINED for both the client
+   and the server.
+
+   As it is a UDP packet, it SHOULD be sent as a stream at a server-
+   defined rate.  The same principles as the Health packet applies.
+
+5.2.18.  Position Update
+
+   This packet MUST:
+   - Be sent over UDP.
+   - Be sent by the server to all client in the game.
+
+   This packet SHOULD be sent by the server to inform players of the
+   position of an entity in game.
+
+   This packet MUST have the following data:
+   - Index:0x0C
+   - Data size: 16 bytes
+   - Data description:
+   > - Unsigned 64 bits integer: The entity unique identifier.
+   > - 32 bits Floating point number [IEEE754]: The position of the
+   entity accross the width.
+   > - 32 bits Floating point number [IEEE754]: The position of the
+   entity accross the height.
+
+   The unactivated size of the laser is UNDEFINED for both the client
+   and the server.
+
+   As it is a UDP packet, it SHOULD be sent as a stream at a server-
+   defined rate.  The same principles as the Health packet applies.
+
+5.2.19.  Client Inputs
+
+   This packet MUST:
+   - Be sent over UDP.
+   - Be sent by a client to the server
+
+   This packet SHOULD be sent by a client to the server to inform the
+   server of the user inputs, at a regular interval.
+
+   This packet MUST have the following data: - Index:0x02
+   - Data size: 1 bytes
+   - Data description:
+
+
+
+Gillier, et al.           Expires 20 June 2026                 [Page 12]
+
+Internet-Draft                   R-Type                    December 2025
+
+
+   > - 1 bit: Boolean for the LEFT movement key state.
+   > - 1 bit: Boolean for the RIGHT movement key state.
+   > - 1 bit: Boolean for the UP movement key state.
+   > - 1 bit: Boolean for the DOWN movement key state.
+   > - 1 bit: Boolean for the SHOOT key state.
+   > - 3 bits: MAY be set to zeroes.  MUST NOT be used.
+
+   As it is a UDP packet, it SHOULD be sent as a stream at a client-
+   defined rate.  The same principles as the Health packet applies.
+
+6.  Game logic
+
+   The game logic MUST be defined solely by the server.  The client
+   SHOULD not have decisive power except from their inputs.
+
+7.  IANA Considerations
+
+   This memo includes no request to IANA.
+
+8.  Security Considerations
+
+   This document should not affect the security of the Internet.
+
+9.  Normative References
+
+   [STD7]     Internet Standard 7,
+              <https://www.rfc-editor.org/info/std7>.
+              At the time of writing, this STD comprises the following:
+
+              Eddy, W., Ed., "Transmission Control Protocol (TCP)",
+              STD 7, RFC 9293, DOI 10.17487/RFC9293, August 2022,
+              <https://www.rfc-editor.org/info/rfc9293>.
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/rfc/rfc2119>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
+
+Authors' Addresses
+
+   Mani Gillier
+   Email: mani.gillier@epitech.eu
+
+
+
+
+
+Gillier, et al.           Expires 20 June 2026                 [Page 13]
+
+Internet-Draft                   R-Type                    December 2025
+
+
+   Rayane El Janati El Idrissi
+   Email: rayane.el-janati-el-idrissi@epitech.eu
+
+
+   Maxime Huet
+   Email: maxime.huet@epitech.eu
+
+
+   Hugo Poggetti
+   Email: hugo.poggetti@epitech.eu
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Gillier, et al.           Expires 20 June 2026                 [Page 14]
