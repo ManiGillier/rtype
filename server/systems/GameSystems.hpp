@@ -46,7 +46,7 @@ auto update_laser_system(
 auto collision_system(
     Registry &r,
     containers::indexed_zipper<SparseArray<Position>, SparseArray<HitBox>>
-        zipper) -> void;
+        zipper, Game &game) -> void;
 
 auto cleanup_system(Registry &r,
                     containers::indexed_zipper<SparseArray<Health>> zipper,

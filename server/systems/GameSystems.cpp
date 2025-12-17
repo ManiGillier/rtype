@@ -3,24 +3,24 @@
 #include "ecs/sparse_array/SparseArray.hpp"
 #include "network/packets/impl/DespawnPlayerPacket.hpp"
 #include "network/packets/impl/LaserActiveUpdatePacket.hpp"
+#include "server/components/BossTag.hpp"
 #include "server/components/Damager.hpp"
 #include "shared/components/Dependence.hpp"
+#include "shared/components/Laser.hpp"
 #include "shared/components/Position.hpp"
 #include <memory>
 #include <network/logger/Logger.hpp>
 #include <network/packets/impl/DespawnBulletPacket.hpp>
+#include <network/packets/impl/GameOverPacket.hpp>
 #include <network/packets/impl/HealthUpdatePacket.hpp>
 #include <network/packets/impl/PlayerDiedPacket.hpp>
 #include <network/packets/impl/PositionUpdatePacket.hpp>
+#include <vector>
 
 namespace GameConstants
 {
 constexpr float width = 800;
 constexpr float height = 600;
-// constexpr float ENEMY_SPAWN_INTERVAL = 2.0f;
-// constexpr float BOSS_SHOOT_COOLDOWN = 1.5f;
-// constexpr int MAX_ENEMIES = 20;
-// constexpr float BOSS_DETECTION_RANGE = 800.0f;
 constexpr float PLAYER_SPEED = 5.0f;
 } // namespace GameConstants
 
@@ -135,8 +135,10 @@ auto Systems::update_player_system(Registry &r,
 auto Systems::collision_system([[maybe_unused]] Registry &r,
                                [[maybe_unused]] containers::indexed_zipper<
                                    SparseArray<Position>, SparseArray<HitBox>>
-                                   zipper) -> void
+                                   zipper, Game &game) -> void
 {
+    std::vector<std::size_t> to_kill;
+
     for (auto &&[i, pos_i, hitbox_i] : zipper) {
         for (auto &&[j, pos_j, hitbox_j] : zipper) {
             if (i >= j)
@@ -148,32 +150,55 @@ auto Systems::collision_system([[maybe_unused]] Registry &r,
                               pos_i->y + hitbox_i->height > pos_j->y;
 
             if (collisionX && collisionY) {
-                if (r.get<Damager>(i).has_value() &&
-                    r.get<Health>(j).has_value()) {
-                    int damage = r.get<Damager>(i)->damage;
+                auto damager_i = r.get<Damager>(i);
+                auto health_j = r.get<Health>(j);
+                if (damager_i.has_value() && health_j.has_value()) {
+                    auto dep_i = r.get<Dependence>(i);
+                    if (dep_i.has_value() && dep_i->id == j)
+                        continue;
+                    auto laser_i = r.get<Laser>(i);
+                    if (laser_i.has_value() && !laser_i->active)
+                        continue;
+                    if (!laser_i.has_value())
+                        to_kill.push_back(i);
 
+                    int damage = damager_i->damage;
                     // if (r.get<Resistance>(j).has_value()) {
                     //     damage = static_cast<int>(
                     //         static_cast<float>(damage) *
                     //         (1.0f - r.get<Resistance>(j)->ratio));
                     // }
-                    r.set<Health>(j, r.get<Health>(j)->pv - damage, 100);
+                    r.set<Health>(j, health_j->pv - damage, 100);
                     LOG("TOUCHED");
                 }
-                if (r.get<Damager>(j).has_value() &&
-                    r.get<Health>(i).has_value()) {
-                    int damage = r.get<Damager>(j)->damage;
 
+                auto damager_j = r.get<Damager>(j);
+                auto health_i = r.get<Health>(i);
+                if (damager_j.has_value() && health_i.has_value()) {
+                    auto dep_j = r.get<Dependence>(j);
+                    if (dep_j.has_value() && dep_j->id == i)
+                        continue;
+
+                    auto laser_j = r.get<Laser>(j);
+                    if (laser_j.has_value() && !laser_j->active)
+                        continue;
+                    if (!laser_j.has_value())
+                        to_kill.push_back(j);
+                    int damage = damager_j->damage;
                     // if (r.get<Resistance>(i).has_value()) {
                     //     damage = static_cast<int>(
                     //         static_cast<float>(damage) *
                     //         (1.0f - r.get<Resistance>(i)->ratio));
                     // }
-                    r.set<Health>(i, r.get<Health>(i)->pv - damage, 100);
+                    r.set<Health>(i, health_i->pv - damage, 100);
                     LOG("TOUCHED");
                 }
             }
         }
+    }
+    for (auto &it : to_kill) {
+        r.kill_entity(r.entity_from_index(it));
+        game.sendPackets(std::make_shared<DespawnBulletPacket>(it));
     }
 }
 
@@ -182,13 +207,31 @@ auto Systems::cleanup_system(
     [[maybe_unused]] Game &game) -> void
 {
     for (auto &&[i, health] : zipper) {
-        LOG("player pv = " << health->pv << " max pv = " << health->max_pv);
         if (game.getPlayers().empty()) {
             LOG("all player died");
-            exit(10);
-            //TODO: game over
+            game.sendPackets(
+                std::make_shared<GameOverPacket>(EndGameState::LOST));
+            game.stop();
+            return;
         }
         if (health->pv <= 0) {
+            auto bossTag = r.get<BossTag>(i);
+            if (bossTag.has_value()) {
+                if (bossTag->isBoss) {
+                    LOG("Boss killed, all players get 50 HP");
+                    for (const auto &[playerId, laserId] : game.getPlayers()) {
+                        auto playerHealth = r.get<Health>(playerId);
+                        if (playerHealth.has_value()) {
+                            int newHealth = std::min(playerHealth->pv + 50, 100);
+                            r.set<Health>(playerId, newHealth, 100);
+                            game.sendPackets(std::make_shared<HealthUpdatePacket>(playerId, newHealth));
+                        }
+                    }
+                    game.getGameBoss().removeBoss(i);
+                } else {
+                    game.getGameBoss().removeEnemy(i);
+                }
+            }
             r.kill_entity(r.entity_from_index(i));
             if (game.getPlayers().contains(i))
                 game.getPlayers().erase(i);

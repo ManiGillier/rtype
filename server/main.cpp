@@ -58,6 +58,7 @@ class RType
             throw ArgsError("We’re not at the butcher’s shop; "
                             "please try a different tick value.");
     }
+    ~RType() = default;
 
     int displayUsage()
     {
@@ -79,13 +80,17 @@ class RType
         server.getPacketListener().addExecutor(
             std::make_unique<ClientInputsExecutor>(server));
 
-        while (1) {
+        std::thread gameThread;
+        while (server.getRunning()) {
             server.loop();
             if (server.canStart() && !_hasStarted) {
-                this->addThread(std::thread(
-                    &Game::loop, std::ref(server.getGame()), this->_ticks));
+                gameThread = std::thread(
+                    &Game::loop, std::ref(server.getGame()), this->_ticks);
                 _hasStarted = !_hasStarted;
             }
+        }
+        if (gameThread.joinable()) {
+            gameThread.join();
         }
     }
 

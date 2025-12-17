@@ -4,7 +4,9 @@
 #include "../../shared/components/HitBox.hpp"
 #include "../../shared/components/Laser.hpp"
 #include "../../shared/components/Position.hpp"
+#include "../RTypeServer.hpp"
 #include "../components/Acceleration.hpp"
+#include "../components/BossTag.hpp"
 #include "../components/Damager.hpp"
 #include "../components/OutsideBoundaries.hpp"
 #include "../components/Resistance.hpp"
@@ -15,6 +17,7 @@
 #include "network/server/Server.hpp"
 #include <chrono>
 #include <iostream>
+#include <memory>
 #include <thread>
 #include <utility>
 
@@ -48,6 +51,13 @@ void Game::start()
     }
 }
 
+void Game::stop()
+{
+    _isRunning = false;
+    auto &r = static_cast<RTypeServer &>(_server);
+    r.setRunning(false);
+}
+
 void Game::loop(int ticks)
 {
     this->start();
@@ -62,6 +72,8 @@ void Game::loop(int ticks)
         {
             std::lock_guard<std::mutex> lock(_registryMutex);
             _registry.update();
+            if (!_isRunning)
+                break;
             _gameBoss.update();
         }
         auto endTime = std::chrono::steady_clock::now();
@@ -74,18 +86,28 @@ void Game::loop(int ticks)
     }
 }
 
-std::pair<Entity, Entity> Game::addPlayer()
+std::pair<std::size_t, std::size_t> Game::addPlayer()
 {
-    Entity pl = _factory.createPlayer();
-    Entity laser = _factory.createPlayerLaser(static_cast<int>(pl.getId()));
+    if (_isRunning)
+        return {0, 0};
+    {
+        std::lock_guard<std::mutex> lock(_registryMutex);
+        Entity pl = _factory.createPlayer();
+        Entity laser = _factory.createPlayerLaser(static_cast<int>(pl.getId()));
 
-    _players.emplace(pl.getId(), laser.getId());
-    return {pl, laser};
+        _players.emplace(pl.getId(), laser.getId());
+        return {pl.getId(), laser.getId()};
+    }
 }
 
 EntityFactory &Game::getFactory()
 {
     return this->_factory;
+}
+
+GameBoss &Game::getGameBoss()
+{
+    return this->_gameBoss;
 }
 
 Registry &Game::getRegistry()
@@ -110,6 +132,7 @@ void Game::initializeComponents()
     _registry.register_component<HitBox>();
     _registry.register_component<Laser>();
     _registry.register_component<Position>();
+    _registry.register_component<BossTag>();
 }
 
 void Game::initializeSystems()
@@ -119,12 +142,13 @@ void Game::initializeSystems()
             Systems::movement_system, std::ref(*this));
     _registry.add_update_system<Position, Laser>(Systems::update_laser_system,
                                                  std::ref(*this));
-    _registry.add_update_system<Position, HitBox>(Systems::collision_system);
+    _registry.add_update_system<Position, HitBox>(Systems::collision_system,
+                                                  std::ref(*this));
     _registry.add_update_system<Health>(Systems::cleanup_system,
                                         std::ref(*this));
 }
 
-std::unordered_map<std::size_t, std::size_t> & Game::getPlayers()
+std::unordered_map<std::size_t, std::size_t> &Game::getPlayers()
 {
     return this->_players;
 }
@@ -136,4 +160,9 @@ void Game::sendPackets(std::shared_ptr<Packet> packet)
     for (auto &pollable : pollables) {
         pollable->sendPacket(packet);
     }
+}
+
+bool Game::isRunning() const
+{
+    return _isRunning;
 }

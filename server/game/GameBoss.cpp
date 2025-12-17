@@ -1,5 +1,8 @@
 #include "GameBoss.hpp"
 #include "Game.hpp"
+#include "ecs/entity/Entity.hpp"
+#include "network/logger/Logger.hpp"
+#include "network/packets/impl/GameOverPacket.hpp"
 #include "network/packets/impl/HitboxSizeUpdatePacket.hpp"
 #include "shared/components/HitBox.hpp"
 #include "shared/components/Position.hpp"
@@ -10,64 +13,154 @@
 #include <network/packets/impl/NewEnemyPacket.hpp>
 
 GameBoss::GameBoss(Game &game)
-    : _game(game), _lastShoot(std::chrono::steady_clock::now())
+    : _game(game), _start(std::chrono::steady_clock::now())
 {
 }
 
 void GameBoss::update()
 {
-    if (!this->hasBoss()) {
-        this->newBoss();
-    } else {
+    if (!_game.isRunning())
+        return;
+
+    if (_state == waiting) {
+        auto now = std::chrono::steady_clock::now();
+        auto elapsed =
+            std::chrono::duration_cast<std::chrono::milliseconds>(now - _start);
+        if (elapsed.count() > 2000) {
+            this->initWave();
+        }
+    } else if (_state == active) {
         this->shoot();
+        this->checkWaveCompletion();
     }
 }
 
-bool GameBoss::hasBoss()
+void GameBoss::initWave()
 {
-    return _curBoss.has_value();
+    if (_curWave >= _maxWaves) {
+        LOG("Victory!");
+        _game.sendPackets(std::make_shared<GameOverPacket>(EndGameState::WIN));
+        _game.stop();
+        return;
+    }
+    LOG("Starting wave " << (_curWave + 1) << " / " << _maxWaves);
+    for (int i = 0; i < _nbEnemyPerWave[_curWave]; i++) {
+        this->spawnEnemy();
+    }
+    this->spawnBoss();
+    _state = active;
 }
 
-bool GameBoss::newBoss()
+void GameBoss::spawnEnemy()
 {
-    _curBoss = this->_game.getFactory().createBoss();
-    this->_game.sendPackets(
-        std::make_shared<NewEnemyPacket>(_curBoss->getId()));
+    Entity enemy = _game.getFactory().createEnemy(static_cast<int>(_curWave));
+    _game.sendPackets(std::make_shared<NewEnemyPacket>(enemy.getId()));
 
-    auto hitBox = this->_game.getRegistry().get<HitBox>(_curBoss->getId());
+    auto hitBox = _game.getRegistry().get<HitBox>(enemy.getId());
     if (hitBox.has_value()) {
         std::shared_ptr<Packet> HitBoxSize =
-            create_packet(HitboxSizeUpdatePacket, _curBoss->getId(),
-                          hitBox->width, hitBox->height);
-        this->_game.sendPackets(HitBoxSize);
+            create_packet(HitboxSizeUpdatePacket, enemy.getId(), hitBox->width,
+                          hitBox->height);
+        _game.sendPackets(HitBoxSize);
     }
-    return true;
+    _enemies.emplace(enemy.getId(), std::chrono::steady_clock::now());
 }
 
-bool GameBoss::shoot()
+void GameBoss::spawnBoss()
 {
-    auto now = std::chrono::steady_clock::now();
-    auto elapsed =
-        std::chrono::duration_cast<std::chrono::milliseconds>(now - _lastShoot);
+    Entity boss = _game.getFactory().createBoss(static_cast<int>(_curWave));
+    _game.sendPackets(std::make_shared<NewEnemyPacket>(boss.getId()));
 
-    if (elapsed.count() < 500) {
-        return false;
-    }
-    auto boss = _game.getRegistry().get<Position>(_curBoss->getId());
-    if (!boss.has_value()) {
-        _curBoss.reset();
-        return false;
-    }
-    auto e = this->_game.getFactory().createBossBullet(
-        static_cast<int>(_curBoss->getId()), boss->x, boss->y);
-    this->_game.sendPackets(std::make_shared<NewBulletPacket>(e.getId()));
-
-    auto hitBox = this->_game.getRegistry().get<HitBox>(e.getId());
+    auto hitBox = _game.getRegistry().get<HitBox>(boss.getId());
     if (hitBox.has_value()) {
-        std::shared_ptr<Packet> HitBoxSize = create_packet(
-            HitboxSizeUpdatePacket, e.getId(), hitBox->width, hitBox->height);
-        this->_game.sendPackets(HitBoxSize);
+        std::shared_ptr<Packet> HitBoxSize =
+            create_packet(HitboxSizeUpdatePacket, boss.getId(), hitBox->width,
+                          hitBox->height);
+        _game.sendPackets(HitBoxSize);
     }
-    _lastShoot = now;
-    return true;
+    _bosses.emplace(boss.getId(), std::chrono::steady_clock::now());
+}
+
+bool GameBoss::isWaveComplete()
+{
+    return _enemies.empty() && _bosses.empty();
+}
+
+void GameBoss::checkWaveCompletion()
+{
+    if (isWaveComplete() && _state == active) {
+        LOG("Wave " << (_curWave + 1) << " completed!");
+        _curWave++;
+        _state = waiting;
+        _start = std::chrono::steady_clock::now();
+    }
+}
+
+void GameBoss::removeEnemy(std::size_t id)
+{
+    _enemies.erase(id);
+}
+
+void GameBoss::removeBoss(std::size_t id)
+{
+    _bosses.erase(id);
+}
+
+void GameBoss::shoot()
+{
+    if (!_game.isRunning())
+        return;
+
+    auto now = std::chrono::steady_clock::now();
+
+    for (auto it = _bosses.begin(); it != _bosses.end();) {
+        auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
+            now - it->second);
+
+        auto bossPos = _game.getRegistry().get<Position>(it->first);
+        if (!bossPos.has_value()) {
+            it = _bosses.erase(it);
+            continue;
+        }
+
+        if (elapsed.count() >= 500) {
+            auto bullet = _game.getFactory().createBossBullet(
+                static_cast<int>(it->first), bossPos->x, bossPos->y);
+            _game.sendPackets(std::make_shared<NewBulletPacket>(bullet.getId()));
+
+            auto hitBox = _game.getRegistry().get<HitBox>(bullet.getId());
+            if (hitBox.has_value()) {
+                _game.sendPackets(create_packet(HitboxSizeUpdatePacket,
+                                                bullet.getId(), hitBox->width,
+                                                hitBox->height));
+            }
+            it->second = now;
+        }
+        ++it;
+    }
+    for (auto it = _enemies.begin(); it != _enemies.end();) {
+        auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
+            now - it->second);
+
+        auto enemyPos = _game.getRegistry().get<Position>(it->first);
+        if (!enemyPos.has_value()) {
+            it = _enemies.erase(it);
+            continue;
+        }
+
+        if (elapsed.count() >= 1000) {
+            auto bullet = _game.getFactory().createEnemyBullet(
+                static_cast<int>(it->first), enemyPos->x, enemyPos->y);
+            _game.sendPackets(std::make_shared<NewBulletPacket>(bullet.getId()));
+
+            auto hitBox = _game.getRegistry().get<HitBox>(bullet.getId());
+            if (hitBox.has_value()) {
+                _game.sendPackets(create_packet(HitboxSizeUpdatePacket,
+                                                bullet.getId(), hitBox->width,
+                                                hitBox->height));
+            }
+            it->second = now;
+        }
+        ++it;
+    }
 }

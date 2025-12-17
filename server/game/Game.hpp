@@ -13,6 +13,7 @@
 #include "../factories/EntityFactory.hpp"
 #include "ecs/entity/Entity.hpp"
 #include "GameBoss.hpp"
+#include <atomic>
 #include <memory>
 #include <mutex>
 #include <unordered_map>
@@ -23,13 +24,16 @@ class Game
     Game(class Server &server);
     ~Game() = default;
     void start();
+    void stop();
     void loop(int ticks);
-    std::pair<Entity, Entity> addPlayer();
+    std::pair<std::size_t, std::size_t> addPlayer();
     Registry &getRegistry();
     std::mutex &getRegistryMutex();
     EntityFactory &getFactory();
+    GameBoss &getGameBoss();
     std::unordered_map<std::size_t, std::size_t> &getPlayers();
     void sendPackets(std::shared_ptr<Packet> packet);
+    bool isRunning() const;
 
   private:
     void initializeComponents();
@@ -37,7 +41,7 @@ class Game
 
     Registry _registry;
     EntityFactory _factory;
-    bool _isRunning;
+    std::atomic<bool> _isRunning;
     class Server &_server;
     GameBoss _gameBoss;
     std::unordered_map<std::size_t, std::size_t> _players;

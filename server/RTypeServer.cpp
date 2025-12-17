@@ -8,16 +8,15 @@
 
 RTypeServer::RTypeServer(int port, int ticks)
     : Server(port), _next_id(0), _ticks(ticks), _canStartGame(false),
-      _game(*this)
+      _isRunning(true), _game(*this)
 {
 }
 
 std::shared_ptr<IPollable> RTypeServer::createClient(int fd)
 {
     // add player to get his entity id
-    auto [e_player, _] = _game.addPlayer();
-    return std::make_shared<Player>(fd, *this,
-                                    e_player.getId());
+    auto [player_id, _] = _game.addPlayer();
+    return std::make_shared<Player>(fd, *this, player_id);
 }
 
 void RTypeServer::onClientConnect(std::shared_ptr<IPollable> client)
@@ -68,4 +67,14 @@ void RTypeServer::setStart()
 bool RTypeServer::canStart() const
 {
     return _canStartGame;
+}
+
+bool RTypeServer::getRunning() const
+{
+    return _isRunning;
+}
+
+void RTypeServer::setRunning(bool r)
+{
+    _isRunning = r;
 }
