@@ -2,12 +2,12 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>R-Type documentation</title>
+        <title>Client - R-Type documentation</title>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <base href="">
+        <base href="../">
 
         <link rel="stylesheet" href="book.css">
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
@@ -63,7 +63,7 @@
         </script>
 
         <div id="sidebar" class="sidebar">
-            <ul class="chapter"><li class="affix"><a href="../../README.html">Introduction</a></li><li><a href="./build.html"><strong>1.</strong> Build Project</a></li><li><a href="./client/README.html"><strong>2.</strong> Client</a></li><li><a href="./server/README.html"><strong>3.</strong> Server</a></li><li><a href="./ecs.html"><strong>4.</strong> Develop with our ECS</a></li></ul>
+            <ul class="chapter"><li class="affix"><a href="../../README.html">Introduction</a></li><li><a href="./build.html"><strong>1.</strong> Build Project</a></li><li><a href="./client/README.html" class="active"><strong>2.</strong> Client</a></li><li><a href="./server/README.html"><strong>3.</strong> Server</a></li><li><a href="./ecs.html"><strong>4.</strong> Develop with our ECS</a></li></ul>
         </div>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -86,86 +86,42 @@
                 </div>
 
                 <div id="content" class="content">
-                    <a class="header" href="print.html#r-type" id="r-type"><h1>R-Type</h1></a>
-<a class="header" href="print.html#documentation" id="documentation"><h2>Documentation</h2></a>
-<p>See the documentation <a href="https://manigillier.github.io/rtype">here</a>.</p>
-<a class="header" href="print.html#how-to-get-started" id="how-to-get-started"><h2>How to get started</h2></a>
-<pre><code class="language-bash">make release
-</code></pre>
-<p>Two binaries will then be created :</p>
-<ul>
-<li><code>r-type_client</code>, graphical client.</li>
-<li><code>r-type_server</code>, server</li>
-</ul>
-<p><code>./r-type_client IP PORT [-d]</code>
-<code>./r-type_server -p PORT [-l TICKSPEED] [-d]</code></p>
-<a class="header" href="print.html#authors" id="authors"><h2>Authors</h2></a>
-<ul>
-<li>Mani Gillier</li>
-<li>Rayane El Janati El Idrissi</li>
-<li>Hugo Poggetti</li>
-<li>Maxime Huet</li>
-</ul>
-<a class="header" href="print.html#build-project" id="build-project"><h1>Build project</h1></a>
-<a class="header" href="print.html#dependencies" id="dependencies"><h2>Dependencies</h2></a>
-<ul>
-<li>make</li>
-<li>cmake =&gt; 3.15</li>
-<li>c++20 compiler</li>
-<li><a href="https://github.com/raysan5/raylib/wiki/raylib-dependencies">Raylib dependencies</a></li>
-<li>PThreads (POSIX threads)</li>
-</ul>
-<a class="header" href="print.html#package-manager" id="package-manager"><h2>Package manager</h2></a>
-<ul>
-<li><a href="https://github.com/cpm-cmake/CPM.cmake">cmake cpm</a></li>
-</ul>
-<a class="header" href="print.html#packages-used" id="packages-used"><h2>Packages used</h2></a>
-<ul>
-<li><a href="https://github.com/raysan5/raylib">raylib v5.5</a></li>
-</ul>
-<a class="header" href="print.html#build" id="build"><h2>Build</h2></a>
-<pre><code class="language-bash"># build release
-make release
-
-# build debug version
-make debug
-</code></pre>
-<a class="header" href="print.html#client-documentation" id="client-documentation"><h1>Client Documentation</h1></a>
-<a class="header" href="print.html#summary" id="summary"><h1>Summary</h1></a>
+                    <a class="header" href="./client/README.html#client-documentation" id="client-documentation"><h1>Client Documentation</h1></a>
+<a class="header" href="./client/README.html#summary" id="summary"><h1>Summary</h1></a>
 <p>The client represent the playable part of the project.</p>
 <p>A client must connect to a given running server to work.</p>
 <p>It has a Graphical User Interface to allow a human to play the game.</p>
-<a class="header" href="print.html#architecture" id="architecture"><h1>Architecture</h1></a>
+<a class="header" href="./client/README.html#architecture" id="architecture"><h1>Architecture</h1></a>
 <p>The client is composed of two parts:</p>
 <ul>
-<li><a href="print.html#gui--logic">The GUI &amp; Logic</a><br />
+<li><a href="./client/README.html#gui--logic">The GUI &amp; Logic</a><br />
 This is where all of the logic and rendering happen.</li>
-<li><a href="print.html#network">The Network</a><br />
+<li><a href="./client/README.html#network">The Network</a><br />
 This is where all communications with the server happen.</li>
 </ul>
 <p>The client is not responsible to determine anything except for user inputs.<br />
 The position of the player is even determined by the server itself.</p>
-<a class="header" href="print.html#gui--logic" id="gui--logic"><h2>Gui &amp; Logic</h2></a>
+<a class="header" href="./client/README.html#gui--logic" id="gui--logic"><h2>Gui &amp; Logic</h2></a>
 <p>This part of a client is defined as a state machine.</p>
 <p>In can be in one of those states:</p>
 <ul>
-<li><a href="print.html#connection-state">Connection</a></li>
-<li><a href="print.html#in-lobby-state">Lobby</a></li>
-<li><a href="print.html#in-game-state">Game</a></li>
+<li><a href="./client/README.html#connection-state">Connection</a></li>
+<li><a href="./client/README.html#in-lobby-state">Lobby</a></li>
+<li><a href="./client/README.html#in-game-state">Game</a></li>
 </ul>
-<a class="header" href="print.html#connection-state" id="connection-state"><h3>Connection state</h3></a>
+<a class="header" href="./client/README.html#connection-state" id="connection-state"><h3>Connection state</h3></a>
 <p>Inside the connection state, the client is preparing the connections with the server.<br />
 It first connect with a TCP socket, and then setups a UDP connection (and this is where the loading time arise).</p>
 <p>It is separated from the rest to forbid interaction while this crucial step is still processing.</p>
-<a class="header" href="print.html#in-lobby-state" id="in-lobby-state"><h3>In lobby state</h3></a>
+<a class="header" href="./client/README.html#in-lobby-state" id="in-lobby-state"><h3>In lobby state</h3></a>
 <p>When connected, you are added to a lobby.<br />
 This is where you wait for your friends to connect to join the game together.</p>
 <p>Inside the lobby, you have the possibility to request the start of the game, and force every player in the lobby to switch to the game state.</p>
-<a class="header" href="print.html#in-game-state" id="in-game-state"><h3>In game state</h3></a>
+<a class="header" href="./client/README.html#in-game-state" id="in-game-state"><h3>In game state</h3></a>
 <p>Finally, the real state. The one where you can play.</p>
 <p>This state starts with a loading time. This is unfortunate, as we wanted to have a dedicated state for loading all ressources before connecting to the game. It will be added in the future !</p>
 <p>Here you have the possibility to see other players, enemies, bullets and, of course, to interact and play the game with you controls.</p>
-<a class="header" href="print.html#composition-of-each-state" id="composition-of-each-state"><h3>Composition of each state</h3></a>
+<a class="header" href="./client/README.html#composition-of-each-state" id="composition-of-each-state"><h3>Composition of each state</h3></a>
 <p>We are using an Entity Component System to make the game work. Both rendering and logic parts are using this ECS.</p>
 <p>Given that, every state has it's own separated entities, components and systems.<br />
 For example, the game state has a system dedicated to showing a bullet on the screen, whilst the connecting state really don't have any bullets !</p>
@@ -178,7 +134,7 @@ There we enter the logic side, like managing player inputs, deleting entities, i
 We have responses to server requests via the networking interface in this part.</li>
 </ol>
 <p>Technically we do have a last state, the GAME OVER state, but it is really a very quick deconnection state, as we do not have a game over screen yet.</p>
-<a class="header" href="print.html#network" id="network"><h2>Network</h2></a>
+<a class="header" href="./client/README.html#network" id="network"><h2>Network</h2></a>
 <p>The client utilizes network in an extensive manner, as it needs it for almost everything !<br />
 Indeed, almost nothing is determined by the client itself for now, and it is uncapable of even computing the position of the player.<br />
 Thus, it needs to receive those informations from the server.</p>
@@ -192,7 +148,7 @@ For example, when a player is killed, or an enemy spawns.</li>
 For example, player and enemy positions, player inputs.</li>
 </ol>
 <p>The architecture with executors that totally abstracts differentiation between types of packet make it fairly easy to understand how to implement a reaction to a give packet.</p>
-<a class="header" href="print.html#managers" id="managers"><h2>Managers</h2></a>
+<a class="header" href="./client/README.html#managers" id="managers"><h2>Managers</h2></a>
 <ul>
 <li><strong>Client Manager</strong><br />
 The client itself is manager through a <code>ClientManager</code>.<br />
@@ -207,7 +163,7 @@ It serves as a cache to avoid loading the same sound file multiple times.</li>
 <li><strong>Texture Manager</strong><br />
 The Texture manager does the same thing as the sound manager, but adapted for images loaded as GPU textures.</li>
 </ul>
-<a class="header" href="print.html#graphical-library" id="graphical-library"><h1>Graphical library</h1></a>
+<a class="header" href="./client/README.html#graphical-library" id="graphical-library"><h1>Graphical library</h1></a>
 <p>For our graphical library, we chose <a href="https://www.raylib.com/">Raylib</a>.</p>
 <p>It offers multiple advantages compared to other libraries:</p>
 <ol>
@@ -233,112 +189,37 @@ The Texture manager does the same thing as the sound manager, but adapted for im
 <li>It is not really adapted to Object Oriented Programming.<br />
 Indeed, it is not at all constructed with classes, and rely solely on direct calls to global funtions.</li>
 </ul>
-<a class="header" href="print.html#diagrams" id="diagrams"><h1>Diagrams</h1></a>
-<a class="header" href="print.html#client-architecture-diagram" id="client-architecture-diagram"><h2>Client architecture diagram</h2></a>
+<a class="header" href="./client/README.html#diagrams" id="diagrams"><h1>Diagrams</h1></a>
+<a class="header" href="./client/README.html#client-architecture-diagram" id="client-architecture-diagram"><h2>Client architecture diagram</h2></a>
 <p><img src="./arch.png" alt="Client architecture" /></p>
-<a class="header" href="print.html#server" id="server"><h1>Server</h1></a>
-<a class="header" href="print.html#ecs-usage-guide" id="ecs-usage-guide"><h1>ECS Usage Guide</h1></a>
-<p>An Entity Component System works with 3 types :</p>
-<ul>
-<li>Entities</li>
-<li>Components</li>
-<li>Systems</li>
-</ul>
-<p>A Component is a small storage structure.<br />
-It should define a single component out of a more complex set, representing an Entity.</p>
-<p>As said, an Entity is represented by a set of components, which can be dynamically modified.</p>
-<p>And a System is something that you would apply on all entities satisfying certain Components, to allow for modification, rendering, ...</p>
-<p>For example, if you have a component Position and Velocity, you could have a System to update the Position based on the Velocity, and a lot of very different entities could end up with those components and be moved by the same System.</p>
-<p>The goal is to separate every actions, and to maximize performances.</p>
-<a class="header" href="print.html#basic-usage" id="basic-usage"><h2>Basic usage</h2></a>
-<ol>
-<li>Define Components
-Components are simple data structures.</li>
-</ol>
-<pre><code class="language-cpp">struct Position {
-    int x;
-    int y;
-};
-</code></pre>
-<ol start="2">
-<li>Create Systems<br />
-Systems are functions that process components.</li>
-</ol>
-<pre><code class="language-cpp">void logging_system(Registry&amp; r,
-    containers::indexed_zipper&lt;SparseArray&lt;Position&gt;,
-                               SparseArray&lt;Velocity&gt;&gt; zipper)
-{
-    for (auto&amp;&amp; [i, pos, vel] : zipper)
-        std::cerr &lt;&lt; i &lt;&lt; &quot;: Position = { &quot; &lt;&lt; pos.value().x &lt;&lt; &quot;, &quot;
-                  &lt;&lt; pos.value().y &lt;&lt; &quot; }&quot; &lt;&lt; std ::endl;
-        std::cerr &lt;&lt; i &lt;&lt; &quot;: Velocity = { &quot; &lt;&lt; vel-&gt;x &lt;&lt; &quot;, &quot;
-                  &lt;&lt; vel-&gt;y &lt;&lt; &quot; }&quot; &lt;&lt; std ::endl;
-}
-</code></pre>
-<ol start="3">
-<li>Setup Registry<br />
-The registry holds the ECS.</li>
-</ol>
-<pre><code class="language-cpp">Registry r;
-r.register_component&lt;Position&gt;();
-r.register_component&lt;Velocity&gt;();
-</code></pre>
-<ol start="4">
-<li>Create Entities</li>
-</ol>
-<pre><code class="language-cpp">Entity player = r.spawn_entity();
-</code></pre>
-<ol start="5">
-<li>Add Components to Entities</li>
-</ol>
-<pre><code class="language-cpp">r.emplace_component&lt;Position&gt;(player, 2, 23);
-r.emplace_component&lt;Velocity&gt;(player, 1, 0);
-</code></pre>
-<ol start="6">
-<li>Register and Run Systems</li>
-</ol>
-<pre><code class="language-cpp">r.add_{render/update}_system&lt;Position, Velocity&gt;(logging_system);
-r.{render/update}();
-</code></pre>
-<ol start="7">
-<li>Cleanup</li>
-</ol>
-<pre><code class="language-cpp">r.kill_entity(player);
-</code></pre>
-<a class="header" href="print.html#complete-example" id="complete-example"><h2>Complete Example</h2></a>
-<p>See the file <code>ecs/ecs_exemple.cpp</code></p>
-<a class="header" href="print.html#iterating-over-components" id="iterating-over-components"><h2>Iterating Over Components</h2></a>
-<p>Use zipper to iterate over multiple component arrays:</p>
-<pre><code class="language-cpp">
-// With index
-for (auto&amp;&amp; [i, pos, vel] : containers::indexed_zipper(positions, velocities)) {
-    // i is the entity ID
-}
-</code></pre>
-<a class="header" href="print.html#passing-more-parameters-to-systems" id="passing-more-parameters-to-systems"><h2>Passing more parameters to systems</h2></a>
-<p>You can simply add more parameters to systems when registering them.</p>
-<pre><code class="language-cpp">void system([[maybe_unused]] Registry &amp;r,
-    [[maybe_unused]] containers::indexed_zipper&lt;SparseArray&lt;Position&gt;&gt; zipper,
-    int bonus_parameter)
-{
-    std::cout &lt;&lt; &quot;Int value=&quot; &lt;&lt; bonus_parameter &lt;&lt; std::endl;
-}
-
-// Inside function to register systems
-registry.add_render_system&lt;Position&gt;(12); // 12 will be passed as bonus_parameter
-</code></pre>
 
                 </div>
 
                 <!-- Mobile navigation buttons -->
                 
+                    <a rel="prev" href="./build.html" class="mobile-nav-chapters previous" title="Previous chapter">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
 
+                
+                    <a rel="next" href="./server/README.html" class="mobile-nav-chapters next" title="Next chapter">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
                 
 
             </div>
 
             
+                <a href="./build.html" class="nav-chapters previous" title="You can navigate through the chapters using the arrow keys">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+            
 
+            
+                <a href="./server/README.html" class="nav-chapters next" title="You can navigate through the chapters using the arrow keys">
+                    <i class="fa fa-angle-right"></i>
+                </a>
             
 
         </div>
@@ -358,12 +239,6 @@ registry.add_render_system&lt;Position&gt;(12); // 12 will be passed as bonus_pa
 
         
 
-        
-        <script>
-            $(document).ready(function() {
-                window.print();
-            })
-        </script>
         
 
         <script src="highlight.js"></script>
