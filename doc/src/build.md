@@ -4,6 +4,9 @@
 
 - make
 - cmake => 3.15
+- c++20 compiler
+- [Raylib dependencies](https://github.com/raysan5/raylib/wiki/raylib-dependencies)
+- PThreads (POSIX threads)
 
 ## Package manager
 

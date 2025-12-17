@@ -2,7 +2,7 @@
 
 ## Documentation
 
-See the documentation [here](https://fictional-adventure-8ew2e44.pages.github.io/).
+See the documentation [here](https://manigillier.github.io/rtype).
 
 ## How to get started
 
@@ -13,6 +13,9 @@ make release
 Two binaries will then be created :
 - `r-type_client`, graphical client.
 - `r-type_server`, server
+
+`./r-type_client IP PORT [-d]`
+`./r-type_server -p PORT [-l TICKSPEED] [-d]`
 
 ## Authors
 

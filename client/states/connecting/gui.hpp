@@ -18,7 +18,7 @@ public:
 
     auto render(Registry &) -> void;
 private:
-    IGameState &gameState;
+    [[maybe_unused]] IGameState &gameState;
 };
 
 #endif /* CONNECTING_STATE_GUI_HPP */

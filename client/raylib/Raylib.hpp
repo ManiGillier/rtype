@@ -24,9 +24,9 @@ public:
     auto isStopped() -> bool;
     auto render(IGameState &) -> void;
 private:
-    ClientManager &clientManager;
-    RenderWindow window;
-    bool stopped = false;
+    [[maybe_unused]] ClientManager &clientManager;
+    [[maybe_unused]] RenderWindow window;
+    [[maybe_unused]] bool stopped = false;
 };
 
 #endif // RAYLIB_H_

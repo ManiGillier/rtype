@@ -29,8 +29,8 @@ class RTypeServer : public Server
     bool getRunning() const;
     void setRunning(bool r);
 
-  private:
-    std::size_t _next_id;
+private:
+    [[maybe_unused]] std::size_t _next_id;
     int _ticks;
     bool _canStartGame;
     std::atomic<bool> _isRunning;
