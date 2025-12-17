@@ -88,7 +88,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../../index.html">Introduction</a></li><li class="chapter-item expanded "><a href="build.html" class="active"><strong aria-hidden="true">1.</strong> Build Project</a></li><li class="chapter-item expanded "><a href="ecs.html"><strong aria-hidden="true">2.</strong> How to use ECS</a></li><li class="chapter-item expanded "><a href="client/index.html"><strong aria-hidden="true">3.</strong> Client</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../../index.html">Introduction</a></li><li class="chapter-item expanded "><a href="build.html" class="active"><strong aria-hidden="true">1.</strong> Build Project</a></li><li class="chapter-item expanded "><a href="client/index.html"><strong aria-hidden="true">2.</strong> Client</a></li><li class="chapter-item expanded "><a href="server/index.html"><strong aria-hidden="true">3.</strong> Server</a></li><li class="chapter-item expanded "><a href="ecs.html"><strong aria-hidden="true">4.</strong> Develop with our ECS</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -178,6 +178,9 @@
 <ul>
 <li>make</li>
 <li>cmake =&gt; 3.15</li>
+<li>c++20 compiler</li>
+<li><a href="https://github.com/raysan5/raylib/wiki/raylib-dependencies">Raylib dependencies</a></li>
+<li>PThreads (POSIX threads)</li>
 </ul>
 <h2 id="package-manager"><a class="header" href="#package-manager">Package manager</a></h2>
 <ul>
@@ -203,7 +206,7 @@ make debug
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="ecs.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="client/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -217,13 +220,29 @@ make debug
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="ecs.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="client/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
 
         </div>
 
+        <!-- Livereload script (if served using the cli tool) -->
+        <script>
+            const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsAddress = wsProtocol + "//" + location.host + "/" + "__livereload";
+            const socket = new WebSocket(wsAddress);
+            socket.onmessage = function (event) {
+                if (event.data === "reload") {
+                    socket.close();
+                    location.reload();
+                }
+            };
+
+            window.onbeforeunload = function() {
+                socket.close();
+            }
+        </script>
 
 
 

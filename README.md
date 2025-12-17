@@ -2,7 +2,7 @@
 
 ## Documentation
 
-See the documentation [here](https://fictional-adventure-8ew2e44.pages.github.io/).
+See the documentation [here](https://manigillier.github.io/rtype).
 
 ## How to get started
 
