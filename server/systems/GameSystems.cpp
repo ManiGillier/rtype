@@ -145,10 +145,23 @@ auto Systems::collision_system([[maybe_unused]] Registry &r,
             if (i >= j)
                 continue;
 
-            bool collisionX = pos_i->x < pos_j->x + hitbox_j->width &&
-                              pos_i->x + hitbox_i->width > pos_j->x;
-            bool collisionY = pos_i->y < pos_j->y + hitbox_j->height &&
-                              pos_i->y + hitbox_i->height > pos_j->y;
+            // J'ai centré les collisions on est bon mainteannt !
+            // (au lieu de faire +width) j'enlève et rajoute width/2 partout
+            bool collisionX = pos_i->x - hitbox_i->width/2
+                              <
+                              pos_j->x + hitbox_j->width/2
+                              &&
+                              pos_i->x + hitbox_i->width/2
+                              >
+                              pos_j->x - hitbox_j->width/2;
+            bool collisionY = pos_i->y - hitbox_i->height/2
+                              <
+                              pos_j->y + hitbox_j->height/2
+                              &&
+                              pos_i->y + hitbox_i->height/2
+                              >
+                              pos_j->y - hitbox_j->height/2;
+            // Et aussi je voyais rien avec les comparaisons et tout x)
 
             if (collisionX && collisionY) {
                 auto damager_i = r.get<Damager>(i);
