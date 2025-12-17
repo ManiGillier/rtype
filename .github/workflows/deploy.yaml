@@ -7,6 +7,12 @@ on:
       - 'B*.*.*'
     branches:
       - dev
+
+env:
+  MIRROR_OWNER: EpitechPGE3-2025
+  MIRROR_NAME: G-CPP-500-TLS-5-2-rtype-1
+  EXECUTABLES: r-type_client,r-type_server
+
 jobs:
   create-a-release:
     if: startsWith(github.ref, 'refs/tags/')
@@ -25,6 +31,14 @@ jobs:
           files: |
             r-type_server
             r-type_client
+      - name: Create Release on Mirror
+        id: create_release_mirror
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: ${{ env.EXECUTABLES }}
+          repo: ${{ env.MIRROR_NAME }}
+          owner: ${{ env.MIRROR_OWNER }}
+          token: ${{ secrets.MIRROR_RELEASE_WRITE_TOKEN }}
   push-on-main:
     needs: create-a-release
     if: startsWith(github.ref, 'refs/tags/')
