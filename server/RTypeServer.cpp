@@ -40,6 +40,7 @@ void RTypeServer::onClientDisconnect(std::shared_ptr<IPollable> client)
 
     std::shared_ptr<Packet> playerDisconnect =
         create_packet(DespawnPlayerPacket, player->getId());
+    this->_game.RemovePlayer(player->getId());
 
     for (std::shared_ptr<IPollable> &c : this->getPollManager().getPool()) {
         std::shared_ptr<ServerClient> clientToNotify =

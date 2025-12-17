@@ -27,6 +27,7 @@ class Game
     void stop();
     void loop(int ticks);
     std::pair<std::size_t, std::size_t> addPlayer();
+    void RemovePlayer(std::size_t id);
     Registry &getRegistry();
     std::mutex &getRegistryMutex();
     EntityFactory &getFactory();
