@@ -63,7 +63,7 @@
         </script>
 
         <div id="sidebar" class="sidebar">
-            <ul class="chapter"><li class="affix"><a href="../../README.html">Introduction</a></li><li><a href="./build.html"><strong>1.</strong> Build Project</a></li><li><a href="./client/README.html"><strong>2.</strong> Client</a></li><li><a href="./server/README.html"><strong>3.</strong> Server</a></li><li><a href="./ecs.html"><strong>4.</strong> Develop with our ECS</a></li></ul>
+            <ul class="chapter"><li class="affix"><a href="../../README.html">Introduction</a></li><li><a href="./build.html"><strong>1.</strong> Build Project</a></li><li><a href="./technical_choices.html"><strong>2.</strong> Technical Choices</a></li><li><a href="./client/README.html"><strong>3.</strong> Client</a></li><li><a href="./server/README.html"><strong>4.</strong> Server</a></li><li><a href="./ecs.html"><strong>5.</strong> Develop with our ECS</a></li></ul>
         </div>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -130,6 +130,96 @@ make release
 # build debug version
 make debug
 </code></pre>
+<a class="header" href="print.html#technical-choices" id="technical-choices"><h1>Technical choices</h1></a>
+<a class="header" href="print.html#chosen-language" id="chosen-language"><h2>Chosen Language</h2></a>
+<p>We chose C++ because for a multiplayer game, we needed very good performance.
+The low-level control over memory allows us to optimize our game as much as possible.</p>
+<p>Compared to Java, C# or Zig, we lose a bit of development time but it's worth it thanks to the time we gain on execution speed and resource control.</p>
+<a class="header" href="print.html#chosen-graphical-library" id="chosen-graphical-library"><h2>Chosen Graphical Library</h2></a>
+<p>For our graphical library, we chose <a href="https://www.raylib.com/">Raylib</a>.</p>
+<p>It offers multiple advantages compared to other libraries:</p>
+<ol>
+<li><strong>SFML</strong>
+<ul>
+<li>The raylib offers a higher level management of operations, with a lot of underlying global variables, offering nice and straightforward function calls.</li>
+<li>The SFML, although having the nice advantage of being adapted to Object Oriented Programming, tends to be more difficult to use because of the need to keep track of all variables created. It may be preferable to have the variables in hand, but in our case with the ECS and state machine, we chose to have hidden variables.</li>
+</ul>
+</li>
+<li><strong>SDL</strong>
+<ul>
+<li>The SDL is a low-level graphical library. We did not wanted to go too deep in that rabbit hole, and we stuck to the Raylib, offering higher level implementation.</li>
+</ul>
+</li>
+<li><strong>Direct OpenGl calls</strong>
+<ul>
+<li>I'm not even gonna explain why we did not chose that path.</li>
+</ul>
+</li>
+</ol>
+<p>The Raylib is a really good graphical library, but we may encounter some problem with it, namely :</p>
+<ul>
+<li>It is not really adapted to Object Oriented Programming.<br />
+Indeed, it is not at all constructed with classes, and rely solely on direct calls to global funtions</li>
+</ul>
+<a class="header" href="print.html#algorithms-and-data-structures" id="algorithms-and-data-structures"><h2>Algorithms and Data Structures</h2></a>
+<a class="header" href="print.html#ecs-entity-component-system" id="ecs-entity-component-system"><h3>ECS (Entity Component System)</h3></a>
+<p>The ECS was a bit of an unusual choice but logical for us.
+Compared to a classic object-oriented architecture with inheritance, the ECS organizes data contiguously in memory, which optimizes the CPU cache on both server and client side.</p>
+<p>Concretely, instead of having &quot;Player&quot; or &quot;Enemy&quot; objects that are subclasses, we group all components of the same type together.</p>
+<p>Result: when we update positions or Health, the iteration is much faster.
+For a game with many simultaneous entities, it makes a huge difference.</p>
+<a class="header" href="print.html#réseautype-custom" id="réseautype-custom"><h3>RéseauType (custom)</h3></a>
+<p>This is our most strongest yet assumed choice. Instead of using an existing cross-platform library, we developed our own network library. Why?</p>
+<ul>
+<li>We know how it works. If a bug appears, we can fix it ourselves without depending on an external community.</li>
+<li>Generic libraries handle many cases we don't need. Our protocol is tailored for our needs - position packets, input packets, etc.</li>
+<li>By controlling the protocol, we can implement packets specific to our game, whereas with an existing library we would have had to adapt to its functioning.</li>
+</ul>
+<p>The fact that we have our own network library allows us to integrate these checks directly into the protocol rather than adding them on top.</p>
+<a class="header" href="print.html#storage" id="storage"><h2>Storage</h2></a>
+<p>RéseauType uses binary serialization for packet transmission.</p>
+<p>This section compares different serialization methods.</p>
+<a class="header" href="print.html#binary-serialization-our-approach" id="binary-serialization-our-approach"><h3>Binary Serialization (Our approach)</h3></a>
+<p>Binary serialization converts packet data into bytes.</p>
+<p>Packets are not stored permanently. They exist only during transmission between client and server.</p>
+<p>It is fast and deterministic.</p>
+<p>Both the client and server know exactly how to read and write packet data.</p>
+<p>There is no parsing overhead, which makes it reliable for real-time communication.</p>
+<p>Each packet has a fixed size.</p>
+<p>This makes bandwidth usage predictable and efficient.</p>
+<p>However, changing packet structure requires updating both client and server code.</p>
+<p>The binary format is also difficult to debug since it is not human-readable. (Although RéseauType comes with a Logger to make debugging easy !)</p>
+<a class="header" href="print.html#why-réseautype-uses-binary-serialization" id="why-réseautype-uses-binary-serialization"><h3>Why RéseauType Uses Binary Serialization</h3></a>
+<p>RéseauType prioritizes speed and bandwidth usage</p>
+<p>Binary serialization provides the fastest transmission and smallest packet size, which is critical for real-time multiplayer games where latency matters.</p>
+<p>JSON or Protocol Buffers are not optimal for real-time games where performance is the priority.</p>
+<a class="header" href="print.html#security" id="security"><h2>Security</h2></a>
+<p>The only security challenge of the project is dealing with client output and preventing cheating.
+Clients can be modified or replaced with malicious programs that send fake data to gain unfair advantages.</p>
+<a class="header" href="print.html#server-authority" id="server-authority"><h3>Server Authority</h3></a>
+<p>The server has authority on everything. It does not trust the client at any point.</p>
+<p>The client only sends its inputs.</p>
+<p>he server calculates the player's position, health, score, and all game state.</p>
+<p>The client does not determine its own position or any game logic.</p>
+<p>This prevents clients from sending false position data or modifying their own stats.</p>
+<p>Even if a cheater modifies their client, they can only send inputs, not results.</p>
+<a class="header" href="print.html#connection-validation" id="connection-validation"><h3>Connection Validation</h3></a>
+<p>A client is disconnected when it does not connect properly using the RéseauType Client.</p>
+<p>Although this connection method can be mimicked by a custom client, it does not give any advantage over using the RéseauType Client.</p>
+<p>This prevents random programs from spamming the server without proper authentication.</p>
+<a class="header" href="print.html#packet-validation" id="packet-validation"><h3>Packet Validation</h3></a>
+<p>Our system can disconnect a user based on the data received in a packet.</p>
+<p>An anti-cheat system can easily be implemented by adding packet executors that detect suspicious behavior.</p>
+<p>The server kicks off a player when it receives an unknown packet ID. It only accepts registered packets.</p>
+<a class="header" href="print.html#data-integrity" id="data-integrity"><h3>Data Integrity</h3></a>
+<p>All packets are serialized in binary with fixed sizes. The server validates packet size before processing. If a packet is incomplete or malformed, it is discarded.</p>
+<a class="header" href="print.html#further-security-axis" id="further-security-axis"><h3>Further Security Axis</h3></a>
+<a class="header" href="print.html#ddos-attacks" id="ddos-attacks"><h4>DDoS Attacks</h4></a>
+<p>RéseauType does not currently implement rate limiting or IP blocking. A malicious client could spam packets to overload the server</p>
+<p>Rate limiting can be added to limit the number of packets per second per client.</p>
+<a class="header" href="print.html#man-in-the-middle-attacks" id="man-in-the-middle-attacks"><h4>Man-in-the-Middle Attacks</h4></a>
+<p>RéseauType does not encrypt packets. An attacker on the same network could intercept and read packets, or modify them in transit</p>
+<p>Adding encryption (TLS for TCP, DTLS for UDP) could prevent this and could be added.</p>
 <a class="header" href="print.html#client-documentation" id="client-documentation"><h1>Client Documentation</h1></a>
 <a class="header" href="print.html#summary" id="summary"><h1>Summary</h1></a>
 <p>The client represent the playable part of the project.</p>
@@ -234,7 +324,7 @@ The Texture manager does the same thing as the sound manager, but adapted for im
 Indeed, it is not at all constructed with classes, and rely solely on direct calls to global funtions.</li>
 </ul>
 <a class="header" href="print.html#diagrams" id="diagrams"><h1>Diagrams</h1></a>
-<a class="header" href="print.html#client-architecture-diagram" id="client-architecture-diagram"><h2>Client architecture diagram</h2></a>
+<a class="header" href="print.html#client-architecture-diagramv" id="client-architecture-diagramv"><h2>Client architecture diagramv</h2></a>
 <p><img src="./arch.png" alt="Client architecture" /></p>
 <a class="header" href="print.html#server" id="server"><h1>Server</h1></a>
 <a class="header" href="print.html#ecs-usage-guide" id="ecs-usage-guide"><h1>ECS Usage Guide</h1></a>
