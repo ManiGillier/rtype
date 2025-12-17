@@ -8,27 +8,26 @@
 #include <network/packets/impl/SAuthentificationPacket.hpp>
 
 #include <network/logger/Logger.hpp>
+#include <network/packets/PacketLogger.hpp>
 #include <network/server/Server.hpp>
 #include <network/server/ServerClient.hpp>
-#include <network/server/Server.hpp>
-#include <network/packets/PacketLogger.hpp>
 #include <string>
 
-#include <poll.h>
-#include <unistd.h>
+#include "Server.hpp"
+#include <bits/stdc++.h>
 #include <fcntl.h>
-#include <poll.h>
-#include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
-#include <bits/stdc++.h>
-#include "Server.hpp"
+#include <poll.h>
+#include <sys/socket.h>
+#include <unistd.h>
 
 Server::Server(int port, int maxConnections)
 {
     this->port = port;
     this->maxConnections = maxConnections;
-    this->getPacketListener().addPersistentExecutor(std::make_unique<AuthenticationExecutor>());
+    this->getPacketListener().addPersistentExecutor(
+        std::make_unique<AuthenticationExecutor>());
 }
 
 /* TODO: Refactor this method, HOLY TRUMP WALL */
@@ -45,15 +44,17 @@ bool Server::up()
     memset(&params, 0, sizeof(sockaddr));
     params.sin_family = AF_INET;
     params.sin_addr.s_addr = INADDR_ANY;
-    params.sin_port = htons((uint16_t) port);
+    params.sin_port = htons((uint16_t)port);
     setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, &optVal, sizeof(optVal));
-    if (bind(serverSocket, (struct sockaddr *) &params, sizeof(struct sockaddr_in)) == -1)
+    if (bind(serverSocket, (struct sockaddr *)&params,
+             sizeof(struct sockaddr_in)) == -1)
         return this->upStatus;
     if (listen(serverSocket, SOMAXCONN) == -1)
         return this->upStatus;
     int udpSocket = socket(AF_INET, SOCK_DGRAM, 0);
     setsockopt(udpSocket, SOL_SOCKET, SO_REUSEADDR, &optVal, sizeof(optVal));
-    if (bind(udpSocket, (struct sockaddr *) &params, sizeof(struct sockaddr_in)) == -1) {
+    if (bind(udpSocket, (struct sockaddr *)&params,
+             sizeof(struct sockaddr_in)) == -1) {
         close(serverSocket);
         return this->upStatus;
     }
@@ -65,7 +66,7 @@ bool Server::up()
     this->getPollManager().addPollable(
         std::make_shared<ServerUDPPollable>(*this, udpFd));
     LOG("Could start server at " << this->port << " !");
-    this->maxConnections += (int) this->getPollManager().getPool().size();
+    this->maxConnections += (int)this->getPollManager().getPool().size();
     return this->upStatus;
 }
 
@@ -131,11 +132,13 @@ void Server::executePackets()
         }
     }
     for (auto &[sender, packet] : ServerUDPPollable::getUDPReceivedPackets()) {
-        std::shared_ptr<IPollable> client = this->getPollManager().getPollableByAddress(sender);
+        std::shared_ptr<IPollable> client =
+            this->getPollManager().getPollableByAddress(sender);
 
         if (!client)
             this->getPacketListener().executePacket(*this, sender, packet);
-        else if (!this->getPacketListener().executePacket(*this, client, packet))
+        else if (!this->getPacketListener().executePacket(*this, client,
+                                                          packet))
             toRemove.push_back(client->getFileDescriptor());
     }
     ServerUDPPollable::getUDPReceivedPackets().clear();
@@ -146,8 +149,9 @@ void Server::executePackets()
 
 void Server::sendUDPPackets()
 {
-    std::lock_guard<std::mutex> lck (this->udpLock);
-    std::vector<std::shared_ptr<IPollable>> pool = this->getPollManager().getPool();
+    std::lock_guard<std::mutex> lck(this->udpLock);
+    std::vector<std::shared_ptr<IPollable>> pool =
+        this->getPollManager().getPool();
 
     for (std::shared_ptr<IPollable> &p : pool) {
         for (auto &[packet, addr] : p->getPacketsToSendUDP()) {
@@ -163,11 +167,22 @@ void Server::sendUDPPackets()
                 packetData.pop();
             }
             sendto(this->udpFd, toSend.data(), toSend.size(), 0,
-                (struct sockaddr*)&(addr.value()), sizeof(addr.value()));
-            PacketLogger::logPacket(packet, PacketLogger::PacketMethod::SENT, this->udpFd);
+                   (struct sockaddr *)&(addr.value()), sizeof(addr.value()));
+            PacketLogger::logPacket(packet, PacketLogger::PacketMethod::SENT,
+                                    this->udpFd);
         }
         p->getPacketsToSendUDP().clear();
     }
+}
+
+bool Server::canConnect() const
+{
+    return this->enableConnection.load();
+}
+
+void Server::setConnect(bool c)
+{
+    this->enableConnection.store(c);
 }
 
 ServerPollable::ServerPollable(Server &server, int fd)
@@ -183,13 +198,16 @@ short ServerPollable::getFlags() const
 
 bool ServerPollable::receiveEvent(short revent)
 {
-    if (this->server.getPollManager().getPool().size() >
-        (std::size_t) this->server.getMaxConnections())
-        return true;
     int other_socket = accept(this->getFileDescriptor(), 0, 0);
+    if ((this->server.getPollManager().getPool().size() >
+         (std::size_t)this->server.getMaxConnections()) ||
+        !this->server.canConnect()) {
+        close(other_socket);
+        return true;
+    }
     std::shared_ptr<IPollable> createdClient = nullptr;
 
-    (void) revent;
+    (void)revent;
     if (other_socket < 0)
         return true;
     int flags = fcntl(other_socket, F_GETFL, 0);
@@ -200,12 +218,13 @@ bool ServerPollable::receiveEvent(short revent)
     createdClient = server.createClient(other_socket);
     this->server.getPollManager().addPollable(createdClient);
     this->server.onClientConnect(createdClient);
-    createdClient->sendPacket(create_packet(SAuthentificationPacket, createdClient->getUUID()));
+    createdClient->sendPacket(
+        create_packet(SAuthentificationPacket, createdClient->getUUID()));
     return true;
 }
 
-ServerUDPPollable::ServerUDPPollable(Server &server, int fd) :
-    Pollable(fd, server.getPollManager()), server(server)
+ServerUDPPollable::ServerUDPPollable(Server &server, int fd)
+    : Pollable(fd, server.getPollManager()), server(server)
 {
     return;
 }
@@ -221,8 +240,8 @@ bool ServerUDPPollable::receiveEvent(short)
     struct sockaddr_in sender;
     socklen_t senderLen = sizeof(sender);
     std::queue<uint8_t> dataQueue;
-    ssize_t bytesRead = recvfrom(this->getFileDescriptor(), buffer, BUFFER_SIZE, 0,
-                                  (struct sockaddr*)&sender, &senderLen);
+    ssize_t bytesRead = recvfrom(this->getFileDescriptor(), buffer, BUFFER_SIZE,
+                                 0, (struct sockaddr *)&sender, &senderLen);
     if (bytesRead <= 0)
         return true;
     for (ssize_t i = 0; i < bytesRead; i++)
@@ -230,14 +249,17 @@ bool ServerUDPPollable::receiveEvent(short)
     while (!dataQueue.empty()) {
         uint8_t packetId = dataQueue.front();
         dataQueue.pop();
-        std::shared_ptr<Packet> packet = PacketManager::getInstance().createPacketById(packetId, Packet::PacketMode::UDP);
+        std::shared_ptr<Packet> packet =
+            PacketManager::getInstance().createPacketById(
+                packetId, Packet::PacketMode::UDP);
         if (packet == nullptr) {
-            LOG_ERR("Received invalid packet ID: " << (int) packetId);
+            LOG_ERR("Received invalid packet ID: " << (int)packetId);
             break;
         }
         std::size_t packetSize = (std::size_t)packet->getSize();
         if (packetSize > dataQueue.size()) {
-            LOG_ERR("Incomplete packet received with ID (" << (int) packetId << ")");
+            LOG_ERR("Incomplete packet received with ID (" << (int)packetId
+                                                           << ")");
             break;
         }
         std::queue<uint8_t> packetData;
@@ -248,9 +270,8 @@ bool ServerUDPPollable::receiveEvent(short)
         packet->setData(packetData);
         packet->unserialize();
         PacketLogger::logPacket(packet, PacketLogger::PacketMethod::RECEIVED,
-            this->getFileDescriptor());
+                                this->getFileDescriptor());
         addReceivedPacket(sender, packet);
     }
     return true;
 }
-

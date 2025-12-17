@@ -32,6 +32,7 @@ Game::Game(class Server &server)
 void Game::start()
 {
     if (!_isRunning) {
+        this->_server.setConnect(false);
         std::this_thread::sleep_for(std::chrono::milliseconds(200));
         for (auto const &[p_id, l_id] : _players) {
             auto hitBox = _registry.get<HitBox>(p_id);
@@ -56,6 +57,7 @@ void Game::stop()
     _isRunning = false;
     auto &r = static_cast<RTypeServer &>(_server);
     r.setRunning(false);
+    r.getPollManager().wakeUp();
 }
 
 void Game::loop(int ticks)
@@ -97,6 +99,15 @@ std::pair<std::size_t, std::size_t> Game::addPlayer()
 
         _players.emplace(pl.getId(), laser.getId());
         return {pl.getId(), laser.getId()};
+    }
+}
+
+void Game::RemovePlayer(std::size_t id)
+{
+    {
+        std::lock_guard<std::mutex> lock(_registryMutex);
+        if (_players.contains(id))
+            _players.erase(id);
     }
 }
 

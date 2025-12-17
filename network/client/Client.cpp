@@ -147,9 +147,9 @@ void Client::loop()
 {
     if (!this->connected)
         return;
-    if ((this->connected && this->getPollManager().getConnectionCount() == 1) ||
+    if ((this->connected && !isAuthentified() &&this->getPollManager().getConnectionCount() == 2) ||
         (this->connected && this->authentified &&
-        this->getPollManager().getConnectionCount() == 2)) {
+        this->getPollManager().getConnectionCount() == 2) || (this->getPollManager().getConnectionCount() == 1)) {
         this->connected = false;
         if (this->fd != -1) {
             close(this->fd);
