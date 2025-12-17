@@ -46,6 +46,8 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          allowUpdates: true
+          replacesArtifacts: true
           artifacts: ${{ env.EXECUTABLES }}
       - name: Create Release on Mirror
         id: create_release_mirror
