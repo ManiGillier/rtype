@@ -54,7 +54,7 @@ class RType
                                 " wihtout value");
             }
         }
-        if (_ticks < 1 || _ticks > 10000)
+        if (_ticks < 1 || _ticks > 120)
             throw ArgsError("We’re not at the butcher’s shop; "
                             "please try a different tick value.");
     }

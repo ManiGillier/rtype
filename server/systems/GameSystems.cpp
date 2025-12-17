@@ -169,7 +169,6 @@ auto Systems::collision_system([[maybe_unused]] Registry &r,
                     //         (1.0f - r.get<Resistance>(j)->ratio));
                     // }
                     r.set<Health>(j, health_j->pv - damage, 100);
-                    LOG("TOUCHED");
                 }
 
                 auto damager_j = r.get<Damager>(j);
@@ -191,7 +190,6 @@ auto Systems::collision_system([[maybe_unused]] Registry &r,
                     //         (1.0f - r.get<Resistance>(i)->ratio));
                     // }
                     r.set<Health>(i, health_i->pv - damage, 100);
-                    LOG("TOUCHED");
                 }
             }
         }
