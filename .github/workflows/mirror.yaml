@@ -30,6 +30,8 @@ jobs:
     needs: [ push_to_mirror ]
     name: Create Release
     runs-on: ubuntu-latest
+    permissions:
+        contents: write
     container: epitechcontent/epitest-docker
     steps:
       - name: Checkout code
