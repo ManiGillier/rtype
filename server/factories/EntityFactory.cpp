@@ -5,7 +5,6 @@
 #include "../../shared/components/Laser.hpp"
 #include "../../shared/components/Position.hpp"
 #include "../components/Acceleration.hpp"
-#include "../components/BossTag.hpp"
 #include "../components/Damager.hpp"
 #include "../components/OutsideBoundaries.hpp"
 #include "../components/Resistance.hpp"
@@ -45,8 +44,6 @@ Entity EntityFactory::createEnemy(int waveNumber)
     _registry.emplace_component<Health>(enemy, baseHealth, baseHealth);
     _registry.emplace_component<Resistance>(enemy, 5.0f);
     _registry.emplace_component<HitBox>(enemy, 30.0f, 30.0f);
-    _registry.emplace_component<BossTag>(enemy, false);
-
     return enemy;
 }
 
@@ -66,8 +63,6 @@ Entity EntityFactory::createBoss(int waveNumber)
     _registry.emplace_component<Health>(boss, bossHealth, bossHealth);
     _registry.emplace_component<Resistance>(boss, 50.0f);
     _registry.emplace_component<HitBox>(boss, 80.0f, 80.0f);
-    _registry.emplace_component<BossTag>(boss, true);
-
     return boss;
 }
 
