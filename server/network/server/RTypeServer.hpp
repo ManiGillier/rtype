@@ -6,8 +6,9 @@
 */
 
 #ifndef RTYPES_SERVER_HPP_
-    #define RTYPES_SERVER_HPP_
+#define RTYPES_SERVER_HPP_
 
+#include "../../lobby/LobbyManager.hpp"
 #include <memory>
 #include <network/server/Server.hpp>
 
@@ -16,14 +17,16 @@ class RTypeServer : public Server
   public:
     RTypeServer(int port, int ticks);
     ~RTypeServer() = default;
-    // std::shared_ptr<IPollable> createClient(int fd) override;
-    // void onClientConnect(std::shared_ptr<IPollable> client) override;
-    // void onClientDisconnect(std::shared_ptr<IPollable> client) override;
-    void setTicks(int ticks); 
+    std::shared_ptr<IPollable> createClient(int fd) override;
+    void onClientConnect(std::shared_ptr<IPollable> client) override;
+    void onClientDisconnect(std::shared_ptr<IPollable> client) override;
+    void setTicks(int ticks);
     int getTicks() const;
 
-private:
+  private:
     int _ticks;
+    int _nextId;
+    LobbyManager _lobbyManager;
 };
 
 #endif

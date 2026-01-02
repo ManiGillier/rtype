@@ -1,6 +1,7 @@
 #include "RType.hpp"
-#include "network/logger/Logger.hpp"
 #include "./error/ArgsError.hpp"
+#include "./network/server/RTypeServer.hpp"
+#include "network/logger/Logger.hpp"
 #include <iostream>
 #include <string>
 
@@ -52,38 +53,29 @@ int RType::displayUsage()
 
 void RType::networkLoop()
 {
-    // RTypeServer server(this->_port, this->_ticks);
-    // if (!server.up()) {
-    //     LOG_ERR("Can't connect");
-    //     return;
-    // }
+    RTypeServer server(this->_port, this->_ticks);
+    if (!server.up()) {
+        LOG_ERR("RType server Can't connect");
+        return;
+    }
     // server.getPacketListener().addExecutor(
     //     std::make_unique<GameExecutor>(server));
     // server.getPacketListener().addExecutor(
     //     std::make_unique<ClientInputsExecutor>(server));
     //
-    // std::thread gameThread;
-    // while (server.getRunning()) {
-    //     server.loop();
-    //     if (server.canStart() && !_hasStarted) {
-    //         gameThread = std::thread(
-    //             &Game::loop, std::ref(server.getGame()), this->_ticks);
-    //         _hasStarted = !_hasStarted;
-    //     }
-    // }
-    // if (gameThread.joinable()) {
-    //     gameThread.join();
-    // }
+    while (server.isUp()) {
+        server.loop();
+    }
 }
 
 int RType::launch()
 {
-    // if (_displayUsage)
-    //     return displayUsage();
-    //
-    // this->addThread(std::thread(&RType::networkLoop, this));
-    // for (std::thread &th : this->_threads)
-    //     th.join();
+    if (_displayUsage)
+        return displayUsage();
+
+    this->addThread(std::thread(&RType::networkLoop, this));
+    for (std::thread &th : this->_threads)
+        th.join();
     return 0;
 }
 

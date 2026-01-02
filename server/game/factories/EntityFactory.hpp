@@ -8,7 +8,7 @@
 #ifndef ENTITY_FACTORY_HPP
 #define ENTITY_FACTORY_HPP
 
-#include "../../ecs/regisrty/Registry.hpp"
+#include "ecs/regisrty/Registry.hpp"
 
 class EntityFactory
 {

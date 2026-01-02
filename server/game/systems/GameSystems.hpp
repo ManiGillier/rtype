@@ -8,13 +8,13 @@
 #ifndef COMP_POSITION_HPP
 #define COMP_POSITION_HPP
 
-#include "../../ecs/regisrty/Registry.hpp"
-#include "../../ecs/sparse_array/SparseArray.hpp"
-#include "../../shared/components/Dependence.hpp"
-#include "../../shared/components/Health.hpp"
-#include "../../shared/components/HitBox.hpp"
-#include "../../shared/components/Laser.hpp"
-#include "../../shared/components/Position.hpp"
+#include "ecs/regisrty/Registry.hpp"
+#include "ecs/sparse_array/SparseArray.hpp"
+#include "shared/components/Dependence.hpp"
+#include "shared/components/Health.hpp"
+#include "shared/components/HitBox.hpp"
+#include "shared/components/Laser.hpp"
+#include "shared/components/Position.hpp"
 #include "../components/Acceleration.hpp"
 #include "../components/Damager.hpp"
 #include "../components/OutsideBoundaries.hpp"

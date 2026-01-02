@@ -2,7 +2,6 @@
 #include "ecs/sparse_array/SparseArray.hpp"
 #include "network/packets/impl/DespawnPlayerPacket.hpp"
 #include "network/packets/impl/LaserActiveUpdatePacket.hpp"
-#include "server/components/Damager.hpp"
 #include "shared/components/Dependence.hpp"
 #include "shared/components/Laser.hpp"
 #include "shared/components/Position.hpp"

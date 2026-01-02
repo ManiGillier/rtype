@@ -9,3 +9,14 @@ std::size_t Player::getId() const
 {
     return _id;
 }
+
+
+void Player::setLobby(const std::string &lobbyid)
+{
+    this->_lobbyId = lobbyid;
+}
+
+const std::string &Player::getLobby() const
+{
+    return this->_lobbyId;
+}
