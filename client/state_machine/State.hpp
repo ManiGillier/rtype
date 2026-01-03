@@ -16,6 +16,7 @@
 class State : public IState {
 public:
     State(Registry&);
+    virtual ~State() = default;
 
     auto update() -> std::unique_ptr<IState>;
 protected:

@@ -11,10 +11,7 @@
 
 State::State(Registry &registry)
     : registry(registry)
-{
-    this->init_systems();
-    this->init_entities();
-}
+{}
 
 auto State::change_state(std::unique_ptr<IState> new_state) -> void
 {

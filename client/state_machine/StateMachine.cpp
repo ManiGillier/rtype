@@ -18,6 +18,8 @@ auto StateMachine::switch_state(std::unique_ptr<IState> state) -> void
     if (!state)
         return;
     this->current_state = std::move(state);
+    this->current_state->init_systems();
+    this->current_state->init_entities();
 }
 
 auto StateMachine::operator*() -> IState &
