@@ -10,6 +10,8 @@
 
 #include "IGameState.hpp"
 
+#include "client/graphical_library/GraphicalLibrary.hpp"
+
 class IGraphicalLibrary
 {
 public:
