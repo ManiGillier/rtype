@@ -8,25 +8,20 @@
 #ifndef RAYLIB_H_
 #define RAYLIB_H_
 
-#include "client/window/RenderWindow.hpp"
-#include "client/manager/ClientManager.hpp"
+#include "client/graphical_library/GraphicalLibrary.hpp"
 
-#include "ecs/regisrty/Registry.hpp"
-
-#include "client/api/IGraphicalLibrary.hpp"
-
-class Raylib : public IGraphicalLibrary
+class Raylib : public gl::GraphicalLibrary
 {
 public:
-    Raylib(ClientManager &);
-    ~Raylib();
+    auto init() -> void;
+    auto deinit() -> void;
 
-    auto isStopped() -> bool;
-    auto render(IGameState &) -> void;
-private:
-    [[maybe_unused]] ClientManager &clientManager;
-    [[maybe_unused]] RenderWindow window;
-    [[maybe_unused]] bool stopped = false;
+    auto should_close() -> bool;
+
+    auto start_new_frame(gl::Color color = gl::BLACK) -> void;
+    auto end_frame() -> void;
+
+    auto draw(gl::Rectangle rect) -> void;
 };
 
 #endif // RAYLIB_H_

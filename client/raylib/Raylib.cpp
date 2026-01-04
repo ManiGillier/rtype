@@ -5,36 +5,39 @@
 ** raylib
 */
 
-#include <thread>
-#include <raylib.h>
-
 #include "Raylib.hpp"
 
-Raylib::Raylib(ClientManager &cm)
-    : clientManager(cm)
+#include <raylib.h>
+
+auto Raylib::init() -> void
 {
-    SetTraceLogLevel(RAYLIB_LOG_LEVEL);
-    InitWindow(this->window.getWidth(),
-               this->window.getHeight(),
-               this->window.getTitle());
-    SetTargetFPS(this->window.getFps());
+    InitWindow(900, 600, "TODO: Change title");
 }
 
-Raylib::~Raylib()
+auto Raylib::deinit() -> void
 {
-    this->stopped = true;
     CloseWindow();
 }
 
-auto Raylib::isStopped() -> bool
+auto Raylib::should_close() -> bool
 {
-    return WindowShouldClose() || this->stopped;
+    return WindowShouldClose();
 }
 
-auto Raylib::render(IGameState &gs) -> void
+auto Raylib::start_new_frame(gl::Color color) -> void
 {
     BeginDrawing();
-    ClearBackground(BLACK);
-    gs.render();
+    ClearBackground(Color {color.r, color.g, color.b, color.a});
+}
+
+auto Raylib::end_frame() -> void
+{
     EndDrawing();
+}
+
+auto Raylib::draw(gl::Rectangle rect) -> void
+{
+    DrawRectangle((int) rect.position.x, (int) rect.position.y,
+                  (int) rect.size.x, (int) rect.size.y,
+                  Color {rect.color.r, rect.color.g, rect.color.b, rect.color.a});
 }
