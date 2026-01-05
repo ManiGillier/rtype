@@ -20,8 +20,9 @@
 
 ClientManager::ClientManager()
 {
-    this->gui = std::make_unique<Raylib>(*this);
+    this->gui = std::make_unique<Raylib>();
 
+    this->gui->init();
     this->_gameStateFactory[AUTHENTIFICATION] = [this] {
         return std::make_unique<ConnectingState>(*this);
     };
@@ -68,13 +69,15 @@ auto ClientManager::loop() -> void
     while (true) {
         if (this->networkManager->isStopped())
             break;
-        this->getGui().render(this->getState());
-        if (this->getGui().isStopped())
-            break;
         this->networkManager->getClient().executePackets();
         State new_state = this->getState().update();
 
         if (new_state == State::END_STATE)
+            break;
+        this->getGui().start_new_frame();
+        this->getState().render();
+        this->getGui().end_frame();
+        if (this->getGui().should_close())
             break;
         if (new_state != State::NONE)
             this->changeState(new_state);
@@ -85,6 +88,7 @@ auto ClientManager::loop() -> void
 auto ClientManager::unload() -> void
 {
     LOG("Unloading.");
+    this->gui->deinit();
     this->gui.reset();
     this->getNetworkManager().stop();
 }

@@ -12,6 +12,7 @@
 auto Raylib::init() -> void
 {
     InitWindow(900, 600, "TODO: Change title");
+    SetTargetFPS(60);
 }
 
 auto Raylib::deinit() -> void

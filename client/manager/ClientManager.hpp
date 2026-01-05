@@ -14,7 +14,7 @@
 
 #include "client/api/IGameState.hpp"
 
-#include "client/api/IGraphicalLibrary.hpp"
+#include "client/graphical_library/GraphicalLibrary.hpp"
 
 #include <functional>
 #include <memory>
@@ -31,7 +31,7 @@ public:
     ClientManager();
     auto changeState(const State) -> void;
 
-    auto getGui() -> IGraphicalLibrary & { return *this->gui; }
+    auto getGui() -> gl::GraphicalLibrary & { return *this->gui; }
     auto getState() -> IGameState & { return *this->_internal_state; }
     auto getNetworkManager() -> NetworkManager &
         { return *this->networkManager; }
@@ -41,7 +41,7 @@ private:
     auto loop() -> void;
     auto unload() -> void;
 private:
-    std::unique_ptr<IGraphicalLibrary> gui;
+    std::unique_ptr<gl::GraphicalLibrary> gui;
     std::unique_ptr<NetworkManager> networkManager;
 
     State _state = NONE;
