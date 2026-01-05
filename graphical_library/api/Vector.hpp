@@ -27,7 +27,9 @@ namespace gl {
     };
 
     typedef Vector2f WorldPosition;
-    typedef Vector2i WindowPosition;
+    typedef Vector2ui Size;
+    typedef float Scale;
+    typedef float Rotation;
 }
 
 #endif /* CLIENT_GRAPHICAL_LIBRARY_VECTOR_HPP */
