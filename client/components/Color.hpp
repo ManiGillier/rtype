@@ -10,7 +10,7 @@
 
 #include <cstddef>
 
-#include "client/graphical_library/Color.hpp"
+#include <graphical_library/api/GraphicalLibrary.hpp>
 
 struct ElementColor {
     gl::Color color;

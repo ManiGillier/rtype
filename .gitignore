@@ -10,3 +10,4 @@ CPM_modules/
 *.o
 .vscode
 /vgcore*
+/gui_tester

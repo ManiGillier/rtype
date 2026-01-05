@@ -7,7 +7,7 @@
 
 #include "SoundManager.hpp"
 
-#include "client/raylib/sound/Sound.hpp"
+#include <graphical_library/raylib/sound/Sound.hpp>
 
 SoundManager::~SoundManager()
 {

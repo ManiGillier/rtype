@@ -11,7 +11,7 @@
 #include "client/api/IGameState.hpp"
 #include "client/manager/ClientManager.hpp"
 
-#include "client/graphical_library/GraphicalLibrary.hpp"
+#include <graphical_library/api/GraphicalLibrary.hpp>
 
 class LobbyState : public IGameState
 {

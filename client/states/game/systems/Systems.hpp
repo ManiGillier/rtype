@@ -8,7 +8,7 @@
 #ifndef RENDER_SYSTEMS_HPP
 #define RENDER_SYSTEMS_HPP
 
-#include "client/graphical_library/GraphicalLibrary.hpp"
+#include <graphical_library/api/GraphicalLibrary.hpp>
 
 #include "ecs/regisrty/Registry.hpp"
 

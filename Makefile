@@ -34,6 +34,10 @@ reseau:
 	cmake -B ${BUILD_DIR} -DCMAKE_BUILD_TYPE=$(DEBUG)
 	cmake --build ${BUILD_DIR} --target reseau -j
 
+gui:
+	cmake -B ${BUILD_DIR} -DCMAKE_BUILD_TYPE=$(DEBUG)
+	cmake --build ${BUILD_DIR} --target gui -j
+
 lint:
 	clang-tidy $$(find . -type f -name "*.[ch]pp" | grep -v "build")
 
@@ -63,4 +67,4 @@ re:
 	make -s fclean
 	make -s all
 
-.PHONY: all lint clean fclean re doc open_doc reseau server client
+.PHONY: all lint clean fclean re doc open_doc reseau server client gui

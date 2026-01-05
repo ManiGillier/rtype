@@ -5,7 +5,7 @@
 ** render laser
 */
 
-#include "client/graphical_library/GraphicalLibrary.hpp"
+#include <graphical_library/api/GraphicalLibrary.hpp>
 
 #include "ecs/regisrty/Registry.hpp"
 

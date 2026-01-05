@@ -12,9 +12,7 @@
 #include <memory>
 #include <string>
 
-#include "client/graphical_library/Sound.hpp"
-
-// #include <raylib.h>
+#include <graphical_library/api/Sound.hpp>
 
 class SoundManager
 {

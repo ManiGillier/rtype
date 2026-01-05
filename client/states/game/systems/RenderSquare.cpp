@@ -11,7 +11,7 @@
 #include "shared/components/HitBox.hpp"
 #include "client/components/Color.hpp"
 
-#include "client/graphical_library/GraphicalLibrary.hpp"
+#include <graphical_library/api/GraphicalLibrary.hpp>
 
 #include <raylib.h>
 

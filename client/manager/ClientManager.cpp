@@ -6,7 +6,8 @@
 */
 
 #include "ClientManager.hpp"
-#include "client/raylib/Raylib.hpp"
+
+#include <graphical_library/raylib/Raylib.hpp>
 
 #include "client/states/game/InGameState.hpp"
 #include "client/states/lobby/LobbyState.hpp"

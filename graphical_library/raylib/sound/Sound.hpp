@@ -8,7 +8,7 @@
 #ifndef CLIENT_RAYLIB_SOUND_HPP
 #define CLIENT_RAYLIB_SOUND_HPP
 
-#include "client/graphical_library/Sound.hpp"
+#include <graphical_library/api/Sound.hpp>
 
 namespace raylib {
     #include <raylib.h>

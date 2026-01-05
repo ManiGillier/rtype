@@ -13,7 +13,7 @@
 #include "ecs/regisrty/Registry.hpp"
 #include "client/states/State.hpp"
 
-#include "client/graphical_library/GraphicalLibrary.hpp"
+#include <graphical_library/api/GraphicalLibrary.hpp>
 
 #include <cstddef>
 

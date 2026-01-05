@@ -14,7 +14,7 @@
 
 #include "client/api/IGameState.hpp"
 
-#include "client/graphical_library/GraphicalLibrary.hpp"
+#include <graphical_library/api/GraphicalLibrary.hpp>
 
 #include <functional>
 #include <memory>

@@ -8,7 +8,7 @@
 #ifndef RAYLIB_H_
 #define RAYLIB_H_
 
-#include "client/graphical_library/GraphicalLibrary.hpp"
+#include <graphical_library/api/GraphicalLibrary.hpp>
 
 class Raylib : public gl::GraphicalLibrary
 {
