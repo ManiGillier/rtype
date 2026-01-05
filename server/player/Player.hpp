@@ -18,7 +18,7 @@ class Player : public ServerClient
     ~Player() = default;
     std::size_t getId() const;
     void setLobby(const std::string &lobbyid);
-    const std::string &getLobby() const;
+    const std::string &getLobbyId() const;
 
   private:
     std::size_t _id;

@@ -3,7 +3,7 @@
 #include <memory>
 
 RTypeServer::RTypeServer(int port, int ticks)
-    : Server(port), _ticks(ticks), _nextId(0)
+    : Server(port), _ticks(ticks), _nextId(0), _lobbyManager(ticks)
 {
 }
 
@@ -15,6 +15,21 @@ void RTypeServer::setTicks(int ticks)
 int RTypeServer::getTicks() const
 {
     return this->_ticks;
+}
+
+LobbyManager &RTypeServer::getLobbyManager()
+{
+    return this->_lobbyManager;
+}
+
+void RTypeServer::cleanFinishedGame()
+{
+    this->_threadPool.cleanup();
+}
+
+ThreadPool &RTypeServer::getGameThreadPool()
+{
+    return this->_threadPool;
 }
 
 std::shared_ptr<IPollable> RTypeServer::createClient(int fd)

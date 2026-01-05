@@ -9,17 +9,19 @@
 class LobbyManager
 {
   public:
-    LobbyManager() = default;
+    LobbyManager(int ticks);
     ~LobbyManager() = default;
     void newLobby(std::shared_ptr<Player> &player);
     void removePlayer(std::shared_ptr<Player> &player);
     bool joinLobby(const std::string &lobbyId, std::shared_ptr<Player> &player);
     void leaveLobby(std::shared_ptr<Player> &player);
-    bool startGame(const std::string &lobbyId);
+    void startGame(const std::string &lobbyId);
+    std::unordered_map<std::string, std::shared_ptr<Lobby>> &getLobbies();
 
   private:
     std::string getRandomLobbyId(std::size_t len);
-    std::unordered_map<std::string, std::unique_ptr<Lobby>> _lobbies;
+    std::unordered_map<std::string, std::shared_ptr<Lobby>> _lobbies;
+    int _ticks;
 };
 
 #endif

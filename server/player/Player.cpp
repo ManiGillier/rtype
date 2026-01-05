@@ -16,7 +16,7 @@ void Player::setLobby(const std::string &lobbyid)
     this->_lobbyId = lobbyid;
 }
 
-const std::string &Player::getLobby() const
+const std::string &Player::getLobbyId() const
 {
     return this->_lobbyId;
 }

@@ -8,8 +8,7 @@
 #ifndef RTYPE
     #define RTYPE
 
-#include <thread>
-#include <vector>
+#include "./network/server/RTypeServer.hpp"
 
 class RType
 {
@@ -17,16 +16,15 @@ class RType
     RType(int argc, char **argv);
     ~RType() = default;
     int displayUsage();
-    void networkLoop();
     int launch();
-    void addThread(std::thread &&t);
+    void networkLoop();
+    void initExecutor(RTypeServer &server);
 
   private:
     int _ticks = 60;
     int _port = -1;
     bool _displayUsage = false;
     bool _hasStarted = false;
-    std::vector<std::thread> _threads;
 };
 
 #endif

@@ -2,8 +2,10 @@
 #define LOBBY_HPP
 
 #include "../player/Player.hpp"
+#include "../game/Game.hpp"
 #include <memory>
 #include <vector>
+#include <mutex>
 
 constexpr int MIN_PLAYER = 1;
 constexpr int MAX_PLAYER = 5;
@@ -15,10 +17,17 @@ class Lobby
     ~Lobby() = default;
     bool addPlayer(std::shared_ptr<Player> &player);
     void removePlayer(std::shared_ptr<Player> &player);
+    std::vector<std::shared_ptr<Player>> &getPlayers();
     std::size_t size() const;
-    bool startGame(); // start game when requested
+    void startGame(int ticks); // start game when requested
+    bool isInGame();
+    void setIsInGame(bool iig);
+
   private:
     std::vector<std::shared_ptr<Player>> _players;
+    bool _inGame;
+    std::mutex _inGameMutex;
+    Game _game;
 };
 
 #endif

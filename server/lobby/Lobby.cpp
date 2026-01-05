@@ -4,6 +4,7 @@ bool Lobby::addPlayer(std::shared_ptr<Player> &player)
 {
     if (this->_players.size() < MAX_PLAYER) {
         this->_players.push_back(player);
+        this->_game.addPlayer(player);
         return true;
     }
     return false;
@@ -17,6 +18,7 @@ void Lobby::removePlayer(std::shared_ptr<Player> &player)
             break;
         }
     }
+    this->_game.removePlayer(player);
 }
 
 std::size_t Lobby::size() const
@@ -24,8 +26,28 @@ std::size_t Lobby::size() const
     return this->_players.size();
 }
 
-bool Lobby::startGame()
+std::vector<std::shared_ptr<Player>> &Lobby::getPlayers()
 {
-    // check nb of player here and create thread for game
-    return true;
+    return this->_players;
+}
+
+bool Lobby::isInGame()
+{
+    std::lock_guard<std::mutex> lock(_inGameMutex);
+    return this->_inGame;
+}
+
+void Lobby::setIsInGame(bool iig)
+{
+    std::lock_guard<std::mutex> lock(_inGameMutex);
+    this->_inGame = iig;
+}
+
+void Lobby::startGame(int ticks)
+{
+    this->_game.loop(ticks);
+    {
+        std::lock_guard<std::mutex> lock(_inGameMutex);
+        this->_inGame = false;
+    }
 }

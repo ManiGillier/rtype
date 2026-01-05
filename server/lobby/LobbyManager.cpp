@@ -5,6 +5,8 @@
 #include <random>
 #include <string>
 
+LobbyManager::LobbyManager(int ticks) : _ticks(ticks) {}
+
 void LobbyManager::newLobby(std::shared_ptr<Player> &player)
 {
     std::string lobbyId = this->getRandomLobbyId(6);
@@ -19,7 +21,7 @@ void LobbyManager::newLobby(std::shared_ptr<Player> &player)
 
 void LobbyManager::removePlayer(std::shared_ptr<Player> &player)
 {
-    auto playerLobbyId = player->getLobby();
+    auto playerLobbyId = player->getLobbyId();
 
     this->_lobbies[playerLobbyId]->removePlayer(player);
     LOG("Player id " << player->getId() << " has quit lobby " << playerLobbyId);
@@ -28,7 +30,8 @@ void LobbyManager::removePlayer(std::shared_ptr<Player> &player)
         this->_lobbies.erase(playerLobbyId);
 }
 
-bool LobbyManager::joinLobby(const std::string &lobbyId, std::shared_ptr<Player> &player)
+bool LobbyManager::joinLobby(const std::string &lobbyId,
+                             std::shared_ptr<Player> &player)
 {
     // TODO: do something if can no join desired lobby
     auto hasJoin = this->_lobbies[lobbyId]->addPlayer(player);
@@ -38,13 +41,19 @@ bool LobbyManager::joinLobby(const std::string &lobbyId, std::shared_ptr<Player>
 
 void LobbyManager::leaveLobby(std::shared_ptr<Player> &player)
 {
-   this->removePlayer(player);
-   this->newLobby(player);
+    this->removePlayer(player);
+    this->newLobby(player);
 }
 
-bool LobbyManager::startGame(const std::string &lobbyId)
+void LobbyManager::startGame(const std::string &lobbyId)
 {
-    return this->_lobbies[lobbyId]->startGame();
+    this->_lobbies[lobbyId]->startGame(this->_ticks);
+}
+
+std::unordered_map<std::string, std::shared_ptr<Lobby>> &
+LobbyManager::getLobbies()
+{
+    return this->_lobbies;
 }
 
 std::string LobbyManager::getRandomLobbyId(std::size_t len)
