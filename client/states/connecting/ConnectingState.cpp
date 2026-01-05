@@ -31,3 +31,7 @@ auto ConnectingState::render() -> void
     if (this->gui)
         this->gui->render(this->getRegistry());
 }
+
+auto ConnectingState::getGraphicalLibrary() -> gl::GraphicalLibrary & {
+    return this->clientManager.getGui();
+}

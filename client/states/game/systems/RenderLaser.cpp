@@ -5,9 +5,12 @@
 ** render laser
 */
 
+#include "client/graphical_library/GraphicalLibrary.hpp"
+
 #include "ecs/regisrty/Registry.hpp"
 
 #include "Systems.hpp"
+
 
 #include <raylib.h>
 
@@ -15,7 +18,8 @@
 auto renderLaser([[maybe_unused]] Registry &reg,
     containers::indexed_zipper<SparseArray<Laser>,
                                SparseArray<Dependence>,
-                               SparseArray<ElementColor>> zip)
+                               SparseArray<ElementColor>> zip,
+                 gl::GraphicalLibrary &gl)
 -> void
 {
     int height = GetRenderHeight();
@@ -27,9 +31,17 @@ auto renderLaser([[maybe_unused]] Registry &reg,
         if (!laser->active)
             continue;
         int const laser_width = 5;
-        DrawRectangle((int) (player_pos->x - (float) laser_width / 2),
-                      height - (int) player_pos->y - (int) laser->length,
-                      laser_width, (int) laser->length,
-                      color->color);
+        
+        gl.draw(gl::Rectangle {
+            gl::WorldPosition {
+                (player_pos->x - (float) laser_width / 2),
+                (float) (height - (int) player_pos->y - (int) laser->length)
+            },
+            gl::Vector2ui {
+                (std::uint32_t) laser_width,
+                (std::uint32_t) laser->length
+            },
+            color->color
+        });
     }
 }

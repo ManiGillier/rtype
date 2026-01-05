@@ -39,12 +39,6 @@
 InGameStateLogic::InGameStateLogic(IGameState &gs, NetworkManager &nm)
     : gameState(gs), networkManager(nm)
 {
-    //Registry &r = gameState.getRegistry();
-
-    //r.add_component<Position>(this->player, {20, 20});
-    //r.add_component<HitBox>(this->player, {20, 20});
-    //r.add_component<SquareColor>(this->player, {WHITE});
-
     nm.addExecutor(std::make_unique<NewPlayerExecutor>(*this));
     nm.addExecutor(std::make_unique<NewEnemyExecutor>(*this));
     nm.addExecutor(std::make_unique<NewBulletExecutor>(*this));
@@ -77,14 +71,14 @@ auto InGameStateLogic::newPlayer(std::size_t player_id, std::size_t laser_id)
     this->sync.add(laser.getId(), laser_id);
     r.add_component<Position>(player, {-200, -500});
     r.add_component<HitBox>(player, {20, 20});
-    r.add_component<ElementColor>(player, {WHITE});
+    r.add_component<ElementColor>(player, {gl::WHITE});
     r.add_component<Health>(player, {0, 0});
     r.add_component<PlayerId>(player, {this->playerId});
     this->playerId++;
 
     r.add_component<Dependence>(laser, {player.getId()});
     r.add_component<Laser>(laser, {true, 30});
-    r.add_component<ElementColor>(laser, {GREEN});
+    r.add_component<ElementColor>(laser, {gl::GREEN});
 }
 
 auto InGameStateLogic::newEnemy(std::size_t enemy_id) -> void
@@ -95,7 +89,7 @@ auto InGameStateLogic::newEnemy(std::size_t enemy_id) -> void
     this->sync.add(enemy.getId(), enemy_id);
     r.add_component<Position>(enemy, {-200, -200});
     r.add_component<HitBox>(enemy, {50, 50});
-    r.add_component<ElementColor>(enemy, {ORANGE});
+    r.add_component<ElementColor>(enemy, {gl::ORANGE});
     r.add_component<Health>(enemy, {0, 0});
 }
 
@@ -107,7 +101,7 @@ auto InGameStateLogic::newBullet(std::size_t bullet_id) -> void
     this->sync.add(bullet.getId(), bullet_id);
     r.add_component<Position>(bullet, {-250, -200});
     r.add_component<HitBox>(bullet, {10, 10});
-    r.add_component<ElementColor>(bullet, {BLUE});
+    r.add_component<ElementColor>(bullet, {gl::BLUE});
 }
 
 auto InGameStateLogic::despawnEntity(std::size_t id) -> void

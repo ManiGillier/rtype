@@ -13,12 +13,11 @@
 namespace gl {
     using byte = std::uint8_t;
 
-    class Color {
-    public:
-        Color(byte l, byte a = 255)
+    struct Color {
+        /*Color(byte l, byte a = 255)
         : r(l), g(l), b(l), a(a) {}
         Color(byte r, byte g, byte b, byte a = 255)
-        : r(r), g(g), b(b), a(a) {}
+        : r(r), g(g), b(b), a(a) {}*/
 
         byte r;
         byte g;
@@ -26,14 +25,14 @@ namespace gl {
         byte a;
     };
 
-    inline Color const BLACK = Color(0, 0, 0, 255);
-    inline Color const WHITE = Color(255, 255, 255, 255);
-    inline Color const RED = Color(255, 0, 0, 255);
-    inline Color const GREEN = Color(0, 255, 0, 255);
-    inline Color const BLUE = Color(0, 0, 255, 255);
-    inline Color const YELLOW = Color(255, 255, 0, 255);
-    inline Color const MAGENTA = Color(255, 0, 255, 255);
-    inline Color const CYAN = Color(0, 255, 255, 255);
+    inline Color const BLACK {0, 0, 0, 255};
+    inline Color const WHITE {255, 255, 255, 255};
+    inline Color const RED {255, 0, 0, 255};
+    inline Color const GREEN {0, 255, 0, 255};
+    inline Color const BLUE {0, 0, 255, 255};
+    inline Color const YELLOW {255, 255, 0, 255};
+    inline Color const MAGENTA {255, 0, 255, 255};
+    inline Color const CYAN {0, 255, 255, 255};
 }
 
 #endif /* CLIENT_GRAPHICAL_LIB_COLOR_HPP */

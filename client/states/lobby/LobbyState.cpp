@@ -31,3 +31,7 @@ auto LobbyState::render() -> void
     if (this->gui)
         this->gui->render(this->getRegistry());
 }
+
+auto LobbyState::getGraphicalLibrary() -> gl::GraphicalLibrary & {
+    return this->clientManager.getGui();
+}

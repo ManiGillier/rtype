@@ -49,3 +49,7 @@ auto InGameState::render() -> void
     if (this->gui)
         this->gui->render(this->getRegistry());
 }
+
+auto InGameState::getGraphicalLibrary() -> gl::GraphicalLibrary & {
+    return this->clientManager.getGui();
+}

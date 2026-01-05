@@ -31,8 +31,10 @@ InGameStateGui::InGameStateGui(IGameState &gm, NetworkManager &nm,
     r.add_render_system<HorizontalTiling, TextureComp>
         (renderHTiledTexture, std::ref(this->textureManager));
 
-    r.add_render_system<Position, HitBox, ElementColor>(renderSquare);
-    r.add_render_system<Laser, Dependence, ElementColor>(renderLaser);
+    r.add_render_system<Position, HitBox, ElementColor>
+        (renderSquare, std::ref(this->gameState.getGraphicalLibrary()));
+    r.add_render_system<Laser, Dependence, ElementColor>
+        (renderLaser, std::ref(this->gameState.getGraphicalLibrary()));
     r.add_render_system<Position, PlayerId>(renderPlayerId,
                                             this->logic.getPlayerId());
 

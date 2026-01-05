@@ -11,6 +11,8 @@
 #include "client/api/IGameState.hpp"
 #include "client/manager/ClientManager.hpp"
 
+#include "client/graphical_library/GraphicalLibrary.hpp"
+
 class ConnectingState : public IGameState
 {
 public:
@@ -18,6 +20,8 @@ public:
 
     auto update() -> State;
     auto render() -> void;
+
+    auto getGraphicalLibrary() -> gl::GraphicalLibrary &;
 private:
     [[maybe_unused]] ClientManager &clientManager;
 };

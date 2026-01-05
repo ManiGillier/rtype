@@ -8,6 +8,8 @@
 #ifndef RENDER_SYSTEMS_HPP
 #define RENDER_SYSTEMS_HPP
 
+#include "client/graphical_library/GraphicalLibrary.hpp"
+
 #include "ecs/regisrty/Registry.hpp"
 
 #include "client/manager/TextureManager.hpp"
@@ -31,13 +33,15 @@
 auto renderSquare([[maybe_unused]] Registry &reg,
     containers::indexed_zipper<SparseArray<Position>,
                                SparseArray<HitBox>,
-                               SparseArray<ElementColor>> zip)
+                               SparseArray<ElementColor>> zip,
+                  gl::GraphicalLibrary &)
 -> void;
 
 auto renderLaser([[maybe_unused]] Registry &reg,
     containers::indexed_zipper<SparseArray<Laser>,
                                SparseArray<Dependence>,
-                               SparseArray<ElementColor>> zip)
+                               SparseArray<ElementColor>> zip,
+                 gl::GraphicalLibrary &)
 -> void;
 
 auto animateTiling([[maybe_unused]] Registry &r,

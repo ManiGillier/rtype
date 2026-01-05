@@ -17,6 +17,8 @@ public:
 
     auto update() -> State;
     auto render() -> void;
+
+    auto getGraphicalLibrary() -> gl::GraphicalLibrary &;
 private:
     [[maybe_unused]] ClientManager &clientManager;
 };
