@@ -284,21 +284,20 @@ bool ClientPollableUDP::receiveEvent(short)
             LOG_ERR("Received invalid packet ID: " << (int) packetId);
             break;
         }
-        std::size_t packetSize = (std::size_t)packet->getSize();
-        if (packetSize > dataQueue.size()) {
+        packet->setData(dataQueue);
+        try {
+            packet->unserialize();
+        } catch (const std::exception &) {
             LOG_ERR("Incomplete packet received with ID (" << (int) packetId << ")");
+            for ([[maybe_unused]] std::size_t i = 0; i < packet->getReadCursor(); i++)
+                dataQueue.pop();
             break;
         }
-        std::queue<uint8_t> packetData;
-        for (std::size_t i = 0; i < packetSize; i++) {
-            packetData.push(dataQueue.front());
-            dataQueue.pop();
-        }
-        packet->setData(packetData);
-        packet->unserialize();
         PacketLogger::logPacket(packet, PacketLogger::PacketMethod::RECEIVED,
             this->getFileDescriptor());
         addReceivedPacket(sender, packet);
+        for (std::size_t i = 0; i < packet->getReadCursor(); i++)
+            dataQueue.pop();
     }
     return true;
 }

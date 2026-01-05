@@ -45,8 +45,6 @@ public:
         << (this->active ? "ON" : "OFF")
         << ", length=" << this->length;
     }
-    auto getSize() const -> int { return sizeof(std::size_t) + sizeof(bool)
-                                         + sizeof(float); }
 
     std::shared_ptr<Packet> clone() const {
         return make_copy(LaserActiveUpdatePacket);

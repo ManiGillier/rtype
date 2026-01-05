@@ -37,7 +37,6 @@ public:
     void display() {
         std::cout << "Id=" << this->id;
     }
-    auto getSize() const -> int { return sizeof(std::size_t); }
 
     std::shared_ptr<Packet> clone() const {
         return make_copy(PlayerIdPacket);

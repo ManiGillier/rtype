@@ -28,27 +28,31 @@ bool PacketReader::readPacket(void)
     while (true) {
         if (readData.empty())
             return true;
+        uint8_t packetId = 0;
         if (currentPacket == nullptr) {
-            currentPacket = PacketManager::getInstance().createPacketById(readData.front(), this->mode);
+            packetId = readData.front();
+            currentPacket = PacketManager::getInstance().createPacketById(packetId, this->mode);
             readData.pop();
         }
         if (currentPacket == nullptr) {
-            LOG_ERR("Received wrong packet, disconnecting " << this->_fd << std::endl);
+            LOG_ERR("Received wrong packet, disconnecting " << this->_fd << "(ID=" << (int) packetId  << ")");
             return false;
         }
-        std::size_t packetSize = (std::size_t) currentPacket->getSize();
-        if (packetSize > readData.size())
+        currentPacket->setData(readData);
+        try {
+            currentPacket->unserialize();
+        } catch (const std::exception &) {
+            for ([[maybe_unused]] std::size_t i = 0; i < currentPacket->getReadCursor(); i++)
+                readData.pop();
+            LOG_ERR("Received wrong packet, disconnecting " << this->_fd << "(ID=" << (int) packetId  << ")");
+            currentPacket = nullptr;
             return true;
-        std::queue<uint8_t> _arr;
-        for (std::size_t i = 0; i < packetSize; i++) {
-            _arr.push(readData.front());
-            readData.pop();
         }
-        currentPacket->setData(_arr);
-        currentPacket->unserialize();
         receivedPackets.push(currentPacket);
         PacketLogger::logPacket(currentPacket,
                  PacketLogger::PacketMethod::RECEIVED, this->_fd);
+        for ([[maybe_unused]] std::size_t i = 0; i < currentPacket->getReadCursor(); i++)
+            readData.pop();
         currentPacket = nullptr;
     }
     return true;

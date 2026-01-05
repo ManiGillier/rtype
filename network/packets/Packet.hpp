@@ -53,6 +53,13 @@ class Packet {
     public:
         enum PacketMode {TCP, UDP};
 
+        class PacketBuildError : public std::exception {
+            public:
+                const char *what() const noexcept override {
+                    return "Could not build Packet (?)";
+                }
+        };
+
         uint8_t getId() const {
             return (uint8_t) this->packetId;
         }
@@ -69,6 +76,10 @@ class Packet {
             this->data = data;
         }
 
+        std::size_t getReadCursor() const {
+            return this->readCursor;
+        }
+
         void clearData() {
             while (!this->data.empty())
                 data.pop();
@@ -80,12 +91,17 @@ class Packet {
             ByteWriter<T, (std::size_t) sizeof(T)> bw;
 
             bw.value = value;
-            if (writeCursor + sizeof(T) > (std::size_t) this->getSize())
-                return;
             for (uint8_t c : bw.bytes) {
                 this->data.push(c);
                 writeCursor++;
             }
+        }
+
+        void write(std::string value) {
+            this->write(value.size());
+
+            for (uint8_t c : value)
+                this->write(c);
         }
 
         // TODO : Verify
@@ -95,8 +111,8 @@ class Packet {
             std::queue<uint8_t> data = this->getData();
             std::size_t index = 0;
 
-            if (readCursor + sizeof(T) > (std::size_t) this->getSize())
-                throw std::exception();
+            if (readCursor + sizeof(T) > (std::size_t) this->getData().size())
+                throw PacketBuildError();
             while (index != readCursor) {
                 data.pop();
                 index++;
@@ -108,6 +124,21 @@ class Packet {
             readCursor += sizeof(T);
             value = bw.value;
             return bw.value;
+        }
+
+        std::string read(std::string &value) {
+            std::string toReturn;
+            std::size_t stringLength = 0;
+            uint8_t stringCharacter;
+
+            this->read(stringLength);
+            for ([[maybe_unused]] std::size_t i = 0; i < stringLength; i++) {
+                this->read(stringCharacter);
+                value.push_back(stringCharacter);
+            }
+            readCursor += stringLength;
+            value = toReturn;
+            return toReturn;
         }
 
         int readInt(int i) {
@@ -142,7 +173,6 @@ class Packet {
             write(d);
         }
 
-        virtual int getSize() const = 0;
         virtual void serialize() = 0;
         virtual void unserialize() = 0;
         virtual const std::string getName() = 0;

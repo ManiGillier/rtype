@@ -30,8 +30,6 @@ public:
         this->read(id);
     }
 
-    auto getSize() const -> int { return sizeof(std::size_t); }
-
     const std::string getName() {
         return "DespawnBulletPacket";
     }

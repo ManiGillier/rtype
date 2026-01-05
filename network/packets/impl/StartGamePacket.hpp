@@ -27,7 +27,6 @@ public:
     }
     void unserialize() {
     }
-    auto getSize() const -> int { return 0; }
 
     const std::string getName() {
         return "StartGamePacket";

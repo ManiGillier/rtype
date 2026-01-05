@@ -35,9 +35,6 @@ public:
         this->read(width);
         this->read(height);
     }
-    auto getSize() const -> int { return sizeof(std::size_t)
-                                         + (sizeof(float) * 2); }
-
     const std::string getName() {
         return "HitboxSizeUpdatePacket";
     }

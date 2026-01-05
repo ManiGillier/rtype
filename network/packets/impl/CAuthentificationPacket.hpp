@@ -24,10 +24,6 @@ public:
         this->uuid = this->read(this->uuid);
     }
 
-    int getSize() const {
-        return (int) sizeof(uint32_t);
-    }
-
     enum PacketMode getMode() const {
     return PacketMode::UDP;
     }

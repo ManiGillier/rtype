@@ -42,8 +42,6 @@ public:
         this->read(inputs);
     }
 
-    auto getSize() const -> int { return sizeof(ClientInputs); }
-
     const std::string getName() {
         return "ClientInputsPacket";
     }

@@ -46,7 +46,6 @@ public:
     void unserialize() {
         this->read(egs);
     }
-    auto getSize() const -> int { return sizeof(enum EndGameState); }
 
     const std::string getName() {
         return "GameOverPacket";
