@@ -13,11 +13,13 @@ auto Raylib::init() -> void
 {
     InitWindow(900, 600, "TODO: Change title");
     SetTargetFPS(60);
+    InitAudioDevice();
 }
 
 auto Raylib::deinit() -> void
 {
     CloseWindow();
+    CloseAudioDevice();
 }
 
 auto Raylib::should_close() -> bool

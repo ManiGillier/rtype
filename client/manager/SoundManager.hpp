@@ -9,31 +9,22 @@
 #define CLIENT_SOUND_MANAGER_HPP
 
 #include <map>
+#include <memory>
 #include <string>
 
-#include <raylib.h>
+#include "client/graphical_library/Sound.hpp"
+
+// #include <raylib.h>
 
 class SoundManager
 {
 public:
-    SoundManager() {
-        InitAudioDevice();
-    }
-    ~SoundManager() {
-        for (auto &[_, sound] : this->sounds)
-            UnloadSound(sound);
-        CloseAudioDevice();
-    }
-    auto loadSound(std::string path) -> void {
-        if (this->sounds.contains(path))
-            return;
-        this->sounds.emplace(path, LoadSound(path.c_str()));
-    }
-    auto playSound(std::string path) -> void {
-        PlaySound(this->sounds.at(path));
-    }
+    ~SoundManager();
+
+    auto loadSound(std::string path) -> void;
+    auto playSound(std::string path) -> void;
 private:
-    std::map<std::string, Sound> sounds;
+    std::map<std::string, std::unique_ptr<gl::Sound>> sounds;
 };
 
 #endif /* CLIENT_SOUND_MANAGER_HPP */
