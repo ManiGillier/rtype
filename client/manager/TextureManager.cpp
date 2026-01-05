@@ -7,6 +7,9 @@
 
 #include "TextureManager.hpp"
 #include <iostream>
+#include <memory>
+
+#include <graphical_library/raylib/texture/Texture.hpp>
 
 TextureManager::~TextureManager()
 {
@@ -23,12 +26,8 @@ auto TextureManager::loadTextures() -> void
     for (std::string path : this->toLoad) {
         if (this->textures.contains(path))
             continue;
-        Image img = LoadImage(path.c_str());
-        float ratio = (600 / (float) img.height);
-        ImageResize(&img, (int) ((float) img.width * ratio),
-                    (int) ((float) img.height * ratio));
-        this->textures.emplace(path, LoadTextureFromImage(img));
-        UnloadImage(img);
+        this->textures.emplace(path, std::make_unique<Texture>());
+        this->textures.at(path)->load(path);
     }
     this->toLoad.clear();
 }
@@ -36,12 +35,12 @@ auto TextureManager::loadTextures() -> void
 auto TextureManager::unloadTextures() -> void
 {
     for (auto &[_, texture] : this->textures)
-        UnloadTexture(texture);
+        texture->unload();
     this->textures.clear();
 }
 
 auto TextureManager::getTexture(const std::string &texturePath)
-    -> Texture2D &
+    -> gl::Texture &
 {
-    return this->textures.at(texturePath);
+    return *this->textures.at(texturePath);
 }

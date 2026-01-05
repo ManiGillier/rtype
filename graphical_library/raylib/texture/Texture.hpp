@@ -8,6 +8,7 @@
 #ifndef CLIENT_RAYLIB_TEXTURE_HPP
 #define CLIENT_RAYLIB_TEXTURE_HPP
 
+#include <cstdint>
 #include <filesystem>
 #include <graphical_library/api/Texture.hpp>
 
@@ -23,6 +24,9 @@ public:
     auto draw(gl::WorldPosition,
               gl::Rotation = 0.0,
               gl::Scale = 1.0) -> void;
+
+    auto getWidth() const -> std::uint32_t;
+    auto getHeight() const -> std::uint32_t;
 private:
     raylib::Texture2D texture;
 };

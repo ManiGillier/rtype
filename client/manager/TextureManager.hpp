@@ -9,10 +9,12 @@
 #define CLIENT_TEXTURE_MANAGER_HPP
 
 #include <map>
+#include <memory>
 #include <string>
 
-#include <raylib.h>
 #include <vector>
+
+#include <graphical_library/api/Texture.hpp>
 
 class TextureManager {
 public:
@@ -24,10 +26,10 @@ public:
     auto loadTextures() -> void;
     auto unloadTextures() -> void;
 
-    auto getTexture(const std::string &texturePath) -> Texture2D &;
+    auto getTexture(const std::string &texturePath) -> gl::Texture &;
 private:
     std::vector<std::string> toLoad;
-    std::map<std::string, Texture2D> textures;
+    std::map<std::string, std::unique_ptr<gl::Texture>> textures;
 };
 
 #endif /* CLIENT_TEXTURE_MANAGER_HPP */

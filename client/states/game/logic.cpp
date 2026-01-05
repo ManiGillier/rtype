@@ -89,7 +89,7 @@ auto InGameStateLogic::newEnemy(std::size_t enemy_id) -> void
     this->sync.add(enemy.getId(), enemy_id);
     r.add_component<Position>(enemy, {-200, -200});
     r.add_component<HitBox>(enemy, {50, 50});
-    r.add_component<ElementColor>(enemy, {gl::ORANGE});
+    r.add_component<ElementColor>(enemy, {gl::MAGENTA});
     r.add_component<Health>(enemy, {0, 0});
 }
 
@@ -159,16 +159,24 @@ auto InGameStateLogic::updateLaser(std::size_t id, bool active, float length)
     this->gameState.getRegistry().set<Laser>(*my_id, active, length);
 }
 
+namespace raylib {
+    #include <raylib.h>
+}
+
 auto InGameStateLogic::managePlayerMovement() -> void
 {
     ClientInputs clientInputs = {0};
 
-    clientInputs.value.left = IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_Q);
-    clientInputs.value.right = IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D);
-    clientInputs.value.up = IsKeyDown(KEY_UP) || IsKeyDown(KEY_Z);
-    clientInputs.value.down = IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S);
-    clientInputs.value.shoot = IsKeyDown(KEY_SPACE)
-                               || IsMouseButtonDown(MOUSE_BUTTON_LEFT);
+    clientInputs.value.left = IsKeyDown(raylib::KEY_LEFT)
+                              || IsKeyDown(raylib::KEY_Q);
+    clientInputs.value.right = IsKeyDown(raylib::KEY_RIGHT)
+                               || IsKeyDown(raylib::KEY_D);
+    clientInputs.value.up = IsKeyDown(raylib::KEY_UP)
+                            || IsKeyDown(raylib::KEY_Z);
+    clientInputs.value.down = IsKeyDown(raylib::KEY_DOWN)
+                              || IsKeyDown(raylib::KEY_S);
+    clientInputs.value.shoot = IsKeyDown(raylib::KEY_SPACE)
+                               || IsMouseButtonDown(raylib::MOUSE_BUTTON_LEFT);
 
     this->networkManager
         .sendPacket(std::make_shared<ClientInputsPacket>(clientInputs));

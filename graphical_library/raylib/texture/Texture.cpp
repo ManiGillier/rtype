@@ -6,6 +6,7 @@
 */
 
 #include "Texture.hpp"
+#include <cstdint>
 
 auto Texture::load(std::filesystem::path path) -> void
 {
@@ -26,4 +27,14 @@ auto Texture::draw(gl::WorldPosition position, gl::Rotation rotation,
                           rotation,
                           scale,
                           raylib::WHITE);
+}
+
+auto Texture::getWidth() const -> std::uint32_t
+{
+    return (std::uint32_t) this->texture.width;
+}
+
+auto Texture::getHeight() const -> std::uint32_t
+{
+    return (std::uint32_t) this->texture.height;
 }

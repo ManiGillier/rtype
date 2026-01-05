@@ -19,8 +19,11 @@ namespace gl {
         virtual auto load(std::filesystem::path) -> void = 0;
         virtual auto unload() -> void = 0;
 
-        virtual auto draw(gl::WorldPosition, gl::Scale, gl::Rotation)
-            -> void = 0;
+        virtual auto draw(gl::WorldPosition, gl::Rotation = 0.0,
+                          gl::Scale = 1.0) -> void = 0;
+
+        virtual auto getWidth() const -> std::uint32_t = 0;
+        virtual auto getHeight() const -> std::uint32_t = 0;
     };
 }
 
