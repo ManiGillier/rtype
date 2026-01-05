@@ -56,6 +56,7 @@ file(GLOB_RECURSE ALL_HEADERS
 
 add_library(graphical_lib STATIC ${graphical_lib_src} ${graphical_lib_src_h})
 target_include_directories(graphical_lib PUBLIC ${CMAKE_SOURCE_DIR})
+target_link_libraries(graphical_lib PRIVATE raylib)
 add_library(network_lib STATIC ${network_src} ${network_src_h})
 target_include_directories(network_lib PUBLIC ${CMAKE_SOURCE_DIR})
 
