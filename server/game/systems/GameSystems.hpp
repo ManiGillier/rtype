@@ -27,30 +27,15 @@ class Game;
 
 namespace Systems
 {
-auto movement_system(
+auto position_system(
     Registry &r,
     containers::indexed_zipper<SparseArray<Position>, SparseArray<Velocity>,
                                SparseArray<Acceleration>,
     SparseArray<OutsideBoundaries>> zipper, Game &game) -> void;
 
-auto update_player_system(Registry &r,
+auto player_velocity_system(Registry &r,
                           std::shared_ptr<ClientInputsPacket> packet,
                           std::size_t id) -> void;
-
-auto update_laser_system(
-    Registry &r,
-    containers::indexed_zipper<SparseArray<Position>, SparseArray<Laser>>
-        zipper,
-    Game &game) -> void;
-
-auto collision_system(
-    Registry &r,
-    containers::indexed_zipper<SparseArray<Position>, SparseArray<HitBox>>
-        zipper, Game &game) -> void;
-
-auto cleanup_system(Registry &r,
-                    containers::indexed_zipper<SparseArray<Health>> zipper,
-                    Game &game) -> void;
 } // namespace Systems
 
 #endif /* COMP_POSITION_HPP */

@@ -12,6 +12,29 @@
 #include <network/packets/impl/HealthUpdatePacket.hpp>
 #include <network/packets/impl/PlayerDiedPacket.hpp>
 #include <network/packets/impl/PositionUpdatePacket.hpp>
-#include <set>
-#include <vector>
+#include "../Game.hpp"
 
+namespace GameConstants
+{
+constexpr float width = 800;
+constexpr float height = 600;
+constexpr float PLAYER_SPEED = 5.0f;
+} // namespace GameConstants
+
+auto Systems::position_system(
+    [[maybe_unused]] Registry &r,
+    containers::indexed_zipper<SparseArray<Position>, SparseArray<Velocity>,
+                               SparseArray<Acceleration>,
+                               SparseArray<OutsideBoundaries>>
+        zipper,
+    Game &game) -> void
+{
+    for (auto &&[i, pos, vel, acc, out] : zipper) {
+        pos->x += vel->x;
+        pos->y += vel->y;
+        vel->x = acc->x;
+        vel->y = acc->y;
+        game.sendPackets(
+            std::make_shared<PositionUpdatePacket>(i, pos->x, pos->y));
+    }
+}

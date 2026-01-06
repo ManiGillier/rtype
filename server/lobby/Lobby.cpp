@@ -1,9 +1,14 @@
 #include "Lobby.hpp"
+#include <mutex>
+
+Lobby::Lobby() : _game(_playersMutex) {}
 
 bool Lobby::addPlayer(std::shared_ptr<Player> &player)
 {
     if (this->_players.size() < MAX_PLAYER) {
+        _playersMutex.lock();
         this->_players.push_back(player);
+        _playersMutex.unlock();
         this->_game.addPlayer(player);
         return true;
     }
@@ -12,13 +17,22 @@ bool Lobby::addPlayer(std::shared_ptr<Player> &player)
 
 void Lobby::removePlayer(std::shared_ptr<Player> &player)
 {
-    for (auto it = this->_players.begin(); it != this->_players.end(); ++it) {
-        if (it->get() == player.get()) {
-            this->_players.erase(it);
-            break;
+    {
+        std::lock_guard<std::mutex> lock(_playersMutex);
+        for (auto it = this->_players.begin(); it != this->_players.end();
+             ++it) {
+            if (it->get() == player.get()) {
+                this->_players.erase(it);
+                break;
+            }
         }
     }
     this->_game.removePlayer(player);
+}
+
+std::mutex &Lobby::getPlayersMutex()
+{
+    return this->_playersMutex;
 }
 
 std::size_t Lobby::size() const

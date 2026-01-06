@@ -8,20 +8,21 @@
 #ifndef GAME_HPP
 #define GAME_HPP
 
+#include "../game/factories/EntityFactory.hpp"
 #include "../player/Player.hpp"
 #include "ecs/regisrty/Registry.hpp"
-#include "../game/factories/EntityFactory.hpp"
 #include <memory>
 #include <vector>
 
 class Game
 {
   public:
-    Game();
+    Game(std::mutex &playersMutex);
     ~Game() = default;
     void loop(int ticks);
     void addPlayer(std::shared_ptr<Player> &player);
     void removePlayer(std::shared_ptr<Player> &player);
+    void sendPackets(std::shared_ptr<Packet> packet);
 
   private:
     /*
@@ -31,12 +32,16 @@ class Game
     void initializeComponents();
     void initializeSystems();
     /*
+       reset helpers to reset entities when game has finished
+    */
+    void resetPlayersEntities();
+    /*
        players set by LobbyManager they need their own method
        because when player deconnect he needs to be removed from current game by
        killing his entity
     */
-    std::mutex _playersMutex;
-    std::vector<std::pair<std::shared_ptr<Player>, std::size_t>> _players;
+    std::mutex &_playersMutex;
+    std::vector<std::shared_ptr<Player>> _players;
     /*
        Registry and Entity factory
     */

@@ -1,6 +1,8 @@
 #include "RTypeServer.hpp"
 #include "../../player/Player.hpp"
 #include <memory>
+#include <mutex>
+#include <optional>
 
 RTypeServer::RTypeServer(int port, int ticks)
     : Server(port), _ticks(ticks), _nextId(0), _lobbyManager(ticks)
@@ -35,7 +37,7 @@ ThreadPool &RTypeServer::getGameThreadPool()
 std::shared_ptr<IPollable> RTypeServer::createClient(int fd)
 {
     // NOTE: id not used yet perhaps remove it later (was usefull during partI)
-    return std::make_shared<Player>(fd, *this, _nextId++);
+    return std::make_shared<Player>(fd, *this, _nextId++, std::nullopt);
 }
 
 void RTypeServer::onClientConnect(std::shared_ptr<IPollable> client)
@@ -57,4 +59,20 @@ void RTypeServer::onClientDisconnect(std::shared_ptr<IPollable> client)
 
     LOG("Player disconnected to fd= " << client->getFileDescriptor());
     this->_lobbyManager.removePlayer(player);
+
+    // send despawn packet if player has an entity id (which meens his in game)
+    if (player->getEntityId().has_value()) {
+        std::shared_ptr<Packet> playerDisconnect =
+            create_packet(DespawnPlayerPacket, player->getId());
+        auto &lobby = this->_lobbyManager.getLobbies()[player->getLobbyId()];
+        auto &playersMutex = lobby->getPlayersMutex();
+        {
+            std::lock_guard<std::mutex> lock(playersMutex);
+            auto &players = lobby->getPlayers();
+
+            for (auto &it : players) {
+                it->sendPacket(playerDisconnect);
+            }
+        }
+    }
 }

@@ -13,10 +13,11 @@ constexpr int MAX_PLAYER = 5;
 class Lobby
 {
   public:
-    Lobby() = default;
+    Lobby();
     ~Lobby() = default;
     bool addPlayer(std::shared_ptr<Player> &player);
     void removePlayer(std::shared_ptr<Player> &player);
+    std::mutex &getPlayersMutex();
     std::vector<std::shared_ptr<Player>> &getPlayers();
     std::size_t size() const;
     void startGame(int ticks); // start game when requested
@@ -24,6 +25,7 @@ class Lobby
     void setIsInGame(bool iig);
 
   private:
+    std::mutex _playersMutex;
     std::vector<std::shared_ptr<Player>> _players;
     bool _inGame;
     std::mutex _inGameMutex;

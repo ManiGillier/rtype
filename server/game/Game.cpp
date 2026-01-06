@@ -10,13 +10,18 @@
 #include "shared/components/HitBox.hpp"
 #include "shared/components/Laser.hpp"
 #include "shared/components/Position.hpp"
+#include "systems/GameSystems.hpp"
 #include <chrono>
 #include <memory>
 #include <mutex>
 #include <network/packets/impl/NewPlayerPacket.hpp>
+#include <optional>
 #include <thread>
 
-Game::Game() : _factory(this->_registry) {}
+Game::Game(std::mutex &playersMutex)
+    : _playersMutex(playersMutex), _factory(this->_registry)
+{
+}
 
 void Game::loop(int ticks)
 {
@@ -24,26 +29,33 @@ void Game::loop(int ticks)
     this->_isRunning = true;
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
     this->initializeComponents();
+    this->initializeSystems();
     this->initPlayers();
+
+    while (1) {
+        this->_registryMutex.lock();
+        _registry.update();
+        this->_registryMutex.unlock();
+    }
+    this->resetPlayersEntities();
 }
 
 void Game::addPlayer(std::shared_ptr<Player> &player)
 {
     std::lock_guard<std::mutex> lock(_playersMutex);
-    this->_players.push_back(std::make_pair(player, 0));
+    this->_players.push_back(player);
 }
 
 void Game::removePlayer(std::shared_ptr<Player> &player)
 {
     std::lock_guard<std::mutex> lock(_playersMutex);
     for (auto it = this->_players.begin(); it != this->_players.end(); ++it) {
-        if (it->first.get() == player.get()) {
-            std::size_t entityId = it->second;
+        if (it->get() == player.get()) {
             this->_players.erase(it);
-
-            if (_isRunning) {
+            if (_isRunning || player->getEntityId().has_value()) {
                 std::lock_guard<std::mutex> lock(_registryMutex);
-                _registry.kill_entity(_registry.entity_from_index(entityId));
+                _registry.kill_entity(
+                    _registry.entity_from_index(player->getEntityId().value()));
             }
             break;
         }
@@ -55,13 +67,13 @@ void Game::initPlayers()
     std::vector<std::pair<std::size_t, std::size_t>> playerData;
     {
         std::lock_guard<std::mutex> lockPlayers(_playersMutex);
-        for (auto &[client, playerId] : _players) {
+        for (auto &pl : _players) {
             {
                 std::lock_guard<std::mutex> lockRegistry(_registryMutex);
                 Entity player = _factory.createPlayer();
                 Entity laser = _factory.createPlayerLaser(
                     static_cast<int>(player.getId()));
-                playerId = player.getId();
+                pl->setEntityId(player.getId());
                 playerData.push_back(
                     std::make_pair(player.getId(), laser.getId()));
             }
@@ -71,7 +83,7 @@ void Game::initPlayers()
         auto newPlayerPacket =
             create_packet(NewPlayerPacket, playerId, laserId);
         std::lock_guard<std::mutex> lock(_playersMutex);
-        for (const auto &[client, _] : _players) {
+        for (const auto &client : _players) {
             client->sendPacket(newPlayerPacket);
         }
     }
@@ -89,4 +101,27 @@ void Game::initializeComponents()
     _registry.register_component<HitBox>();
     _registry.register_component<Laser>();
     _registry.register_component<Position>();
+}
+
+void Game::initializeSystems()
+{
+    _registry
+        .add_update_system<Position, Velocity, Acceleration, OutsideBoundaries>(
+            Systems::position_system, std::ref(*this));
+}
+
+void Game::resetPlayersEntities()
+{
+    std::lock_guard<std::mutex> lock(_playersMutex);
+    for (auto &it : _players)
+        it->setEntityId(std::nullopt);
+}
+
+void Game::sendPackets(std::shared_ptr<Packet> packet)
+{
+    this->_playersMutex.lock();
+    for (auto &client : _players) {
+        client->sendPacket(packet);
+    }
+    this->_playersMutex.unlock();
 }
