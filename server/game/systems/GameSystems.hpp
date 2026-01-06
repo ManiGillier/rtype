@@ -33,7 +33,16 @@ auto position_system(
                                SparseArray<Acceleration>,
     SparseArray<OutsideBoundaries>> zipper, Game &game) -> void;
 
+auto update_laser_system(
+    Registry &r,
+    containers::indexed_zipper<SparseArray<Position>, SparseArray<Laser>>
+        zipper,
+    Game &game) -> void;
+
 auto player_velocity_system(Registry &r,
+                          std::shared_ptr<ClientInputsPacket> packet,
+                          std::size_t id) -> void;
+auto player_laser_system(Registry &r,
                           std::shared_ptr<ClientInputsPacket> packet,
                           std::size_t id) -> void;
 } // namespace Systems

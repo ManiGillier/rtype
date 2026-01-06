@@ -11,12 +11,12 @@
 #include "shared/components/Laser.hpp"
 #include "shared/components/Position.hpp"
 #include "systems/GameSystems.hpp"
-#include <network/packets/impl/NewPlayerPacket.hpp>
 #include "ticker/Ticker.hpp"
 #include <chrono>
-#include <optional>
 #include <memory>
 #include <mutex>
+#include <network/packets/impl/NewPlayerPacket.hpp>
+#include <optional>
 #include <thread>
 #include <tuple>
 
@@ -28,7 +28,8 @@ Game::Game(std::mutex &playersMutex)
 void Game::loop(int ticks)
 {
     Ticker ticker(ticks);
-    std::this_thread::sleep_for(std::chrono::milliseconds(200)); // TODO: remove this
+    std::this_thread::sleep_for(
+        std::chrono::milliseconds(200)); // TODO: remove this
 
     this->_isRunning = true;
     this->initializeComponents();
@@ -115,6 +116,8 @@ void Game::initializeSystems()
     _registry
         .add_update_system<Position, Velocity, Acceleration, OutsideBoundaries>(
             Systems::position_system, std::ref(*this));
+    _registry.add_update_system<Position, Laser>(Systems::update_laser_system,
+                                                 std::ref(*this));
 }
 
 void Game::resetPlayersEntities()

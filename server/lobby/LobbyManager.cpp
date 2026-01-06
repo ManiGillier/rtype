@@ -50,6 +50,7 @@ void LobbyManager::startGame(const std::string &lobbyId)
     this->_lobbies[lobbyId]->startGame(this->_ticks);
 }
 
+// TODO: fix this
 std::unordered_map<std::string, std::shared_ptr<Lobby>> &
 LobbyManager::getLobbies()
 {
