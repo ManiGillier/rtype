@@ -3,7 +3,6 @@
 #include "ecs/sparse_array/SparseArray.hpp"
 #include "network/packets/impl/DespawnPlayerPacket.hpp"
 #include "network/packets/impl/LaserActiveUpdatePacket.hpp"
-#include <network/logger/Logger.hpp>
 #include "shared/components/Dependence.hpp"
 #include "shared/components/Laser.hpp"
 #include "shared/components/Position.hpp"
@@ -35,8 +34,10 @@ auto Systems::position_system(
         pos->y += vel->y;
         vel->x = acc->x;
         vel->y = acc->y;
-        game.sendPackets(
-            std::make_shared<PositionUpdatePacket>(i, pos->x, pos->y));
+
+        auto packet = std::make_shared<PositionUpdatePacket>(i, pos->x, pos->y);
+        if (game.getPacketFilter().shouldSend(i, packet))
+            game.sendPackets(packet);
     }
 }
 
@@ -47,8 +48,10 @@ auto Systems::update_laser_system(
     Game &game) -> void
 {
     for (auto &&[i, pos, laser] : zipper) {
-        game.sendPackets(create_packet(LaserActiveUpdatePacket, i,
-                                       laser->active, laser->length));
+        auto packet = create_packet(LaserActiveUpdatePacket, i, laser->active,
+                                    laser->length);
+        if (game.getPacketFilter().shouldSend(i, packet))
+            game.sendPackets(packet);
     }
 }
 
@@ -80,8 +83,8 @@ auto Systems::player_velocity_system(Registry &r,
 }
 
 auto Systems::player_laser_system(Registry &r,
-                         std::shared_ptr<ClientInputsPacket> packet,
-                         std::size_t id) -> void
+                                  std::shared_ptr<ClientInputsPacket> packet,
+                                  std::size_t id) -> void
 {
     auto &positions = r.get_components<Position>();
     auto &dependences = r.get_components<Dependence>();

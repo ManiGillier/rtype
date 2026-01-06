@@ -46,6 +46,7 @@ void Game::loop(int ticks)
         ticker.wait();
     }
     this->resetPlayersEntities();
+    this->_filter.resetAll();
 }
 
 void Game::addPlayer(std::shared_ptr<Player> &player)
@@ -64,6 +65,7 @@ void Game::removePlayer(std::shared_ptr<Player> &player)
                 std::lock_guard<std::mutex> lock(_registryMutex);
                 _registry.kill_entity(
                     _registry.entity_from_index(player->getEntityId().value()));
+                this->_filter.reset(player->getEntityId().value());
             }
             break;
         }
@@ -139,4 +141,9 @@ void Game::sendPackets(std::shared_ptr<Packet> packet)
 std::tuple<std::mutex &, Registry &> Game::getRegistry()
 {
     return std::tie(this->_registryMutex, this->_registry);
+}
+
+PacketFilter &Game::getPacketFilter()
+{
+    return this->_filter;
 }
