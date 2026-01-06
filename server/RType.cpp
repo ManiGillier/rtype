@@ -2,6 +2,7 @@
 #include "./error/ArgsError.hpp"
 #include "network/logger/Logger.hpp"
 #include "server/network/executor/GameStartExecutor.hpp"
+#include "server/network/executor/ClientInputsExecutor.hpp"
 #include "server/network/server/RTypeServer.hpp"
 #include <iostream>
 #include <string>
@@ -56,9 +57,8 @@ void RType::initExecutor(RTypeServer &server)
 {
     server.getPacketListener().addExecutor(
         std::make_unique<GameStartExecutor>(server));
-    // server.getPacketListener().addExecutor(
-    //     std::make_unique<ClientInputsExecutor>(server));
-    //
+    server.getPacketListener().addExecutor(
+        std::make_unique<ClientInputsExecutor>(server));
 }
 
 void RType::networkLoop()

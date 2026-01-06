@@ -38,3 +38,30 @@ auto Systems::position_system(
             std::make_shared<PositionUpdatePacket>(i, pos->x, pos->y));
     }
 }
+
+auto Systems::player_velocity_system(Registry &r,
+                          std::shared_ptr<ClientInputsPacket> packet,
+                          std::size_t id) -> void
+{
+    auto &positions = r.get_components<Position>();
+    auto &velocities = r.get_components<Velocity>();
+    // auto &dependences = r.get_components<Dependence>();
+    // auto &lasers = r.get_components<Laser>();
+
+    if (positions.size() <= id || !positions[id].has_value())
+        return;
+    if (velocities.size() <= id || !velocities[id].has_value())
+        return;
+
+    auto inputs = packet->getInputs();
+    auto &vel = velocities[id].value();
+
+    if (inputs.value.left)
+        vel.x -= GameConstants::PLAYER_SPEED;
+    if (inputs.value.right)
+        vel.x += GameConstants::PLAYER_SPEED;
+    if (inputs.value.up)
+        vel.y += GameConstants::PLAYER_SPEED;
+    if (inputs.value.down)
+        vel.y -= GameConstants::PLAYER_SPEED;
+}

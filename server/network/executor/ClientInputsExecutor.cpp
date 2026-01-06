@@ -15,16 +15,13 @@ bool ClientInputsExecutor::execute(Server &server,
     (void)server;
     (void)player;
     (void)packet;
-    // auto &game = _rtypeServer.getGame();
-    // auto &registry = game.getRegistry();
-    // auto &mutex = game.getRegistryMutex();
-    // std::size_t player_id = player->getId();
-    //
-    // LOG("Client inputs update");
-    // {
-    //     std::lock_guard<std::mutex> lock(mutex);
-    //     Systems::update_player_system(registry, packet, player_id);
-    // }
+    auto &game = _rtypeServer.getLobbyManager().getLobbies()[player->getLobbyId()]->getGame();
+    auto [regMtx, registry] = game.getRegistry();
+    LOG("Client inputs update");
+    {
+        std::lock_guard<std::mutex> lock(regMtx);
+        Systems::player_velocity_system(registry, packet, player->getEntityId().value());
+    }
     return true;
 }
 

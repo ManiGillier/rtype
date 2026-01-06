@@ -23,12 +23,13 @@ class Lobby
     void startGame(int ticks); // start game when requested
     bool isInGame();
     void setIsInGame(bool iig);
+    Game &getGame();
 
   private:
     std::mutex _playersMutex;
     std::vector<std::shared_ptr<Player>> _players;
+    std::mutex _GameMutex;
     bool _inGame;
-    std::mutex _inGameMutex;
     Game _game;
 };
 

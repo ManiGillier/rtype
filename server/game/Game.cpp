@@ -18,6 +18,7 @@
 #include <memory>
 #include <mutex>
 #include <thread>
+#include <tuple>
 
 Game::Game(std::mutex &playersMutex)
     : _playersMutex(playersMutex), _factory(this->_registry)
@@ -26,14 +27,13 @@ Game::Game(std::mutex &playersMutex)
 
 void Game::loop(int ticks)
 {
-    (void)ticks;
+    Ticker ticker(ticks);
+    std::this_thread::sleep_for(std::chrono::milliseconds(200)); // TODO: remove this
+
     this->_isRunning = true;
-    std::this_thread::sleep_for(std::chrono::milliseconds(200));
     this->initializeComponents();
     this->initializeSystems();
     this->initPlayers();
-
-    Ticker ticker(ticks);
 
     while (this->_isRunning) {
         ticker.now();
@@ -131,4 +131,9 @@ void Game::sendPackets(std::shared_ptr<Packet> packet)
         client->sendPacket(packet);
     }
     this->_playersMutex.unlock();
+}
+
+std::tuple<std::mutex &, Registry &> Game::getRegistry()
+{
+    return std::tie(this->_registryMutex, this->_registry);
 }

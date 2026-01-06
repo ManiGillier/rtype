@@ -23,6 +23,7 @@ class Game
     void addPlayer(std::shared_ptr<Player> &player);
     void removePlayer(std::shared_ptr<Player> &player);
     void sendPackets(std::shared_ptr<Packet> packet);
+    std::tuple<std::mutex &, Registry &> getRegistry();
 
   private:
     /*
@@ -45,9 +46,9 @@ class Game
     /*
        Registry and Entity factory
     */
+    std::mutex _registryMutex;
     Registry _registry;
     EntityFactory _factory;
-    std::mutex _registryMutex;
     bool _isRunning;
 };
 

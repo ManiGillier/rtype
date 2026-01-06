@@ -56,23 +56,33 @@ void RTypeServer::onClientConnect(std::shared_ptr<IPollable> client)
 void RTypeServer::onClientDisconnect(std::shared_ptr<IPollable> client)
 {
     auto player = std::static_pointer_cast<Player>(client);
-
     LOG("Player disconnected to fd= " << client->getFileDescriptor());
-    this->_lobbyManager.removePlayer(player);
 
-    // send despawn packet if player has an entity id (which meens his in game)
-    if (player->getEntityId().has_value()) {
-        std::shared_ptr<Packet> playerDisconnect =
-            create_packet(DespawnPlayerPacket, player->getId());
-        auto &lobby = this->_lobbyManager.getLobbies()[player->getLobbyId()];
-        auto &playersMutex = lobby->getPlayersMutex();
-        {
-            std::lock_guard<std::mutex> lock(playersMutex);
-            auto &players = lobby->getPlayers();
+    bool hasEntityId = player->getEntityId().has_value();
+    auto lobbyId = player->getLobbyId();
+    auto playerId = player->getId();
 
-            for (auto &it : players) {
-                it->sendPacket(playerDisconnect);
+    if (hasEntityId) {
+        auto &lobbies = this->_lobbyManager.getLobbies();
+        auto lobbyIt = lobbies.find(lobbyId);
+
+        if (lobbyIt != lobbies.end() && lobbyIt->second) {
+            auto &lobby = lobbyIt->second;
+
+            std::shared_ptr<Packet> playerDisconnect =
+                create_packet(DespawnPlayerPacket, playerId);
+
+            auto &playersMutex = lobby->getPlayersMutex();
+            {
+                std::lock_guard<std::mutex> lock(playersMutex);
+                auto &players = lobby->getPlayers();
+                for (auto &it : players) {
+                    if (it && it != player) {
+                        it->sendPacket(playerDisconnect);
+                    }
+                }
             }
         }
     }
+    this->_lobbyManager.removePlayer(player);
 }

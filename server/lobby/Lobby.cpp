@@ -47,13 +47,13 @@ std::vector<std::shared_ptr<Player>> &Lobby::getPlayers()
 
 bool Lobby::isInGame()
 {
-    std::lock_guard<std::mutex> lock(_inGameMutex);
+    std::lock_guard<std::mutex> lock(_GameMutex);
     return this->_inGame;
 }
 
 void Lobby::setIsInGame(bool iig)
 {
-    std::lock_guard<std::mutex> lock(_inGameMutex);
+    std::lock_guard<std::mutex> lock(_GameMutex);
     this->_inGame = iig;
 }
 
@@ -61,7 +61,12 @@ void Lobby::startGame(int ticks)
 {
     this->_game.loop(ticks);
     {
-        std::lock_guard<std::mutex> lock(_inGameMutex);
+        std::lock_guard<std::mutex> lock(_GameMutex);
         this->_inGame = false;
     }
+}
+
+Game &Lobby::getGame()
+{
+    return this->_game;
 }
