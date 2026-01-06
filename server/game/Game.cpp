@@ -11,11 +11,12 @@
 #include "shared/components/Laser.hpp"
 #include "shared/components/Position.hpp"
 #include "systems/GameSystems.hpp"
+#include <network/packets/impl/NewPlayerPacket.hpp>
+#include "ticker/Ticker.hpp"
 #include <chrono>
+#include <optional>
 #include <memory>
 #include <mutex>
-#include <network/packets/impl/NewPlayerPacket.hpp>
-#include <optional>
 #include <thread>
 
 Game::Game(std::mutex &playersMutex)
@@ -32,10 +33,16 @@ void Game::loop(int ticks)
     this->initializeSystems();
     this->initPlayers();
 
-    while (1) {
+    Ticker ticker(ticks);
+
+    while (this->_isRunning) {
+        ticker.now();
+
         this->_registryMutex.lock();
         _registry.update();
         this->_registryMutex.unlock();
+
+        ticker.wait();
     }
     this->resetPlayersEntities();
 }
