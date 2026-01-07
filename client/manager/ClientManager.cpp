@@ -41,7 +41,7 @@ inline auto ClientManager::changeInternalState(std::unique_ptr<IGameState> state
     this->_internal_state = std::move(state);
 }
 
-auto ClientManager::changeState(const State state) -> void
+auto ClientManager::changeState(const State_old state) -> void
 {
     this->networkManager->resetExecutors();
     this->changeInternalState(this->_gameStateFactory[state]());
@@ -71,16 +71,16 @@ auto ClientManager::loop() -> void
         if (this->networkManager->isStopped())
             break;
         this->networkManager->getClient().executePackets();
-        State new_state = this->getState().update();
+        State_old new_state = this->getState().update();
 
-        if (new_state == State::END_STATE)
+        if (new_state == State_old::END_STATE)
             break;
         this->getGui().start_new_frame();
         this->getState().render();
         this->getGui().end_frame();
         if (this->getGui().should_close())
             break;
-        if (new_state != State::NONE)
+        if (new_state != State_old::NONE)
             this->changeState(new_state);
     }
     this->unload();

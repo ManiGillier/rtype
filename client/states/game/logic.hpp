@@ -25,7 +25,7 @@ class InGameStateLogic : public ILogic
 public:
     InGameStateLogic(IGameState &gameState, NetworkManager &networkManager);
 
-    auto update(Registry &) -> State;
+    auto update(Registry &) -> State_old;
     auto managePlayerMovement() -> void;
 
     auto newPlayer(std::size_t player_id, std::size_t laser_id) -> void;

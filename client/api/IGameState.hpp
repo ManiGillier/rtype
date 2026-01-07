@@ -23,7 +23,7 @@ public:
 
     inline auto getRegistry() -> Registry & { return this->reg; }
     virtual auto render() -> void = 0;
-    virtual auto update() -> State = 0;
+    virtual auto update() -> State_old = 0;
     virtual auto getGraphicalLibrary() -> gl::GraphicalLibrary & = 0;
 protected:
     Registry reg;

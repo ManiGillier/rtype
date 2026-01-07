@@ -20,7 +20,7 @@ ConnectingStateLogic::ConnectingStateLogic(IGameState &gs, NetworkManager &nm)
         (std::make_unique<AuthentifiedPacketExecutor>(*this));
 }
 
-auto ConnectingStateLogic::update(Registry &r) -> State
+auto ConnectingStateLogic::update(Registry &r) -> State_old
 {
     r.update();
     return this->nextState;
@@ -28,5 +28,5 @@ auto ConnectingStateLogic::update(Registry &r) -> State
 
 auto ConnectingStateLogic::notifyAuthentified() -> void
 {
-    this->nextState = State::LOBBY;
+    this->nextState = State_old::LOBBY;
 }

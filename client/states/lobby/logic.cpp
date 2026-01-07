@@ -22,7 +22,7 @@ LobbyStateLogic::LobbyStateLogic(IGameState &gs, NetworkManager &nm)
     this->networkManager.addExecutor(std::make_unique<StartGameExecutor>(*this));
 }
 
-auto LobbyStateLogic::update(Registry &r) -> State
+auto LobbyStateLogic::update(Registry &r) -> State_old
 {
     r.update();
     return this->nextState;
@@ -30,5 +30,5 @@ auto LobbyStateLogic::update(Registry &r) -> State
 
 auto LobbyStateLogic::startGame() -> void
 {
-    this->nextState = State::IN_GAME;
+    this->nextState = State_old::IN_GAME;
 }

@@ -19,11 +19,11 @@ LobbyState::LobbyState(ClientManager &cm) : clientManager(cm)
                       (*this, this->clientManager.getNetworkManager());
 }
 
-auto LobbyState::update() -> State
+auto LobbyState::update() -> State_old
 {
     if (this->logic)
         return this->logic->update(this->getRegistry());
-    return State::NONE;
+    return State_old::NONE;
 }
 
 auto LobbyState::render() -> void

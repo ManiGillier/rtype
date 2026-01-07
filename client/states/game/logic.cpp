@@ -53,11 +53,11 @@ InGameStateLogic::InGameStateLogic(IGameState &gs, NetworkManager &nm)
     nm.addExecutor(std::make_unique<PositionUpdateExecutor>(*this));
 }
 
-auto InGameStateLogic::update(Registry &r) -> State
+auto InGameStateLogic::update(Registry &r) -> State_old
 {
     r.update();
     this->managePlayerMovement();
-    return this->shouldStop ? State::END_STATE : State::NONE;
+    return this->shouldStop ? State_old::END_STATE : State_old::NONE;
 }
 
 auto InGameStateLogic::newPlayer(std::size_t player_id, std::size_t laser_id)
