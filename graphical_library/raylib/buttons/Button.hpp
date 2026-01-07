@@ -30,5 +30,6 @@ private:
     int transparency;
     Color color;
     string text;
+    bool clicked = false;
 };
 #endif // BUTTON_HPP_
