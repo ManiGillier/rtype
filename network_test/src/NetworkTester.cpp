@@ -11,6 +11,7 @@
 #include <network/packets/impl/CAuthentificationPacket.hpp>
 #include <network/packets/impl/SAuthentificationPacket.hpp>
 #include <network/packets/impl/AuthentifiedPacket.hpp>
+#include <network/packets/impl/TestPacket.hpp>
 #include <network/packets/impl/NewPlayerPacket.hpp>
 #include <iostream>
 #include <cstring>
@@ -53,6 +54,7 @@ static int client(const std::string &ip, int port)
         LOG_ERR("Could not connect to " << ip << ":" << port << ", aborting..");
         return 1;
     }
+    cl.sendPacket(create_packet(TestPacket, "meow !!! :3 >\\<"));
     while (cl.isConnected()) {
         cl.loop();
         cl.executePackets();

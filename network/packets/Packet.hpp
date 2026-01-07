@@ -10,13 +10,12 @@
 
     #include <iostream>
     #include <cstdint>
+    #include <cstring>
     #include <queue>
     #include <memory>
+    #include <arpa/inet.h>
 
-    #define DOUBLE_SIZE sizeof(double)
-    #define INT_SIZE sizeof(int)
-    #define CHAR_SIZE sizeof(char)
-    #define LONG_SIZE sizeof(long)
+    #define MAX_STRING_SIZE 256
 
     #define make_copy(TYPE) std::make_shared<TYPE>(*this)
     #define create_packet(TYPE, ...) std::make_shared<TYPE>(__VA_ARGS__)
@@ -46,7 +45,8 @@ enum PacketId {
     C_AUTHENTICATION_PACKET,
     S_AUTHENTICATION_PACKET,
     AUTHENTIFIED_PACKET,
-    GAME_START_REQUEST
+    GAME_START_REQUEST,
+    TEST_PACKET
 };
 
 class Packet {
@@ -88,20 +88,21 @@ class Packet {
 
         template<typename T>
         void write(T value) {
-            ByteWriter<T, (std::size_t) sizeof(T)> bw;
+            ByteWriter<T, sizeof(T)> bw;
 
-            bw.value = value;
+            bw.value = toNetwork(value);
             for (uint8_t c : bw.bytes) {
                 this->data.push(c);
                 writeCursor++;
             }
         }
 
-        void write(std::string value) {
-            this->write(value.size());
-
-            for (uint8_t c : value)
-                this->write(c);
+        void write(const std::string &value) {
+            this->write(static_cast<uint32_t>(value.size()));
+            for (uint8_t c : value) {
+                this->data.push(c);
+                writeCursor++;
+            }
         }
 
         // TODO : Verify
@@ -122,23 +123,23 @@ class Packet {
                 data.pop();
             }
             readCursor += sizeof(T);
-            value = bw.value;
-            return bw.value;
+            value = fromNetwork(bw.value);
+            return value;
         }
 
         std::string read(std::string &value) {
-            std::string toReturn;
-            std::size_t stringLength = 0;
+            uint32_t stringLength = 0;
             uint8_t stringCharacter;
 
             this->read(stringLength);
-            for ([[maybe_unused]] std::size_t i = 0; i < stringLength; i++) {
+            if (stringLength > MAX_STRING_SIZE)
+                throw PacketBuildError();
+            value.clear();
+            for (std::size_t i = 0; i < stringLength; i++) {
                 this->read(stringCharacter);
                 value.push_back(stringCharacter);
             }
-            readCursor += stringLength;
-            value = toReturn;
-            return toReturn;
+            return value;
         }
 
         int readInt(int i) {
@@ -185,6 +186,37 @@ class Packet {
         std::size_t writeCursor = 0;
         std::size_t readCursor = 0;
         std::queue<uint8_t> data;
+
+        template<typename T>
+        inline T toNetwork(T value) {
+            if constexpr (sizeof(T) == 1) {
+                return value;
+            } else if constexpr (sizeof(T) == 2) {
+                uint16_t temp;
+                std::memcpy(&temp, &value, sizeof(T));
+                temp = htons(temp);
+                std::memcpy(&value, &temp, sizeof(T));
+                return value;
+            } else if constexpr (sizeof(T) == 4) {
+                uint32_t temp;
+                std::memcpy(&temp, &value, sizeof(T));
+                temp = htonl(temp);
+                std::memcpy(&value, &temp, sizeof(T));
+                return value;
+            } else if constexpr (sizeof(T) == 8) {
+                uint64_t temp;
+                std::memcpy(&temp, &value, sizeof(T));
+                temp = __builtin_bswap64(temp);
+                std::memcpy(&value, &temp, sizeof(T));
+                return value;
+            }
+            return value;
+        }
+
+        template<typename T>
+        inline T fromNetwork(T value) {
+            return toNetwork(value);
+        }
 };
 
 #endif /* !PACKET_HPP_ */
