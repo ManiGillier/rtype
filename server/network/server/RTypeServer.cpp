@@ -47,6 +47,9 @@ void RTypeServer::onClientConnect(std::shared_ptr<IPollable> client)
     LOG("Player connected to fd= " << client->getFileDescriptor());
 
     this->_lobbyManager.newLobby(player);
+    // TODO: join public need to be call by client request (here for debug)
+    this->_lobbyManager.joinPublicLobby(player);
+
     std::shared_ptr<ServerClient> sc =
         std::static_pointer_cast<ServerClient>(client);
     std::shared_ptr<Packet> p = create_packet(PlayerIdPacket, player->getId());
@@ -60,26 +63,19 @@ void RTypeServer::onClientDisconnect(std::shared_ptr<IPollable> client)
 
     bool hasEntityId = player->getEntityId().has_value();
     auto lobbyId = player->getLobbyId();
-    auto playerId = player->getId();
 
     if (hasEntityId) {
-        auto &lobbies = this->_lobbyManager.getLobbies();
-        auto lobbyIt = lobbies.find(lobbyId);
-
-        if (lobbyIt != lobbies.end() && lobbyIt->second) {
-            auto &lobby = lobbyIt->second;
-
+        auto lobby = this->_lobbyManager.getLobby(lobbyId);
+        if (lobby) {
             std::shared_ptr<Packet> playerDisconnect =
-                create_packet(DespawnPlayerPacket, playerId);
+                create_packet(DespawnPlayerPacket, player->getEntityId().value());
 
             auto &playersMutex = lobby->getPlayersMutex();
             {
                 std::lock_guard<std::mutex> lock(playersMutex);
                 auto &players = lobby->getPlayers();
                 for (auto &it : players) {
-                    if (it && it != player) {
-                        it->sendPacket(playerDisconnect);
-                    }
+                    it->sendPacket(playerDisconnect);
                 }
             }
         }

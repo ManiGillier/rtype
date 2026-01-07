@@ -34,7 +34,6 @@ auto Systems::position_system(
         pos->y += vel->y;
         vel->x = acc->x;
         vel->y = acc->y;
-
         auto packet = std::make_shared<PositionUpdatePacket>(i, pos->x, pos->y);
         if (game.getPacketFilter().shouldSend(i, packet))
             game.sendPackets(packet);

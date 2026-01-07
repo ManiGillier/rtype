@@ -7,54 +7,108 @@
 
 LobbyManager::LobbyManager(int ticks) : _ticks(ticks) {}
 
-void LobbyManager::newLobby(std::shared_ptr<Player> &player)
+void LobbyManager::newLobby(std::shared_ptr<Player> &player, bool publicl)
 {
     std::string lobbyId = this->getRandomLobbyId(6);
-    auto lobby = std::make_unique<Lobby>();
+    auto lobby = std::make_shared<Lobby>();
 
     player->setLobby(lobbyId);
     lobby->addPlayer(player);
 
+    if (publicl)
+        lobby->setPublic(true);
+
+    {
+        std::lock_guard<std::mutex> lock(_lobbiesMutex);
+        this->_lobbies.emplace(lobbyId, lobby);
+    }
+
     LOG("Player id " << player->getId() << " added to lobby " << lobbyId);
-    this->_lobbies.emplace(lobbyId, std::move(lobby));
 }
 
 void LobbyManager::removePlayer(std::shared_ptr<Player> &player)
 {
     auto playerLobbyId = player->getLobbyId();
 
-    this->_lobbies[playerLobbyId]->removePlayer(player);
+    std::lock_guard<std::mutex> lock(_lobbiesMutex);
+    auto it = _lobbies.find(playerLobbyId);
+    if (it == _lobbies.end()) {
+        return;
+    }
+
+    it->second->removePlayer(player);
     LOG("Player id " << player->getId() << " has quit lobby " << playerLobbyId);
 
-    if (this->_lobbies[playerLobbyId]->size() <= 0)
-        this->_lobbies.erase(playerLobbyId);
+    if (it->second->size() <= 0)
+        this->_lobbies.erase(it);
 }
 
 bool LobbyManager::joinLobby(const std::string &lobbyId,
                              std::shared_ptr<Player> &player)
 {
-    // TODO: do something if can no join desired lobby
-    auto hasJoin = this->_lobbies[lobbyId]->addPlayer(player);
+    std::shared_ptr<Lobby> lobby;
+    {
+        std::lock_guard<std::mutex> lock(_lobbiesMutex);
+        auto it = _lobbies.find(lobbyId);
+        if (it == _lobbies.end()) {
+            return false;
+        }
+        lobby = it->second;
+        player->setLobby(it->first);
+    }
+    return lobby->addPlayer(player);
+}
 
-    return hasJoin;
+bool LobbyManager::joinPublicLobby(std::shared_ptr<Player> &player)
+{
+    std::string publiclobby;
+
+    {
+        std::lock_guard<std::mutex> lock(_lobbiesMutex);
+        for (auto &it : _lobbies) {
+            if (it.second->isPublic() && !it.second->isInGame() &&
+                !it.second->isFull()) {
+                publiclobby = it.first;
+                break;
+            }
+        }
+    }
+
+    this->removePlayer(player);
+    if (!publiclobby.empty()) {
+        return this->joinLobby(publiclobby, player);
+    } else {
+        newLobby(player, true);
+        return true;
+    }
 }
 
 void LobbyManager::leaveLobby(std::shared_ptr<Player> &player)
 {
     this->removePlayer(player);
-    this->newLobby(player);
+    this->newLobby(player, false);
 }
 
 void LobbyManager::startGame(const std::string &lobbyId)
 {
-    this->_lobbies[lobbyId]->startGame(this->_ticks);
+    std::shared_ptr<Lobby> lobby;
+    {
+        std::lock_guard<std::mutex> lock(_lobbiesMutex);
+        auto it = _lobbies.find(lobbyId);
+        if (it == _lobbies.end()) {
+            LOG("Cannot start game, lobby " << lobbyId << " not found");
+            return;
+        }
+        lobby = it->second;
+    }
+    lobby->startGame(this->_ticks);
 }
 
-// TODO: fix this
-std::unordered_map<std::string, std::shared_ptr<Lobby>> &
-LobbyManager::getLobbies()
+std::shared_ptr<Lobby> LobbyManager::getLobby(const std::string &lobbyId)
 {
-    return this->_lobbies;
+    std::lock_guard<std::mutex> lock(_lobbiesMutex);
+    auto it = _lobbies.find(lobbyId);
+    return (it != _lobbies.end()) ? it->second : nullptr;
 }
 
 std::string LobbyManager::getRandomLobbyId(std::size_t len)

@@ -13,9 +13,14 @@ bool ClientInputsExecutor::execute(Server &server,
                                    std::shared_ptr<ClientInputsPacket> packet)
 {
     (void)server;
-    (void)player;
-    (void)packet;
-    auto &game = _rtypeServer.getLobbyManager().getLobbies()[player->getLobbyId()]->getGame();
+
+    auto lobby = _rtypeServer.getLobbyManager().getLobby(player->getLobbyId());
+    if (!lobby) {
+        LOG("Error: Lobby not found for player " << player->getId());
+        return false;
+    }
+
+    auto &game = lobby->getGame();
     auto [regMtx, registry] = game.getRegistry();
     LOG("Client inputs update");
     {

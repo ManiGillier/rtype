@@ -20,13 +20,18 @@ class Lobby
     std::mutex &getPlayersMutex();
     std::vector<std::shared_ptr<Player>> &getPlayers();
     std::size_t size() const;
+    bool isFull() const;
     void startGame(int ticks); // start game when requested
     bool isInGame();
     void setIsInGame(bool iig);
     Game &getGame();
+    bool isPublic() const;
+    void setPublic(bool isPublic);
 
   private:
-    std::mutex _playersMutex;
+    bool _isPublic;
+    mutable std::mutex _publicMutex;
+    mutable std::mutex _playersMutex;
     std::vector<std::shared_ptr<Player>> _players;
     std::mutex _GameMutex;
     bool _inGame;

@@ -21,7 +21,7 @@
 #include <tuple>
 
 Game::Game(std::mutex &playersMutex)
-    : _playersMutex(playersMutex), _factory(this->_registry)
+    : _playersMutex(playersMutex), _factory(this->_registry), _isRunning(false)
 {
 }
 
@@ -39,9 +39,10 @@ void Game::loop(int ticks)
     while (this->_isRunning) {
         ticker.now();
 
-        this->_registryMutex.lock();
-        _registry.update();
-        this->_registryMutex.unlock();
+        {
+            std::lock_guard<std::mutex> lock(_registryMutex);
+            _registry.update();
+        }
 
         ticker.wait();
     }
@@ -61,7 +62,7 @@ void Game::removePlayer(std::shared_ptr<Player> &player)
     for (auto it = this->_players.begin(); it != this->_players.end(); ++it) {
         if (it->get() == player.get()) {
             this->_players.erase(it);
-            if (_isRunning || player->getEntityId().has_value()) {
+            if (_isRunning && player->getEntityId().has_value()) {
                 std::lock_guard<std::mutex> lock(_registryMutex);
                 _registry.kill_entity(
                     _registry.entity_from_index(player->getEntityId().value()));
@@ -131,11 +132,10 @@ void Game::resetPlayersEntities()
 
 void Game::sendPackets(std::shared_ptr<Packet> packet)
 {
-    this->_playersMutex.lock();
+    std::lock_guard<std::mutex> lock(_playersMutex);
     for (auto &client : _players) {
         client->sendPacket(packet);
     }
-    this->_playersMutex.unlock();
 }
 
 std::tuple<std::mutex &, Registry &> Game::getRegistry()

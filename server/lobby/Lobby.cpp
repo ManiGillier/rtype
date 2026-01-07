@@ -1,14 +1,20 @@
 #include "Lobby.hpp"
 #include <mutex>
 
-Lobby::Lobby() : _game(_playersMutex) {}
+Lobby::Lobby() : _isPublic(false), _inGame(false), _game(_playersMutex) {}
 
 bool Lobby::addPlayer(std::shared_ptr<Player> &player)
 {
-    if (this->_players.size() < MAX_PLAYER) {
-        _playersMutex.lock();
-        this->_players.push_back(player);
-        _playersMutex.unlock();
+    bool canAdd = false;
+    {
+        std::lock_guard<std::mutex> lock(_playersMutex);
+        if (this->_players.size() < MAX_PLAYER) {
+            this->_players.push_back(player);
+            canAdd = true;
+        }
+    }
+
+    if (canAdd) {
         this->_game.addPlayer(player);
         return true;
     }
@@ -37,7 +43,14 @@ std::mutex &Lobby::getPlayersMutex()
 
 std::size_t Lobby::size() const
 {
+    std::lock_guard<std::mutex> lock(_playersMutex);
     return this->_players.size();
+}
+
+bool Lobby::isFull() const
+{
+    std::lock_guard<std::mutex> lock(_playersMutex);
+    return this->_players.size() >= MAX_PLAYER;
 }
 
 std::vector<std::shared_ptr<Player>> &Lobby::getPlayers()
@@ -69,4 +82,16 @@ void Lobby::startGame(int ticks)
 Game &Lobby::getGame()
 {
     return this->_game;
+}
+
+bool Lobby::isPublic() const
+{
+    std::lock_guard<std::mutex> lock(_publicMutex);
+    return this->_isPublic;
+}
+
+void Lobby::setPublic(bool isPublic)
+{
+    std::lock_guard<std::mutex> lock(_publicMutex);
+    this->_isPublic = isPublic;
 }
