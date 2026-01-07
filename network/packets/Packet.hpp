@@ -10,10 +10,14 @@
 
     #include <iostream>
     #include <cstdint>
+    #include <string>
     #include <cstring>
     #include <queue>
     #include <memory>
     #include <arpa/inet.h>
+    #include <vector>
+    #include <sstream>
+    #include <functional>
 
     #define MAX_STRING_SIZE 256
 
@@ -49,6 +53,45 @@ enum PacketId {
     TEST_PACKET
 };
 
+class PacketDisplay {
+public:
+    PacketDisplay() = default;
+    
+    template<typename... Args>
+    PacketDisplay(Args &&...args) {
+        addAll(std::forward<Args>(args)...);
+    }
+
+    template<typename T>
+    void add(const std::string &key, const T &value) {
+        fields.emplace_back(key, [value](std::ostream &os) {
+            os << value;
+        });
+    }
+
+    void display() const {
+        for (size_t i = 0; i < fields.size(); ++i) {
+            const auto &[key, printer] = fields[i];
+            std::cout << key << "=";
+            printer(std::cout);
+
+            if (i < fields.size() - 1) {
+                std::cout << ", ";
+            }
+        }
+    }
+
+private:
+    template<typename T, typename... Rest>
+    void addAll(const std::string &key, const T &value, Rest &&...rest) {
+        add(key, value);
+        if constexpr (sizeof...(rest) > 0) {
+            addAll(std::forward<Rest>(rest)...);
+        }
+    }
+    std::vector<std::pair<std::string, std::function<void(std::ostream&)>>> fields;
+};
+
 class Packet {
     public:
         enum PacketMode {TCP, UDP};
@@ -68,11 +111,11 @@ class Packet {
             this->packetId = packetId;
         }
 
-        std::queue<uint8_t> &getData() {
+        std::vector<uint8_t> &getData() {
             return this->data;
         }
 
-        void setData(std::queue<uint8_t> &data) {
+        void setData(std::vector<uint8_t> &data) {
             this->data = data;
         }
 
@@ -81,8 +124,7 @@ class Packet {
         }
 
         void clearData() {
-            while (!this->data.empty())
-                data.pop();
+            data.clear();
             this->writeCursor = 0;
         }
 
@@ -92,36 +134,29 @@ class Packet {
 
             bw.value = toNetwork(value);
             for (uint8_t c : bw.bytes) {
-                this->data.push(c);
+                this->data.push_back(c);
                 writeCursor++;
             }
         }
 
+        // TODO: Disable send of large strings
         void write(const std::string &value) {
             this->write(static_cast<uint32_t>(value.size()));
             for (uint8_t c : value) {
-                this->data.push(c);
+                this->data.push_back(c);
                 writeCursor++;
             }
         }
 
-        // TODO : Verify
         template<typename T>
         T read(T &value) {
             ByteWriter<T, (std::size_t) sizeof(T)> bw;
-            std::queue<uint8_t> data = this->getData();
             std::size_t index = 0;
 
             if (readCursor + sizeof(T) > (std::size_t) this->getData().size())
                 throw PacketBuildError();
-            while (index != readCursor) {
-                data.pop();
-                index++;
-            }
-            for (index = 0; index != sizeof(T); index++) {
-                bw.bytes[index] = data.front();
-                data.pop();
-            }
+            for (index = 0; index != sizeof(T); index++)
+                bw.bytes[index] = data[readCursor + index];
             readCursor += sizeof(T);
             value = fromNetwork(bw.value);
             return value;
@@ -179,13 +214,13 @@ class Packet {
         virtual const std::string getName() = 0;
         virtual std::shared_ptr<Packet> clone() const = 0;
         virtual enum PacketMode getMode() const = 0;
-        virtual void display() = 0;
+        virtual PacketDisplay display() const = 0;
         virtual ~Packet() = default;
     private:
         int packetId;
         std::size_t writeCursor = 0;
         std::size_t readCursor = 0;
-        std::queue<uint8_t> data;
+        std::vector<uint8_t> data;
 
         template<typename T>
         inline T toNetwork(T value) {

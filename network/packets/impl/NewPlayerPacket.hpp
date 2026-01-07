@@ -36,8 +36,8 @@ public:
         return "NewPlayerPacket";
     }
 
-    void display() {
-        std::cout << "PlayerId=" << this->id << ", LaserId=" << this->laser_id;
+    PacketDisplay display() const {
+        return {"playerId", this->id, "laserId", this->laser_id};
     }
 
     std::shared_ptr<Packet> clone() const {

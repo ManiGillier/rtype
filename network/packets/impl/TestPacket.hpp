@@ -35,8 +35,8 @@ public:
         return "TestPacket";
     }
 
-    void display() {
-        std::cout << "TestString=" << this->testString;
+    PacketDisplay display() const {
+        return {"TestString", this->testString};
     }
 
     std::shared_ptr<Packet> clone() const {

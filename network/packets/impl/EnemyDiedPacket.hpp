@@ -34,8 +34,8 @@ public:
         return "EnemyDiedPacket";
     }
 
-    void display() {
-        std::cout << "Id=" << this->id;
+    PacketDisplay display() const {
+        return {"Id", this->id};
     }
 
     std::shared_ptr<Packet> clone() const {

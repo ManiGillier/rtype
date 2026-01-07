@@ -38,9 +38,8 @@ public:
         return "PositionUpdatePacket";
     }
 
-    void display() {
-        std::cout << "Id=" << this->id << ", x=" << this->x << ", y="
-        << this->y;
+    PacketDisplay display() const {
+        return {"Id", this->id, "x", this->x, "y", this->y};
     }
 
     std::shared_ptr<Packet> clone() const {

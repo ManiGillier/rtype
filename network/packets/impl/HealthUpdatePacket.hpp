@@ -39,9 +39,8 @@ public:
         return "HealthUpdatePacket";
     }
 
-    void display() {
-        std::cout << "Id=" << this->id << ", health=" << this->health
-        << ", max_health=" << this->max_health;
+    PacketDisplay display() const {
+        return {"Id", this->id, "health", this->health, "max_health", this->max_health};
     }
 
     std::shared_ptr<Packet> clone() const {

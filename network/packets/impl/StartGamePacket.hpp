@@ -32,8 +32,8 @@ public:
         return "StartGamePacket";
     }
 
-    void display() {
-        std::cout << "Id=" << this->getId();
+    PacketDisplay display() const {
+        return {};
     }
 
     std::shared_ptr<Packet> clone() const {

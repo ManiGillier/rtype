@@ -90,6 +90,7 @@ class Server {
         int getMaxConnections() const;
         bool canConnect() const; 
         void setConnect(bool c);
+        void sendAll(std::shared_ptr<Packet> p);
         virtual ~Server() = default;
         std::mutex udpLock;
         std::mutex tcpLock;
@@ -99,6 +100,7 @@ class Server {
         int port;
         int fd;
         int udpFd;
+        int defaultCons;
         bool upStatus = false;
         PacketListener<Server> pl;
         int maxConnections;

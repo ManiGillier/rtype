@@ -28,8 +28,8 @@ public:
         return "AuthentifiedPacket";
     }
 
-    void display() {
-        std::cout << "None";
+    PacketDisplay display() const {
+        return {};
     }
 };
 

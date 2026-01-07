@@ -16,9 +16,11 @@ class PacketLogger {
         enum PacketMethod {RECEIVED, SENT};
 
         static void logPacket(const std::shared_ptr<Packet> &packet, PacketMethod method, int fd) {
+            if (!Logger::shouldLog)
+                return;
             LOG((method == RECEIVED ? "Received" : "Sent") <<
                 " packet " << packet->getName() << " with ID " << (int) packet->getId() << " and data {");
-            packet->display();
+            packet->display().display();
             std::cout << "}" << (method == RECEIVED ? " from" : " to")
             << " socket " << fd << std::endl;
         }

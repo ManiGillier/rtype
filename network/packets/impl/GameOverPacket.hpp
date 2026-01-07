@@ -51,8 +51,8 @@ public:
         return "GameOverPacket";
     }
 
-    void display() {
-        std::cout << "EndGameState=" << egsToString(egs);
+    PacketDisplay display() const {
+        return {"EndGameState", egsToString(egs)};
     }
 
     std::shared_ptr<Packet> clone() const {

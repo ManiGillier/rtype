@@ -46,8 +46,8 @@ public:
         return this->uuid;
     }
 
-    void display() {
-        std::cout << "UUID=" << uuid;
+    PacketDisplay display() const {
+        return {"UUID", this->uuid};
     }
 
 private:

@@ -40,10 +40,8 @@ public:
         return "LaserActiveUpdatePacket";
     }
 
-    void display() {
-        std::cout << "Id=" << this->id << ", "
-        << (this->active ? "ON" : "OFF")
-        << ", length=" << this->length;
+    PacketDisplay display() const {
+        return {"Id", this->id, "active", this->active ? "ON" : "OFF", "length", this->length};
     }
 
     std::shared_ptr<Packet> clone() const {
