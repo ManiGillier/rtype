@@ -26,7 +26,7 @@ namespace rd {
         virtual void DeleteButton(size_t i) = 0;
         virtual void DeleteCheckBox(size_t i) = 0;
         virtual void Clear() = 0;
-        virtual auto getButton(int i) -> Button = 0;
-        virtual auto getCheckBox(int i) -> Button = 0;
+        virtual auto GetButton(int i) -> Button = 0;
+        virtual auto GetCheckBox(int i) -> Button = 0;
     };
 }
