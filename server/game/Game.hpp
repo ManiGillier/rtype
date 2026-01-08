@@ -9,15 +9,16 @@
 #define GAME_HPP
 
 #include "../game/factories/EntityFactory.hpp"
-#include "../player/Player.hpp"
 #include "../network/network_manager/NetworkManager.hpp"
+#include "../player/Player.hpp"
 #include "ecs/regisrty/Registry.hpp"
 #include <memory>
 
 class Game
 {
   public:
-    Game(std::mutex &playersMutex);
+    Game(std::vector<std::shared_ptr<Player>> &players,
+         std::mutex &playersMutex);
     ~Game() = default;
     void loop(int ticks);
     void addPlayer(std::shared_ptr<Player> &player);
@@ -41,7 +42,7 @@ class Game
        killing his entity
     */
     std::mutex &_playersMutex;
-    std::vector<std::shared_ptr<Player>> _players;
+    std::vector<std::shared_ptr<Player>> &_players;
     NetworkManager _networkManager;
     /*
        Registry and Entity factory
