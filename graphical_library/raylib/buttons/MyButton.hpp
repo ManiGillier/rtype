@@ -10,10 +10,10 @@
 
 #include <graphical_library/api/Button.hpp>
 
-class Button : bt::Button
+class MyButton : bt::Button
 {
 public:
-    Button(int x, int y, int width, int height, int transparency = 255);
+    MyButton(int x, int y, int width, int height, int transparency = 255);
     auto Draw() const -> void = 0;
     auto IsClicked() const -> bool = 0;
     auto IsHovered() const -> bool = 0;
