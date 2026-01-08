@@ -8,7 +8,8 @@
 #include "MyButton.hpp"
 
 MyButton::MyButton(int x, int y, int width, int height, int transparency)
-    : m_x(x), m_y(y), m_width(width), m_height(height), m_transparency(transparency) {}
+    : this->posX(x), this->posY(y), this->sizeX(width), this->sizeY(height),
+    this->transparency(transparency) {}
 
 void MyButton::Draw() const {}
 
