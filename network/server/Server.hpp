@@ -100,7 +100,6 @@ class Server {
         int port;
         int fd;
         int udpFd;
-        int defaultCons;
         bool upStatus = false;
         PacketListener<Server> pl;
         int maxConnections;

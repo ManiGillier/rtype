@@ -286,13 +286,13 @@ bool ClientPollableUDP::receiveEvent(short)
             packet->unserialize();
         } catch (const std::exception &) {
             LOG_ERR("Incomplete packet received with ID (" << (int) packetId << ")");
-            receivedData.erase(receivedData.begin(), receivedData.begin() + packet->getReadCursor());
+            receivedData.erase(receivedData.begin(), std::next(receivedData.begin(), static_cast<std::ptrdiff_t>(packet->getReadCursor())));
             break;
         }
         PacketLogger::logPacket(packet, PacketLogger::PacketMethod::RECEIVED,
             this->getFileDescriptor());
         addReceivedPacket(sender, packet);
-        receivedData.erase(receivedData.begin(), receivedData.begin() + packet->getReadCursor());
+        receivedData.erase(receivedData.begin(), std::next(receivedData.begin(), static_cast<std::ptrdiff_t>(packet->getReadCursor())));
     }
     return true;
 }

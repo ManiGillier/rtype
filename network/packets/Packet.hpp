@@ -142,8 +142,8 @@ class Packet {
         // TODO: Disable send of large strings
         void write(const std::string &value) {
             this->write(static_cast<uint32_t>(value.size()));
-            for (uint8_t c : value) {
-                this->data.push_back(c);
+            for (const char c : value) {
+                this->data.push_back((uint8_t) c);
                 writeCursor++;
             }
         }
@@ -172,7 +172,7 @@ class Packet {
             value.clear();
             for (std::size_t i = 0; i < stringLength; i++) {
                 this->read(stringCharacter);
-                value.push_back(stringCharacter);
+                value.push_back((char) stringCharacter);
             }
             return value;
         }

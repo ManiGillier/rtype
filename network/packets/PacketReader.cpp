@@ -42,15 +42,17 @@ bool PacketReader::readPacket(void)
         try {
             currentPacket->unserialize();
         } catch (const std::exception &) {
-            readData.erase(readData.begin(), readData.begin() + currentPacket->getReadCursor());
+            readData.erase(readData.begin(), std::next(readData.begin(),
+                static_cast<std::ptrdiff_t>(currentPacket->getReadCursor())));
             LOG_ERR("Received wrong packet, disconnecting " << this->_fd << "(ID=" << (int) packetId  << ")");
             currentPacket = nullptr;
             return true;
         }
         receivedPackets.push(currentPacket);
         PacketLogger::logPacket(currentPacket,
-                 PacketLogger::PacketMethod::RECEIVED, this->_fd);
-        readData.erase(readData.begin(), readData.begin() + currentPacket->getReadCursor());
+            PacketLogger::PacketMethod::RECEIVED, this->_fd);
+        readData.erase(readData.begin(), std::next(readData.begin(),
+            static_cast<std::ptrdiff_t>(currentPacket->getReadCursor())));
         currentPacket = nullptr;
     }
     return true;
