@@ -21,8 +21,7 @@ class Game
          std::mutex &playersMutex);
     ~Game() = default;
     void loop(int ticks);
-    void addPlayer(std::shared_ptr<Player> &player);
-    void removePlayer(std::shared_ptr<Player> &player);
+    NetworkManager &getNetworkManager();
     std::tuple<std::mutex &, Registry &> getRegistry();
 
   private:

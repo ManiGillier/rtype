@@ -25,11 +25,20 @@ void Lobby::removePlayer(std::shared_ptr<Player> &player)
              ++it) {
             if (it->get() == player.get()) {
                 this->_players.erase(it);
+
+                if (player->getEntityId().has_value()) {
+                    auto [regMtx, reg] = _game.getRegistry();
+                    std::lock_guard<std::mutex> lock(regMtx);
+                    reg.kill_entity(
+                        reg.entity_from_index(player->getEntityId().value()));
+                    _game.getNetworkManager().clearId(
+                        player->getEntityId().value());
+                    player->setEntityId(std::nullopt);
+                }
                 break;
             }
         }
     }
-    // this->_game.removePlayer(player);
 }
 
 std::mutex &Lobby::getPlayersMutex()

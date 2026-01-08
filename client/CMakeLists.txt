@@ -36,15 +36,7 @@ list(FILTER client_src EXCLUDE REGEX ".*/build/.*")
 list(FILTER client_src EXCLUDE REGEX ".*CMakeCXXCompilerId\\.cpp$")
 list(FILTER client_src EXCLUDE REGEX "ecs_exemple\\.cpp$")
 
-file(GLOB_RECURSE network_src ${PROJECT_ROOT}/network/*.cpp)
-file(GLOB_RECURSE network_src_h ${PROJECT_ROOT}/network/*.hpp)
-
-list(FILTER network_src EXCLUDE REGEX ".*/build/.*")
-list(FILTER network_src EXCLUDE REGEX ".*CMakeCXXCompilerId\\.cpp$")
-
-# Create network library
-add_library(network_lib STATIC ${network_src} ${network_src_h})
-target_include_directories(network_lib PUBLIC ${PROJECT_ROOT})
+add_subdirectory(${PROJECT_ROOT}/network ${CMAKE_BINARY_DIR}/network)
 
 # raylib v5.5 package
 CPMAddPackage(
@@ -52,7 +44,7 @@ CPMAddPackage(
     GIT_REPOSITORY https://github.com/raysan5/raylib.git
     GIT_TAG 5.5
     OPTIONS
-    "BUILD_EXAMPLES OFF"
+        "BUILD_EXAMPLES OFF"
 )
 
 add_executable(${CLIENT_EXEC_NAME} ${client_src} ${client_src_h})

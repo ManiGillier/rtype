@@ -29,16 +29,11 @@ set(PROJECT_ROOT ${CMAKE_SOURCE_DIR}/..)
 file(GLOB_RECURSE server_src *.cpp ${PROJECT_ROOT}/ecs/*.cpp ${PROJECT_ROOT}/shared/*.cpp)
 file(GLOB_RECURSE server_src_h *.hpp ${PROJECT_ROOT}/ecs/*.hpp ${PROJECT_ROOT}/shared/*.hpp)
 
-# get all cpp files from network library
-file(GLOB_RECURSE network_src ${PROJECT_ROOT}/network/*.cpp)
-file(GLOB_RECURSE network_src_h ${PROJECT_ROOT}/network/*.hpp)
-
-add_library(network_lib STATIC ${network_src} ${network_src_h})
-target_include_directories(network_lib PUBLIC ${PROJECT_ROOT})
-
 list(FILTER server_src EXCLUDE REGEX ".*/build/.*")
 list(FILTER server_src EXCLUDE REGEX ".*CMakeCXXCompilerId\\.cpp$")
 list(FILTER server_src EXCLUDE REGEX "ecs_exemple\\.cpp$")
+
+add_subdirectory(${PROJECT_ROOT}/network ${CMAKE_BINARY_DIR}/network)
 
 add_executable(${SERVER_EXEC_NAME} ${server_src} ${server_src_h})
 target_include_directories(${SERVER_EXEC_NAME} PUBLIC ${PROJECT_ROOT})

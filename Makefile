@@ -17,10 +17,12 @@ define build
 endef
 
 debug:
+	$(call build,network,$(DEBUG))
 	$(call build,server,$(DEBUG))
 	$(call build,client,$(DEBUG))
 
 release:
+	$(call build,network,$(RELEASE))
 	$(call build,server,$(RELEASE))
 	$(call build,client,$(RELEASE))
 
@@ -52,6 +54,7 @@ fclean:
 	make -s clean
 	rm -rf server/${BUILD_DIR}
 	rm -rf client/${BUILD_DIR}
+	rm -rf network/${BUILD_DIR}
 	rm -rf index.html
 
 clean_cache:

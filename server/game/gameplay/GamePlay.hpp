@@ -9,8 +9,8 @@
 #define GAMEPLAY_HPP
 
 #include "ecs/entity/Entity.hpp"
-#include <unordered_map>
-#include <vector>
+#include "ecs/regisrty/Registry.hpp"
+#include "server/network/network_manager/NetworkManager.hpp"
 #include <chrono>
 
 class Game;
@@ -20,12 +20,13 @@ enum GameState { waiting = 0, active, completed };
 class GamePlay
 {
   public:
-    GamePlay(Game &game, std::chrono::steady_clock::time_point start);
+    GamePlay(NetworkManager &nm, Registry &r);
     ~GamePlay() = default;
     void update();
 
   private:
-    Game &_game;
+    NetworkManager &_networkManager;
+    Registry &_regisrty;
     std::chrono::steady_clock::time_point _start;
     GameState _state;
     void spawnBoss();

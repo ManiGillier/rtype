@@ -34,7 +34,7 @@ Game::Game(std::vector<std::shared_ptr<Player>> &players,
 void Game::loop(int ticks)
 {
     Ticker ticker(ticks);
-    GamePlay gamePlay(*this, std::chrono::steady_clock::now());
+    GamePlay gamePlay(this->_networkManager, this->_registry);
 
     std::this_thread::sleep_for(
         std::chrono::milliseconds(200)); // TODO: remove this
@@ -58,16 +58,6 @@ void Game::loop(int ticks)
     }
     this->resetPlayersEntities();
     this->_networkManager.clear();
-}
-
-void Game::removePlayer(std::shared_ptr<Player> &player)
-{
-    if (_isRunning && player->getEntityId().has_value()) {
-        std::lock_guard<std::mutex> lock(_registryMutex);
-        _registry.kill_entity(
-            _registry.entity_from_index(player->getEntityId().value()));
-        this->_networkManager.clearId(player->getEntityId().value());
-    }
 }
 
 void Game::initPlayers()
@@ -135,4 +125,9 @@ void Game::resetPlayersEntities()
 std::tuple<std::mutex &, Registry &> Game::getRegistry()
 {
     return std::tie(this->_registryMutex, this->_registry);
+}
+
+NetworkManager &Game::getNetworkManager()
+{
+    return this->_networkManager;
 }

@@ -1,9 +1,9 @@
 #include "GamePlay.hpp"
-#include "../Game.hpp"
 
-GamePlay::GamePlay(Game &game, std::chrono::steady_clock::time_point start)
-    : _game(game), _start(start), _state(GameState::waiting)
+GamePlay::GamePlay(NetworkManager &nm, Registry &r)
+    : _networkManager(nm), _regisrty(r), _state(GameState::waiting)
 {
+    _start = std::chrono::steady_clock::now();
 }
 
 void GamePlay::update()
@@ -12,7 +12,6 @@ void GamePlay::update()
         auto now = std::chrono::steady_clock::now();
         auto elapsed =
             std::chrono::duration_cast<std::chrono::milliseconds>(now - _start);
-        if (elapsed.count() > 5000) {
-        }
+        if (elapsed.count() > 5000) {}
     }
 }
