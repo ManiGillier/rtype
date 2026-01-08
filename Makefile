@@ -27,12 +27,15 @@ release:
 	$(call build,client,$(RELEASE))
 
 server:
+	$(call build,network,$(RELEASE))
 	$(call build,server,$(DEBUG))
 
 client:
+	$(call build,network,$(RELEASE))
 	$(call build,client,$(DEBUG))
 
 reseau:
+	$(call build,network,$(RELEASE))
 	$(call build,server,$(DEBUG),--target reseau)
 
 lint:
