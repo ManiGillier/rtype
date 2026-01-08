@@ -22,7 +22,7 @@ constexpr float PLAYER_SPEED = 5.0f;
 } // namespace GameConstants
 
 auto Systems::position_system(
-    [[maybe_unused]] Registry &r,
+    Registry &r,
     containers::indexed_zipper<SparseArray<Position>, SparseArray<Velocity>,
                                SparseArray<Acceleration>,
                                SparseArray<OutsideBoundaries>>
@@ -34,6 +34,22 @@ auto Systems::position_system(
         pos->y += vel->y;
         vel->x = acc->x;
         vel->y = acc->y;
+        if (!out->canGoOutside) {
+            if (pos->x < 0.0f)
+                pos->x = 0.0f;
+            if (pos->x > GameConstants::width)
+                pos->x = GameConstants::width;
+            if (pos->y < 0.0f)
+                pos->y = 0.0f;
+            if (pos->y > GameConstants::height)
+                pos->y = GameConstants::height;
+        } else if (out->canGoOutside &&
+                   (pos->x < 0.0f || pos->x > GameConstants::width ||
+                    pos->y < 0.0f || pos->y > GameConstants::height)) {
+            game.sendPackets(std::make_shared<DespawnBulletPacket>(i));
+            r.kill_entity(r.entity_from_index(i));
+            continue;
+        }
         auto packet = std::make_shared<PositionUpdatePacket>(i, pos->x, pos->y);
         if (game.getPacketFilter().shouldSend(i, packet))
             game.sendPackets(packet);

@@ -19,7 +19,7 @@ Entity EntityFactory::createPlayer(void)
     _registry.emplace_component<Position>(player, 400.0f, 300.0f);
     _registry.emplace_component<Velocity>(player, 5.0f, 5.0f);
     _registry.emplace_component<Acceleration>(player, 0.0f, 0.0f);
-    _registry.emplace_component<OutsideBoundaries>(player, false, -1.0, -1.0);
+    _registry.emplace_component<OutsideBoundaries>(player, false);
     _registry.emplace_component<Health>(player, 100, 100);
     _registry.emplace_component<Resistance>(player, 10.0f);
     _registry.emplace_component<HitBox>(player, 30.0f, 30.0f);
@@ -32,8 +32,8 @@ Entity EntityFactory::createPlayerLaser(int id)
 
     _registry.emplace_component<Position>(playerLaser, 50.0f, 300.0f);
     _registry.emplace_component<Dependence>(playerLaser, id);
-    _registry.emplace_component<Laser>(playerLaser, false, 0.0f);
     _registry.emplace_component<HitBox>(playerLaser, 1.0f, 1200.0f);
+    _registry.emplace_component<Laser>(playerLaser, false, 0.0f);
     _registry.emplace_component<Damager>(playerLaser, 10);
     return playerLaser;
 }

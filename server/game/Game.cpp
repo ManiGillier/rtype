@@ -5,6 +5,7 @@
 #include "components/Resistance.hpp"
 #include "components/Velocity.hpp"
 #include "network/logger/Logger.hpp"
+#include "network/packets/Packet.hpp"
 #include "shared/components/Dependence.hpp"
 #include "shared/components/Health.hpp"
 #include "shared/components/HitBox.hpp"
@@ -16,6 +17,7 @@
 #include <memory>
 #include <mutex>
 #include <network/packets/impl/NewPlayerPacket.hpp>
+#include <network/packets/impl/HitboxSizeUpdatePacket.hpp>
 #include <optional>
 #include <thread>
 #include <tuple>
@@ -93,8 +95,18 @@ void Game::initPlayers()
     for (const auto &[playerId, laserId] : playerData) {
         auto newPlayerPacket =
             create_packet(NewPlayerPacket, playerId, laserId);
+
+        auto hitBox = _registry.get<HitBox>(playerId);
+        std::shared_ptr<Packet> HitBoxSize = nullptr;
+        if (hitBox.has_value()) {
+            HitBoxSize = create_packet(HitboxSizeUpdatePacket, playerId,
+                                       hitBox->width, hitBox->height);
+        }
+
         std::lock_guard<std::mutex> lock(_playersMutex);
         for (const auto &client : _players) {
+            if (HitBoxSize)
+                client->sendPacket(HitBoxSize);
             client->sendPacket(newPlayerPacket);
         }
     }
