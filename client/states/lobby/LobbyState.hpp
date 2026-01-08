@@ -18,7 +18,7 @@ class LobbyState : public IGameState
 public:
     LobbyState(ClientManager &);
 
-    auto update() -> State;
+    auto update() -> State_old;
     auto render() -> void;
 
     auto getGraphicalLibrary() -> gl::GraphicalLibrary &;

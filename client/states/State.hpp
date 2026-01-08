@@ -8,7 +8,7 @@
 #ifndef CLIENT_STATE_HPP
 #define CLIENT_STATE_HPP
 
-enum State {
+enum State_old {
    NONE = 0,
    AUTHENTIFICATION,
    LOBBY,

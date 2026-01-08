@@ -19,11 +19,11 @@ ConnectingState::ConnectingState(ClientManager &cm) : clientManager(cm)
                       (*this, this->clientManager.getNetworkManager());
 }
 
-auto ConnectingState::update() -> State
+auto ConnectingState::update() -> State_old
 {
     if (this->logic)
         return this->logic->update(this->getRegistry());
-    return State::NONE;
+    return State_old::NONE;
 }
 
 auto ConnectingState::render() -> void

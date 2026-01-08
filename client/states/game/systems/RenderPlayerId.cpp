@@ -12,9 +12,13 @@
 #include "client/components/Color.hpp"
 #include "client/components/PlayerId.hpp"
 
-#include <raylib.h>
-#include <string>
+namespace raylib {
+    #include <raylib.h>
+}
 
+#include <graphical_library/raylib/text/Text.hpp>
+
+#include <string>
 
 auto renderPlayerId([[maybe_unused]] Registry &reg,
     containers::indexed_zipper<SparseArray<Position>,
@@ -22,16 +26,16 @@ auto renderPlayerId([[maybe_unused]] Registry &reg,
                     std::optional<std::size_t> &my_id)
 -> void
 {
-    int height = GetRenderHeight();
+    int height = raylib::GetRenderHeight();
     for (auto &&[ecsId, pos, playerId] : zip) {
-        Color color = my_id ? (*my_id == ecsId ? YELLOW : WHITE) : RED;
-        DrawText(std::to_string(playerId->id).c_str(),
-                 (int) pos->x + 15, height - (int) pos->y - 10, 10, color);
-/*
-        DrawRectangle((int) (pos->x - (size->height / 2.0)),
-                      height - (int) pos->y - (int) (size->width / 2.0),
-                      (int) size->height, (int) size->width,
-                      PlayerId_color->color);
-*/
+        gl::Color color = my_id ? (*my_id == ecsId ? gl::YELLOW : gl::WHITE)
+                          : gl::RED;
+        const int fontSize = 10;
+        Text text(std::to_string(playerId->id));
+
+        text.draw(gl::WorldPosition {
+            pos->x + 15,
+            (float) height - pos->y - 10
+        }, fontSize, color);
     }
 }

@@ -25,14 +25,14 @@ class ConnectingStateLogic : public ILogic
 public:
     ConnectingStateLogic(IGameState &gameState, NetworkManager &networkManager);
 
-    auto update(Registry &) -> State;
+    auto update(Registry &) -> State_old;
 
     auto notifyAuthentified() -> void;
 private:
     [[maybe_unused]] IGameState &gameState;
     [[maybe_unused]] NetworkManager &networkManager;
 
-    [[maybe_unused]] State nextState = State::NONE;
+    [[maybe_unused]] State_old nextState = State_old::NONE;
     [[maybe_unused]] Sync sync;
     [[maybe_unused]] bool shouldStop = false;
 };

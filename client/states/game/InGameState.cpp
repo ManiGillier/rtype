@@ -37,11 +37,11 @@ InGameState::InGameState(ClientManager &cm) : clientManager(cm)
     this->logic = std::move(l);
 }
 
-auto InGameState::update() -> State
+auto InGameState::update() -> State_old
 {
     if (this->logic)
         return this->logic->update(this->getRegistry());
-    return State::NONE;
+    return State_old::NONE;
 }
 
 auto InGameState::render() -> void

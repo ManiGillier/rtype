@@ -18,7 +18,7 @@ class ConnectingState : public IGameState
 public:
     ConnectingState(ClientManager &);
 
-    auto update() -> State;
+    auto update() -> State_old;
     auto render() -> void;
 
     auto getGraphicalLibrary() -> gl::GraphicalLibrary &;

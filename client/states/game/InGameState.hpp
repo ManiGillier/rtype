@@ -15,7 +15,7 @@ class InGameState : public IGameState {
 public:
     InGameState(ClientManager &);
 
-    auto update() -> State;
+    auto update() -> State_old;
     auto render() -> void;
 
     auto getGraphicalLibrary() -> gl::GraphicalLibrary &;

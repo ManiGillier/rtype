@@ -6,7 +6,12 @@
 */
 
 #include "gui.hpp"
-#include <raylib.h>
+
+namespace raylib {
+    #include <raylib.h>
+}
+
+#include <graphical_library/raylib/text/Text.hpp>
 
 ConnectingStateGui::ConnectingStateGui(IGameState &gs) : gameState(gs)
 {
@@ -16,8 +21,12 @@ auto ConnectingStateGui::render(Registry &r) -> void
 {
     const char *txt = "Authentification... Please wait!";
     const int fontSize = 40;
-    const int width = MeasureText(txt, fontSize);
+    Text text(txt);
+    const int width = text.size(fontSize);
 
-    DrawText(txt, GetRenderWidth() / 2 - width / 2, 50, fontSize, WHITE);
+    text.draw(gl::WorldPosition {
+        (float) raylib::GetRenderWidth() / 2 - (float) width / 2,
+        (float) 50
+    }, fontSize, gl::WHITE);
     r.render();
 }
