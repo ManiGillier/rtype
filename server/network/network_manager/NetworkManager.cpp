@@ -1,0 +1,42 @@
+#include "NetworkManager.hpp"
+#include <mutex>
+
+NetworkManager::NetworkManager(std::mutex &playersMutex,
+                               std::vector<std::shared_ptr<Player>> &players)
+    : _playersMutex(playersMutex), _players(players)
+{
+}
+
+void NetworkManager::queuePacket(std::shared_ptr<Packet> packet,
+                                 std::size_t playerId, bool filter)
+
+{
+    if (!filter || (filter && _filter.shouldSend(playerId, packet)))
+        _packets.push(packet);
+}
+
+void NetworkManager::flush()
+{
+    while (!_packets.empty()) {
+        auto p = _packets.front();
+        {
+            std::lock_guard<std::mutex> lock(this->_playersMutex);
+            for (auto &it : _players) {
+                it->sendPacket(p);
+            }
+        }
+        _packets.pop();
+    }
+}
+
+void NetworkManager::clear()
+{
+    while (!_packets.empty())
+        _packets.pop();
+    this->_filter.resetAll();
+}
+
+void NetworkManager::clearId(std::size_t id)
+{
+    this->_filter.reset(id);
+}

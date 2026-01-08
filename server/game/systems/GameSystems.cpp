@@ -1,5 +1,4 @@
 #include "GameSystems.hpp"
-#include "../Game.hpp"
 #include "ecs/sparse_array/SparseArray.hpp"
 #include "network/packets/impl/DespawnPlayerPacket.hpp"
 #include "network/packets/impl/LaserActiveUpdatePacket.hpp"
@@ -27,7 +26,7 @@ auto Systems::position_system(
                                SparseArray<Acceleration>,
                                SparseArray<OutsideBoundaries>>
         zipper,
-    Game &game) -> void
+    NetworkManager &nm) -> void
 {
     for (auto &&[i, pos, vel, acc, out] : zipper) {
         pos->x += vel->x;
@@ -46,13 +45,12 @@ auto Systems::position_system(
         } else if (out->canGoOutside &&
                    (pos->x < 0.0f || pos->x > GameConstants::width ||
                     pos->y < 0.0f || pos->y > GameConstants::height)) {
-            game.sendPackets(std::make_shared<DespawnBulletPacket>(i));
+            nm.queuePacket(std::make_shared<DespawnBulletPacket>(i));
             r.kill_entity(r.entity_from_index(i));
             continue;
         }
         auto packet = std::make_shared<PositionUpdatePacket>(i, pos->x, pos->y);
-        if (game.getPacketFilter().shouldSend(i, packet))
-            game.sendPackets(packet);
+        nm.queuePacket(packet, i, true);
     }
 }
 
@@ -60,13 +58,12 @@ auto Systems::update_laser_system(
     [[maybe_unused]] Registry &r,
     containers::indexed_zipper<SparseArray<Position>, SparseArray<Laser>>
         zipper,
-    Game &game) -> void
+    NetworkManager &nm) -> void
 {
     for (auto &&[i, pos, laser] : zipper) {
         auto packet = create_packet(LaserActiveUpdatePacket, i, laser->active,
                                     laser->length);
-        if (game.getPacketFilter().shouldSend(i, packet))
-            game.sendPackets(packet);
+        nm.queuePacket(packet, i, true);
     }
 }
 

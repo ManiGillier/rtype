@@ -10,10 +10,9 @@
 
 #include "../game/factories/EntityFactory.hpp"
 #include "../player/Player.hpp"
-#include "packet_filter/PacketFilter.hpp"
+#include "../network/network_manager/NetworkManager.hpp"
 #include "ecs/regisrty/Registry.hpp"
 #include <memory>
-#include <vector>
 
 class Game
 {
@@ -23,9 +22,7 @@ class Game
     void loop(int ticks);
     void addPlayer(std::shared_ptr<Player> &player);
     void removePlayer(std::shared_ptr<Player> &player);
-    void sendPackets(std::shared_ptr<Packet> packet);
     std::tuple<std::mutex &, Registry &> getRegistry();
-    PacketFilter &getPacketFilter();
 
   private:
     /*
@@ -45,13 +42,13 @@ class Game
     */
     std::mutex &_playersMutex;
     std::vector<std::shared_ptr<Player>> _players;
+    NetworkManager _networkManager;
     /*
        Registry and Entity factory
     */
     std::mutex _registryMutex;
     Registry _registry;
     EntityFactory _factory;
-    PacketFilter _filter;
     bool _isRunning;
 };
 

@@ -4,6 +4,7 @@
 #include "components/OutsideBoundaries.hpp"
 #include "components/Resistance.hpp"
 #include "components/Velocity.hpp"
+#include "gameplay/GamePlay.hpp"
 #include "network/logger/Logger.hpp"
 #include "network/packets/Packet.hpp"
 #include "shared/components/Dependence.hpp"
@@ -16,20 +17,23 @@
 #include <chrono>
 #include <memory>
 #include <mutex>
-#include <network/packets/impl/NewPlayerPacket.hpp>
 #include <network/packets/impl/HitboxSizeUpdatePacket.hpp>
+#include <network/packets/impl/NewPlayerPacket.hpp>
 #include <optional>
 #include <thread>
 #include <tuple>
 
 Game::Game(std::mutex &playersMutex)
-    : _playersMutex(playersMutex), _factory(this->_registry), _isRunning(false)
+    : _playersMutex(playersMutex), _networkManager(playersMutex, _players),
+      _factory(this->_registry), _isRunning(false)
 {
 }
 
 void Game::loop(int ticks)
 {
     Ticker ticker(ticks);
+    GamePlay gamePlay(*this, std::chrono::steady_clock::now());
+
     std::this_thread::sleep_for(
         std::chrono::milliseconds(200)); // TODO: remove this
 
@@ -41,15 +45,17 @@ void Game::loop(int ticks)
     while (this->_isRunning) {
         ticker.now();
 
+        this->_networkManager.flush();
         {
             std::lock_guard<std::mutex> lock(_registryMutex);
             _registry.update();
         }
+        gamePlay.update();
 
         ticker.wait();
     }
     this->resetPlayersEntities();
-    this->_filter.resetAll();
+    this->_networkManager.clear();
 }
 
 void Game::addPlayer(std::shared_ptr<Player> &player)
@@ -68,7 +74,7 @@ void Game::removePlayer(std::shared_ptr<Player> &player)
                 std::lock_guard<std::mutex> lock(_registryMutex);
                 _registry.kill_entity(
                     _registry.entity_from_index(player->getEntityId().value()));
-                this->_filter.reset(player->getEntityId().value());
+                this->_networkManager.clearId(player->getEntityId().value());
             }
             break;
         }
@@ -102,13 +108,8 @@ void Game::initPlayers()
             HitBoxSize = create_packet(HitboxSizeUpdatePacket, playerId,
                                        hitBox->width, hitBox->height);
         }
-
-        std::lock_guard<std::mutex> lock(_playersMutex);
-        for (const auto &client : _players) {
-            if (HitBoxSize)
-                client->sendPacket(HitBoxSize);
-            client->sendPacket(newPlayerPacket);
-        }
+        _networkManager.queuePacket(HitBoxSize);
+        _networkManager.queuePacket(newPlayerPacket);
     }
 }
 
@@ -130,9 +131,9 @@ void Game::initializeSystems()
 {
     _registry
         .add_update_system<Position, Velocity, Acceleration, OutsideBoundaries>(
-            Systems::position_system, std::ref(*this));
+            Systems::position_system, std::ref(_networkManager));
     _registry.add_update_system<Position, Laser>(Systems::update_laser_system,
-                                                 std::ref(*this));
+                                                 std::ref(_networkManager));
 }
 
 void Game::resetPlayersEntities()
@@ -142,20 +143,7 @@ void Game::resetPlayersEntities()
         it->setEntityId(std::nullopt);
 }
 
-void Game::sendPackets(std::shared_ptr<Packet> packet)
-{
-    std::lock_guard<std::mutex> lock(_playersMutex);
-    for (auto &client : _players) {
-        client->sendPacket(packet);
-    }
-}
-
 std::tuple<std::mutex &, Registry &> Game::getRegistry()
 {
     return std::tie(this->_registryMutex, this->_registry);
-}
-
-PacketFilter &Game::getPacketFilter()
-{
-    return this->_filter;
 }
