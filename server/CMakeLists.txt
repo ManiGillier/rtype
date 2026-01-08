@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.15)
 project(R-Type LANGUAGES CXX)
 
+include("${CMAKE_SOURCE_DIR}/../cmake/CPM.cmake")
+set(CPM_SOURCE_CACHE "${CMAKE_SOURCE_DIR}/../.cpm-cache")
+
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -35,9 +38,17 @@ list(FILTER server_src EXCLUDE REGEX "ecs_exemple\\.cpp$")
 
 add_subdirectory(${PROJECT_ROOT}/network ${CMAKE_BINARY_DIR}/network)
 
+CPMAddPackage(
+    NAME SQLiteCpp
+    GIT_REPOSITORY https://github.com/SRombauts/SQLiteCpp
+    GIT_TAG 3.3.3
+    OPTIONS
+        "SQLITECPP_BUILD_EXAMPLES OFF"
+)
+
 add_executable(${SERVER_EXEC_NAME} ${server_src} ${server_src_h})
 target_include_directories(${SERVER_EXEC_NAME} PUBLIC ${PROJECT_ROOT})
-target_link_libraries(${SERVER_EXEC_NAME} PRIVATE network_lib)
+target_link_libraries(${SERVER_EXEC_NAME} PRIVATE network_lib SQLiteCpp)
 
 file(GLOB_RECURSE network_test_src ${PROJECT_ROOT}/network_test/src/*.cpp)
 file(GLOB_RECURSE network_test_src_h ${PROJECT_ROOT}/network_test/src/*.hpp)

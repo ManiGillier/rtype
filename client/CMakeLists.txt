@@ -47,6 +47,14 @@ CPMAddPackage(
         "BUILD_EXAMPLES OFF"
 )
 
+CPMAddPackage(
+    NAME SQLiteCpp
+    GIT_REPOSITORY https://github.com/SRombauts/SQLiteCpp
+    GIT_TAG 3.3.3
+    OPTIONS
+        "SQLITECPP_BUILD_EXAMPLES OFF"
+)
+
 add_executable(${CLIENT_EXEC_NAME} ${client_src} ${client_src_h})
 target_include_directories(${CLIENT_EXEC_NAME} PUBLIC ${PROJECT_ROOT})
-target_link_libraries(${CLIENT_EXEC_NAME} PRIVATE network_lib raylib)
+target_link_libraries(${CLIENT_EXEC_NAME} PRIVATE network_lib raylib SQLiteCpp)
