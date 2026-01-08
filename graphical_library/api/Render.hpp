@@ -13,11 +13,11 @@
 #include <graphical_library/api/Check.hpp>
 
 namespace rd {
-    class Render
+    class Renderer
     {
     public:
-        Render() = default;
-        virtual ~Render() = default;
+        Renderer() = default;
+        virtual ~Renderer() = default;
         virtual void Draw() = 0;
         virtual void AddButton(int posX, int posY, int sizeX, int sizeY,
             int transparency, Color color, const std::string& text) = 0;
@@ -26,7 +26,7 @@ namespace rd {
         virtual void DeleteButton(size_t i) = 0;
         virtual void DeleteCheckBox(size_t i) = 0;
         virtual void Clear() = 0;
-        virtual auto GetButton(int i) -> Button = 0;
-        virtual auto GetCheckBox(int i) -> Button = 0;
+        virtual auto &GetButton(int i) -> Button = 0;
+        virtual auto &GetCheckBox(int i) -> CheckBox = 0;
     };
 }
