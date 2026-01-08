@@ -18,7 +18,6 @@ PacketSender::PacketSender(int fd)
 
 void PacketSender::sendPacket(std::shared_ptr<Packet> packet)
 {
-    packet->clearData();
     this->packets.push(packet);
 }
 
@@ -28,6 +27,7 @@ void PacketSender::writePackets()
 
     while (!this->packets.empty()) {
         std::shared_ptr<Packet> &packet = this->packets.front();
+        packet->clearData();
         packet->serialize();
         toSend.push_back(packet->getId());
         std::vector<uint8_t> &packetData = packet->getData();
