@@ -24,7 +24,6 @@ class RType
     int _ticks = 60;
     int _port = -1;
     bool _displayUsage = false;
-    bool _hasStarted = false;
 };
 
 #endif

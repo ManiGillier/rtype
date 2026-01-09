@@ -30,7 +30,6 @@ class GameStartExecutor
 
   private:
     RTypeServer &_rtypeServer;
-    bool _hasStarted;
 };
 
 #endif

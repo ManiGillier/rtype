@@ -7,7 +7,7 @@
 #include <mutex>
 
 GameStartExecutor::GameStartExecutor(RTypeServer &server)
-    : _rtypeServer(server), _hasStarted(false)
+    : _rtypeServer(server)
 {
 }
 
