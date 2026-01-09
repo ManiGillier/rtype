@@ -9,13 +9,12 @@
 #define CLIENT_BUTTON_HPP
 
 #include <raylib.h>
+#include <string>
 
-namespace bt {
-    class Button {
+namespace gl {
+    class MyButton {
     public:
-        Button(int x, int y, int width, int height, Color buttonColor,
-            Color hoveredButtonColor, int transparency = 255);
-        virtual ~Button() = 0;
+        virtual ~MyButton() = 0;
         virtual auto Draw() const -> void = 0;
         virtual auto IsClicked(int mouseX, int mouseY) -> bool = 0;
         virtual auto IsHovered(int mouseX, int mouseY) -> bool = 0;
@@ -23,7 +22,7 @@ namespace bt {
         virtual auto SetSize(int width, int height) -> void = 0;
         virtual auto SetTransparency(int transparency) -> void = 0;
         virtual auto SetColor(Color color) -> void = 0;
-        virtual auto SetText(std::string str) -> void = 0;
+        virtual auto SetText(const std::string str) -> void = 0;
         virtual auto SwitchClick() -> void = 0;
     };
 }

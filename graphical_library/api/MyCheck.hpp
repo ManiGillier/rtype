@@ -8,10 +8,12 @@
 #ifndef CHECKBOX_H_
 #define CHECKBOX_H_
 
-namespace ck {
-    class CheckBox {
+#include <string>
+
+namespace gl {
+    class MyCheckBox {
     public:
-        CheckBox(int x, int y, int size, bool checked = false, int transparency = 255);
+        MyCheckBox(int x, int y, int size, bool checked = false, int transparency = 255);
         virtual auto Draw() const -> void = 0;
         virtual auto Update() -> void = 0;
         virtual auto IsClicked() const -> bool = 0;
