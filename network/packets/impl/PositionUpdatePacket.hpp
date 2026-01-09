@@ -21,40 +21,46 @@ class PositionUpdatePacket : public Packet
     {
     }
 
-    enum PacketMode getMode() const
+    enum PacketMode getMode() const override
     {
         return PacketMode::UDP;
     }
 
-    void serialize()
+    void serialize() override
+
     {
         this->write(id);
         this->write(x);
         this->write(y);
     }
-    void unserialize()
+    void unserialize() override
+
     {
         this->read(id);
         this->read(x);
         this->read(y);
     }
 
-    const std::string getName()
+    const std::string getName() override
+
     {
         return "PositionUpdatePacket";
     }
 
-    void display()
+    void display() override
+
     {
         std::cout << "Id=" << this->id << ", x=" << this->x
                   << ", y=" << this->y;
     }
-    auto getSize() const -> int
+    auto getSize() const -> int override
+
     {
         return sizeof(std::size_t) + (sizeof(float) * 2);
     }
 
-    std::shared_ptr<Packet> clone() const
+    std::shared_ptr<Packet> clone() const override
+
     {
         return make_copy(PositionUpdatePacket);
     }

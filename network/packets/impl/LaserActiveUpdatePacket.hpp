@@ -23,40 +23,47 @@ class LaserActiveUpdatePacket : public Packet
     {
     }
 
-    enum PacketMode getMode() const
+    enum PacketMode getMode() const override
+
     {
         return PacketMode::UDP;
     }
 
-    void serialize()
+    void serialize() override
+
     {
         this->write(id);
         this->write(active);
         this->write(length);
     }
-    void unserialize()
+    void unserialize() override
+
     {
         this->read(id);
         this->read(active);
         this->read(length);
     }
 
-    const std::string getName()
+    const std::string getName() override
+
     {
         return "LaserActiveUpdatePacket";
     }
 
-    void display()
+    void display() override
+
     {
         std::cout << "Id=" << this->id << ", " << (this->active ? "ON" : "OFF")
                   << ", length=" << this->length;
     }
-    auto getSize() const -> int
+    auto getSize() const -> int override
+
     {
         return sizeof(std::size_t) + sizeof(bool) + sizeof(float);
     }
 
-    std::shared_ptr<Packet> clone() const
+    std::shared_ptr<Packet> clone() const override
+
     {
         return make_copy(LaserActiveUpdatePacket);
     }
