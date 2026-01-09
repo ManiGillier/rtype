@@ -2,6 +2,7 @@
 #include "components/Acceleration.hpp"
 #include "components/Damager.hpp"
 #include "components/OutsideBoundaries.hpp"
+#include "components/Pattern.hpp"
 #include "components/Resistance.hpp"
 #include "components/Velocity.hpp"
 #include "gameplay/GamePlay.hpp"
@@ -34,7 +35,7 @@ Game::Game(std::vector<std::shared_ptr<Player>> &players,
 void Game::loop(int ticks)
 {
     Ticker ticker(ticks);
-    GamePlay gamePlay(this->_networkManager, this->_registry);
+    GamePlay gamePlay(this->_networkManager, this->_registry, this->_factory);
 
     std::this_thread::sleep_for(
         std::chrono::milliseconds(200)); // TODO: remove this
@@ -51,8 +52,8 @@ void Game::loop(int ticks)
         {
             std::lock_guard<std::mutex> lock(_registryMutex);
             _registry.update();
+            gamePlay.update();
         }
-        gamePlay.update();
 
         ticker.wait();
     }
@@ -104,6 +105,7 @@ void Game::initializeComponents()
     _registry.register_component<HitBox>();
     _registry.register_component<Laser>();
     _registry.register_component<Position>();
+    _registry.register_component<Pattern>();
 }
 
 void Game::initializeSystems()
@@ -111,6 +113,8 @@ void Game::initializeSystems()
     _registry
         .add_update_system<Position, Velocity, Acceleration, OutsideBoundaries>(
             Systems::position_system, std::ref(_networkManager));
+    _registry.add_update_system<Position, Acceleration, Pattern>(
+        Systems::pattern_system, std::ref(_networkManager));
     _registry.add_update_system<Position, Laser>(Systems::update_laser_system,
                                                  std::ref(_networkManager));
 }

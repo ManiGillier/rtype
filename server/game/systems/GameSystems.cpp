@@ -17,7 +17,7 @@ namespace GameConstants
 {
 constexpr float width = 800;
 constexpr float height = 600;
-constexpr float PLAYER_SPEED = 5.0f;
+constexpr float PLAYER_SPEED = 3.0f;
 } // namespace GameConstants
 
 auto Systems::position_system(
@@ -48,6 +48,47 @@ auto Systems::position_system(
             nm.queuePacket(std::make_shared<DespawnBulletPacket>(i));
             r.kill_entity(r.entity_from_index(i));
             continue;
+        }
+        auto packet = std::make_shared<PositionUpdatePacket>(i, pos->x, pos->y);
+        nm.queuePacket(packet, i, true);
+    }
+}
+
+auto Systems::pattern_system(
+    Registry &r,
+    containers::indexed_zipper<SparseArray<Position>, SparseArray<Acceleration>,
+                               SparseArray<Pattern>>
+        zipper,
+    NetworkManager &nm) -> void
+{
+    (void)r;
+
+    for (auto &&[i, pos, acc, pat] : zipper) {
+        const float speed = acc->x;
+        if (!pos || !pat)
+            continue;
+
+        float width = pat->max_x - pat->min_x;
+        float height = pat->max_y - pat->min_y;
+        float perimeter = 2 * (width + height);
+
+        static float progress = 0.0f;
+        progress += speed;
+        if (progress >= perimeter)
+            progress -= perimeter;
+
+        if (progress < width) {
+            pos->x = pat->min_x + progress;
+            pos->y = pat->min_y;
+        } else if (progress < width + height) {
+            pos->x = pat->max_x;
+            pos->y = pat->min_y + (progress - width);
+        } else if (progress < 2 * width + height) {
+            pos->x = pat->max_x - (progress - width - height);
+            pos->y = pat->max_y;
+        } else {
+            pos->x = pat->min_x;
+            pos->y = pat->max_y - (progress - 2 * width - height);
         }
         auto packet = std::make_shared<PositionUpdatePacket>(i, pos->x, pos->y);
         nm.queuePacket(packet, i, true);

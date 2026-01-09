@@ -16,6 +16,7 @@
 #include "../components/Velocity.hpp"
 #include "ecs/regisrty/Registry.hpp"
 #include "ecs/sparse_array/SparseArray.hpp"
+#include "server/game/components/Pattern.hpp"
 #include "shared/components/Dependence.hpp"
 #include "shared/components/Health.hpp"
 #include "shared/components/HitBox.hpp"
@@ -31,6 +32,14 @@ auto position_system(
     containers::indexed_zipper<SparseArray<Position>, SparseArray<Velocity>,
                                SparseArray<Acceleration>,
                                SparseArray<OutsideBoundaries>>
+        zipper,
+    NetworkManager &nm) -> void;
+
+auto pattern_system(
+    Registry &r,
+    containers::indexed_zipper<SparseArray<Position>,
+                               SparseArray<Acceleration>,
+                               SparseArray<Pattern>>
         zipper,
     NetworkManager &nm) -> void;
 
