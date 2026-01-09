@@ -328,7 +328,7 @@ bool ClientPollableUDP::receiveEvent(short)
             break;
         }
         PacketLogger::logPacket(packet, PacketLogger::PacketMethod::RECEIVED,
-            this->getFileDescriptor());
+            this->getFileDescriptor(), sequenceNum);
         addReceivedPacket(sender, packet);
         receivedData.erase(receivedData.begin(), std::next(receivedData.begin(), static_cast<std::ptrdiff_t>(packet->getReadCursor())));
         cl.updateSequenceNum(sequenceNum);
