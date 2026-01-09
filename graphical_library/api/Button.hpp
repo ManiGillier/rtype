@@ -8,16 +8,17 @@
 #ifndef CLIENT_BUTTON_HPP
 #define CLIENT_BUTTON_HPP
 
+#include <raylib.h>
+
 namespace bt {
     class Button {
     public:
-        MyButton(int x, int y, int width, int height, Color buttonColor,
+        Button(int x, int y, int width, int height, Color buttonColor,
             Color hoveredButtonColor, int transparency = 255);
         virtual ~Button() = 0;
-        virtual auto ~Button() = 0;
         virtual auto Draw() const -> void = 0;
-        virtual auto IsClicked() -> bool = 0;
-        virtual auto IsHovered() -> bool = 0;
+        virtual auto IsClicked(int mouseX, int mouseY) -> bool = 0;
+        virtual auto IsHovered(int mouseX, int mouseY) -> bool = 0;
         virtual auto SetPosition(int x, int y) -> void = 0;
         virtual auto SetSize(int width, int height) -> void = 0;
         virtual auto SetTransparency(int transparency) -> void = 0;
