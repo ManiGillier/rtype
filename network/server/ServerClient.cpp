@@ -63,5 +63,5 @@ void ServerClient::sendPacket(std::shared_ptr<Packet> p, bool wakeUpPoll)
 
 bool ServerClient::shouldWrite() const
 {
-    return !this->getPacketSender().getPackets().empty();
+    return this->getPacketSender().shouldSend();
 }

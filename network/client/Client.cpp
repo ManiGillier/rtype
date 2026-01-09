@@ -127,7 +127,12 @@ void Client::sendUDPPackets()
         for (auto &[packet, addr] : p->getPacketsToSendUDP()) {
             (void) addr;
             packet->clearData();
-            packet->serialize();
+            try {
+                packet->serialize();
+            } catch (const Packet::PacketException &e) {
+                LOG_ERR(e.what());
+                continue;
+            }
             std::vector<uint8_t> toSend;
             toSend.push_back(packet->getId());
             std::vector<uint8_t> packetData = packet->getData();
@@ -209,6 +214,36 @@ uint32_t Client::getUUID() const
     return this->uuid;
 }
 
+void Client::updateSequenceNum(uint16_t receivedSequence)
+{
+    if (this->firstUDPPacket) {
+        this->lastReceivedSeqNum = receivedSequence;
+        this->firstUDPPacket = false;
+    } else {
+        int16_t diff = (int16_t) (receivedSequence - this->lastReceivedSeqNum);
+        if (diff <= 0) {
+            return;
+        }
+        if (diff > 1) {
+            uint16_t packetsLost = static_cast<uint16_t>(diff - 1);
+            this->totalPacketsLost += packetsLost;
+        }
+
+        this->lastReceivedSeqNum = receivedSequence;
+    }
+}
+
+double Client::getPacketLossPercentage() const
+{
+    if (this->firstUDPPacket)
+        return 0.0;
+    uint32_t totalReceived = static_cast<uint32_t>(this->lastReceivedSeqNum) + 1;
+    uint32_t totalExpected = totalReceived + this->totalPacketsLost;
+
+    return (static_cast<double>(this->totalPacketsLost) /
+        static_cast<double>(totalExpected)) * 100.0;
+}
+
 ClientPollable::ClientPollable(Client &cl, int fd) : Pollable(fd, cl.getPollManager()), cl(cl)
 {
     return;
@@ -245,7 +280,7 @@ bool ClientPollable::receiveEvent(short revent)
 
 bool ClientPollable::shouldWrite() const
 {
-    return !this->getPacketSender().getPackets().empty();
+    return this->getPacketSender().shouldSend();
 }
 
 ClientPollableUDP::ClientPollableUDP(Client &cl, int fd,
@@ -254,7 +289,6 @@ ClientPollableUDP::ClientPollableUDP(Client &cl, int fd,
     this->address = address;
     this->setClientAddress(address);
 }
-
 
 short ClientPollableUDP::getFlags() const
 {
@@ -274,15 +308,19 @@ bool ClientPollableUDP::receiveEvent(short)
     for (ssize_t i = 0; i < bytesRead; i++)
         receivedData.push_back(buffer[i]);
     while (!receivedData.empty()) {
-        uint8_t packetId = receivedData[0];
-        receivedData.erase(receivedData.begin());
-        std::shared_ptr<Packet> packet = PacketManager::getInstance().createPacketById(packetId, Packet::PacketMode::UDP);
-        if (packet == nullptr) {
-            LOG_ERR("Received invalid packet ID: " << (int) packetId);
-            break;
-        }
-        packet->setData(receivedData);
+        std::shared_ptr<Packet> packet = nullptr;
+        uint8_t packetId = 0;
+        uint16_t sequenceNum = 0;
         try {
+            Packet::fromBinary(receivedData, sequenceNum);
+            packetId = receivedData[0];
+            receivedData.erase(receivedData.begin());
+            packet = PacketManager::getInstance().createPacketById(packetId, Packet::PacketMode::UDP);
+            if (packet == nullptr) {
+                LOG_ERR("Received invalid packet ID: " << (int) packetId);
+                break;
+            }
+            packet->setData(receivedData);
             packet->unserialize();
         } catch (const std::exception &) {
             LOG_ERR("Incomplete packet received with ID (" << (int) packetId << ")");
@@ -293,6 +331,7 @@ bool ClientPollableUDP::receiveEvent(short)
             this->getFileDescriptor());
         addReceivedPacket(sender, packet);
         receivedData.erase(receivedData.begin(), std::next(receivedData.begin(), static_cast<std::ptrdiff_t>(packet->getReadCursor())));
+        cl.updateSequenceNum(sequenceNum);
     }
     return true;
 }

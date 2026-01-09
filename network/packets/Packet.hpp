@@ -19,6 +19,10 @@
     #include <sstream>
     #include <functional>
 
+    #define SENT_TOO_LARGE_STRING "Sent string was too large"
+    #define RECEIVED_TOO_LARGE_STRING "Received too large string"
+    #define NOT_ENOUGH_DATA "Did not receive enough data to unserialize"
+
     #define MAX_STRING_SIZE 256
 
     #define make_copy(TYPE) std::make_shared<TYPE>(*this)
@@ -96,11 +100,18 @@ class Packet {
     public:
         enum PacketMode {TCP, UDP};
 
-        class PacketBuildError : public std::exception {
+        class PacketException : public std::exception {
             public:
-                const char *what() const noexcept override {
-                    return "Could not build Packet (?)";
+                PacketException(const std::string &exception) {
+                    this->exception = exception;
                 }
+
+                const char *what() const noexcept override {
+                    return exception.c_str();
+                }
+
+            private:
+                std::string exception;
         };
 
         uint8_t getId() const {
@@ -141,6 +152,8 @@ class Packet {
 
         // TODO: Disable send of large strings
         void write(const std::string &value) {
+            if (value.size() > MAX_STRING_SIZE)
+                throw PacketException(SENT_TOO_LARGE_STRING);
             this->write(static_cast<uint32_t>(value.size()));
             for (const char c : value) {
                 this->data.push_back((uint8_t) c);
@@ -154,11 +167,32 @@ class Packet {
             std::size_t index = 0;
 
             if (readCursor + sizeof(T) > (std::size_t) this->getData().size())
-                throw PacketBuildError();
+                throw PacketException(NOT_ENOUGH_DATA);
             for (index = 0; index != sizeof(T); index++)
                 bw.bytes[index] = data[readCursor + index];
             readCursor += sizeof(T);
             value = fromNetwork(bw.value);
+            return value;
+        }
+
+        template<typename T>
+        static std::vector<uint8_t> toBinary(T &value) {
+            std::vector<uint8_t> binary;
+            ByteWriter<T, sizeof(T)> bw;
+
+            bw.value = toNetwork(value);
+            for (uint8_t c : bw.bytes)
+                binary.push_back(c);
+            return binary;
+        }
+
+        template<typename T>
+        static T fromBinary(std::vector<uint8_t> &data, T &value) {
+            if (sizeof(T) > (std::size_t) data.size())
+                throw PacketException(NOT_ENOUGH_DATA);
+            std::memcpy(&value, data.data(), sizeof(T));
+            value = fromNetwork(value);
+            data.erase(data.begin(), std::next(data.begin(), static_cast<std::ptrdiff_t>(sizeof(T))));
             return value;
         }
 
@@ -168,7 +202,7 @@ class Packet {
 
             this->read(stringLength);
             if (stringLength > MAX_STRING_SIZE)
-                throw PacketBuildError();
+                throw PacketException(RECEIVED_TOO_LARGE_STRING);
             value.clear();
             for (std::size_t i = 0; i < stringLength; i++) {
                 this->read(stringCharacter);
@@ -223,7 +257,7 @@ class Packet {
         std::vector<uint8_t> data;
 
         template<typename T>
-        inline T toNetwork(T value) {
+        static inline T toNetwork(T value) {
             if constexpr (sizeof(T) == 1) {
                 return value;
             } else if constexpr (sizeof(T) == 2) {
@@ -249,7 +283,7 @@ class Packet {
         }
 
         template<typename T>
-        inline T fromNetwork(T value) {
+        static inline T fromNetwork(T value) {
             return toNetwork(value);
         }
 };

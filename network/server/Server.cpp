@@ -160,13 +160,23 @@ void Server::sendUDPPackets()
             if (addr == std::nullopt)
                 continue;
             packet->clearData();
-            packet->serialize();
+            try {
+                packet->serialize();
+            } catch (const Packet::PacketException &e) {
+                LOG_ERR(e.what());
+                continue;
+            }
+            std::uint16_t &sequenceNum = p->getUDPPacketCount();
+
             std::vector<uint8_t> toSend;
+            std::vector<uint8_t> sequenceNumData = Packet::toBinary(sequenceNum);
+            toSend.insert(toSend.end(), sequenceNumData.begin(), sequenceNumData.end());
             toSend.push_back(packet->getId());
             std::vector<uint8_t> packetData = packet->getData();
             toSend.insert(toSend.end(), packetData.begin(), packetData.end());
             sendto(this->udpFd, toSend.data(), toSend.size(), 0,
                    (struct sockaddr *)&(addr.value()), sizeof(addr.value()));
+            sequenceNum += 1;
             PacketLogger::logPacket(packet, PacketLogger::PacketMethod::SENT,
                                     this->udpFd);
         }
@@ -186,14 +196,19 @@ void Server::setConnect(bool c)
 
 void Server::sendAll(std::shared_ptr<Packet> p)
 {
+    this->sendAll(this->getPollManager().getPool(), p);
+}
+
+void Server::sendAll(std::vector<std::shared_ptr<IPollable>> clients,
+    std::shared_ptr<Packet> p)
+{
+    if (clients.empty())
+        return;
     if (p->getMode() == Packet::PacketMode::TCP)
         std::lock_guard<std::mutex> lck(this->tcpLock);
     else
         std::lock_guard<std::mutex> lck(this->udpLock);
-
-    std::vector<std::shared_ptr<IPollable>> pool =
-        this->getPollManager().getPool();
-    for (std::shared_ptr<IPollable> cl : pool) {
+    for (std::shared_ptr<IPollable> cl : clients) {
         if (std::dynamic_pointer_cast<ServerUDPPollable>(cl) != nullptr ||
             std::dynamic_pointer_cast<ServerPollable>(cl) != nullptr ||
             std::dynamic_pointer_cast<WakeUpPollable>(cl) != nullptr)
