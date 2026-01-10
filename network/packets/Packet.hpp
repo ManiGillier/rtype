@@ -243,6 +243,14 @@ class Packet {
             write(d);
         }
 
+        virtual bool isEqual(const Packet &other) const
+        {
+            if (this->packetId != other.packetId) {
+                return false;
+            }
+            return this->data == other.data;
+        }
+
         virtual void serialize() = 0;
         virtual void unserialize() = 0;
         virtual const std::string getName() = 0;

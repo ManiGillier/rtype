@@ -8,7 +8,7 @@
 #ifndef CLIENT_INPUTS_HPP
 #define CLIENT_INPUTS_HPP
 
-#include "../player/Player.hpp"
+#include "../../player/Player.hpp"
 #include <network/packets/PacketManager.hpp>
 #include <network/packets/impl/ClientInputsPacket.hpp>
 #include <network/server/Server.hpp>

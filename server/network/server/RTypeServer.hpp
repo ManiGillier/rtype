@@ -8,8 +8,8 @@
 #ifndef RTYPES_SERVER_HPP_
 #define RTYPES_SERVER_HPP_
 
-#include "game/Game.hpp"
-#include <atomic>
+#include "../../lobby/LobbyManager.hpp"
+#include "../../thread/ThreadPool.hpp"
 #include <memory>
 #include <network/server/Server.hpp>
 
@@ -21,20 +21,17 @@ class RTypeServer : public Server
     std::shared_ptr<IPollable> createClient(int fd) override;
     void onClientConnect(std::shared_ptr<IPollable> client) override;
     void onClientDisconnect(std::shared_ptr<IPollable> client) override;
-
-    Game &getGame();
+    void setTicks(int ticks);
     int getTicks() const;
-    void setStart();
-    bool canStart() const;
-    bool getRunning() const;
-    void setRunning(bool r);
+    LobbyManager &getLobbyManager();
+    void cleanFinishedGame();
+    ThreadPool &getGameThreadPool();
 
-private:
-    [[maybe_unused]] std::size_t _next_id;
+  private:
     int _ticks;
-    bool _canStartGame;
-    std::atomic<bool> _isRunning;
-    Game _game;
+    int _nextId;
+    LobbyManager _lobbyManager;
+    ThreadPool _threadPool;
 };
 
 #endif

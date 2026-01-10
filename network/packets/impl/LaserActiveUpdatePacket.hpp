@@ -21,31 +21,43 @@ public:
         Packet(PacketId::LASER_ACTIVE_UPDATE), id(id), active(active),
         length(length) {}
 
-    enum PacketMode getMode() const {
+    enum PacketMode getMode() const override {
         return PacketMode::UDP;
     }
 
-    void serialize() {
+    void serialize() override {
         this->write(id);
         this->write(active);
         this->write(length);
     }
-    void unserialize() {
+    void unserialize()override {
         this->read(id);
         this->read(active);
         this->read(length);
     }
 
-    const std::string getName() {
+    const std::string getName() override {
         return "LaserActiveUpdatePacket";
     }
 
-    PacketDisplay display() const {
+    PacketDisplay display() const override {
         return {"Id", this->id, "active", this->active ? "ON" : "OFF", "length", this->length};
     }
 
-    std::shared_ptr<Packet> clone() const {
+    std::shared_ptr<Packet> clone() const override {
         return make_copy(LaserActiveUpdatePacket);
+    }
+
+    bool isEqual(const Packet &o) const override
+    {
+        if (o.getId() != LASER_ACTIVE_UPDATE) {
+            return false;
+        }
+        const LaserActiveUpdatePacket &other =
+            static_cast<const LaserActiveUpdatePacket &>(o);
+
+        return (this->getLength() == other.getLength() &&
+                this->isActive() == other.isActive());
     }
 
     auto getEntityId() const -> std::size_t { return this->id; }
