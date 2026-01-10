@@ -13,7 +13,12 @@
 
 #include "network/packets/impl/StartGamePacket.hpp"
 
+#include <graphical_library/api/GraphicalLibrary.hpp>
+
 auto gameStart([[maybe_unused]] Registry &r, NetworkManager &networkManager)
+-> void;
+
+auto lobbyText([[maybe_unused]] Registry &r, gl::GraphicalLibrary &gl)
 -> void;
 
 #endif /* CLIENT_LOBBY_STATE_SYSTEMS_HPP */

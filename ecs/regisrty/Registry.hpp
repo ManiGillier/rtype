@@ -66,6 +66,9 @@ class Registry
     template <typename Function, class... Args>
     void add_global_update_system(Function&& f, Args&&...);
 
+    void reset_update_systems();
+    void reset_render_systems();
+
     void update();
     void render();
 

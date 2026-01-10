@@ -49,3 +49,13 @@ SparseArray<std::any> const& Registry::get_components_by_id
 {
     return std::any_cast<SparseArray<std::any> const&>(_components_arrays.at(id));
 }
+
+void Registry::reset_update_systems()
+{
+    this->_update_systems = {};
+}
+
+void Registry::reset_render_systems()
+{
+    this->_render_systems = {};
+}
