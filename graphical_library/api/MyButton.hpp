@@ -12,9 +12,9 @@
 #include <string>
 
 namespace gl {
-    class MyButton {
+    class Button {
     public:
-        virtual ~MyButton() = 0;
+        virtual ~Button() = default;
         virtual auto Draw() const -> void = 0;
         virtual auto IsClicked(int mouseX, int mouseY) -> bool = 0;
         virtual auto IsHovered(int mouseX, int mouseY) -> bool = 0;

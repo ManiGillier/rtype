@@ -8,31 +8,32 @@
 #ifndef BUTTON_HPP
 #define BUTTON_HPP
 
-#include <graphical_library/api/Button.hpp>
+#include <graphical_library/api/MyButton.hpp>
 
-class MyButton : bt::Button
+
+class MyButton : public gl::Button
 {
 public:
     MyButton(int x, int y, int width, int height, Color buttonColor,
         Color hoveredButtonColor, int transparency = 255);
-    void Draw() const;
-    bool IsClicked();
-    bool IsHovered(int mouseX, int mouseY);
-    void SetPosition(int x, int y);
-    void SetSize(int width, int height);
-    void SetTransparency(int transparency);
-    void SetColor(Color color);
-    void SetText(std::string str);
-    void SwitchClick();
+    void Draw() const override;
+    bool IsClicked(int mouseX, int mouseY) override;
+    bool IsHovered(int mouseX, int mouseY) override;
+    void SetPosition(int x, int y) override;
+    void SetSize(int width, int height) override;
+    void SetTransparency(int transparency) override;
+    void SetColor(Color color) override;
+    void SetText(const std::string str) override;
+    void SwitchClick() override;
 private:
     bool hovered;
     int posX;
     int posY;
     int sizeX;
     int sizeY;
-    int transparency;
     Color color;
     Color hoveredColor;
+    int transparency;
     std::string text;
     bool clicked = false;
 };
