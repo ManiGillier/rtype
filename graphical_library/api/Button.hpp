@@ -12,7 +12,6 @@ namespace bt {
     class Button {
     public:
         Button(int x, int y, int width, int height, int transparency = 255);
-        virtual auto ~Button() = 0;
         virtual auto Draw() const -> void = 0;
         virtual auto IsClicked() const -> bool = 0;
         virtual auto IsHovered() const -> bool = 0;
