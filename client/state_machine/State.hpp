@@ -32,12 +32,21 @@ public:
 
     auto update() -> std::unique_ptr<IState>;
     auto isEnd() -> bool { return false; }
+    template <class _State, class... Args>
+    auto change_state(Args &&...) -> void;
 protected:
-    auto change_state(std::unique_ptr<IState>) -> void;
     ClientManager &clientManager;
     Registry &registry;
 private:
     std::unique_ptr<IState> next_state = nullptr;
 };
+
+template <class _State, class... Args>
+auto State::change_state(Args &&... args) -> void
+{
+    this->next_state = std::make_unique<_State>
+        (this->clientManager, this->registry, args...);
+}
+
 
 #endif /* CLIENT_ABSTRACT_STATE_HPP */

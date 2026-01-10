@@ -12,11 +12,6 @@ State::State(ClientManager &cm, Registry &registry)
     : clientManager(cm), registry(registry)
 {}
 
-auto State::change_state(std::unique_ptr<IState> new_state) -> void
-{
-    this->next_state = std::move(new_state);
-}
-
 auto State::update() -> std::unique_ptr<IState>
 {
     this->registry.update();

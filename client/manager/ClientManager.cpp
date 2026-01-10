@@ -9,7 +9,7 @@
 
 #include <graphical_library/raylib/Raylib.hpp>
 
-#include "client/state_machine/states/lobby/Lobby.hpp"
+#include "client/state_machine/states/connecting/Connecting.hpp"
 
 /*#include "client/states/game/InGameState.hpp"
 #include "client/states/lobby/LobbyState.hpp"
@@ -23,7 +23,7 @@
 
 
 ClientManager::ClientManager()
-    : stateMachine(std::make_unique<Lobby>(*this, this->registry))
+    : stateMachine(std::make_unique<Connecting>(*this, this->registry))
 {
     this->gui = std::make_unique<Raylib>();
 

@@ -9,15 +9,12 @@
 
 #include "client/network/executor/AuthentifiedPacketExecutor.hpp"
 
-#include "systems/Systems.hpp"
 #include <iostream>
 #include <memory>
 
 ConnectingStateLogic::ConnectingStateLogic(IGameState &gs, NetworkManager &nm)
     : gameState(gs), networkManager(nm)
 {
-    this->networkManager.addExecutor
-        (std::make_unique<AuthentifiedPacketExecutor>(*this));
 }
 
 auto ConnectingStateLogic::update(Registry &r) -> State_old
