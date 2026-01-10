@@ -10,8 +10,8 @@
 #include "client/network/executor/AuthentifiedPacketExecutor.hpp"
 #include <memory>
 
-Connecting::Connecting(ClientManager &cm, Registry &r)
-    : State(cm, r)
+Connecting::Connecting(ClientManager &cm, Registry &r, Sync &s)
+    : State(cm, r, s)
 {}
 
 auto Connecting::init_systems() -> void

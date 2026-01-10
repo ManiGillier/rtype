@@ -7,8 +7,6 @@
 
 #include "logic.hpp"
 
-#include "client/network/executor/StartGameExecutor.hpp"
-
 //#include "systems/Systems.hpp"
 #include <iostream>
 #include <memory>
@@ -19,7 +17,6 @@ LobbyStateLogic::LobbyStateLogic(IGameState &gs, NetworkManager &nm)
     //Registry &r = this->gameState.getRegistry();
 
     //r.add_global_update_system(gameStart, std::ref(this->networkManager));
-    this->networkManager.addExecutor(std::make_unique<StartGameExecutor>(*this));
 }
 
 auto LobbyStateLogic::update(Registry &r) -> State_old

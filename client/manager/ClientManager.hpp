@@ -10,7 +10,8 @@
 
 #include "client/states/State.hpp"
 
-#include "ecs/regisrty/Registry.hpp"
+#include <ecs/regisrty/Registry.hpp>
+#include <ecs/sync/Sync.hpp>
 
 #include "client/api/IGameState.hpp"
 
@@ -46,6 +47,7 @@ private:
     std::unique_ptr<NetworkManager> networkManager;
 
     Registry registry;
+    Sync sync;
     StateMachine stateMachine;
     //State_old _state = NONE;
     //std::unique_ptr<IGameState> _internal_state = nullptr;

@@ -12,7 +12,7 @@
 
 class Connecting : public State {
 public:
-    Connecting(ClientManager &cm, Registry &r);
+    Connecting(ClientManager &cm, Registry &r, Sync &s);
 
     auto init_systems() -> void;
     auto init_entities() -> void;

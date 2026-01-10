@@ -23,7 +23,8 @@
 
 
 ClientManager::ClientManager()
-    : stateMachine(std::make_unique<Connecting>(*this, this->registry))
+    : stateMachine(std::make_unique<Connecting>
+        (*this, this->registry, this->sync))
 {
     this->gui = std::make_unique<Raylib>();
 

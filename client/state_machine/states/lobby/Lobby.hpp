@@ -12,7 +12,7 @@
 
 class Lobby : public State {
 public:
-    Lobby(ClientManager &cm, Registry &r);
+    Lobby(ClientManager &cm, Registry &r, Sync &s);
 
     auto init_systems() -> void;
     auto init_entities() -> void;
