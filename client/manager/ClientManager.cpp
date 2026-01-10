@@ -21,7 +21,6 @@
 #include <cstdlib>
 #include <memory>
 
-
 ClientManager::ClientManager()
     : stateMachine(std::make_unique<Connecting>
         (*this, this->registry, this->sync))

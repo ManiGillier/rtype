@@ -11,7 +11,6 @@
 
 #include "client/components/Color.hpp"
 
-#include "systems/Systems.hpp"
 
 #include "shared/components/Health.hpp"
 #include "shared/components/Dependence.hpp"
@@ -22,35 +21,11 @@
 #include <cstdint>
 #include <memory>
 
-#include "client/network/executor/NewPlayerExecutor.hpp"
-#include "client/network/executor/NewEnemyExecutor.hpp"
-#include "client/network/executor/NewBulletExecutor.hpp"
-#include "client/network/executor/DespawnPlayerExecutor.hpp"
-#include "client/network/executor/DespawnBulletExecutor.hpp"
-#include "client/network/executor/EnemyDiedExecutor.hpp"
-#include "client/network/executor/PlayerIdExecutor.hpp"
-#include "client/network/executor/GameOverExecutor.hpp"
-#include "client/network/executor/HealthUpdateExecutor.hpp"
-#include "client/network/executor/HitboxSizeUpdateExecutor.hpp"
-#include "client/network/executor/LaserActivateUpdateExecutor.hpp"
-#include "client/network/executor/PositionUpdateExecutor.hpp"
 #include <network/packets/impl/ClientInputsPacket.hpp>
 
 InGameStateLogic::InGameStateLogic(IGameState &gs, NetworkManager &nm)
     : gameState(gs), networkManager(nm)
 {
-    nm.addExecutor(std::make_unique<NewPlayerExecutor>(*this));
-    nm.addExecutor(std::make_unique<NewEnemyExecutor>(*this));
-    nm.addExecutor(std::make_unique<NewBulletExecutor>(*this));
-    nm.addExecutor(std::make_unique<DespawnPlayerExecutor>(*this));
-    nm.addExecutor(std::make_unique<DespawnBulletExecutor>(*this));
-    nm.addExecutor(std::make_unique<EnemyDiedExecutor>(*this));
-    nm.addExecutor(std::make_unique<PlayerIdExecutor>(*this));
-    nm.addExecutor(std::make_unique<GameOverExecutor>(*this));
-    nm.addExecutor(std::make_unique<HealthUpdateExecutor>(*this));
-    nm.addExecutor(std::make_unique<HitboxSizeUpdateExecutor>(*this));
-    nm.addExecutor(std::make_unique<LaserActiveUpdateExecutor>(*this));
-    nm.addExecutor(std::make_unique<PositionUpdateExecutor>(*this));
 }
 
 auto InGameStateLogic::update(Registry &r) -> State_old
@@ -60,48 +35,17 @@ auto InGameStateLogic::update(Registry &r) -> State_old
     return this->shouldStop ? State_old::END_STATE : State_old::NONE;
 }
 
-auto InGameStateLogic::newPlayer(std::size_t player_id, std::size_t laser_id)
+auto InGameStateLogic::newPlayer(std::size_t, std::size_t)
 -> void
 {
-    Registry &r = gameState.getRegistry();
-    Entity player = r.spawn_entity();
-    Entity laser = r.spawn_entity();
-
-    this->sync.add(player.getId(), player_id);
-    this->sync.add(laser.getId(), laser_id);
-    r.add_component<Position>(player, {-200, -500});
-    r.add_component<HitBox>(player, {20, 20});
-    r.add_component<ElementColor>(player, {gl::WHITE});
-    r.add_component<Health>(player, {0, 0});
-    r.add_component<PlayerId>(player, {this->playerId});
-    this->playerId++;
-
-    r.add_component<Dependence>(laser, {player.getId()});
-    r.add_component<Laser>(laser, {true, 30});
-    r.add_component<ElementColor>(laser, {gl::GREEN});
 }
 
-auto InGameStateLogic::newEnemy(std::size_t enemy_id) -> void
+auto InGameStateLogic::newEnemy(std::size_t) -> void
 {
-    Registry &r = gameState.getRegistry();
-    Entity enemy = r.spawn_entity();
-
-    this->sync.add(enemy.getId(), enemy_id);
-    r.add_component<Position>(enemy, {-200, -200});
-    r.add_component<HitBox>(enemy, {50, 50});
-    r.add_component<ElementColor>(enemy, {gl::MAGENTA});
-    r.add_component<Health>(enemy, {0, 0});
 }
 
-auto InGameStateLogic::newBullet(std::size_t bullet_id) -> void
+auto InGameStateLogic::newBullet(std::size_t) -> void
 {
-    Registry &r = gameState.getRegistry();
-    Entity bullet = r.spawn_entity();
-
-    this->sync.add(bullet.getId(), bullet_id);
-    r.add_component<Position>(bullet, {-250, -200});
-    r.add_component<HitBox>(bullet, {10, 10});
-    r.add_component<ElementColor>(bullet, {gl::BLUE});
 }
 
 auto InGameStateLogic::despawnEntity(std::size_t id) -> void
@@ -139,14 +83,13 @@ auto InGameStateLogic::updateHealth(std::size_t id, float health,
                                               (int) max_health);
 }
 
-auto InGameStateLogic::updateHitbox(std::size_t id, float width, float height)
+auto InGameStateLogic::updateHitbox(std::size_t id, float, float)
 -> void
 {
     std::optional<std::size_t> my_id = this->sync.get_mine_from_theirs(id);
 
     if (!my_id)
         return;
-    this->gameState.getRegistry().set<HitBox>(*my_id, width, height);
 }
 
 auto InGameStateLogic::updateLaser(std::size_t id, bool active, float length)

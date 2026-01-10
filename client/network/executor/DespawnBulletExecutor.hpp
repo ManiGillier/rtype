@@ -8,7 +8,7 @@
 #ifndef DESPAWNBULLET_EXECUTOR_HPP
 #define DESPAWNBULLET_EXECUTOR_HPP
 
-#include "client/states/game/logic.hpp"
+#include "client/state_machine/states/game/Game.hpp"
 
 #include <memory>
 #include <network/packets/listener/PacketExecutor.hpp>
@@ -18,13 +18,13 @@ class DespawnBulletExecutor : public PacketExecutorImplClient
 <DespawnBulletPacket, ClientPollable>
 {
 public:
-    DespawnBulletExecutor(InGameStateLogic &logic) : logic(logic) {}
+    DespawnBulletExecutor(Game &state) : state(state) {}
 
     bool execute([[maybe_unused]]Client &cl,
                  [[maybe_unused]] std::shared_ptr<ClientPollable> con,
                  [[maybe_unused]] std::shared_ptr<DespawnBulletPacket> packet)
     {
-        this->logic.despawnEntity(packet->getBulletId());
+        this->state.despawnEntity(packet->getBulletId());
         return true;
     }
 
@@ -32,7 +32,7 @@ public:
         return PacketId::DESPAWN_BULLET;
     }
 private:
-    [[maybe_unused]] InGameStateLogic &logic;
+    [[maybe_unused]] Game &state;
 };
 
 #endif /* DESPAWNBULLET_EXECUTOR_HPP */

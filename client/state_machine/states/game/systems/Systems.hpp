@@ -13,6 +13,7 @@
 #include "ecs/regisrty/Registry.hpp"
 
 #include "client/manager/TextureManager.hpp"
+#include "client/manager/NetworkManager.hpp"
 
 #include "shared/components/Position.hpp"
 #include "shared/components/HitBox.hpp"
@@ -63,6 +64,9 @@ auto renderPlayerId([[maybe_unused]] Registry &reg,
     containers::indexed_zipper<SparseArray<Position>,
                                SparseArray<PlayerId>> zip,
                     std::optional<std::size_t> &my_id)
+-> void;
+
+auto playerInputs([[maybe_unused]] Registry &r, NetworkManager &networkManager)
 -> void;
 
 #endif /* RENDER_SYSTEMS_HPP */
