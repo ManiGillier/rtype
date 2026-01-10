@@ -16,6 +16,9 @@ public:
     StateMachine(std::unique_ptr<IState>);
 
     auto switch_state(std::unique_ptr<IState>) -> void;
+    // Return true on end
+    auto init() -> void;
+    [[nodiscard]]  auto update() -> bool;
     auto operator*() -> IState &;
     auto operator->() -> IState *;
 private:

@@ -7,6 +7,8 @@
 
 #include "Lobby.hpp"
 
+#include "systems/Systems.hpp"
+
 #include <iostream>
 
 Lobby::Lobby(ClientManager &cm, Registry &r)
@@ -16,6 +18,8 @@ Lobby::Lobby(ClientManager &cm, Registry &r)
 auto Lobby::init_systems() -> void
 {
     std::cout << "Init systems" << std::endl;
+    this->registry.add_global_update_system
+        (gameStart, std::ref(this->clientManager.getNetworkManager()));
 }
 
 auto Lobby::init_entities() -> void

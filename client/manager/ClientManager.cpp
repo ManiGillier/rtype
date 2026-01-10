@@ -9,9 +9,11 @@
 
 #include <graphical_library/raylib/Raylib.hpp>
 
-#include "client/states/game/InGameState.hpp"
+#include "client/state_machine/states/lobby/Lobby.hpp"
+
+/*#include "client/states/game/InGameState.hpp"
 #include "client/states/lobby/LobbyState.hpp"
-#include "client/states/connecting/ConnectingState.hpp"
+#include "client/states/connecting/ConnectingState.hpp"*/
 
 #include <iostream>
 #include <network/logger/Logger.hpp>
@@ -19,11 +21,14 @@
 #include <cstdlib>
 #include <memory>
 
+
 ClientManager::ClientManager()
+    : stateMachine(std::make_unique<Lobby>(*this, this->registry))
 {
     this->gui = std::make_unique<Raylib>();
 
     this->gui->init();
+    /*
     this->_gameStateFactory[AUTHENTIFICATION] = [this] {
         return std::make_unique<ConnectingState>(*this);
     };
@@ -33,20 +38,25 @@ ClientManager::ClientManager()
     this->_gameStateFactory[IN_GAME] = [this] {
         return std::make_unique<InGameState>(*this);
     };
+    */
 }
 
+/*
 inline auto ClientManager::changeInternalState(std::unique_ptr<IGameState> state)
 -> void
 {
     this->_internal_state = std::move(state);
 }
+*/
 
+/*
 auto ClientManager::changeState(const State_old state) -> void
 {
     this->networkManager->resetExecutors();
     this->changeInternalState(this->_gameStateFactory[state]());
     this->_state = state;
 }
+*/
 
 auto ClientManager::launch(int argc, char **argv) -> void
 {
@@ -61,7 +71,7 @@ auto ClientManager::launch(int argc, char **argv) -> void
         std::make_unique<NetworkManager>(argv[1], std::atoi(argv[2]));
 
     LOG("Starting game.");
-    this->changeState(AUTHENTIFICATION);
+    this->stateMachine.init();
     this->loop();
 }
 
@@ -71,17 +81,14 @@ auto ClientManager::loop() -> void
         if (this->networkManager->isStopped())
             break;
         this->networkManager->getClient().executePackets();
-        State_old new_state = this->getState().update();
-
-        if (new_state == State_old::END_STATE)
-            break;
         this->getGui().start_new_frame();
-        this->getState().render();
+        if (this->stateMachine.update()) {
+            this->getGui().end_frame();
+            break;
+        }
         this->getGui().end_frame();
         if (this->getGui().should_close())
             break;
-        if (new_state != State_old::NONE)
-            this->changeState(new_state);
     }
     this->unload();
 }

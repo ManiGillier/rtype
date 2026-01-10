@@ -9,16 +9,16 @@
 
 #include "client/network/executor/StartGameExecutor.hpp"
 
-#include "systems/Systems.hpp"
+//#include "systems/Systems.hpp"
 #include <iostream>
 #include <memory>
 
 LobbyStateLogic::LobbyStateLogic(IGameState &gs, NetworkManager &nm)
     : gameState(gs), networkManager(nm)
 {
-    Registry &r = this->gameState.getRegistry();
+    //Registry &r = this->gameState.getRegistry();
 
-    r.add_global_update_system(gameStart, std::ref(this->networkManager));
+    //r.add_global_update_system(gameStart, std::ref(this->networkManager));
     this->networkManager.addExecutor(std::make_unique<StartGameExecutor>(*this));
 }
 
