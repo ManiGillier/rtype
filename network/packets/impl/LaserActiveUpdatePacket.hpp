@@ -15,56 +15,36 @@
 
 class LaserActiveUpdatePacket : public Packet
 {
-  public:
+public:
     LaserActiveUpdatePacket(std::size_t id = 0, bool active = false,
-                            float length = 0.0)
-        : Packet(PacketId::LASER_ACTIVE_UPDATE), id(id), active(active),
-          length(length)
-    {
-    }
+                            float length = 0.0) :
+        Packet(PacketId::LASER_ACTIVE_UPDATE), id(id), active(active),
+        length(length) {}
 
-    enum PacketMode getMode() const override
-
-    {
+    enum PacketMode getMode() const override {
         return PacketMode::UDP;
     }
 
-    void serialize() override
-
-    {
+    void serialize() override {
         this->write(id);
         this->write(active);
         this->write(length);
     }
-    void unserialize() override
-
-    {
+    void unserialize()override {
         this->read(id);
         this->read(active);
         this->read(length);
     }
 
-    const std::string getName() override
-
-    {
+    const std::string getName() override {
         return "LaserActiveUpdatePacket";
     }
 
-    void display() override
-
-    {
-        std::cout << "Id=" << this->id << ", " << (this->active ? "ON" : "OFF")
-                  << ", length=" << this->length;
-    }
-    auto getSize() const -> int override
-
-    {
-        return sizeof(std::size_t) + sizeof(bool) + sizeof(float);
+    PacketDisplay display() const override {
+        return {"Id", this->id, "active", this->active ? "ON" : "OFF", "length", this->length};
     }
 
-    std::shared_ptr<Packet> clone() const override
-
-    {
+    std::shared_ptr<Packet> clone() const override {
         return make_copy(LaserActiveUpdatePacket);
     }
 
@@ -80,20 +60,10 @@ class LaserActiveUpdatePacket : public Packet
                 this->isActive() == other.isActive());
     }
 
-    auto getEntityId() const -> std::size_t
-    {
-        return this->id;
-    }
-    auto isActive() const -> bool
-    {
-        return this->active;
-    }
-    auto getLength() const -> float
-    {
-        return this->length;
-    }
-
-  private:
+    auto getEntityId() const -> std::size_t { return this->id; }
+    auto isActive() const -> bool { return this->active; }
+    auto getLength() const -> float { return this->length; }
+private:
     std::size_t id;
     bool active;
     float length;

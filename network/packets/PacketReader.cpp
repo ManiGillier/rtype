@@ -28,27 +28,27 @@ bool PacketReader::readPacket(void)
     while (true) {
         if (readData.empty())
             return true;
+        uint8_t packetId = 0;
         if (currentPacket == nullptr) {
-            currentPacket = PacketManager::getInstance().createPacketById(readData.front(), this->mode);
-            readData.pop();
+            packetId = readData[0];
+            currentPacket = PacketManager::getInstance().createPacketById(packetId, this->mode);
+            readData.erase(readData.begin());
         }
         if (currentPacket == nullptr) {
-            LOG_ERR("Received wrong packet, disconnecting " << this->_fd << std::endl);
+            LOG_ERR("Received wrong packet, disconnecting " << this->_fd << "(ID=" << (int) packetId  << ")");
             return false;
         }
-        std::size_t packetSize = (std::size_t) currentPacket->getSize();
-        if (packetSize > readData.size())
+        currentPacket->setData(readData);
+        try {
+            currentPacket->unserialize();
+        } catch (const std::exception &) {
             return true;
-        std::queue<uint8_t> _arr;
-        for (std::size_t i = 0; i < packetSize; i++) {
-            _arr.push(readData.front());
-            readData.pop();
         }
-        currentPacket->setData(_arr);
-        currentPacket->unserialize();
         receivedPackets.push(currentPacket);
         PacketLogger::logPacket(currentPacket,
-                 PacketLogger::PacketMethod::RECEIVED, this->_fd);
+            PacketLogger::PacketMethod::RECEIVED, this->_fd);
+        readData.erase(readData.begin(), std::next(readData.begin(),
+            static_cast<std::ptrdiff_t>(currentPacket->getReadCursor())));
         currentPacket = nullptr;
     }
     return true;
@@ -63,7 +63,7 @@ bool PacketReader::createBuffer(void)
     if (newlyReadBytes == 0)
         return false;
     for (ssize_t i = 0; i < newlyReadBytes; i++)
-        this->readData.push(_readBuff[i]);
+        this->readData.push_back(_readBuff[i]);
     return true;
 }
 

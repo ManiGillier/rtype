@@ -15,53 +15,34 @@
 
 class PositionUpdatePacket : public Packet
 {
-  public:
-    PositionUpdatePacket(std::size_t id = 0, float x = 0.0, float y = 0.0)
-        : Packet(PacketId::POSITION_UPDATE), id(id), x(x), y(y)
-    {
-    }
+public:
+    PositionUpdatePacket(std::size_t id = 0, float x = 0.0, float y = 0.0) :
+        Packet(PacketId::POSITION_UPDATE), id(id), x(x), y(y) {}
 
-    enum PacketMode getMode() const override
-    {
+    enum PacketMode getMode() const override {
         return PacketMode::UDP;
     }
 
-    void serialize() override
-
-    {
+    void serialize() override {
         this->write(id);
         this->write(x);
         this->write(y);
     }
-    void unserialize() override
-
-    {
+    void unserialize() override {
         this->read(id);
         this->read(x);
         this->read(y);
     }
 
-    const std::string getName() override
-
-    {
+    const std::string getName() override {
         return "PositionUpdatePacket";
     }
 
-    void display() override
-
-    {
-        std::cout << "Id=" << this->id << ", x=" << this->x
-                  << ", y=" << this->y;
-    }
-    auto getSize() const -> int override
-
-    {
-        return sizeof(std::size_t) + (sizeof(float) * 2);
+    PacketDisplay display() const override {
+        return {"Id", this->id, "x", this->x, "y", this->y};
     }
 
-    std::shared_ptr<Packet> clone() const override
-
-    {
+    std::shared_ptr<Packet> clone() const override {
         return make_copy(PositionUpdatePacket);
     }
 
@@ -77,20 +58,10 @@ class PositionUpdatePacket : public Packet
                 this->getYPos() == other.getYPos());
     }
 
-    auto getEntityId() const -> std::size_t
-    {
-        return this->id;
-    }
-    auto getXPos() const -> float
-    {
-        return this->x;
-    }
-    auto getYPos() const -> float
-    {
-        return this->y;
-    }
-
-  private:
+    auto getEntityId() const -> std::size_t { return this->id; }
+    auto getXPos() const -> float { return this->x; }
+    auto getYPos() const -> float { return this->y; }
+private:
     std::size_t id;
     float x;
     float y;

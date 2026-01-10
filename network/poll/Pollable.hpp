@@ -68,9 +68,14 @@ class Pollable : public IPollable {
                 return this->toProcessUDP;
         }
 
+        uint16_t &getUDPPacketCount() {
+            return this->packetCount;
+        }
+
     protected:
         std::queue<std::shared_ptr<Packet>> toProcess;
         std::vector<std::tuple<std::shared_ptr<Packet>, std::optional<sockaddr_in>>> toProcessUDP;
+        uint16_t packetCount = 0;
     private:
         std::optional<sockaddr_in> address = std::nullopt;
         uint32_t uuid;

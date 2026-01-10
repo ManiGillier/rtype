@@ -39,12 +39,17 @@ class Client {
         void setAuthentified(bool auth);
         bool isAuthentified() const;
         uint32_t getUUID()  const;
+        void updateSequenceNum(uint16_t receivedSequence);
+        double getPacketLossPercentage() const;
         void executePackets();
         std::mutex udpLockSend;
         std::mutex tcpLockSend;
     private:
         void sendUDPPackets();
         std::string ip;
+        uint16_t lastReceivedSeqNum = 0;
+        bool firstUDPPacket = true;
+        uint32_t totalPacketsLost = 0;
         int port;
         int udpSocket;
         int fd = -1;
