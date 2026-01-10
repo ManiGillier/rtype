@@ -18,9 +18,10 @@ public:
     void writePackets();
     std::queue<std::shared_ptr<Packet>> getPackets() const;
     void setFd(int fd);
+    bool shouldSend() const;
 private:
     int _fd;
-    std::queue<std::shared_ptr<Packet>> packets;
+    std::vector<uint8_t> dataQueue;
 };
 
 #endif /* !PACKETSENDER_HPP_ */

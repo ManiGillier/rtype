@@ -42,20 +42,12 @@ public:
         this->read(inputs);
     }
 
-    auto getSize() const -> int { return sizeof(ClientInputs); }
-
     const std::string getName() {
         return "ClientInputsPacket";
     }
 
-    void display() {
-        std::cout << "Inputs={";
-        if (this->inputs.value.left) std::cout << "LEFT,";
-        if (this->inputs.value.right) std::cout << "RIGHT,";
-        if (this->inputs.value.up) std::cout << "UP,";
-        if (this->inputs.value.down) std::cout << "DOWN,";
-        if (this->inputs.value.shoot) std::cout << "SHOOT,";
-        std::cout << "}";
+    PacketDisplay display() const {
+        return {"Inputs", this->inputs};
     }
 
     std::shared_ptr<Packet> clone() const {
@@ -66,5 +58,15 @@ public:
  private:
     ClientInputs inputs;
 };
+
+inline std::ostream& operator<<(std::ostream &out, ClientInputs const &inputs)
+{
+    if (inputs.value.left)  out << "LEFT,";
+    if (inputs.value.right) out << "RIGHT,";
+    if (inputs.value.up)    out << "UP,";
+    if (inputs.value.down)  out << "DOWN,";
+    if (inputs.value.shoot) out << "SHOOT,";
+    return out;
+}
 
 #endif /* CLIENTINPUTS_PACKET_HPP */

@@ -38,12 +38,9 @@ public:
         return "PositionUpdatePacket";
     }
 
-    void display() {
-        std::cout << "Id=" << this->id << ", x=" << this->x << ", y="
-        << this->y;
+    PacketDisplay display() const {
+        return {"Id", this->id, "x", this->x, "y", this->y};
     }
-    auto getSize() const -> int { return sizeof(std::size_t)
-                                         + (sizeof(float) * 2); }
 
     std::shared_ptr<Packet> clone() const {
         return make_copy(PositionUpdatePacket);

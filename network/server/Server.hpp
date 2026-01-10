@@ -90,6 +90,8 @@ class Server {
         int getMaxConnections() const;
         bool canConnect() const; 
         void setConnect(bool c);
+        void sendAll(std::shared_ptr<Packet> p);
+        void sendAll(std::vector<std::shared_ptr<IPollable>> clients, std::shared_ptr<Packet> p);
         virtual ~Server() = default;
         std::mutex udpLock;
         std::mutex tcpLock;

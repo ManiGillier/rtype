@@ -30,14 +30,12 @@ public:
         this->read(id);
     }
 
-    auto getSize() const -> int { return sizeof(std::size_t); }
-
     const std::string getName() {
         return "DespawnBulletPacket";
     }
 
-    void display() {
-        std::cout << "Id=" << this->id;
+    PacketDisplay display() const {
+        return {"Id", this->id};
     }
 
     std::shared_ptr<Packet> clone() const {
