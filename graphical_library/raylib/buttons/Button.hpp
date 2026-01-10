@@ -8,8 +8,6 @@
 #ifndef BUTTON_HPP
 #define BUTTON_HPP
 
-#include <graphical_library/api/Button.hpp>
-
 class Button : bt::Button
 {
 public:
