@@ -24,7 +24,8 @@ auto Lobby::init_systems() -> void
     this->registry.reset_render_systems();
 
     this->registry.add_global_update_system
-        (gameStart, std::ref(this->clientManager.getNetworkManager()));
+        (gameStart, std::ref(this->clientManager.getGui()),
+         std::ref(this->clientManager.getNetworkManager()));
     this->registry.add_global_render_system
         (lobbyText, std::ref(this->clientManager.getGui()));
 

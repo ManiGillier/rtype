@@ -22,6 +22,8 @@ namespace raylib {
 class Raylib : public gl::GraphicalLibrary
 {
 public:
+    Raylib();
+
     auto init() -> void;
     auto deinit() -> void;
 
@@ -53,12 +55,26 @@ public:
     auto play(gl::Sound) -> void;
 
     auto loadEverything() -> void;
+
+    auto registerEvent(std::string eventName, gl::Key key = gl::UNDEFINED)
+        -> void;
+    auto bindKey(std::string eventName, gl::Key key) -> void;
+    auto isEventStart(std::string eventName) -> bool;
+    auto isEventActive(std::string eventName) -> bool;
+protected:
+    auto convertKey(gl::Key key) -> int;
+    auto isKeyPressed(gl::Key key) -> bool;
+    auto isKeyDown(gl::Key key) -> bool;
 private:
     std::queue<std::pair<std::string, std::filesystem::path>> texturesToLoad;
     std::map<std::string, std::pair<gl::Texture, raylib::Texture>> textures;
 
     std::queue<std::pair<std::string, std::filesystem::path>> soundsToLoad;
     std::map<std::string, std::pair<gl::Sound, raylib::Sound>> sounds;
+
+    std::map<std::string, gl::Key> keybinds;
+
+    const std::map<gl::Key, int> keymap;
 };
 
 #endif // RAYLIB_H_

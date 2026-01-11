@@ -55,9 +55,6 @@ auto renderHTiledTexture([[maybe_unused]] Registry &r,
     gl::GraphicalLibrary &)
 -> void;
 
-auto laserSound([[maybe_unused]] Registry &r, gl::GraphicalLibrary &gl)
--> void;
-
 auto renderPlayerId([[maybe_unused]] Registry &reg,
     containers::indexed_zipper<SparseArray<Position>,
                                SparseArray<PlayerId>> zip,
@@ -65,7 +62,8 @@ auto renderPlayerId([[maybe_unused]] Registry &reg,
                     std::optional<std::size_t> &my_id)
 -> void;
 
-auto playerInputs([[maybe_unused]] Registry &r, NetworkManager &networkManager)
+auto playerInputs([[maybe_unused]] Registry &r, gl::GraphicalLibrary &gl,
+                  NetworkManager &networkManager)
 -> void;
 
 #endif /* RENDER_SYSTEMS_HPP */

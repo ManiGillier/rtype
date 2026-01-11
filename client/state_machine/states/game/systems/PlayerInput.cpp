@@ -8,26 +8,22 @@
 #include <ecs/regisrty/Registry.hpp>
 #include "client/manager/NetworkManager.hpp"
 #include <network/packets/impl/ClientInputsPacket.hpp>
+#include <graphical_library/api/GraphicalLibrary.hpp>
 
-namespace raylib {
-    #include <raylib.h>
-}
-
-auto playerInputs([[maybe_unused]] Registry &r, NetworkManager &networkManager)
+auto playerInputs([[maybe_unused]] Registry &r, gl::GraphicalLibrary &gl,
+                  NetworkManager &networkManager)
 -> void
 {
     ClientInputs clientInputs = {0};
 
-    clientInputs.value.left = IsKeyDown(raylib::KEY_LEFT)
-                              || IsKeyDown(raylib::KEY_Q);
-    clientInputs.value.right = IsKeyDown(raylib::KEY_RIGHT)
-                               || IsKeyDown(raylib::KEY_D);
-    clientInputs.value.up = IsKeyDown(raylib::KEY_UP)
-                            || IsKeyDown(raylib::KEY_Z);
-    clientInputs.value.down = IsKeyDown(raylib::KEY_DOWN)
-                              || IsKeyDown(raylib::KEY_S);
-    clientInputs.value.shoot = IsKeyDown(raylib::KEY_SPACE)
-                               || IsMouseButtonDown(raylib::MOUSE_BUTTON_LEFT);
+    clientInputs.value.left = gl.isEventActive("move_left");
+    clientInputs.value.right = gl.isEventActive("move_right");
+    clientInputs.value.up = gl.isEventActive("move_up");
+    clientInputs.value.down = gl.isEventActive("move_down");
+    clientInputs.value.shoot = gl.isEventActive("shoot");
+
+    if (gl.isEventStart("shoot"))
+        gl.play(gl.getSound("laser"));
 
     networkManager
         .sendPacket(std::make_shared<ClientInputsPacket>(clientInputs));

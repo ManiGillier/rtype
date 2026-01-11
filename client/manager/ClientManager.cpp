@@ -34,6 +34,13 @@ ClientManager::ClientManager()
     this->gui->registerSound("client/assets/new_player.mp3", "new_player");
     this->gui->registerSound("client/assets/despawn_player.mp3",
                              "despawn_player");
+
+    this->gui->registerEvent("start_game", gl::Key::SPACE);
+    this->gui->registerEvent("shoot", gl::Key::SPACE);
+    this->gui->registerEvent("move_left", gl::Key::ARROW_LEFT);
+    this->gui->registerEvent("move_right", gl::Key::ARROW_RIGHT);
+    this->gui->registerEvent("move_up", gl::Key::ARROW_UP);
+    this->gui->registerEvent("move_down", gl::Key::ARROW_DOWN);
 }
 
 /*

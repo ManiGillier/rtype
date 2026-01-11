@@ -15,7 +15,8 @@
 
 #include <graphical_library/api/GraphicalLibrary.hpp>
 
-auto gameStart([[maybe_unused]] Registry &r, NetworkManager &networkManager)
+auto gameStart([[maybe_unused]] Registry &r, gl::GraphicalLibrary &gl,
+               NetworkManager &networkManager)
 -> void;
 
 auto lobbyText([[maybe_unused]] Registry &r, gl::GraphicalLibrary &gl)

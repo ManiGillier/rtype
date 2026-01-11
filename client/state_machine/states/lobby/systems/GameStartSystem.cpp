@@ -11,12 +11,14 @@
 
 #include "network/packets/impl/StartGamePacket.hpp"
 
-#include <memory>
-#include <raylib.h>
+#include <graphical_library/api/GraphicalLibrary.hpp>
 
-auto gameStart([[maybe_unused]] Registry &r, NetworkManager &networkManager)
+#include <memory>
+
+auto gameStart([[maybe_unused]] Registry &r, gl::GraphicalLibrary &gl,
+               NetworkManager &networkManager)
 {
-    if (IsKeyPressed(KEY_SPACE)) {
+    if (gl.isEventStart("start_game")) {
         std::shared_ptr<Packet> p = std::make_shared<StartGamePacket>();
         networkManager.sendPacket(p);
     }

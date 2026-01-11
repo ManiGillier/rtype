@@ -77,11 +77,9 @@ auto Game::init_systems() -> void
         (renderPlayerId, std::ref(this->getGraphicalLibrary()),
          std::ref(this->clientId));
 
-    this->registry.add_global_render_system
-        (laserSound, std::ref(this->clientManager.getGui()));
-
     this->registry.add_global_update_system
-        (playerInputs, std::ref(this->clientManager.getNetworkManager()));
+        (playerInputs, std::ref(this->clientManager.getGui()),
+         std::ref(this->clientManager.getNetworkManager()));
 
     nm.addExecutor(std::make_unique<NewPlayerExecutor>(*this));
     nm.addExecutor(std::make_unique<NewEnemyExecutor>(*this));

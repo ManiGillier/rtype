@@ -9,6 +9,7 @@
 #define CLIENT_GRAPHICAL_LIBRARY_HPP
 
 #include "Color.hpp"
+#include "Key.hpp"
 #include "Sound.hpp"
 #include "Text.hpp"
 #include "Texture.hpp"
@@ -59,6 +60,12 @@ namespace gl {
         virtual auto play(Sound) -> void = 0;
 
         virtual auto loadEverything() -> void = 0;
+
+        virtual auto registerEvent(std::string eventName, Key key = UNDEFINED)
+            -> void = 0;
+        virtual auto bindKey(std::string eventName, Key key) -> void = 0;
+        virtual auto isEventStart(std::string eventName) -> bool = 0;
+        virtual auto isEventActive(std::string eventName) -> bool = 0;
     };
 }
 

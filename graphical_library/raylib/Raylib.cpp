@@ -8,6 +8,45 @@
 #include "Raylib.hpp"
 #include <iostream>
 
+Raylib::Raylib()
+: keymap({
+    { gl::Key::A, raylib::KEY_A },
+    { gl::Key::B, raylib::KEY_B },
+    { gl::Key::C, raylib::KEY_C },
+    { gl::Key::D, raylib::KEY_D },
+    { gl::Key::E, raylib::KEY_E },
+    { gl::Key::F, raylib::KEY_F },
+    { gl::Key::G, raylib::KEY_G },
+    { gl::Key::H, raylib::KEY_H },
+    { gl::Key::I, raylib::KEY_I },
+    { gl::Key::J, raylib::KEY_J },
+    { gl::Key::K, raylib::KEY_K },
+    { gl::Key::L, raylib::KEY_L },
+    { gl::Key::M, raylib::KEY_M },
+    { gl::Key::N, raylib::KEY_N },
+    { gl::Key::O, raylib::KEY_O },
+    { gl::Key::P, raylib::KEY_P },
+    { gl::Key::Q, raylib::KEY_Q },
+    { gl::Key::R, raylib::KEY_R },
+    { gl::Key::S, raylib::KEY_S },
+    { gl::Key::T, raylib::KEY_T },
+    { gl::Key::U, raylib::KEY_U },
+    { gl::Key::V, raylib::KEY_V },
+    { gl::Key::W, raylib::KEY_W },
+    { gl::Key::X, raylib::KEY_X },
+    { gl::Key::Y, raylib::KEY_Y },
+    { gl::Key::Z, raylib::KEY_Z },
+    { gl::Key::ARROW_LEFT, raylib::KEY_LEFT },
+    { gl::Key::ARROW_RIGHT, raylib::KEY_RIGHT },
+    { gl::Key::ARROW_UP, raylib::KEY_UP },
+    { gl::Key::ARROW_DOWN, raylib::KEY_DOWN },
+    { gl::Key::ESCAPE, raylib::KEY_ESCAPE },
+    { gl::Key::ENTER, raylib::KEY_ENTER },
+    { gl::Key::SHIFT, raylib::KEY_LEFT_SHIFT},
+    { gl::Key::SPACE, raylib::KEY_SPACE},
+})
+{}
+
 auto Raylib::init() -> void
 {
     raylib::InitWindow(900, 600, "TODO: Change title");
@@ -190,4 +229,49 @@ auto Raylib::get_window_size() -> gl::Vector2ui
 auto Raylib::getDeltaTime() -> float
 {
     return raylib::GetFrameTime();
+}
+
+auto Raylib::registerEvent(std::string eventName, gl::Key key) -> void
+{
+    this->keybinds[eventName] = key;
+}
+
+auto Raylib::bindKey(std::string eventName, gl::Key key) -> void
+{
+    if (!this->keybinds.contains(eventName))
+        return;
+    this->keybinds[eventName] = key;
+}
+
+auto Raylib::isEventStart(std::string eventName) -> bool
+{
+    if (!this->keybinds.contains(eventName))
+        return false;
+    return this->isKeyPressed(this->keybinds.at(eventName));
+}
+
+auto Raylib::isEventActive(std::string eventName) -> bool
+{
+    if (!this->keybinds.contains(eventName))
+        return false;
+    return this->isKeyDown(this->keybinds.at(eventName));
+}
+
+auto Raylib::isKeyPressed(gl::Key key) -> bool
+{
+    if(key == gl::UNDEFINED)
+        return false;
+    return raylib::IsKeyPressed(this->convertKey(key));
+}
+
+auto Raylib::isKeyDown(gl::Key key) -> bool
+{
+    if(key == gl::UNDEFINED)
+        return false;
+    return raylib::IsKeyDown(this->convertKey(key));
+}
+
+auto Raylib::convertKey(gl::Key key) -> int
+{
+    return this->keymap.at(key);
 }
