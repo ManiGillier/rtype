@@ -5,8 +5,8 @@
 ** raylib
 */
 
-#ifndef RENDER_H_
-#define RENDER_H_
+#ifndef CLIENT_RENDERER_HPP
+#define CLIENT_RENDERER_HPP
 
 #include <graphical_library/api/MyButton.hpp>
 #include <graphical_library/api/MyCheck.hpp>
@@ -25,7 +25,10 @@ namespace gl {
         virtual void DeleteButton(size_t i) = 0;
         virtual void DeleteCheckBox(size_t i) = 0;
         virtual void Clear() = 0;
-        virtual auto &GetButton(int i) -> MyButton = 0;
-        virtual auto &GetCheckBox(int i) -> MyCheckBox = 0;
+        virtual const Button &GetButton(int i) const = 0;
+        virtual const Checkbox &GetCheckBox(int i) const = 0;
+        virtual Button &GetButton(int i) = 0;
+        virtual Checkbox &GetCheckBox(int i) = 0;
     };
 }
+#endif // RENDERER_HPP_
