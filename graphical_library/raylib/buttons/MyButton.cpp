@@ -6,7 +6,6 @@
 */
 
 #include "MyButton.hpp"
-#include <iostream>
 
 MyButton::MyButton(int x, int y, int width, int height,
     Color buttonColor, Color hoveredButtonColor, int transparency)
@@ -51,7 +50,6 @@ void MyButton::Update() {
 bool MyButton::IsClicked() {
 
     return this->clicked;
-}
 
 bool MyButton::IsHovered() {
     return this->hovered;
