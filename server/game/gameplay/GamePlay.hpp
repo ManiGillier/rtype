@@ -28,6 +28,7 @@ class GamePlay
 
   private:
     void spawnBoss();
+    void removeDeadBoss();
     NetworkManager &_networkManager;
     Registry &_regisrty;
     EntityFactory &_factory;

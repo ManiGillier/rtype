@@ -18,6 +18,7 @@ class Boss
   public:
     Boss(NetworkManager &nm, Registry &r, EntityFactory &factory);
     ~Boss() = default;
+    std::size_t getId() const;
     void shoot();
 
   private:

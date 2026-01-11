@@ -23,6 +23,11 @@ Boss::Boss(NetworkManager &nm, Registry &r, EntityFactory &factory)
     _start = std::chrono::steady_clock::now();
 }
 
+std::size_t Boss::getId() const
+{
+    return _id;
+}
+
 void Boss::shoot()
 {
     auto now = std::chrono::steady_clock::now();

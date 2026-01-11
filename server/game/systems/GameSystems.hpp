@@ -55,6 +55,16 @@ auto player_velocity_system(Registry &r,
 auto player_laser_system(Registry &r,
                          std::shared_ptr<ClientInputsPacket> packet,
                          std::size_t id) -> void;
+
+auto collision_system(
+    Registry &r,
+    containers::indexed_zipper<SparseArray<Position>, SparseArray<HitBox>>
+        zipper, NetworkManager &nm) -> void;
+
+auto health_system(Registry &r,
+                    containers::indexed_zipper<SparseArray<Health>> zipper,
+                    NetworkManager &nm) -> void;
+
 } // namespace Systems
 
 #endif /* COMP_POSITION_HPP */

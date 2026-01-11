@@ -1,5 +1,6 @@
 #include "GamePlay.hpp"
 #include "server/game/factories/EntityFactory.hpp"
+#include "shared/components/Position.hpp"
 #include <memory>
 
 GamePlay::GamePlay(NetworkManager &nm, Registry &r, EntityFactory &factory)
@@ -12,6 +13,8 @@ GamePlay::GamePlay(NetworkManager &nm, Registry &r, EntityFactory &factory)
 
 void GamePlay::update()
 {
+    this->removeDeadBoss();
+
     if (_state == GameState::waiting) {
         auto now = std::chrono::steady_clock::now();
         auto elapsed =
@@ -30,4 +33,15 @@ void GamePlay::spawnBoss()
 {
     this->_bosses.push_back(
         std::make_unique<Boss>(_networkManager, _regisrty, _factory));
+}
+
+void GamePlay::removeDeadBoss()
+{
+    for (auto it = _bosses.begin(); it != _bosses.end();) {
+        auto bossPos = _regisrty.get<Position>(it->get()->getId());
+        if (!bossPos.has_value())
+            it = _bosses.erase(it);
+        else
+            ++it;
+    }
 }

@@ -5,6 +5,7 @@
 #include "components/Pattern.hpp"
 #include "components/Resistance.hpp"
 #include "components/Velocity.hpp"
+#include "components/Tag.hpp"
 #include "gameplay/GamePlay.hpp"
 #include "network/logger/Logger.hpp"
 #include "network/packets/Packet.hpp"
@@ -106,6 +107,7 @@ void Game::initializeComponents()
     _registry.register_component<Laser>();
     _registry.register_component<Position>();
     _registry.register_component<Pattern>();
+    _registry.register_component<Tag>();
 }
 
 void Game::initializeSystems()
@@ -117,6 +119,11 @@ void Game::initializeSystems()
         Systems::pattern_system, std::ref(_networkManager));
     _registry.add_update_system<Position, Laser>(Systems::update_laser_system,
                                                  std::ref(_networkManager));
+    _registry.add_update_system<Position, HitBox>(Systems::collision_system,
+                                                  std::ref(_networkManager));
+
+    _registry.add_update_system<Health>(Systems::health_system,
+                                                  std::ref(_networkManager));
 }
 
 void Game::resetPlayersEntities()
