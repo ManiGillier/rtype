@@ -28,7 +28,6 @@ public:
 
 private:
     bool hovered;
-    bool active;
     int posX;
     int posY;
     int sizeX;
