@@ -81,7 +81,6 @@ void Lobby::startGame(int ticks)
     this->_game.loop(ticks);
     LOG("game end");
     this->_inGame = false;
-    exit(8);
 }
 
 Game &Lobby::getGame()
