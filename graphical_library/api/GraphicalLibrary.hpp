@@ -9,8 +9,12 @@
 #define CLIENT_GRAPHICAL_LIBRARY_HPP
 
 #include "Color.hpp"
-#include "shapes/Rectangle.hpp"
 #include "Text.hpp"
+#include "Texture.hpp"
+#include "shapes/Rectangle.hpp"
+
+#include <filesystem>
+#include <string>
 
 namespace gl {
     class GraphicalLibrary
@@ -28,10 +32,19 @@ namespace gl {
 
         virtual auto draw(gl::Rectangle rect) -> void = 0;
         virtual auto draw(gl::Text text) -> void = 0;
+        virtual auto draw(gl::Texture texture) -> void = 0;
 
         virtual auto getTextWidth(gl::Text text) -> int = 0;
         virtual auto getTextWidth(const std::string &txt, int fontSize)
             -> int = 0;
+
+        virtual auto registerTexture(std::filesystem::path, std::string)
+            -> void = 0;
+        virtual auto loadAllTextures() -> void = 0;
+
+        virtual auto loadTexture(std::filesystem::path, std::string)
+            -> Texture = 0;
+        virtual auto getTexture(std::string) -> Texture = 0;
     };
 }
 

@@ -28,17 +28,8 @@ ClientManager::ClientManager()
     this->gui = std::make_unique<Raylib>();
 
     this->gui->init();
-    /*
-    this->_gameStateFactory[AUTHENTIFICATION] = [this] {
-        return std::make_unique<ConnectingState>(*this);
-    };
-    this->_gameStateFactory[LOBBY] = [this] {
-        return std::make_unique<LobbyState>(*this);
-    };
-    this->_gameStateFactory[IN_GAME] = [this] {
-        return std::make_unique<InGameState>(*this);
-    };
-    */
+
+    this->gui->registerTexture("client/assets/background.jpg", "background");
 }
 
 /*
@@ -71,6 +62,7 @@ auto ClientManager::launch(int argc, char **argv) -> void
         std::make_unique<NetworkManager>(argv[1], std::atoi(argv[2]));
 
     LOG("Starting game.");
+    this->gui->loadAllTextures();
     this->stateMachine.init();
     this->loop();
 }

@@ -25,6 +25,5 @@ InGameStateGui::InGameStateGui(IGameState &gm, NetworkManager &nm,
 
 auto InGameStateGui::render(Registry &r) -> void
 {
-    this->textureManager.loadTextures();
     r.render();
 }

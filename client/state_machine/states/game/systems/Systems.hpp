@@ -12,7 +12,6 @@
 
 #include "ecs/regisrty/Registry.hpp"
 
-#include "client/manager/TextureManager.hpp"
 #include "client/manager/NetworkManager.hpp"
 
 #include "shared/components/Position.hpp"
@@ -48,13 +47,13 @@ auto renderLaser([[maybe_unused]] Registry &reg,
 auto animateTiling([[maybe_unused]] Registry &r,
     containers::indexed_zipper<SparseArray<HorizontalTiling>,
                                SparseArray<TextureComp>> zip,
-    TextureManager &manager)
+    gl::GraphicalLibrary &)
 -> void;
 
 auto renderHTiledTexture([[maybe_unused]] Registry &r,
     containers::indexed_zipper<SparseArray<HorizontalTiling>,
                                SparseArray<TextureComp>> zip,
-    TextureManager &manager)
+    gl::GraphicalLibrary &)
 -> void;
 
 auto laserSound([[maybe_unused]] Registry &r, SoundManager &soundManager)

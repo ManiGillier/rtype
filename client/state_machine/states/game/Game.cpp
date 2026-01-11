@@ -58,15 +58,12 @@ auto Game::init_systems() -> void
     this->registry.register_component<PlayerId>();
     this->registry.register_component<TextureComp>();
 
-    /*
-    this->textureManager.registerTexture("client/assets/background.jpg");
     this->registry.add_render_system<HorizontalTiling, TextureComp>
-        (animateTiling, std::ref(this->textureManager));
+        (animateTiling, std::ref(this->clientManager.getGui()));
     this->registry.add_render_system<HorizontalTiling, TextureComp>
-        (renderHTiledTexture, std::ref(this->textureManager));
-    r.add_component<HorizontalTiling>(background, {2, 0, -50});
-    r.add_component<TextureComp>(background, {"client/assets/background.jpg"});
-    */
+        (renderHTiledTexture, std::ref(this->clientManager.getGui()));
+    //r.add_component<HorizontalTiling>(background, {2, 0, -50});
+    //r.add_component<TextureComp>(background, {"client/assets/background.jpg"});
 
     /*
     this->soundManager.loadSound("client/assets/new_player.mp3");

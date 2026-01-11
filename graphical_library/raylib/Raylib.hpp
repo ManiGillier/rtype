@@ -8,7 +8,16 @@
 #ifndef RAYLIB_H_
 #define RAYLIB_H_
 
+#include <filesystem>
 #include <graphical_library/api/GraphicalLibrary.hpp>
+#include <queue>
+#include <map>
+#include <string>
+#include <utility>
+
+namespace raylib {
+    #include <raylib.h>
+}
 
 class Raylib : public gl::GraphicalLibrary
 {
@@ -23,9 +32,20 @@ public:
 
     auto draw(gl::Rectangle rect) -> void;
     auto draw(gl::Text text) -> void;
+    auto draw(gl::Texture texture) -> void;
 
     auto getTextWidth(gl::Text text) -> int;
     auto getTextWidth(const std::string &txt, int fontSize) -> int;
+
+
+    auto registerTexture(std::filesystem::path, std::string) -> void;
+    auto loadAllTextures() -> void;
+
+    auto loadTexture(std::filesystem::path, std::string) -> gl::Texture;
+    auto getTexture(std::string) -> gl::Texture;
+private:
+    std::queue<std::pair<std::string, std::filesystem::path>> texturesToLoad;
+    std::map<std::string, std::pair<gl::Texture, raylib::Texture>> textures;
 };
 
 #endif // RAYLIB_H_

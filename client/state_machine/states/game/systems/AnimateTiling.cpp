@@ -13,18 +13,18 @@ namespace raylib {
 auto animateTiling([[maybe_unused]] Registry &r,
     containers::indexed_zipper<SparseArray<HorizontalTiling>,
                                SparseArray<TextureComp>> zip,
-    TextureManager &manager)
+    gl::GraphicalLibrary &gl)
 -> void
 {
     for (auto &&[_, tiling, texture] : zip) {
         tiling->horizontal_pos += tiling->speed * raylib::GetFrameTime();
-        float width = 
-            (float) manager.getTexture(texture->texture_path).getWidth()
+        float width =
+            (float) gl.getTexture(texture->texture_path).size.x
             *
             (
                (float) raylib::GetRenderHeight()
                /
-               (float) manager.getTexture(texture->texture_path).getHeight()
+               (float) gl.getTexture(texture->texture_path).size.y
             );
         while (tiling->horizontal_pos < -width)
             tiling->horizontal_pos += width;
