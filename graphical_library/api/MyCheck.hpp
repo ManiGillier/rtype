@@ -5,19 +5,20 @@
 ** raylib
 */
 
-#ifndef CHECKBOX_H_
-#define CHECKBOX_H_
-
+#ifndef CLIENT_CHECKBOX_HPP
+#define CLIENT_CHECKBOX_HPP
+#include <raylib.h>
 #include <string>
 
+
 namespace gl {
-    class MyCheckBox {
+    class Checkbox {
     public:
-        MyCheckBox(int x, int y, int size, bool checked = false, int transparency = 255);
+        virtual ~Checkbox() = default;
         virtual auto Draw() const -> void = 0;
         virtual auto Update() -> void = 0;
         virtual auto IsClicked() const -> bool = 0;
-        virtual auto IsHovered() const -> bool = 0;
+        virtual auto IsHovered(int mouseX, int mouseY) const -> bool = 0;
         virtual auto IsChecked() const -> bool = 0;
         virtual auto SetChecked(bool checked) -> void = 0;
         virtual auto Toggle() -> void = 0;
@@ -25,17 +26,8 @@ namespace gl {
         virtual auto SetSize(int size) -> void = 0;
         virtual auto SetTransparency(int transparency) -> void = 0;
         virtual auto SetColor(Color color) -> void = 0;
-        virtual auto SetText(string str) -> void = 0;
+        virtual auto SetText(const std::string& str) -> void = 0;
         virtual auto OnClick() -> void = 0;
-
-    private:
-        bool hovered;
-        bool checked;
-        int posX;
-        int posY;
-        int size;
-        int transparency;
-        Color color;
-        string text;
     };
 }
+#endif
