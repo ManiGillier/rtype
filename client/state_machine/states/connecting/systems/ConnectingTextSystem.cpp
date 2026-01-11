@@ -9,10 +9,6 @@
 
 #include <ecs/regisrty/Registry.hpp>
 
-namespace raylib {
-    #include <raylib.h>
-}
-
 auto connectingText([[maybe_unused]] Registry &r, gl::GraphicalLibrary &gl)
 -> void
 {
@@ -22,7 +18,7 @@ auto connectingText([[maybe_unused]] Registry &r, gl::GraphicalLibrary &gl)
     const gl::Text text = {
         txt,
         {
-            raylib::GetRenderWidth() / 2 - width / 2,
+            (int) gl.get_window_size().x / 2 - width / 2,
             50
         },
         fontSize,

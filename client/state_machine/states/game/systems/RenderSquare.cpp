@@ -13,8 +13,6 @@
 
 #include <graphical_library/api/GraphicalLibrary.hpp>
 
-#include <raylib.h>
-
 auto renderSquare([[maybe_unused]] Registry &reg,
     containers::indexed_zipper<SparseArray<Position>,
                                SparseArray<HitBox>,
@@ -22,7 +20,7 @@ auto renderSquare([[maybe_unused]] Registry &reg,
                   gl::GraphicalLibrary &gl)
 -> void
 {
-    int height = GetRenderHeight();
+    int height = (int) gl.get_window_size().y;
     for (auto &&[_, pos, size, square_color] : zip) {
         gl.draw(gl::Rectangle {
             gl::WorldPosition {

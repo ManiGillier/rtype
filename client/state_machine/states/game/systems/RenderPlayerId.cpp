@@ -12,10 +12,6 @@
 #include "client/components/Color.hpp"
 #include "client/components/PlayerId.hpp"
 
-namespace raylib {
-    #include <raylib.h>
-}
-
 #include <string>
 
 auto renderPlayerId([[maybe_unused]] Registry &reg,
@@ -25,7 +21,7 @@ auto renderPlayerId([[maybe_unused]] Registry &reg,
                     std::optional<std::size_t> &my_id)
 -> void
 {
-    int height = raylib::GetRenderHeight();
+    int height = (int) gl.get_window_size().y;
     for (auto &&[ecsId, pos, playerId] : zip) {
         gl::Color color = my_id ? (*my_id == ecsId ? gl::YELLOW : gl::WHITE)
                           : gl::RED;

@@ -6,9 +6,6 @@
 */
 
 #include "Systems.hpp"
-namespace raylib {
-    #include <raylib.h>
-}
 
 auto animateTiling([[maybe_unused]] Registry &r,
     containers::indexed_zipper<SparseArray<HorizontalTiling>,
@@ -17,12 +14,12 @@ auto animateTiling([[maybe_unused]] Registry &r,
 -> void
 {
     for (auto &&[_, tiling, texture] : zip) {
-        tiling->horizontal_pos += tiling->speed * raylib::GetFrameTime();
+        tiling->horizontal_pos += tiling->speed * gl.getDeltaTime();
         float width =
             (float) gl.getTexture(texture->texture_name).size.x
             *
             (
-               (float) raylib::GetRenderHeight()
+               (float) gl.get_window_size().y
                /
                (float) gl.getTexture(texture->texture_name).size.y
             );

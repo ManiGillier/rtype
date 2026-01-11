@@ -11,10 +11,6 @@
 
 #include "Systems.hpp"
 
-
-#include <raylib.h>
-
-
 auto renderLaser([[maybe_unused]] Registry &reg,
     containers::indexed_zipper<SparseArray<Laser>,
                                SparseArray<Dependence>,
@@ -22,7 +18,7 @@ auto renderLaser([[maybe_unused]] Registry &reg,
                  gl::GraphicalLibrary &gl)
 -> void
 {
-    int height = GetRenderHeight();
+    int height = (int) gl.get_window_size().y;
     for (auto &&[_, laser, ref, color] : zip) {
         std::optional<Position> player_pos = reg.get<Position>(ref->id);
 

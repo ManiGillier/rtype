@@ -7,10 +7,6 @@
 
 #include "Systems.hpp"
 
-namespace raylib {
-    #include <raylib.h>
-}
-
 auto renderHTiledTexture([[maybe_unused]] Registry &r,
     containers::indexed_zipper<SparseArray<HorizontalTiling>,
                                SparseArray<TextureComp>> zip,
@@ -21,7 +17,7 @@ auto renderHTiledTexture([[maybe_unused]] Registry &r,
         gl::Texture t = gl.getTexture(texture->texture_name);
         float width = (float) t.size.x;
         float height = (float) t.size.y;
-        float winHeight = (float) raylib::GetRenderHeight();
+        float winHeight = (float) gl.get_window_size().y;
         float ratio = winHeight / height;
 
         t.pos.y = 0;

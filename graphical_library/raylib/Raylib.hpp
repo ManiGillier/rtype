@@ -27,6 +27,9 @@ public:
 
     auto should_close() -> bool;
 
+    auto get_window_size() -> gl::Vector2ui;
+    auto getDeltaTime() -> float;
+
     auto start_new_frame(gl::Color color = gl::BLACK) -> void;
     auto end_frame() -> void;
 

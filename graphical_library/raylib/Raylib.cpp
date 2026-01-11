@@ -178,3 +178,16 @@ auto Raylib::loadAllSounds() -> void
         this->soundsToLoad.pop();
     }
 }
+
+auto Raylib::get_window_size() -> gl::Vector2ui
+{
+    return {
+        (std::uint32_t) raylib::GetRenderWidth(),
+        (std::uint32_t) raylib::GetRenderHeight()
+    };
+}
+
+auto Raylib::getDeltaTime() -> float
+{
+    return raylib::GetFrameTime();
+}

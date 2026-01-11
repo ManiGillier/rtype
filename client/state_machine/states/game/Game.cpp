@@ -199,10 +199,6 @@ auto Game::updateLaser(std::size_t id, bool active, float length)
     this->registry.set<Laser>(*my_id, active, length);
 }
 
-namespace raylib {
-    #include <raylib.h>
-}
-
 auto Game::updatePosition(std::size_t id, float x, float y)
 -> void
 {

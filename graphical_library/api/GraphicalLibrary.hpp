@@ -12,6 +12,7 @@
 #include "Sound.hpp"
 #include "Text.hpp"
 #include "Texture.hpp"
+#include "Vector.hpp"
 #include "shapes/Rectangle.hpp"
 
 #include <filesystem>
@@ -25,6 +26,9 @@ namespace gl {
 
         virtual auto init() -> void = 0;
         virtual auto deinit() -> void = 0;
+
+        virtual auto get_window_size() -> Vector2ui = 0;
+        virtual auto getDeltaTime() -> float = 0;
 
         virtual auto should_close() -> bool = 0;
 
