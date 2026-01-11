@@ -1,12 +1,14 @@
 #include "GameSystems.hpp"
-#include "../components/Tag.hpp"
 #include "ecs/sparse_array/SparseArray.hpp"
 #include "network/packets/impl/DespawnPlayerPacket.hpp"
 #include "network/packets/impl/LaserActiveUpdatePacket.hpp"
 #include "server/game/components/OutsideBoundaries.hpp"
+#include "server/game/components/Tag.hpp"
 #include "shared/components/Dependence.hpp"
+#include "shared/components/Health.hpp"
 #include "shared/components/Laser.hpp"
 #include "shared/components/Position.hpp"
+#include "../components/Healer.hpp"
 #include <memory>
 #include <network/logger/Logger.hpp>
 #include <network/packets/impl/DespawnBulletPacket.hpp>
@@ -245,6 +247,19 @@ auto Systems::collision_system(
     }
 }
 
+auto Systems::heal_all_players_system(Registry &r, int heal)
+    -> void
+{
+    auto zipper = containers::indexed_zipper(r.get_components<Tag>());
+
+    for (auto &&[i, tag] : zipper) {
+        if (tag->tag == EntityTag::PLAYER) {
+            auto hl = r.get<Health>(i);
+            r.set<Health>(i, hl->pv + heal, hl->max_pv);
+        }
+    }
+}
+
 auto Systems::health_system(
     Registry &r, containers::indexed_zipper<SparseArray<Health>> zipper,
     NetworkManager &nm) -> void
@@ -253,8 +268,29 @@ auto Systems::health_system(
         nm.queuePacket(std::make_shared<HealthUpdatePacket>(i, health->pv), i,
                        true);
         if (health->pv <= 0) {
+            auto tag = r.get<Tag>(i);
+            if (tag->tag == EntityTag::BOSS)
+                heal_all_players_system(r, r.get<Healer>(i)->healer);
             nm.queuePacket(std::make_shared<DespawnPlayerPacket>(i));
             r.kill_entity(r.entity_from_index(i));
         }
+    }
+}
+
+auto Systems::loose_system([[maybe_unused]] Registry &r,
+                           containers::indexed_zipper<SparseArray<Tag>> zipper,
+                           NetworkManager &nm, std::mutex &m, bool &run) -> void
+{
+    int remainingPlayers = 0;
+
+    for (auto &&[i, tag] : zipper)
+        if (tag->tag == EntityTag::PLAYER)
+            remainingPlayers++;
+
+    if (remainingPlayers == 0) {
+        nm.queuePacket(std::make_shared<GameOverPacket>(EndGameState::LOST));
+        m.lock();
+        run = false;
+        m.unlock();
     }
 }

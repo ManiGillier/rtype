@@ -13,6 +13,7 @@
 #include "../components/Damager.hpp"
 #include "../components/OutsideBoundaries.hpp"
 #include "../components/Resistance.hpp"
+#include "../components/Tag.hpp"
 #include "../components/Velocity.hpp"
 #include "ecs/regisrty/Registry.hpp"
 #include "ecs/sparse_array/SparseArray.hpp"
@@ -37,8 +38,7 @@ auto position_system(
 
 auto pattern_system(
     Registry &r,
-    containers::indexed_zipper<SparseArray<Position>,
-                               SparseArray<Acceleration>,
+    containers::indexed_zipper<SparseArray<Position>, SparseArray<Acceleration>,
                                SparseArray<Pattern>>
         zipper,
     NetworkManager &nm) -> void;
@@ -59,11 +59,18 @@ auto player_laser_system(Registry &r,
 auto collision_system(
     Registry &r,
     containers::indexed_zipper<SparseArray<Position>, SparseArray<HitBox>>
-        zipper, NetworkManager &nm) -> void;
+        zipper,
+    NetworkManager &nm) -> void;
 
 auto health_system(Registry &r,
-                    containers::indexed_zipper<SparseArray<Health>> zipper,
-                    NetworkManager &nm) -> void;
+                   containers::indexed_zipper<SparseArray<Health>> zipper,
+                   NetworkManager &nm) -> void;
+
+auto heal_all_players_system(Registry &r, int heal) -> void;
+
+auto loose_system(Registry &r,
+                  containers::indexed_zipper<SparseArray<Tag>> zipper,
+                  NetworkManager &nm, std::mutex &m, bool &run) -> void;
 
 } // namespace Systems
 

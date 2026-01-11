@@ -4,8 +4,9 @@
 #include "components/OutsideBoundaries.hpp"
 #include "components/Pattern.hpp"
 #include "components/Resistance.hpp"
-#include "components/Velocity.hpp"
 #include "components/Tag.hpp"
+#include "components/Healer.hpp"
+#include "components/Velocity.hpp"
 #include "gameplay/GamePlay.hpp"
 #include "network/logger/Logger.hpp"
 #include "network/packets/Packet.hpp"
@@ -38,15 +39,17 @@ void Game::loop(int ticks)
     Ticker ticker(ticks);
     GamePlay gamePlay(this->_networkManager, this->_registry, this->_factory);
 
+    this->_isRunning = true;
     std::this_thread::sleep_for(
         std::chrono::milliseconds(200)); // TODO: remove this
 
-    this->_isRunning = true;
     this->initializeComponents();
     this->initializeSystems();
     this->initPlayers();
 
-    while (this->_isRunning) {
+    bool running = true;
+
+    do {
         ticker.now();
 
         this->_networkManager.flush();
@@ -57,7 +60,13 @@ void Game::loop(int ticks)
         }
 
         ticker.wait();
-    }
+        {
+            std::lock_guard<std::mutex> lock(_runningMutex);
+            running = _isRunning;
+        }
+
+    } while (running);
+
     this->resetPlayersEntities();
     this->_networkManager.clear();
 }
@@ -108,6 +117,7 @@ void Game::initializeComponents()
     _registry.register_component<Position>();
     _registry.register_component<Pattern>();
     _registry.register_component<Tag>();
+    _registry.register_component<Health>();
 }
 
 void Game::initializeSystems()
@@ -123,7 +133,10 @@ void Game::initializeSystems()
                                                   std::ref(_networkManager));
 
     _registry.add_update_system<Health>(Systems::health_system,
-                                                  std::ref(_networkManager));
+                                        std::ref(_networkManager));
+    _registry.add_update_system<Tag>(
+        Systems::loose_system, std::ref(_networkManager),
+        std::ref(_runningMutex), std::ref(_isRunning));
 }
 
 void Game::resetPlayersEntities()
@@ -141,4 +154,10 @@ std::tuple<std::mutex &, Registry &> Game::getRegistry()
 NetworkManager &Game::getNetworkManager()
 {
     return this->_networkManager;
+}
+
+bool Game::isRunning()
+{
+    std::lock_guard<std::mutex> lock(_runningMutex);
+    return _isRunning;
 }
