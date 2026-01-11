@@ -17,8 +17,8 @@ namespace gl {
         virtual ~Checkbox() = default;
         virtual auto Draw() const -> void = 0;
         virtual auto Update() -> void = 0;
-        virtual auto IsClicked() const -> bool = 0;
-        virtual auto IsHovered(int mouseX, int mouseY) const -> bool = 0;
+        virtual auto IsClicked(int mouseX, int mouseY) -> bool = 0;
+        virtual auto IsHovered(int mouseX, int mouseY) -> bool = 0;
         virtual auto IsChecked() const -> bool = 0;
         virtual auto SetChecked(bool checked) -> void = 0;
         virtual auto Toggle() -> void = 0;

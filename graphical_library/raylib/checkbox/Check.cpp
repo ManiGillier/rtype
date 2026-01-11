@@ -1,4 +1,5 @@
 #include "Check.hpp"
+#include <iostream>
 #include <raylib.h>
 
 MyCheckBox::MyCheckBox(int x, int y, int size_, bool checked_,
@@ -41,11 +42,17 @@ void MyCheckBox::Update() {
         i = 12;
 }
 
-bool MyCheckBox::IsClicked() const {
-    return this->checked;
+bool MyCheckBox::IsClicked(int mouseX, int mouseY) {
+    if (IsHovered(mouseX, mouseY) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+    {
+        this->checked = !this->checked;
+        return true;
+
+    }
+    return false;
 }
 
-bool MyCheckBox::IsHovered(int mouseX, int mouseY) const {
+bool MyCheckBox::IsHovered(int mouseX, int mouseY) {
     if (((this->posX < mouseX) && (this->posX + this->size > mouseX)) && ((this->posY < mouseY) && (this->posY + this->size > mouseY)))
         return true;
     else

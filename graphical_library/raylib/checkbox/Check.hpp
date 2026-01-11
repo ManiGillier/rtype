@@ -18,8 +18,8 @@ public:
     MyCheckBox(int x, int y, int size, bool checked = false, int transparency = 255);
     void Draw() const override;
     void Update() override;
-    bool IsClicked() const override;
-    bool IsHovered(int mouseX, int mouseY) const override;
+    bool IsClicked(int mouseX, int mouseY) override;
+    bool IsHovered(int mouseX, int mouseY) override;
     bool IsChecked() const override;
     void SetChecked(bool checked) override;
     void Toggle() override;
