@@ -16,13 +16,12 @@ namespace raylib {
     #include <raylib.h>
 }
 
-#include <graphical_library/raylib/text/Text.hpp>
-
 #include <string>
 
 auto renderPlayerId([[maybe_unused]] Registry &reg,
     containers::indexed_zipper<SparseArray<Position>,
                                SparseArray<PlayerId>> zip,
+                    gl::GraphicalLibrary &gl,
                     std::optional<std::size_t> &my_id)
 -> void
 {
@@ -31,11 +30,16 @@ auto renderPlayerId([[maybe_unused]] Registry &reg,
         gl::Color color = my_id ? (*my_id == ecsId ? gl::YELLOW : gl::WHITE)
                           : gl::RED;
         const int fontSize = 10;
-        Text text(std::to_string(playerId->id));
-
-        text.draw(gl::WorldPosition {
-            pos->x + 15,
-            (float) height - pos->y - 10
-        }, fontSize, color);
+        const std::string txt = std::to_string(playerId->id);
+        gl::Text text = {
+            txt,
+            {
+                (int) pos->x + 15,
+                height - (int) pos->y - 10
+            },
+            fontSize,
+            color
+        };
+        gl.draw(text);
     }
 }

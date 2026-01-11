@@ -6,7 +6,6 @@
 */
 
 #include <graphical_library/api/GraphicalLibrary.hpp>
-#include <graphical_library/raylib/text/Text.hpp>
 
 #include <ecs/regisrty/Registry.hpp>
 
@@ -17,14 +16,18 @@ namespace raylib {
 auto lobbyText([[maybe_unused]] Registry &r, gl::GraphicalLibrary &gl)
 -> void
 {
-    (void) gl;
     const char *txt = "When ready, press <SPACE>";
     const int fontSize = 40;
-    Text text(txt);
-    const int width = text.size(fontSize);
+    const int width = gl.getTextWidth(txt, fontSize);
+    const gl::Text text = {
+        txt,
+        {
+            raylib::GetRenderWidth() / 2 - width / 2,
+            50
+        },
+        fontSize,
+        gl::WHITE
+    };
 
-    text.draw(gl::WorldPosition {
-        (float) raylib::GetRenderWidth() / 2 - (float) width / 2,
-        (float) 50
-    }, fontSize, gl::WHITE);
+    gl.draw(text);
 }

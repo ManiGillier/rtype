@@ -63,6 +63,7 @@ auto laserSound([[maybe_unused]] Registry &r, SoundManager &soundManager)
 auto renderPlayerId([[maybe_unused]] Registry &reg,
     containers::indexed_zipper<SparseArray<Position>,
                                SparseArray<PlayerId>> zip,
+                    gl::GraphicalLibrary & gl,
                     std::optional<std::size_t> &my_id)
 -> void;
 

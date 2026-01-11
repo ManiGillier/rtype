@@ -44,3 +44,19 @@ auto Raylib::draw(gl::Rectangle rect) -> void
                   (int) rect.size.x, (int) rect.size.y,
                   Color {rect.color.r, rect.color.g, rect.color.b, rect.color.a});
 }
+
+auto Raylib::draw(gl::Text text) -> void
+{
+    DrawText(text.text.c_str(), text.pos.x, text.pos.y, text.charSize,
+        Color {text.color.r, text.color.g, text.color.b, text.color.a});
+}
+
+auto Raylib::getTextWidth(gl::Text text) -> int
+{
+    return MeasureText(text.text.c_str(), text.charSize);
+}
+
+auto Raylib::getTextWidth(const std::string &txt, int fontSize) -> int
+{
+    return MeasureText(txt.c_str(), fontSize);
+}

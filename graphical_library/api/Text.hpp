@@ -10,13 +10,14 @@
 
 #include "Color.hpp"
 #include "Vector.hpp"
+#include <string>
 
 namespace gl {
-    class Text {
-    public:
-        virtual ~Text() = default;
-
-        virtual auto draw(WorldPosition, Scale, Color) -> void = 0;
+    struct Text {
+        std::string text;
+        Vector2i pos;
+        int charSize;
+        Color color;
     };
 }
 

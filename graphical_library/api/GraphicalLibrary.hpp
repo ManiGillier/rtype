@@ -10,6 +10,7 @@
 
 #include "Color.hpp"
 #include "shapes/Rectangle.hpp"
+#include "Text.hpp"
 
 namespace gl {
     class GraphicalLibrary
@@ -26,6 +27,11 @@ namespace gl {
         virtual auto end_frame() -> void = 0;
 
         virtual auto draw(gl::Rectangle rect) -> void = 0;
+        virtual auto draw(gl::Text text) -> void = 0;
+
+        virtual auto getTextWidth(gl::Text text) -> int = 0;
+        virtual auto getTextWidth(const std::string &txt, int fontSize)
+            -> int = 0;
     };
 }
 

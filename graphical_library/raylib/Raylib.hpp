@@ -22,6 +22,10 @@ public:
     auto end_frame() -> void;
 
     auto draw(gl::Rectangle rect) -> void;
+    auto draw(gl::Text text) -> void;
+
+    auto getTextWidth(gl::Text text) -> int;
+    auto getTextWidth(const std::string &txt, int fontSize) -> int;
 };
 
 #endif // RAYLIB_H_

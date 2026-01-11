@@ -86,7 +86,8 @@ auto Game::init_systems() -> void
     this->registry.add_render_system<Laser, Dependence, ElementColor>
         (renderLaser, std::ref(this->getGraphicalLibrary()));
     this->registry.add_render_system<Position, PlayerId>
-        (renderPlayerId, std::ref(this->clientId));
+        (renderPlayerId, std::ref(this->getGraphicalLibrary()),
+         std::ref(this->clientId));
 
     this->registry.add_global_update_system
         (playerInputs, std::ref(this->clientManager.getNetworkManager()));
