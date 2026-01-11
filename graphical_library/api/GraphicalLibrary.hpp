@@ -9,6 +9,7 @@
 #define CLIENT_GRAPHICAL_LIBRARY_HPP
 
 #include "Color.hpp"
+#include "Sound.hpp"
 #include "Text.hpp"
 #include "Texture.hpp"
 #include "shapes/Rectangle.hpp"
@@ -41,10 +42,19 @@ namespace gl {
         virtual auto registerTexture(std::filesystem::path, std::string)
             -> void = 0;
         virtual auto loadAllTextures() -> void = 0;
-
         virtual auto loadTexture(std::filesystem::path, std::string)
             -> Texture = 0;
         virtual auto getTexture(std::string) -> Texture = 0;
+
+        virtual auto registerSound(std::filesystem::path, std::string)
+            -> void = 0;
+        virtual auto loadAllSounds() -> void = 0;
+        virtual auto loadSound(std::filesystem::path, std::string)
+            -> Sound = 0;
+        virtual auto getSound(std::string) -> Sound = 0;
+        virtual auto play(Sound) -> void = 0;
+
+        virtual auto loadEverything() -> void = 0;
     };
 }
 

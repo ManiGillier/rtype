@@ -30,6 +30,10 @@ ClientManager::ClientManager()
     this->gui->init();
 
     this->gui->registerTexture("client/assets/background.jpg", "background");
+    this->gui->registerSound("client/assets/laser.mp3", "laser");
+    this->gui->registerSound("client/assets/new_player.mp3", "new_player");
+    this->gui->registerSound("client/assets/despawn_player.mp3",
+                             "despawn_player");
 }
 
 /*
@@ -62,7 +66,7 @@ auto ClientManager::launch(int argc, char **argv) -> void
         std::make_unique<NetworkManager>(argv[1], std::atoi(argv[2]));
 
     LOG("Starting game.");
-    this->gui->loadAllTextures();
+    this->gui->loadEverything();
     this->stateMachine.init();
     this->loop();
 }

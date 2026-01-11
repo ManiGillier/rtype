@@ -68,18 +68,6 @@ auto Game::init_systems() -> void
     this->registry.add_component<TextureComp>
         (background, {"background"});
 
-    /*
-    this->soundManager.loadSound("client/assets/new_player.mp3");
-    this->soundManager.loadSound("client/assets/despawn_player.mp3");
-    this->soundManager.loadSound("client/assets/laser.mp3");
-
-    r.add_global_render_system(laserSound, std::ref(this->soundManager));
-
-    nm.addExecutor(std::make_unique<NewPlayerSoundExecutor>
-                       (std::ref(this->soundManager)));
-    nm.addExecutor(std::make_unique<DespawnPlayerSoundExecutor>
-                       (std::ref(this->soundManager)));
-    */
 
     this->registry.add_render_system<Position, HitBox, ElementColor>
         (renderSquare, std::ref(this->getGraphicalLibrary()));
@@ -88,6 +76,9 @@ auto Game::init_systems() -> void
     this->registry.add_render_system<Position, PlayerId>
         (renderPlayerId, std::ref(this->getGraphicalLibrary()),
          std::ref(this->clientId));
+
+    this->registry.add_global_render_system
+        (laserSound, std::ref(this->clientManager.getGui()));
 
     this->registry.add_global_update_system
         (playerInputs, std::ref(this->clientManager.getNetworkManager()));

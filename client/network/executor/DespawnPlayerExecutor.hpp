@@ -24,7 +24,11 @@ public:
                  [[maybe_unused]] std::shared_ptr<ClientPollable> con,
                  [[maybe_unused]] std::shared_ptr<DespawnPlayerPacket> packet)
     {
+        gl::Sound sound = this->state.getGraphicalLibrary()
+            .getSound("despawn_player");
+
         this->state.despawnEntity(packet->getPlayerId());
+        this->state.getGraphicalLibrary().play(sound);
         return true;
     }
 

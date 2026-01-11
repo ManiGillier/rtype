@@ -22,7 +22,6 @@
 #include "shared/components/Laser.hpp"
 #include "shared/components/Dependence.hpp"
 #include "client/components/PlayerId.hpp"
-#include "client/manager/SoundManager.hpp"
 #include <optional>
 #include <unordered_map>
 
@@ -56,7 +55,7 @@ auto renderHTiledTexture([[maybe_unused]] Registry &r,
     gl::GraphicalLibrary &)
 -> void;
 
-auto laserSound([[maybe_unused]] Registry &r, SoundManager &soundManager)
+auto laserSound([[maybe_unused]] Registry &r, gl::GraphicalLibrary &gl)
 -> void;
 
 auto renderPlayerId([[maybe_unused]] Registry &reg,

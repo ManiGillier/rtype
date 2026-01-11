@@ -25,7 +25,11 @@ public:
                  [[maybe_unused]] std::shared_ptr<ClientPollable> con,
                  [[maybe_unused]] std::shared_ptr<NewPlayerPacket> packet)
     {
+        gl::Sound sound = this->state.getGraphicalLibrary()
+            .getSound("new_player");
+
         this->state.newPlayer(packet->getPlayerId(), packet->getLaserId());
+        this->state.getGraphicalLibrary().play(sound);
         return true;
     }
 

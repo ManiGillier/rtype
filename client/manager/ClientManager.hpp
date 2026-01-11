@@ -8,12 +8,8 @@
 #ifndef CLIENT_MANAGER_HPP
 #define CLIENT_MANAGER_HPP
 
-#include "client/states/State.hpp"
-
 #include <ecs/regisrty/Registry.hpp>
 #include <ecs/sync/Sync.hpp>
-
-#include "client/api/IGameState.hpp"
 
 #include <graphical_library/api/GraphicalLibrary.hpp>
 

@@ -7,14 +7,14 @@
 
 #include "ecs/regisrty/Registry.hpp"
 
-#include "client/manager/SoundManager.hpp"
+#include <graphical_library/api/GraphicalLibrary.hpp>
 
 #include <raylib.h>
 
-auto laserSound([[maybe_unused]] Registry &r, SoundManager &soundManager)
+auto laserSound([[maybe_unused]] Registry &r, gl::GraphicalLibrary &gl)
 -> void
 {
     if (IsKeyPressed(KEY_SPACE)) {
-        soundManager.playSound("client/assets/laser.mp3");
+        gl.play(gl.getSound("laser"));
     }
 }

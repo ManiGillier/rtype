@@ -11,14 +11,9 @@
 #include <filesystem>
 
 namespace gl {
-    class Sound {
-    public:
-        virtual ~Sound() = default;
-
-        virtual auto load(std::filesystem::path) -> void = 0;
-        virtual auto unload() -> void = 0;
-
-        virtual auto play() -> void = 0;
+    struct Sound {
+        std::filesystem::path path;
+        std::string name;
     };
 }
 
