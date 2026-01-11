@@ -1,11 +1,11 @@
 #include "Game.hpp"
 #include "components/Acceleration.hpp"
 #include "components/Damager.hpp"
+#include "components/Healer.hpp"
 #include "components/OutsideBoundaries.hpp"
 #include "components/Pattern.hpp"
 #include "components/Resistance.hpp"
 #include "components/Tag.hpp"
-#include "components/Healer.hpp"
 #include "components/Velocity.hpp"
 #include "gameplay/GamePlay.hpp"
 #include "network/logger/Logger.hpp"
@@ -20,6 +20,7 @@
 #include <chrono>
 #include <memory>
 #include <mutex>
+#include <network/packets/impl/GameOverPacket.hpp>
 #include <network/packets/impl/HitboxSizeUpdatePacket.hpp>
 #include <network/packets/impl/NewPlayerPacket.hpp>
 #include <optional>
@@ -56,17 +57,20 @@ void Game::loop(int ticks)
         {
             std::lock_guard<std::mutex> lock(_registryMutex);
             _registry.update();
-            gamePlay.update();
+            if (gamePlay.update()) {
+                std::lock_guard<std::mutex> lock(_runningMutex);
+                _isRunning = false;
+                break;
+            }
         }
-
-        ticker.wait();
         {
             std::lock_guard<std::mutex> lock(_runningMutex);
             running = _isRunning;
         }
-
+        ticker.wait();
     } while (running);
 
+    this->_networkManager.flush();
     this->resetPlayersEntities();
     this->_networkManager.clear();
 }
@@ -117,7 +121,7 @@ void Game::initializeComponents()
     _registry.register_component<Position>();
     _registry.register_component<Pattern>();
     _registry.register_component<Tag>();
-    _registry.register_component<Health>();
+    _registry.register_component<Healer>();
 }
 
 void Game::initializeSystems()

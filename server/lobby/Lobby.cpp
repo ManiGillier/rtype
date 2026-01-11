@@ -1,4 +1,5 @@
 #include "Lobby.hpp"
+#include "network/logger/Logger.hpp"
 #include <mutex>
 
 Lobby::Lobby()
@@ -78,10 +79,9 @@ void Lobby::setIsInGame(bool iig)
 void Lobby::startGame(int ticks)
 {
     this->_game.loop(ticks);
-    {
-        std::lock_guard<std::mutex> lock(_GameMutex);
-        this->_inGame = false;
-    }
+    LOG("game end");
+    this->_inGame = false;
+    exit(8);
 }
 
 Game &Lobby::getGame()

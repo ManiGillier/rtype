@@ -1,6 +1,7 @@
 #include "GameSystems.hpp"
 #include "ecs/sparse_array/SparseArray.hpp"
 #include "network/packets/impl/DespawnPlayerPacket.hpp"
+#include "network/packets/impl/EnemyDiedPacket.hpp"
 #include "network/packets/impl/LaserActiveUpdatePacket.hpp"
 #include "server/game/components/OutsideBoundaries.hpp"
 #include "server/game/components/Tag.hpp"
@@ -269,9 +270,12 @@ auto Systems::health_system(
                        true);
         if (health->pv <= 0) {
             auto tag = r.get<Tag>(i);
-            if (tag->tag == EntityTag::BOSS)
+            if (tag->tag == EntityTag::BOSS) {
                 heal_all_players_system(r, r.get<Healer>(i)->healer);
-            nm.queuePacket(std::make_shared<DespawnPlayerPacket>(i));
+                nm.queuePacket(std::make_shared<EnemyDiedPacket>(i));
+            } else {
+                nm.queuePacket(std::make_shared<PlayerDiedPacket>(i));
+            }
             r.kill_entity(r.entity_from_index(i));
         }
     }
