@@ -48,8 +48,8 @@ void MyButton::Update() {
 }
 
 bool MyButton::IsClicked() {
-
     return this->clicked;
+}
 
 bool MyButton::IsHovered() {
     return this->hovered;
