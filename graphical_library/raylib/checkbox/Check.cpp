@@ -31,32 +31,30 @@ void MyCheckBox::Draw() const {
             this->posX + this->size + 10,
             this->posY + (this->size / 2) - 10,
             20,
-            this->color
+            this->hovered ? this->hoveredColor : this->color
         );
     }
 }
 
 void MyCheckBox::Update() {
-    int i = 1;
-    if (i != 2)
-        i = 12;
-}
+    int mouseX = GetMouseX();
+    int mouseY = GetMouseY();
 
-bool MyCheckBox::IsClicked(int mouseX, int mouseY) {
-    if (IsHovered(mouseX, mouseY) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-    {
-        this->checked = !this->checked;
-        return true;
-
-    }
-    return false;
-}
-
-bool MyCheckBox::IsHovered(int mouseX, int mouseY) {
     if (((this->posX < mouseX) && (this->posX + this->size > mouseX)) && ((this->posY < mouseY) && (this->posY + this->size > mouseY)))
-        return true;
+        this->hovered = true;
     else
-        return false;
+        this->hovered = false;
+    if (IsHovered() && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+        this->checked = !this->checked;
+    return;
+}
+
+bool MyCheckBox::IsClicked() {
+    return this->checked;
+}
+
+bool MyCheckBox::IsHovered() {
+    return this->hovered;
 }
 
 bool MyCheckBox::IsChecked() const {
@@ -94,4 +92,8 @@ void MyCheckBox::SetText(const std::string& str) {
 
 void MyCheckBox::OnClick() {
     this->Toggle();
+}
+
+void MyCheckBox::SetHoveredColor(Color aColor) {
+    this->hoveredColor = aColor;
 }

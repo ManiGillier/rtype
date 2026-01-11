@@ -27,6 +27,7 @@ public:
         int transparency, Color color, const std::string& text) override;
     void AddTextBox(int posX, int posY, int sizeX, int sizeY,
         int transparency, Color color, const std::string& text) override;
+    void Update() override;
     void DeleteButton(size_t i) override;
     void DeleteCheckBox(size_t i) override;
     void DeleteTextBox(size_t i) override;

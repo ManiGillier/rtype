@@ -23,6 +23,7 @@ namespace gl {
             int transparency, Color color, const std::string &text) = 0;
         virtual void AddCheckBox(bool checked, int posX, int posY, int size,
             int transparency, Color color, const std::string &text) = 0;
+        virtual auto Update() -> void = 0;
         virtual void DeleteButton(size_t i) = 0;
         virtual void DeleteCheckBox(size_t i) = 0;
         virtual void Clear() = 0;

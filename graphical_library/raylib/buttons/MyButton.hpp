@@ -17,8 +17,9 @@ public:
     MyButton(int x, int y, int width, int height, Color buttonColor,
         Color hoveredButtonColor, int transparency = 255);
     void Draw() const override;
-    bool IsClicked(int mouseX, int mouseY) override;
-    bool IsHovered(int mouseX, int mouseY) override;
+    void Update() override;
+    bool IsClicked() override;
+    bool IsHovered() override;
     void SetPosition(int x, int y) override;
     void SetSize(int width, int height) override;
     void SetTransparency(int transparency) override;

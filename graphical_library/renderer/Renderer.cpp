@@ -21,7 +21,6 @@ Renderer::~Renderer() {
 
 void Renderer::Draw()
 {
-    ClearBackground(RAYWHITE);
     for (auto &button : buttons)
         button.Draw();
     for (auto &checkbox : checkboxes)
@@ -92,6 +91,18 @@ void Renderer::AddTextBox(int posX, int posY, int sizeX, int sizeY,
     textboxes.emplace_back(posX, posY, sizeX, sizeY,
                           color, color, transparency);
     textboxes.back().SetText(text);
+}
+
+void Renderer::Update()
+{
+    for (auto &button : buttons)
+        button.Update();
+    for (auto &checkbox : checkboxes)
+        checkbox.Update();
+    for (auto &textbox : textboxes)
+            textbox.Update();
+    this->Draw();
+    return;
 }
 
 void Renderer::DeleteTextBox(size_t i)

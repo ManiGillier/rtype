@@ -18,8 +18,8 @@ public:
     MyCheckBox(int x, int y, int size, bool checked = false, int transparency = 255);
     void Draw() const override;
     void Update() override;
-    bool IsClicked(int mouseX, int mouseY) override;
-    bool IsHovered(int mouseX, int mouseY) override;
+    bool IsClicked() override;
+    bool IsHovered() override;
     bool IsChecked() const override;
     void SetChecked(bool checked) override;
     void Toggle() override;
@@ -27,6 +27,7 @@ public:
     void SetSize(int size) override;
     void SetTransparency(int transparency) override;
     void SetColor(Color aColor) override;
+    void SetHoveredColor(Color aColor) override;
     void SetText(const std::string& str) override;
     void OnClick() override;
 private:
@@ -37,6 +38,7 @@ private:
     int size;
     int transparency;
     Color color;
+    Color hoveredColor;
     std::string text;
 };
 

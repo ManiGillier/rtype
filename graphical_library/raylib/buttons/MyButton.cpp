@@ -6,6 +6,7 @@
 */
 
 #include "MyButton.hpp"
+#include <iostream>
 
 MyButton::MyButton(int x, int y, int width, int height,
     Color buttonColor, Color hoveredButtonColor, int transparency)
@@ -32,19 +33,27 @@ MyButton::MyButton(int x, int y, int width, int height,
         );
     }
 
-bool MyButton::IsClicked(int mouseX, int mouseY) {
-    if (IsHovered(mouseX, mouseY) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-        this->clicked = true;
-    else
-        this->clicked = false;
-    return this->clicked;
-}
+void MyButton::Update() {
+    int mouseX = GetMouseX();
+    int mouseY = GetMouseY();
 
-bool MyButton::IsHovered(int mouseX, int mouseY) {
     if (((this->posX < mouseX) && (this->posX + this->sizeX > mouseX)) && ((this->posY < mouseY) && (this->posY + this->sizeY > mouseY)) )
         this->hovered = true;
     else
         this->hovered = false;
+    if (IsHovered() && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+        this->clicked = true;
+    else
+        this->clicked = false;
+    return;
+}
+
+bool MyButton::IsClicked() {
+
+    return this->clicked;
+}
+
+bool MyButton::IsHovered() {
     return this->hovered;
 }
 

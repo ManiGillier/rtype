@@ -16,6 +16,7 @@ namespace gl {
     public:
         virtual ~TextBox() = default;
         virtual auto Draw() const -> void = 0;
+        virtual auto Update() -> void = 0;
         virtual auto SetPosition(int x, int y) -> void = 0;
         virtual auto SetSize(int width, int height) -> void = 0;
         virtual auto SetTransparency(int transparency) -> void = 0;
