@@ -66,6 +66,10 @@ void MyButton::SetColor(Color color) {
     this->color = color;
 }
 
+void MyButton::SetHoveredColor(Color aColor) {
+    this->hoveredColor = aColor;
+}
+
 void MyButton::SetText(std::string str) {
     this->text = str;
 }

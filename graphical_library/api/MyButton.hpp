@@ -21,7 +21,8 @@ namespace gl {
         virtual auto SetPosition(int x, int y) -> void = 0;
         virtual auto SetSize(int width, int height) -> void = 0;
         virtual auto SetTransparency(int transparency) -> void = 0;
-        virtual auto SetColor(Color color) -> void = 0;
+        virtual auto SetColor(Color aColor) -> void = 0;
+        virtual auto SetHoveredColor(Color aColor) -> void = 0;
         virtual auto SetText(const std::string str) -> void = 0;
         virtual auto SwitchClick() -> void = 0;
     };

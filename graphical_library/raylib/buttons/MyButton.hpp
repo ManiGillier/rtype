@@ -23,6 +23,7 @@ public:
     void SetSize(int width, int height) override;
     void SetTransparency(int transparency) override;
     void SetColor(Color color) override;
+    void SetHoveredColor(Color aColor) override;
     void SetText(const std::string str) override;
     void SwitchClick() override;
 private:
