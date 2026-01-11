@@ -18,7 +18,7 @@ auto renderHTiledTexture([[maybe_unused]] Registry &r,
 -> void
 {
     for (auto &&[_, tiling, texture] : zip) {
-        gl::Texture t = gl.getTexture(texture->texture_path);
+        gl::Texture t = gl.getTexture(texture->texture_name);
         float width = (float) t.size.x;
         float height = (float) t.size.y;
         float winHeight = (float) raylib::GetRenderHeight();

@@ -19,12 +19,12 @@ auto animateTiling([[maybe_unused]] Registry &r,
     for (auto &&[_, tiling, texture] : zip) {
         tiling->horizontal_pos += tiling->speed * raylib::GetFrameTime();
         float width =
-            (float) gl.getTexture(texture->texture_path).size.x
+            (float) gl.getTexture(texture->texture_name).size.x
             *
             (
                (float) raylib::GetRenderHeight()
                /
-               (float) gl.getTexture(texture->texture_path).size.y
+               (float) gl.getTexture(texture->texture_name).size.y
             );
         while (tiling->horizontal_pos < -width)
             tiling->horizontal_pos += width;

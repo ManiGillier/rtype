@@ -62,8 +62,11 @@ auto Game::init_systems() -> void
         (animateTiling, std::ref(this->clientManager.getGui()));
     this->registry.add_render_system<HorizontalTiling, TextureComp>
         (renderHTiledTexture, std::ref(this->clientManager.getGui()));
-    //r.add_component<HorizontalTiling>(background, {2, 0, -50});
-    //r.add_component<TextureComp>(background, {"client/assets/background.jpg"});
+
+    Entity background = this->registry.spawn_named_entity("background");
+    this->registry.add_component<HorizontalTiling>(background, {2, 0, -50});
+    this->registry.add_component<TextureComp>
+        (background, {"background"});
 
     /*
     this->soundManager.loadSound("client/assets/new_player.mp3");
