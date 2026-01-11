@@ -27,6 +27,8 @@ void Renderer::Draw()
         checkbox.Draw();
     for (auto &textbox : textboxes)
             textbox.Draw();
+    for (auto &inputbox : inputboxes)
+            inputbox.Draw();
 }
 
 void Renderer::AddButton(int posX, int posY, int sizeX, int sizeY,
@@ -49,12 +51,14 @@ void Renderer::AddCheckBox(bool checked, int posX, int posY, int size,
 
 void Renderer::DeleteButton(size_t i)
 {
-    (void)i;
+    if (i < buttons.size())
+        buttons.erase(buttons.begin() + i);
 }
 
 void Renderer::DeleteCheckBox(size_t i)
 {
-    (void)i;
+    if (i < checkboxes.size())
+        checkboxes.erase(checkboxes.begin() + i);
 }
 
 void Renderer::Clear()
@@ -101,13 +105,16 @@ void Renderer::Update()
         checkbox.Update();
     for (auto &textbox : textboxes)
             textbox.Update();
+    for (auto &inputbox : inputboxes)
+            inputbox.Update();
     this->Draw();
     return;
 }
 
 void Renderer::DeleteTextBox(size_t i)
 {
-    (void)i;
+    if (i < textboxes.size())
+        textboxes.erase(textboxes.begin() + i);
 }
 
 gl::TextBox &Renderer::GetTextBox(int i)
@@ -118,4 +125,29 @@ gl::TextBox &Renderer::GetTextBox(int i)
 const gl::TextBox &Renderer::GetTextBox(int i) const
 {
     return textboxes.at(static_cast<size_t>(i));
+}
+
+void Renderer::DeleteInputBox(size_t i)
+{
+    if (i < inputboxes.size())
+        inputboxes.erase(inputboxes.begin() + i);
+}
+
+const gl::InputBox &Renderer::GetInputBox(int i) const
+{
+    return inputboxes.at(static_cast<size_t>(i));
+}
+
+gl::InputBox &Renderer::GetInputBox(int i)
+{
+    return inputboxes.at(static_cast<size_t>(i));
+}
+
+void Renderer::AddInputBox(int posX, int posY, int sizeX, int sizeY,
+                          int transparency, Color color,
+                          const std::string &text)
+{
+    inputboxes.emplace_back(posX, posY, sizeX, sizeY,
+                          color, color, transparency);
+    (void)text;
 }

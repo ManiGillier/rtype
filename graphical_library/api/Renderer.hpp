@@ -11,6 +11,7 @@
 #include <graphical_library/api/MyButton.hpp>
 #include <graphical_library/api/MyCheck.hpp>
 #include <graphical_library/api/MyTextBox.hpp>
+#include <graphical_library/api/MyInputBox.hpp>
 
 namespace gl {
     class Renderer
@@ -36,6 +37,11 @@ namespace gl {
         virtual void DeleteTextBox(size_t i) = 0;
         virtual TextBox &GetTextBox(int i) = 0;
         virtual const TextBox &GetTextBox(int i) const = 0;
+        virtual void AddInputBox(int posX, int posY, int sizeX, int sizeY,
+                    int transparency, Color color, const std::string& text) = 0;
+        virtual void DeleteInputBox(size_t i) = 0;
+        virtual InputBox &GetInputBox(int i) = 0;
+        virtual const InputBox &GetInputBox(int i) const = 0;
     };
 }
 #endif // RENDERER_HPP_

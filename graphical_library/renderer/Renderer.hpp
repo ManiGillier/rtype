@@ -11,6 +11,7 @@
 #include "../raylib/buttons/MyButton.hpp"
 #include "../raylib/checkbox/Check.hpp"
 #include "../raylib/textbox/MyTextBox.hpp"
+#include "../raylib/inputbox/MyInputBox.hpp"
 #include <graphical_library/api/Renderer.hpp>
 #include <raylib.h>
 #include <vector>
@@ -27,10 +28,13 @@ public:
         int transparency, Color color, const std::string& text) override;
     void AddTextBox(int posX, int posY, int sizeX, int sizeY,
         int transparency, Color color, const std::string& text) override;
+    void AddInputBox(int posX, int posY, int sizeX, int sizeY,
+        int transparency, Color color, const std::string& text) override;
     void Update() override;
     void DeleteButton(size_t i) override;
     void DeleteCheckBox(size_t i) override;
     void DeleteTextBox(size_t i) override;
+    void DeleteInputBox(size_t i) override;
     void Clear() override;
     gl::Button &GetButton(int i) override;
     const gl::Button &GetButton(int i) const override;
@@ -38,11 +42,14 @@ public:
     const gl::Checkbox &GetCheckBox(int i) const override;
     gl::TextBox &GetTextBox(int i) override;
     const gl::TextBox &GetTextBox(int i) const override;
+    gl::InputBox &GetInputBox(int i) override;
+    const gl::InputBox &GetInputBox(int i) const override;
 
 private:
     std::vector<MyCheckBox> checkboxes;
     std::vector<MyButton> buttons;
     std::vector<MyTextBox> textboxes;
+    std::vector<MyInputBox> inputboxes;
 };
 
-#endif // RENDERER_HPP_
+#endif
