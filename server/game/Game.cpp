@@ -7,6 +7,7 @@
 #include "components/Resistance.hpp"
 #include "components/Tag.hpp"
 #include "components/Velocity.hpp"
+#include "ecs/regisrty/Registry.hpp"
 #include "gameplay/GamePlay.hpp"
 #include "network/logger/Logger.hpp"
 #include "network/packets/Packet.hpp"
@@ -73,6 +74,7 @@ void Game::loop(int ticks)
     this->_networkManager.flush();
     this->resetPlayersEntities();
     this->_networkManager.clear();
+    this->_registry = Registry();
 }
 
 void Game::initPlayers()
