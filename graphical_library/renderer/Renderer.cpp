@@ -26,6 +26,8 @@ void Renderer::Draw()
         button.Draw();
     for (auto &checkbox : checkboxes)
         checkbox.Draw();
+    for (auto &textbox : textboxes)
+            textbox.Draw();
 }
 
 void Renderer::AddButton(int posX, int posY, int sizeX, int sizeY,
@@ -60,6 +62,7 @@ void Renderer::Clear()
 {
     buttons.clear();
     checkboxes.clear();
+    textboxes.clear();
 }
 
 gl::Button &Renderer::GetButton(int i)
@@ -80,4 +83,28 @@ gl::Checkbox &Renderer::GetCheckBox(int i)
 const gl::Checkbox &Renderer::GetCheckBox(int i) const
 {
     return checkboxes.at(static_cast<size_t>(i));
+}
+
+void Renderer::AddTextBox(int posX, int posY, int sizeX, int sizeY,
+                          int transparency, Color color,
+                          const std::string &text)
+{
+    textboxes.emplace_back(posX, posY, sizeX, sizeY,
+                          color, color, transparency);
+    textboxes.back().SetText(text);
+}
+
+void Renderer::DeleteTextBox(size_t i)
+{
+    (void)i;
+}
+
+gl::TextBox &Renderer::GetTextBox(int i)
+{
+    return textboxes.at(static_cast<size_t>(i));
+}
+
+const gl::TextBox &Renderer::GetTextBox(int i) const
+{
+    return textboxes.at(static_cast<size_t>(i));
 }

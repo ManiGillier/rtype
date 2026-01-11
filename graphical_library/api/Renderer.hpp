@@ -10,6 +10,7 @@
 
 #include <graphical_library/api/MyButton.hpp>
 #include <graphical_library/api/MyCheck.hpp>
+#include <graphical_library/api/MyTextBox.hpp>
 
 namespace gl {
     class Renderer
@@ -29,6 +30,11 @@ namespace gl {
         virtual const Checkbox &GetCheckBox(int i) const = 0;
         virtual Button &GetButton(int i) = 0;
         virtual Checkbox &GetCheckBox(int i) = 0;
+        virtual void AddTextBox(int posX, int posY, int sizeX, int sizeY,
+            int transparency, Color color, const std::string& text) = 0;
+        virtual void DeleteTextBox(size_t i) = 0;
+        virtual TextBox &GetTextBox(int i) = 0;
+        virtual const TextBox &GetTextBox(int i) const = 0;
     };
 }
 #endif // RENDERER_HPP_
