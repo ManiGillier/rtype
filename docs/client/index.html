@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Technical Choices - R-Type documentation</title>
+        <title>Client - R-Type documentation</title>
 
 
         <!-- Custom HTML head -->
@@ -12,21 +12,21 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="favicon.svg">
-        <link rel="shortcut icon" href="favicon.png">
-        <link rel="stylesheet" href="css/variables.css">
-        <link rel="stylesheet" href="css/general.css">
-        <link rel="stylesheet" href="css/chrome.css">
-        <link rel="stylesheet" href="css/print.css" media="print">
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        <link rel="stylesheet" href="fonts/fonts.css">
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" href="highlight.css">
-        <link rel="stylesheet" href="tomorrow-night.css">
-        <link rel="stylesheet" href="ayu-highlight.css">
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
 
@@ -35,7 +35,7 @@
     <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
-            var path_to_root = "";
+            var path_to_root = "../";
             var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
         </script>
 
@@ -88,7 +88,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../../index.html">Introduction</a></li><li class="chapter-item expanded "><a href="build.html"><strong aria-hidden="true">1.</strong> Build Project</a></li><li class="chapter-item expanded "><a href="technical_choices.html" class="active"><strong aria-hidden="true">2.</strong> Technical Choices</a></li><li class="chapter-item expanded "><a href="client/index.html"><strong aria-hidden="true">3.</strong> Client</a></li><li class="chapter-item expanded "><a href="server/index.html"><strong aria-hidden="true">4.</strong> Server</a></li><li class="chapter-item expanded "><a href="network/index.html"><strong aria-hidden="true">5.</strong> Network</a></li><li class="chapter-item expanded "><a href="ecs.html"><strong aria-hidden="true">6.</strong> Develop with our ECS</a></li><li class="chapter-item expanded "><a href="graphical_library/index.html"><strong aria-hidden="true">7.</strong> Graphical Library</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../../../index.html">Introduction</a></li><li class="chapter-item expanded "><a href="../build.html"><strong aria-hidden="true">1.</strong> Build Project</a></li><li class="chapter-item expanded "><a href="../technical_choices.html"><strong aria-hidden="true">2.</strong> Technical Choices</a></li><li class="chapter-item expanded "><a href="../client/index.html" class="active"><strong aria-hidden="true">3.</strong> Client</a></li><li class="chapter-item expanded "><a href="../server/index.html"><strong aria-hidden="true">4.</strong> Server</a></li><li class="chapter-item expanded "><a href="../network/index.html"><strong aria-hidden="true">5.</strong> Network</a></li><li class="chapter-item expanded "><a href="../ecs.html"><strong aria-hidden="true">6.</strong> Develop with our ECS</a></li><li class="chapter-item expanded "><a href="../graphical_library/index.html"><strong aria-hidden="true">7.</strong> Graphical Library</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -144,7 +144,7 @@
                     <h1 class="menu-title">R-Type documentation</h1>
 
                     <div class="right-buttons">
-                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
 
@@ -173,12 +173,84 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="technical-choices"><a class="header" href="#technical-choices">Technical choices</a></h1>
-<h2 id="chosen-language"><a class="header" href="#chosen-language">Chosen Language</a></h2>
-<p>We chose C++ because for a multiplayer game, we needed very good performance.
-The low-level control over memory allows us to optimize our game as much as possible.</p>
-<p>Compared to Java, C# or Zig, we lose a bit of development time but it's worth it thanks to the time we gain on execution speed and resource control.</p>
-<h2 id="chosen-graphical-library"><a class="header" href="#chosen-graphical-library">Chosen Graphical Library</a></h2>
+                        <h1 id="client-documentation"><a class="header" href="#client-documentation">Client Documentation</a></h1>
+<h1 id="summary"><a class="header" href="#summary">Summary</a></h1>
+<p>The client represent the playable part of the project.</p>
+<p>A client must connect to a given running server to work.</p>
+<p>It has a Graphical User Interface to allow a human to play the game.</p>
+<h1 id="architecture"><a class="header" href="#architecture">Architecture</a></h1>
+<p>The client is composed of two parts:</p>
+<ul>
+<li><a href="#gui--logic">The GUI &amp; Logic</a><br />
+This is where all of the logic and rendering happen.</li>
+<li><a href="#network">The Network</a><br />
+This is where all communications with the server happen.</li>
+</ul>
+<p>The client is not responsible to determine anything except for user inputs.<br />
+The position of the player is even determined by the server itself.</p>
+<h2 id="gui--logic"><a class="header" href="#gui--logic">Gui &amp; Logic</a></h2>
+<p>This part of a client is defined as a state machine.</p>
+<p>In can be in one of those states:</p>
+<ul>
+<li><a href="#connection-state">Connection</a></li>
+<li><a href="#in-lobby-state">Lobby</a></li>
+<li><a href="#in-game-state">Game</a></li>
+</ul>
+<h3 id="connection-state"><a class="header" href="#connection-state">Connection state</a></h3>
+<p>Inside the connection state, the client is preparing the connections with the server.<br />
+It first connect with a TCP socket, and then setups a UDP connection (and this is where the loading time arise).</p>
+<p>It is separated from the rest to forbid interaction while this crucial step is still processing.</p>
+<h3 id="in-lobby-state"><a class="header" href="#in-lobby-state">In lobby state</a></h3>
+<p>When connected, you are added to a lobby.<br />
+This is where you wait for your friends to connect to join the game together.</p>
+<p>Inside the lobby, you have the possibility to request the start of the game, and force every player in the lobby to switch to the game state.</p>
+<h3 id="in-game-state"><a class="header" href="#in-game-state">In game state</a></h3>
+<p>Finally, the real state. The one where you can play.</p>
+<p>This state starts with a loading time. This is unfortunate, as we wanted to have a dedicated state for loading all ressources before connecting to the game. It will be added in the future !</p>
+<p>Here you have the possibility to see other players, enemies, bullets and, of course, to interact and play the game with you controls.</p>
+<h3 id="composition-of-each-state"><a class="header" href="#composition-of-each-state">Composition of each state</a></h3>
+<p>We are using an Entity Component System to make the game work. Both rendering and logic parts are using this ECS.</p>
+<p>Given that, every state has it's own separated entities, components and systems.<br />
+For example, the game state has a system dedicated to showing a bullet on the screen, whilst the connecting state really don't have any bullets !</p>
+<p>The GUI is then separated from the LOGIC, via two interfaces.</p>
+<ol>
+<li>GUI
+Inside this part, all of the rendering logic happen. We define every rendering systems, as well as rendering-related responses to network packets.</li>
+<li>Logic
+There we enter the logic side, like managing player inputs, deleting entities, instanciating new bullets, and so on.<br />
+We have responses to server requests via the networking interface in this part.</li>
+</ol>
+<p>Technically we do have a last state, the GAME OVER state, but it is really a very quick deconnection state, as we do not have a game over screen yet.</p>
+<h2 id="network"><a class="header" href="#network">Network</a></h2>
+<p>The client utilizes network in an extensive manner, as it needs it for almost everything !<br />
+Indeed, almost nothing is determined by the client itself for now, and it is uncapable of even computing the position of the player.<br />
+Thus, it needs to receive those informations from the server.</p>
+<p>We can differentiate three kind of communication between the server and the client :</p>
+<ol>
+<li><strong>Mandatory connection communications</strong><br />
+This include the authentification of the UDP socket for example.</li>
+<li><strong>Ponctual events</strong><br />
+For example, when a player is killed, or an enemy spawns.</li>
+<li><strong>Continuous datastream</strong><br />
+For example, player and enemy positions, player inputs.</li>
+</ol>
+<p>The architecture with executors that totally abstracts differentiation between types of packet make it fairly easy to understand how to implement a reaction to a give packet.</p>
+<h2 id="managers"><a class="header" href="#managers">Managers</a></h2>
+<ul>
+<li><strong>Client Manager</strong><br />
+The client itself is manager through a <code>ClientManager</code>.<br />
+This class creates all the necessary subclasses and managers to launch the game, connect to the server and close everything without memory leaks.<br />
+It hosts the principal game loop and the state machine, and calls the subsequent update and render methods from a given state. It is responsible for the state change, although determined by the state themselves.</li>
+<li><strong>Network Manager</strong><br />
+The network manager inits the network thread. Inside this thread runs the network main loop, in change of calling the network library methods to connect to the server, poll events and send them.<br />
+This manager also handles request of deconnections.</li>
+<li><strong>Sound Manager</strong><br />
+The sound manager is a specific GUI manager that loads, plays and unloads sound files into memory.<br />
+It serves as a cache to avoid loading the same sound file multiple times.</li>
+<li><strong>Texture Manager</strong><br />
+The Texture manager does the same thing as the sound manager, but adapted for images loaded as GPU textures.</li>
+</ul>
+<h1 id="graphical-library"><a class="header" href="#graphical-library">Graphical library</a></h1>
 <p>For our graphical library, we chose <a href="https://www.raylib.com/">Raylib</a>.</p>
 <p>It offers multiple advantages compared to other libraries:</p>
 <ol>
@@ -202,77 +274,21 @@ The low-level control over memory allows us to optimize our game as much as poss
 <p>The Raylib is a really good graphical library, but we may encounter some problem with it, namely :</p>
 <ul>
 <li>It is not really adapted to Object Oriented Programming.<br />
-Indeed, it is not at all constructed with classes, and rely solely on direct calls to global funtions</li>
+Indeed, it is not at all constructed with classes, and rely solely on direct calls to global funtions.</li>
 </ul>
-<h2 id="algorithms-and-data-structures"><a class="header" href="#algorithms-and-data-structures">Algorithms and Data Structures</a></h2>
-<h3 id="ecs-entity-component-system"><a class="header" href="#ecs-entity-component-system">ECS (Entity Component System)</a></h3>
-<p>The ECS was a bit of an unusual choice but logical for us.
-Compared to a classic object-oriented architecture with inheritance, the ECS organizes data contiguously in memory, which optimizes the CPU cache on both server and client side.</p>
-<p>Concretely, instead of having "Player" or "Enemy" objects that are subclasses, we group all components of the same type together.</p>
-<p>Result: when we update positions or Health, the iteration is much faster.
-For a game with many simultaneous entities, it makes a huge difference.</p>
-<h3 id="réseautype-custom"><a class="header" href="#réseautype-custom">RéseauType (custom)</a></h3>
-<p>This is our most strongest yet assumed choice. Instead of using an existing cross-platform library, we developed our own network library. Why?</p>
-<ul>
-<li>We know how it works. If a bug appears, we can fix it ourselves without depending on an external community.</li>
-<li>Generic libraries handle many cases we don't need. Our protocol is tailored for our needs - position packets, input packets, etc.</li>
-<li>By controlling the protocol, we can implement packets specific to our game, whereas with an existing library we would have had to adapt to its functioning.</li>
-</ul>
-<p>The fact that we have our own network library allows us to integrate these checks directly into the protocol rather than adding them on top.</p>
-<h2 id="storage"><a class="header" href="#storage">Storage</a></h2>
-<p>RéseauType uses binary serialization for packet transmission.</p>
-<p>This section compares different serialization methods.</p>
-<h3 id="binary-serialization-our-approach"><a class="header" href="#binary-serialization-our-approach">Binary Serialization (Our approach)</a></h3>
-<p>Binary serialization converts packet data into bytes.</p>
-<p>Packets are not stored permanently. They exist only during transmission between client and server.</p>
-<p>It is fast and deterministic.</p>
-<p>Both the client and server know exactly how to read and write packet data.</p>
-<p>There is no parsing overhead, which makes it reliable for real-time communication.</p>
-<p>Each packet has a fixed size.</p>
-<p>This makes bandwidth usage predictable and efficient.</p>
-<p>However, changing packet structure requires updating both client and server code.</p>
-<p>The binary format is also difficult to debug since it is not human-readable. (Although RéseauType comes with a Logger to make debugging easy !)</p>
-<h3 id="why-réseautype-uses-binary-serialization"><a class="header" href="#why-réseautype-uses-binary-serialization">Why RéseauType Uses Binary Serialization</a></h3>
-<p>RéseauType prioritizes speed and bandwidth usage</p>
-<p>Binary serialization provides the fastest transmission and smallest packet size, which is critical for real-time multiplayer games where latency matters.</p>
-<p>JSON or Protocol Buffers are not optimal for real-time games where performance is the priority.</p>
-<h2 id="security"><a class="header" href="#security">Security</a></h2>
-<p>The only security challenge of the project is dealing with client output and preventing cheating.
-Clients can be modified or replaced with malicious programs that send fake data to gain unfair advantages.</p>
-<h3 id="server-authority"><a class="header" href="#server-authority">Server Authority</a></h3>
-<p>The server has authority on everything. It does not trust the client at any point.</p>
-<p>The client only sends its inputs.</p>
-<p>he server calculates the player's position, health, score, and all game state.</p>
-<p>The client does not determine its own position or any game logic.</p>
-<p>This prevents clients from sending false position data or modifying their own stats.</p>
-<p>Even if a cheater modifies their client, they can only send inputs, not results.</p>
-<h3 id="connection-validation"><a class="header" href="#connection-validation">Connection Validation</a></h3>
-<p>A client is disconnected when it does not connect properly using the RéseauType Client.</p>
-<p>Although this connection method can be mimicked by a custom client, it does not give any advantage over using the RéseauType Client.</p>
-<p>This prevents random programs from spamming the server without proper authentication.</p>
-<h3 id="packet-validation"><a class="header" href="#packet-validation">Packet Validation</a></h3>
-<p>Our system can disconnect a user based on the data received in a packet.</p>
-<p>An anti-cheat system can easily be implemented by adding packet executors that detect suspicious behavior.</p>
-<p>The server kicks off a player when it receives an unknown packet ID. It only accepts registered packets.</p>
-<h3 id="data-integrity"><a class="header" href="#data-integrity">Data Integrity</a></h3>
-<p>All packets are serialized in binary with fixed sizes. The server validates packet size before processing. If a packet is incomplete or malformed, it is discarded.</p>
-<h3 id="further-security-axis"><a class="header" href="#further-security-axis">Further Security Axis</a></h3>
-<h4 id="ddos-attacks"><a class="header" href="#ddos-attacks">DDoS Attacks</a></h4>
-<p>RéseauType does not currently implement rate limiting or IP blocking. A malicious client could spam packets to overload the server</p>
-<p>Rate limiting can be added to limit the number of packets per second per client.</p>
-<h4 id="man-in-the-middle-attacks"><a class="header" href="#man-in-the-middle-attacks">Man-in-the-Middle Attacks</a></h4>
-<p>RéseauType does not encrypt packets. An attacker on the same network could intercept and read packets, or modify them in transit</p>
-<p>Adding encryption (TLS for TCP, DTLS for UDP) could prevent this and could be added.</p>
+<h1 id="diagrams"><a class="header" href="#diagrams">Diagrams</a></h1>
+<h2 id="client-architecture-diagramv"><a class="header" href="#client-architecture-diagramv">Client architecture diagramv</a></h2>
+<p><img src="./arch.png" alt="Client architecture" /></p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="build.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../technical_choices.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next prefetch" href="client/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../server/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -282,11 +298,11 @@ Clients can be modified or replaced with malicious programs that send fake data 
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="build.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../technical_choices.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next prefetch" href="client/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../server/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
@@ -317,13 +333,13 @@ Clients can be modified or replaced with malicious programs that send fake data 
         </script>
 
 
-        <script src="elasticlunr.min.js"></script>
-        <script src="mark.min.js"></script>
-        <script src="searcher.js"></script>
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
 
-        <script src="clipboard.min.js"></script>
-        <script src="highlight.js"></script>
-        <script src="book.js"></script>
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
 
         <!-- Custom JS scripts -->
 

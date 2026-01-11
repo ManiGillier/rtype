@@ -3,8 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>R-Type documentation</title>
-        <meta name="robots" content="noindex">
+        <title>Network - R-Type documentation</title>
 
 
         <!-- Custom HTML head -->
@@ -13,21 +12,21 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="favicon.svg">
-        <link rel="shortcut icon" href="favicon.png">
-        <link rel="stylesheet" href="css/variables.css">
-        <link rel="stylesheet" href="css/general.css">
-        <link rel="stylesheet" href="css/chrome.css">
-        <link rel="stylesheet" href="css/print.css" media="print">
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
-        <link rel="stylesheet" href="fonts/fonts.css">
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" href="highlight.css">
-        <link rel="stylesheet" href="tomorrow-night.css">
-        <link rel="stylesheet" href="ayu-highlight.css">
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
 
         <!-- Custom theme stylesheets -->
 
@@ -36,7 +35,7 @@
     <div id="body-container">
         <!-- Provide site root to javascript -->
         <script>
-            var path_to_root = "";
+            var path_to_root = "../";
             var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
         </script>
 
@@ -89,7 +88,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../../index.html">Introduction</a></li><li class="chapter-item expanded "><a href="build.html"><strong aria-hidden="true">1.</strong> Build Project</a></li><li class="chapter-item expanded "><a href="technical_choices.html"><strong aria-hidden="true">2.</strong> Technical Choices</a></li><li class="chapter-item expanded "><a href="client/index.html"><strong aria-hidden="true">3.</strong> Client</a></li><li class="chapter-item expanded "><a href="server/index.html"><strong aria-hidden="true">4.</strong> Server</a></li><li class="chapter-item expanded "><a href="network/index.html"><strong aria-hidden="true">5.</strong> Network</a></li><li class="chapter-item expanded "><a href="ecs.html"><strong aria-hidden="true">6.</strong> Develop with our ECS</a></li><li class="chapter-item expanded "><a href="graphical_library/index.html"><strong aria-hidden="true">7.</strong> Graphical Library</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../../../index.html">Introduction</a></li><li class="chapter-item expanded "><a href="../build.html"><strong aria-hidden="true">1.</strong> Build Project</a></li><li class="chapter-item expanded "><a href="../technical_choices.html"><strong aria-hidden="true">2.</strong> Technical Choices</a></li><li class="chapter-item expanded "><a href="../client/index.html"><strong aria-hidden="true">3.</strong> Client</a></li><li class="chapter-item expanded "><a href="../server/index.html"><strong aria-hidden="true">4.</strong> Server</a></li><li class="chapter-item expanded "><a href="../network/index.html" class="active"><strong aria-hidden="true">5.</strong> Network</a></li><li class="chapter-item expanded "><a href="../ecs.html"><strong aria-hidden="true">6.</strong> Develop with our ECS</a></li><li class="chapter-item expanded "><a href="../graphical_library/index.html"><strong aria-hidden="true">7.</strong> Graphical Library</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -145,7 +144,7 @@
                     <h1 class="menu-title">R-Type documentation</h1>
 
                     <div class="right-buttons">
-                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
                         </a>
 
@@ -174,285 +173,8 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="r-type"><a class="header" href="#r-type">R-Type</a></h1>
-<h2 id="documentation"><a class="header" href="#documentation">Documentation</a></h2>
-<p>See the documentation <a href="https://manigillier.github.io/rtype">here</a>.</p>
-<h2 id="how-to-get-started"><a class="header" href="#how-to-get-started">How to get started</a></h2>
-<pre><code class="language-bash">make release
-</code></pre>
-<p>Two binaries will then be created :</p>
-<ul>
-<li><code>r-type_client</code>, graphical client.</li>
-<li><code>r-type_server</code>, server</li>
-</ul>
-<p><code>./r-type_client IP PORT [-d]</code>
-<code>./r-type_server -p PORT [-l TICKSPEED] [-d]</code></p>
-<h2 id="authors"><a class="header" href="#authors">Authors</a></h2>
-<ul>
-<li>Mani Gillier</li>
-<li>Rayane El Janati El Idrissi</li>
-<li>Hugo Poggetti</li>
-<li>Maxime Huet</li>
-</ul>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="build-project"><a class="header" href="#build-project">Build project</a></h1>
-<h2 id="dependencies"><a class="header" href="#dependencies">Dependencies</a></h2>
-<ul>
-<li>make</li>
-<li>cmake =&gt; 3.15</li>
-<li>c++20 compiler</li>
-<li><a href="https://github.com/raysan5/raylib/wiki/raylib-dependencies">Raylib dependencies</a></li>
-<li>PThreads (POSIX threads)</li>
-</ul>
-<h2 id="package-manager"><a class="header" href="#package-manager">Package manager</a></h2>
-<ul>
-<li><a href="https://github.com/cpm-cmake/CPM.cmake">cmake cpm</a></li>
-</ul>
-<h2 id="packages-used"><a class="header" href="#packages-used">Packages used</a></h2>
-<ul>
-<li><a href="https://github.com/raysan5/raylib">raylib v5.5</a></li>
-</ul>
-<h2 id="build"><a class="header" href="#build">Build</a></h2>
-<pre><code class="language-bash"># build release
-make release
-
-# build debug version
-make debug
-</code></pre>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="technical-choices"><a class="header" href="#technical-choices">Technical choices</a></h1>
-<h2 id="chosen-language"><a class="header" href="#chosen-language">Chosen Language</a></h2>
-<p>We chose C++ because for a multiplayer game, we needed very good performance.
-The low-level control over memory allows us to optimize our game as much as possible.</p>
-<p>Compared to Java, C# or Zig, we lose a bit of development time but it's worth it thanks to the time we gain on execution speed and resource control.</p>
-<h2 id="chosen-graphical-library"><a class="header" href="#chosen-graphical-library">Chosen Graphical Library</a></h2>
-<p>For our graphical library, we chose <a href="https://www.raylib.com/">Raylib</a>.</p>
-<p>It offers multiple advantages compared to other libraries:</p>
-<ol>
-<li><strong>SFML</strong>
-<ul>
-<li>The raylib offers a higher level management of operations, with a lot of underlying global variables, offering nice and straightforward function calls.</li>
-<li>The SFML, although having the nice advantage of being adapted to Object Oriented Programming, tends to be more difficult to use because of the need to keep track of all variables created. It may be preferable to have the variables in hand, but in our case with the ECS and state machine, we chose to have hidden variables.</li>
-</ul>
-</li>
-<li><strong>SDL</strong>
-<ul>
-<li>The SDL is a low-level graphical library. We did not wanted to go too deep in that rabbit hole, and we stuck to the Raylib, offering higher level implementation.</li>
-</ul>
-</li>
-<li><strong>Direct OpenGl calls</strong>
-<ul>
-<li>I'm not even gonna explain why we did not chose that path.</li>
-</ul>
-</li>
-</ol>
-<p>The Raylib is a really good graphical library, but we may encounter some problem with it, namely :</p>
-<ul>
-<li>It is not really adapted to Object Oriented Programming.<br />
-Indeed, it is not at all constructed with classes, and rely solely on direct calls to global funtions</li>
-</ul>
-<h2 id="algorithms-and-data-structures"><a class="header" href="#algorithms-and-data-structures">Algorithms and Data Structures</a></h2>
-<h3 id="ecs-entity-component-system"><a class="header" href="#ecs-entity-component-system">ECS (Entity Component System)</a></h3>
-<p>The ECS was a bit of an unusual choice but logical for us.
-Compared to a classic object-oriented architecture with inheritance, the ECS organizes data contiguously in memory, which optimizes the CPU cache on both server and client side.</p>
-<p>Concretely, instead of having "Player" or "Enemy" objects that are subclasses, we group all components of the same type together.</p>
-<p>Result: when we update positions or Health, the iteration is much faster.
-For a game with many simultaneous entities, it makes a huge difference.</p>
-<h3 id="réseautype-custom"><a class="header" href="#réseautype-custom">RéseauType (custom)</a></h3>
-<p>This is our most strongest yet assumed choice. Instead of using an existing cross-platform library, we developed our own network library. Why?</p>
-<ul>
-<li>We know how it works. If a bug appears, we can fix it ourselves without depending on an external community.</li>
-<li>Generic libraries handle many cases we don't need. Our protocol is tailored for our needs - position packets, input packets, etc.</li>
-<li>By controlling the protocol, we can implement packets specific to our game, whereas with an existing library we would have had to adapt to its functioning.</li>
-</ul>
-<p>The fact that we have our own network library allows us to integrate these checks directly into the protocol rather than adding them on top.</p>
-<h2 id="storage"><a class="header" href="#storage">Storage</a></h2>
-<p>RéseauType uses binary serialization for packet transmission.</p>
-<p>This section compares different serialization methods.</p>
-<h3 id="binary-serialization-our-approach"><a class="header" href="#binary-serialization-our-approach">Binary Serialization (Our approach)</a></h3>
-<p>Binary serialization converts packet data into bytes.</p>
-<p>Packets are not stored permanently. They exist only during transmission between client and server.</p>
-<p>It is fast and deterministic.</p>
-<p>Both the client and server know exactly how to read and write packet data.</p>
-<p>There is no parsing overhead, which makes it reliable for real-time communication.</p>
-<p>Each packet has a fixed size.</p>
-<p>This makes bandwidth usage predictable and efficient.</p>
-<p>However, changing packet structure requires updating both client and server code.</p>
-<p>The binary format is also difficult to debug since it is not human-readable. (Although RéseauType comes with a Logger to make debugging easy !)</p>
-<h3 id="why-réseautype-uses-binary-serialization"><a class="header" href="#why-réseautype-uses-binary-serialization">Why RéseauType Uses Binary Serialization</a></h3>
-<p>RéseauType prioritizes speed and bandwidth usage</p>
-<p>Binary serialization provides the fastest transmission and smallest packet size, which is critical for real-time multiplayer games where latency matters.</p>
-<p>JSON or Protocol Buffers are not optimal for real-time games where performance is the priority.</p>
-<h2 id="security"><a class="header" href="#security">Security</a></h2>
-<p>The only security challenge of the project is dealing with client output and preventing cheating.
-Clients can be modified or replaced with malicious programs that send fake data to gain unfair advantages.</p>
-<h3 id="server-authority"><a class="header" href="#server-authority">Server Authority</a></h3>
-<p>The server has authority on everything. It does not trust the client at any point.</p>
-<p>The client only sends its inputs.</p>
-<p>he server calculates the player's position, health, score, and all game state.</p>
-<p>The client does not determine its own position or any game logic.</p>
-<p>This prevents clients from sending false position data or modifying their own stats.</p>
-<p>Even if a cheater modifies their client, they can only send inputs, not results.</p>
-<h3 id="connection-validation"><a class="header" href="#connection-validation">Connection Validation</a></h3>
-<p>A client is disconnected when it does not connect properly using the RéseauType Client.</p>
-<p>Although this connection method can be mimicked by a custom client, it does not give any advantage over using the RéseauType Client.</p>
-<p>This prevents random programs from spamming the server without proper authentication.</p>
-<h3 id="packet-validation"><a class="header" href="#packet-validation">Packet Validation</a></h3>
-<p>Our system can disconnect a user based on the data received in a packet.</p>
-<p>An anti-cheat system can easily be implemented by adding packet executors that detect suspicious behavior.</p>
-<p>The server kicks off a player when it receives an unknown packet ID. It only accepts registered packets.</p>
-<h3 id="data-integrity"><a class="header" href="#data-integrity">Data Integrity</a></h3>
-<p>All packets are serialized in binary with fixed sizes. The server validates packet size before processing. If a packet is incomplete or malformed, it is discarded.</p>
-<h3 id="further-security-axis"><a class="header" href="#further-security-axis">Further Security Axis</a></h3>
-<h4 id="ddos-attacks"><a class="header" href="#ddos-attacks">DDoS Attacks</a></h4>
-<p>RéseauType does not currently implement rate limiting or IP blocking. A malicious client could spam packets to overload the server</p>
-<p>Rate limiting can be added to limit the number of packets per second per client.</p>
-<h4 id="man-in-the-middle-attacks"><a class="header" href="#man-in-the-middle-attacks">Man-in-the-Middle Attacks</a></h4>
-<p>RéseauType does not encrypt packets. An attacker on the same network could intercept and read packets, or modify them in transit</p>
-<p>Adding encryption (TLS for TCP, DTLS for UDP) could prevent this and could be added.</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="client-documentation"><a class="header" href="#client-documentation">Client Documentation</a></h1>
+                        <h1 id="network-documentation-aka-réseautype"><a class="header" href="#network-documentation-aka-réseautype">Network Documentation (a.k.a RéseauType)</a></h1>
 <h1 id="summary"><a class="header" href="#summary">Summary</a></h1>
-<p>The client represent the playable part of the project.</p>
-<p>A client must connect to a given running server to work.</p>
-<p>It has a Graphical User Interface to allow a human to play the game.</p>
-<h1 id="architecture"><a class="header" href="#architecture">Architecture</a></h1>
-<p>The client is composed of two parts:</p>
-<ul>
-<li><a href="client/index.html#gui--logic">The GUI &amp; Logic</a><br />
-This is where all of the logic and rendering happen.</li>
-<li><a href="client/index.html#network">The Network</a><br />
-This is where all communications with the server happen.</li>
-</ul>
-<p>The client is not responsible to determine anything except for user inputs.<br />
-The position of the player is even determined by the server itself.</p>
-<h2 id="gui--logic"><a class="header" href="#gui--logic">Gui &amp; Logic</a></h2>
-<p>This part of a client is defined as a state machine.</p>
-<p>In can be in one of those states:</p>
-<ul>
-<li><a href="client/index.html#connection-state">Connection</a></li>
-<li><a href="client/index.html#in-lobby-state">Lobby</a></li>
-<li><a href="client/index.html#in-game-state">Game</a></li>
-</ul>
-<h3 id="connection-state"><a class="header" href="#connection-state">Connection state</a></h3>
-<p>Inside the connection state, the client is preparing the connections with the server.<br />
-It first connect with a TCP socket, and then setups a UDP connection (and this is where the loading time arise).</p>
-<p>It is separated from the rest to forbid interaction while this crucial step is still processing.</p>
-<h3 id="in-lobby-state"><a class="header" href="#in-lobby-state">In lobby state</a></h3>
-<p>When connected, you are added to a lobby.<br />
-This is where you wait for your friends to connect to join the game together.</p>
-<p>Inside the lobby, you have the possibility to request the start of the game, and force every player in the lobby to switch to the game state.</p>
-<h3 id="in-game-state"><a class="header" href="#in-game-state">In game state</a></h3>
-<p>Finally, the real state. The one where you can play.</p>
-<p>This state starts with a loading time. This is unfortunate, as we wanted to have a dedicated state for loading all ressources before connecting to the game. It will be added in the future !</p>
-<p>Here you have the possibility to see other players, enemies, bullets and, of course, to interact and play the game with you controls.</p>
-<h3 id="composition-of-each-state"><a class="header" href="#composition-of-each-state">Composition of each state</a></h3>
-<p>We are using an Entity Component System to make the game work. Both rendering and logic parts are using this ECS.</p>
-<p>Given that, every state has it's own separated entities, components and systems.<br />
-For example, the game state has a system dedicated to showing a bullet on the screen, whilst the connecting state really don't have any bullets !</p>
-<p>The GUI is then separated from the LOGIC, via two interfaces.</p>
-<ol>
-<li>GUI
-Inside this part, all of the rendering logic happen. We define every rendering systems, as well as rendering-related responses to network packets.</li>
-<li>Logic
-There we enter the logic side, like managing player inputs, deleting entities, instanciating new bullets, and so on.<br />
-We have responses to server requests via the networking interface in this part.</li>
-</ol>
-<p>Technically we do have a last state, the GAME OVER state, but it is really a very quick deconnection state, as we do not have a game over screen yet.</p>
-<h2 id="network"><a class="header" href="#network">Network</a></h2>
-<p>The client utilizes network in an extensive manner, as it needs it for almost everything !<br />
-Indeed, almost nothing is determined by the client itself for now, and it is uncapable of even computing the position of the player.<br />
-Thus, it needs to receive those informations from the server.</p>
-<p>We can differentiate three kind of communication between the server and the client :</p>
-<ol>
-<li><strong>Mandatory connection communications</strong><br />
-This include the authentification of the UDP socket for example.</li>
-<li><strong>Ponctual events</strong><br />
-For example, when a player is killed, or an enemy spawns.</li>
-<li><strong>Continuous datastream</strong><br />
-For example, player and enemy positions, player inputs.</li>
-</ol>
-<p>The architecture with executors that totally abstracts differentiation between types of packet make it fairly easy to understand how to implement a reaction to a give packet.</p>
-<h2 id="managers"><a class="header" href="#managers">Managers</a></h2>
-<ul>
-<li><strong>Client Manager</strong><br />
-The client itself is manager through a <code>ClientManager</code>.<br />
-This class creates all the necessary subclasses and managers to launch the game, connect to the server and close everything without memory leaks.<br />
-It hosts the principal game loop and the state machine, and calls the subsequent update and render methods from a given state. It is responsible for the state change, although determined by the state themselves.</li>
-<li><strong>Network Manager</strong><br />
-The network manager inits the network thread. Inside this thread runs the network main loop, in change of calling the network library methods to connect to the server, poll events and send them.<br />
-This manager also handles request of deconnections.</li>
-<li><strong>Sound Manager</strong><br />
-The sound manager is a specific GUI manager that loads, plays and unloads sound files into memory.<br />
-It serves as a cache to avoid loading the same sound file multiple times.</li>
-<li><strong>Texture Manager</strong><br />
-The Texture manager does the same thing as the sound manager, but adapted for images loaded as GPU textures.</li>
-</ul>
-<h1 id="graphical-library"><a class="header" href="#graphical-library">Graphical library</a></h1>
-<p>For our graphical library, we chose <a href="https://www.raylib.com/">Raylib</a>.</p>
-<p>It offers multiple advantages compared to other libraries:</p>
-<ol>
-<li><strong>SFML</strong>
-<ul>
-<li>The raylib offers a higher level management of operations, with a lot of underlying global variables, offering nice and straightforward function calls.</li>
-<li>The SFML, although having the nice advantage of being adapted to Object Oriented Programming, tends to be more difficult to use because of the need to keep track of all variables created. It may be preferable to have the variables in hand, but in our case with the ECS and state machine, we chose to have hidden variables.</li>
-</ul>
-</li>
-<li><strong>SDL</strong>
-<ul>
-<li>The SDL is a low-level graphical library. We did not wanted to go too deep in that rabbit hole, and we stuck to the Raylib, offering higher level implementation.</li>
-</ul>
-</li>
-<li><strong>Direct OpenGl calls</strong>
-<ul>
-<li>I'm not even gonna explain why we did not chose that path.</li>
-</ul>
-</li>
-</ol>
-<p>The Raylib is a really good graphical library, but we may encounter some problem with it, namely :</p>
-<ul>
-<li>It is not really adapted to Object Oriented Programming.<br />
-Indeed, it is not at all constructed with classes, and rely solely on direct calls to global funtions.</li>
-</ul>
-<h1 id="diagrams"><a class="header" href="#diagrams">Diagrams</a></h1>
-<h2 id="client-architecture-diagramv"><a class="header" href="#client-architecture-diagramv">Client architecture diagramv</a></h2>
-<p><img src="client/./arch.png" alt="Client architecture" /></p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="rtype-server"><a class="header" href="#rtype-server">RType Server</a></h1>
-<p>The RType Server is the game server implementation that extends RéseauType's <code>Server</code> class.
-It manages game sessions (limited to one right now), and player connections.</p>
-<h1 id="server-responsibilities"><a class="header" href="#server-responsibilities">Server Responsibilities</a></h1>
-<h2 id="game-state-management"><a class="header" href="#game-state-management">Game State Management</a></h2>
-<p>The server maintains the authoritative game state.</p>
-<p>It processes player inputs, updates entity positions, handles collisions, and manages game logic.</p>
-<p>Clients receive updates from the server but cannot modify the game state directly.</p>
-<h2 id="player-connection-handling"><a class="header" href="#player-connection-handling">Player Connection Handling</a></h2>
-<p>When a player connects, the server creates a new client instance and assigns them a unique UUID.</p>
-<p>The server tracks all connected players and removes them from the game when they disconnect.</p>
-<h2 id="packet-processing"><a class="header" href="#packet-processing">Packet Processing:</a></h2>
-<p>The server uses packet executors to handle different types of packets:</p>
-<ul>
-<li><code>CLIENT_INPUTS</code>: Processes player input and updates game state</li>
-<li><code>GAME_START_REQUEST</code>: Starts a new game session</li>
-<li>etc..</li>
-</ul>
-<h2 id="entity-synchronization"><a class="header" href="#entity-synchronization">Entity Synchronization</a></h2>
-<p>The server broadcasts entity updates to all clients using packets like:</p>
-<ul>
-<li><code>POSITION_UPDATE</code>: Sends entity positions</li>
-<li><code>HEALTH_UPDATE</code>: Sends health changes</li>
-<li><code>NEW_PLAYER</code>, <code>NEW_BULLET</code>, <code>NEW_ENEMY</code>: Spawns new entities</li>
-<li><code>DESPAWN_PLAYER</code>, <code>DESPAWN_BULLET</code>: Removes entities</li>
-<li>etc..</li>
-</ul>
-<h2 id="server-authority-1"><a class="header" href="#server-authority-1">Server Authority</a></h2>
-<p>The server validates all client inputs.</p>
-<p>Players cannot send their own positions or modify game state directly.</p>
-<p>The server calculates everything and sends results to clients.</p>
-<h1 id="what-is-done"><a class="header" href="#what-is-done">What is done</a></h1>
-<p>Currently, the server allows launching a multiplayer game session.
-Players can see each other move around and shoot at enemies.</p>
-<p>There are two types of enemies: small enemies and big bosses. Players can shoot at them.</p>
-<p>When there are no more enemies on the field, they respawn again. Enemies spawn from the left side of the screen.
-Players have health points. When all players die, the game is over.</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="network-documentation-aka-réseautype"><a class="header" href="#network-documentation-aka-réseautype">Network Documentation (a.k.a RéseauType)</a></h1>
-<h1 id="summary-1"><a class="header" href="#summary-1">Summary</a></h1>
 <p>RéseauType is the network library used by both the client and the server, written in C++.</p>
 <p>Being developed by our own, it provides a high abstraction of common network utils, and makes communication easy and reliable.
 RéseauType allows server-client communication by Packet.
@@ -464,18 +186,18 @@ RéseauType sockets are non-blocking.
 RéseauType, with its own Client and Server implementation, is able to match a TCP Client to an UDP Client, and recognise them as a single entity and same entity. This demonstrate RéseauType's high network abstraction.
 RéseauType comes with its own logging packet system, logging every received and sent packet. Those can be toggled by setting <code>Logger:shouldLog</code> to <code>true</code></p>
 <p>(*): except strings, those will be available in a future soon-to-be update.</p>
-<h1 id="architecture-1"><a class="header" href="#architecture-1">Architecture</a></h1>
+<h1 id="architecture"><a class="header" href="#architecture">Architecture</a></h1>
 <p>RéseauType is composed of five parts:</p>
 <ul>
-<li><a href="network/index.html#packets">Packets</a>
+<li><a href="#packets">Packets</a>
 Packets are the data being sent from the server to the clients and vice-versa. Serialised in binary, those can be sent either via TCP or UDP.</li>
-<li><a href="network/index.html#the-server">The Server</a><br />
+<li><a href="#the-server">The Server</a><br />
 Creates &amp; starts a RéseauType server (TCP/UDP) that can automatically write, receive, and execute packets.</li>
-<li><a href="network/index.html#the-client">The Client</a><br />
+<li><a href="#the-client">The Client</a><br />
 Creates a client to connect to a RéseauType server (TCP/UDP). It can send, receive, and execute incoming packets from the server.</li>
-<li><a href="network/index.html#poll-manager">PollManager</a>
+<li><a href="#poll-manager">PollManager</a>
 PollManager is being used by both the client and server. It is a generic part of RéseauType, which allows to accept connections, read packets, send packets, and handle disconnections.</li>
-<li><a href="network/index.html#packet-executors">Packet Executors</a>
+<li><a href="#packet-executors">Packet Executors</a>
 RéseauType's Packet Executors allow you to run specific code when receiving a particular packet type.
 These can be added to both the <code>Client</code> or the <code>Server</code>.</li>
 </ul>
@@ -483,7 +205,7 @@ These can be added to both the <code>Client</code> or the <code>Server</code>.</
 <p>A packet is a serialisable data structure that can be sent between the client and the server using either TCP or UDP.
 Each packet has an ID, is fixed sized, and withholds datas.
 A packet does not have a direction, and can be sent by both the server and the client.
-The server and the client needs to handle individually their own behavior on receiving a packet using <a href="network/index.html#packet-executors">Packet Executors</a></p>
+The server and the client needs to handle individually their own behavior on receiving a packet using <a href="#packet-executors">Packet Executors</a></p>
 <h3 id="developers-packet-definition-how-to-create-your-own-packet"><a class="header" href="#developers-packet-definition-how-to-create-your-own-packet">Developer's Packet Definition (How to create your own packet)</a></h3>
 <p>Each created packet must implement the <code>Packet</code> class.</p>
 <h4 id="id"><a class="header" href="#id">ID</a></h4>
@@ -838,191 +560,18 @@ P.S: This second forced parameter will be removed in an soon upcoming update.</p
    return true;
 }
 </code></pre>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="ecs-usage-guide"><a class="header" href="#ecs-usage-guide">ECS Usage Guide</a></h1>
-<p>An Entity Component System works with 3 types :</p>
-<ul>
-<li>Entities</li>
-<li>Components</li>
-<li>Systems</li>
-</ul>
-<p>A Component is a small storage structure.<br />
-It should define a single component out of a more complex set, representing an Entity.</p>
-<p>As said, an Entity is represented by a set of components, which can be dynamically modified.</p>
-<p>And a System is something that you would apply on all entities satisfying certain Components, to allow for modification, rendering, ...</p>
-<p>For example, if you have a component Position and Velocity, you could have a System to update the Position based on the Velocity, and a lot of very different entities could end up with those components and be moved by the same System.</p>
-<p>The goal is to separate every actions, and to maximize performances.</p>
-<h2 id="basic-usage"><a class="header" href="#basic-usage">Basic usage</a></h2>
-<ol>
-<li>Define Components
-Components are simple data structures.</li>
-</ol>
-<pre><code class="language-cpp">struct Position {
-    int x;
-    int y;
-};
-</code></pre>
-<ol start="2">
-<li>Create Systems<br />
-Systems are functions that process components.</li>
-</ol>
-<pre><code class="language-cpp">void logging_system(Registry&amp; r,
-    containers::indexed_zipper&lt;SparseArray&lt;Position&gt;,
-                               SparseArray&lt;Velocity&gt;&gt; zipper)
-{
-    for (auto&amp;&amp; [i, pos, vel] : zipper)
-        std::cerr &lt;&lt; i &lt;&lt; ": Position = { " &lt;&lt; pos.value().x &lt;&lt; ", "
-                  &lt;&lt; pos.value().y &lt;&lt; " }" &lt;&lt; std ::endl;
-        std::cerr &lt;&lt; i &lt;&lt; ": Velocity = { " &lt;&lt; vel-&gt;x &lt;&lt; ", "
-                  &lt;&lt; vel-&gt;y &lt;&lt; " }" &lt;&lt; std ::endl;
-}
-</code></pre>
-<ol start="3">
-<li>Setup Registry<br />
-The registry holds the ECS.</li>
-</ol>
-<pre><code class="language-cpp">Registry r;
-r.register_component&lt;Position&gt;();
-r.register_component&lt;Velocity&gt;();
-</code></pre>
-<ol start="4">
-<li>Create Entities</li>
-</ol>
-<pre><code class="language-cpp">Entity player = r.spawn_entity();
-</code></pre>
-<ol start="5">
-<li>Add Components to Entities</li>
-</ol>
-<pre><code class="language-cpp">r.emplace_component&lt;Position&gt;(player, 2, 23);
-r.emplace_component&lt;Velocity&gt;(player, 1, 0);
-</code></pre>
-<ol start="6">
-<li>Register and Run Systems</li>
-</ol>
-<pre><code class="language-cpp">r.add_{render/update}_system&lt;Position, Velocity&gt;(logging_system);
-r.{render/update}();
-</code></pre>
-<ol start="7">
-<li>Cleanup</li>
-</ol>
-<pre><code class="language-cpp">r.kill_entity(player);
-</code></pre>
-<h2 id="complete-example"><a class="header" href="#complete-example">Complete Example</a></h2>
-<p>See the file <code>ecs/ecs_exemple.cpp</code></p>
-<h2 id="iterating-over-components"><a class="header" href="#iterating-over-components">Iterating Over Components</a></h2>
-<p>Use zipper to iterate over multiple component arrays:</p>
-<pre><code class="language-cpp">
-// With index
-for (auto&amp;&amp; [i, pos, vel] : containers::indexed_zipper(positions, velocities)) {
-    // i is the entity ID
-}
-</code></pre>
-<h2 id="passing-more-parameters-to-systems"><a class="header" href="#passing-more-parameters-to-systems">Passing more parameters to systems</a></h2>
-<p>You can simply add more parameters to systems when registering them.</p>
-<pre><code class="language-cpp">void system([[maybe_unused]] Registry &amp;r,
-    [[maybe_unused]] containers::indexed_zipper&lt;SparseArray&lt;Position&gt;&gt; zipper,
-    int bonus_parameter)
-{
-    std::cout &lt;&lt; "Int value=" &lt;&lt; bonus_parameter &lt;&lt; std::endl;
-}
-
-// Inside function to register systems
-registry.add_render_system&lt;Position&gt;(12); // 12 will be passed as bonus_parameter
-</code></pre>
-<div style="break-before: page; page-break-before: always;"></div><h2 id="graphical-library-1"><a class="header" href="#graphical-library-1">Graphical Library</a></h2>
-<h1 id="restrictions"><a class="header" href="#restrictions">Restrictions</a></h1>
-<p>The Graphical Library imposes restrictions.</p>
-<ol>
-<li>All methods must be called in a single Thread.</li>
-<li>The <code>init</code> method must be called before any other method.</li>
-<li>The <code>deinit</code> method must be called before the object is deconstructed.</li>
-</ol>
-<h1 id="usage"><a class="header" href="#usage">Usage</a></h1>
-<h2 id="rectangle"><a class="header" href="#rectangle">Rectangle</a></h2>
-<p>In order to draw a rectangle, you need to create a <code>Rectangle</code> object, and then call the <code>draw</code> method with that rectangle.</p>
-<p>You can specify three parameters.</p>
-<ol>
-<li>The on-screen position with <code>position</code>, as a <code>WorldPosition</code> object.</li>
-<li>The on-screen size with <code>size</code>, as a <code>Vector2ui</code> object.</li>
-<li>The color with <code>color</code>.</li>
-</ol>
-<h2 id="text"><a class="header" href="#text">Text</a></h2>
-<p>In order to draw text on screen, you need to create a <code>Text</code> object, and then call the <code>draw</code> method with that text.</p>
-<p>To help center the text, you can use the <code>getTextWidth</code> method to get the width of the text in on-screen pixels, using either a <code>Text</code> object, or just plain text with a fontSize.</p>
-<p>You cannot change the text font.</p>
-<p>You can choose the text, it's on-screen position, font size and color.</p>
-<h2 id="images"><a class="header" href="#images">Images</a></h2>
-<p>Images are called Textures.</p>
-<p>Textures are referenced by name as a <code>std::string</code>.</p>
-<p>The best way to use Textures is to register them using the <code>registerTexture</code> method, by specifying a path to the texture file, and a name to reference it ; then to load all textures with <code>loadAllTextures</code> at a specified time.<br />
-This way, you will have a lag at the loading time, but not in random state change. You could load all textures in a dedicated "Loading" screen for example.</p>
-<p>If you prefer, you can load a single texture instantly using the <code>loadTexture</code> method.</p>
-<p>You can get a loaded texture through the <code>getTexture</code> method.</p>
-<p>You can render a <code>Texture</code> object via the <code>draw</code> method.</p>
-<p>To position the texture to draw, modify a copy of the <code>Texture</code> object.</p>
-<p>You have write access to :</p>
-<ol>
-<li>The <code>scale</code> attribute, to scale up or down the texture. 1.0 is the default scale.</li>
-<li>The <code>pos</code> attribute, to set the on-screen position.</li>
-<li>The <code>rotation</code> attribyte, to set the rotation in degrees.</li>
-</ol>
-<p>You have read access to :</p>
-<ol>
-<li>The <code>path</code> attribute, specifying the texture file path.</li>
-<li>The <code>name</code> attribute, specifying the texture reference name.</li>
-<li>The <code>size</code> attribute, specifying the on-screen size for a scale of 1.</li>
-</ol>
-<h2 id="sound"><a class="header" href="#sound">Sound</a></h2>
-<p>Like textures, sound can be registered for loading, or loaded directly following similar conventions.</p>
-<p>You only have read access on the <code>Sound</code> object, allowing the reading of the file path and reference name.</p>
-<p>A sound is played using the <code>play</code> method.</p>
-<h2 id="events"><a class="header" href="#events">Events</a></h2>
-<p>Events are used to know if a key is pressed, down or just up.</p>
-<p>You can register a list of events with the <code>registerEvent</code> method.<br />
-Events are referenced by name in the form of a <code>std::string</code>.</p>
-<p>If you want to deactivate an event, bind it to the <code>gl::Key::UNDEFINED</code> key.</p>
-<p>You can re-bind events using the <code>bindKey</code> method.</p>
-<p>If the key bound to an event was pressed in the current frame but not in the precedent frame, the <code>isEventStart</code> method should yield <code>true</code>.</p>
-<p>If the key bound to an event is currently pressed, the <code>isEventActive</code> method should yield <code>true</code>.</p>
-<p>In other cases, or if the event is deactivated, the <code>isEvent{Start,Active}</code> methods should yield false.</p>
-<h2 id="render-loop"><a class="header" href="#render-loop">Render loop</a></h2>
-<p>The render loop should be implemented at a higher order.</p>
-<p>If the window was closed, the <code>should_close</code> method returns <code>true</code>.<br />
-You should not call any methods other than <code>end_frame</code> or <code>deinit</code> in this case.</p>
-<p>Any render methods should be called between the call of <code>start_new_frame</code> and <code>end_frame</code>.</p>
-<p>A typical implementation would be like the following :</p>
-<pre><code class="language-c++">gl.init();
-/*
-Register events
-Register textures
-Register sounds
-*/
-gl.loadEverything();
-while (!gl.should_close()) {
-    gl.start_new_frame(gl::BLACK);
-    /*
-    Drawing code here
-    */
-    gl.end_frame();
-}
-gl.deinit();
-</code></pre>
-<h2 id="miscellaneous"><a class="header" href="#miscellaneous">Miscellaneous</a></h2>
-<p>When using textures and sound, we recommand using the <code>loadEverything</code> method, loading both registered textures and sounds.</p>
-<p>If you need to get the window size, use the <code>get_window_size</code> method.</p>
-<p>If you need to get the delta time between the last frame, use the <code>getDeltaTime</code> method.</p>
-<h2 id="implementation"><a class="header" href="#implementation">Implementation</a></h2>
-<p>An implementation was done using the <code>Raylib</code> library, and can be found in the <code>graphical_library/raylib/</code> directory.</p>
-<p>You can instanciate it in a cpp file using the following :</p>
-<pre><code class="language-c++">#include &lt;graphical_library/raylib/Raylib.hpp&gt;
-
-std::make_unique&lt;Raylib&gt;();
-</code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../server/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
 
+                            <a rel="next prefetch" href="../ecs.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -1030,7 +579,13 @@ std::make_unique&lt;Raylib&gt;();
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../server/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
 
+                    <a rel="next prefetch" href="../ecs.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
             </nav>
 
         </div>
@@ -1059,21 +614,16 @@ std::make_unique&lt;Raylib&gt;();
         </script>
 
 
-        <script src="elasticlunr.min.js"></script>
-        <script src="mark.min.js"></script>
-        <script src="searcher.js"></script>
+        <script src="../elasticlunr.min.js"></script>
+        <script src="../mark.min.js"></script>
+        <script src="../searcher.js"></script>
 
-        <script src="clipboard.min.js"></script>
-        <script src="highlight.js"></script>
-        <script src="book.js"></script>
+        <script src="../clipboard.min.js"></script>
+        <script src="../highlight.js"></script>
+        <script src="../book.js"></script>
 
         <!-- Custom JS scripts -->
 
-        <script>
-        window.addEventListener('load', function() {
-            window.setTimeout(window.print, 100);
-        });
-        </script>
 
     </div>
     </body>
