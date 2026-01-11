@@ -1,4 +1,5 @@
 #include "Registry.hpp"
+#include <optional>
 
 Entity Registry::spawn_entity()
 {
@@ -10,9 +11,33 @@ Entity Registry::spawn_entity()
     return Entity(_next_entity_id++);
 }
 
+Entity Registry::spawn_named_entity(std::string name)
+{
+    Entity entity = this->spawn_entity();
+
+    this->named_entities_ids[name] = entity.getId();
+    this->named_entities_names[entity.getId()] = name;
+    return entity;
+}
+
+std::optional<Entity> Registry::entity_from_name(std::string name)
+{
+    if (!this->named_entities_ids.contains(name))
+        return std::nullopt;
+    return this->entity_from_index(this->named_entities_ids.at(name));
+}
+
 Entity Registry::entity_from_index(std::size_t idx)
 {
     return Entity(idx);
+}
+
+void Registry::kill_entity(std::string name)
+{
+    std::optional<Entity> entity = this->entity_from_name(name);
+    if (!entity)
+        return;
+    this->kill_entity(*entity);
 }
 
 void Registry::kill_entity(Entity const& e)
@@ -23,6 +48,10 @@ void Registry::kill_entity(Entity const& e)
         erase_fn(*this, e);
     }
     _dead_entities.push(id);
+    if (!this->named_entities_names.contains(id))
+        return;
+    this->named_entities_ids.erase(this->named_entities_names.at(id));
+    this->named_entities_names.erase(id);
 }
 
 void Registry::update()
