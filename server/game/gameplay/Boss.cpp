@@ -50,6 +50,11 @@ void Boss::setPatterns(const std::vector<PatternType> &patterns)
 
 void Boss::shoot()
 {
+    // Check if boss entity still exists
+    auto bossPos = _regisrty.get<Position>(_id);
+    if (!bossPos.has_value())
+        return;
+
     auto now = std::chrono::steady_clock::now();
     auto elapsed =
         std::chrono::duration_cast<std::chrono::milliseconds>(now - _start);
@@ -79,6 +84,8 @@ void Boss::shoot()
 
 void Boss::rotatePattern()
 {
+    if (_patterns.empty())
+        return;
     _currentPatternIndex = (_currentPatternIndex + 1) % _patterns.size();
 }
 
@@ -95,7 +102,7 @@ void Boss::sendBullet(Entity e)
 
 void Boss::bulletPattern()
 {
-    if (_patterns.empty())
+    if (_patterns.empty() || _currentPatternIndex >= _patterns.size())
         return;
 
     PatternType currentPattern = _patterns[_currentPatternIndex];

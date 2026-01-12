@@ -55,7 +55,7 @@ Entity EntityFactory::createBoss()
     _registry.emplace_component<Health>(boss, 100, 100);
     _registry.emplace_component<Resistance>(boss, 50.0f);
     _registry.emplace_component<HitBox>(boss, 80.0f, 80.0f);
-    _registry.emplace_component<Pattern>(boss, x - 50, y - 20, x + 50, y + 20);
+    _registry.emplace_component<Pattern>(boss, x - 50, y - 20, x + 50, y + 20, 0.0f);
     _registry.emplace_component<Tag>(boss, EntityTag::BOSS);
     _registry.emplace_component<Healer>(boss, 50);
     return boss;

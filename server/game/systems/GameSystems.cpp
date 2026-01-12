@@ -80,23 +80,22 @@ auto Systems::pattern_system(
         float height = pat->max_y - pat->min_y;
         float perimeter = 2 * (width + height);
 
-        static float progress = 0.0f;
-        progress += speed;
-        if (progress >= perimeter)
-            progress -= perimeter;
+        pat->progress += speed;
+        if (pat->progress >= perimeter)
+            pat->progress -= perimeter;
 
-        if (progress < width) {
-            pos->x = pat->min_x + progress;
+        if (pat->progress < width) {
+            pos->x = pat->min_x + pat->progress;
             pos->y = pat->min_y;
-        } else if (progress < width + height) {
+        } else if (pat->progress < width + height) {
             pos->x = pat->max_x;
-            pos->y = pat->min_y + (progress - width);
-        } else if (progress < 2 * width + height) {
-            pos->x = pat->max_x - (progress - width - height);
+            pos->y = pat->min_y + (pat->progress - width);
+        } else if (pat->progress < 2 * width + height) {
+            pos->x = pat->max_x - (pat->progress - width - height);
             pos->y = pat->max_y;
         } else {
             pos->x = pat->min_x;
-            pos->y = pat->max_y - (progress - 2 * width - height);
+            pos->y = pat->max_y - (pat->progress - 2 * width - height);
         }
         auto packet = std::make_shared<PositionUpdatePacket>(i, pos->x, pos->y);
         nm.queuePacket(packet, i, true);
@@ -150,6 +149,9 @@ auto Systems::player_laser_system(Registry &r,
     auto &positions = r.get_components<Position>();
     auto &dependences = r.get_components<Dependence>();
     auto &lasers = r.get_components<Laser>();
+
+    if (id >= positions.size() || !positions[id].has_value())
+        return;
 
     auto &pos = positions[id].value();
     auto inputs = packet->getInputs();
