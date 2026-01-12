@@ -38,7 +38,7 @@ Entity EntityFactory::createPlayerLaser(int id)
     _registry.emplace_component<Dependence>(playerLaser, id);
     _registry.emplace_component<HitBox>(playerLaser, 1.0f, 1200.0f);
     _registry.emplace_component<Laser>(playerLaser, false, 0.0f);
-    _registry.emplace_component<Damager>(playerLaser, 10);
+    _registry.emplace_component<Damager>(playerLaser, 8);
     _registry.emplace_component<Tag>(playerLaser, EntityTag::LASER);
     return playerLaser;
 }
@@ -52,12 +52,12 @@ Entity EntityFactory::createBoss()
 
     _registry.emplace_component<Position>(boss, x, y);
     _registry.emplace_component<Acceleration>(boss, 1.0f, 1.0f);
-    _registry.emplace_component<Health>(boss, 100, 100);
+    _registry.emplace_component<Health>(boss, 180, 180);
     _registry.emplace_component<Resistance>(boss, 50.0f);
     _registry.emplace_component<HitBox>(boss, 80.0f, 80.0f);
     _registry.emplace_component<Pattern>(boss, x - 50, y - 20, x + 50, y + 20, 0.0f);
     _registry.emplace_component<Tag>(boss, EntityTag::BOSS);
-    _registry.emplace_component<Healer>(boss, 50);
+    _registry.emplace_component<Healer>(boss, 25);
     return boss;
 }
 

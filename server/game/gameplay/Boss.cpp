@@ -59,7 +59,7 @@ void Boss::shoot()
     auto elapsed =
         std::chrono::duration_cast<std::chrono::milliseconds>(now - _start);
 
-    int shootInterval = std::max(2000 - (_difficulty * 200), 800);
+    int shootInterval = 2000 - (_difficulty * 500);
 
     if (elapsed.count() > shootInterval) {
         this->bulletPattern();
@@ -69,7 +69,7 @@ void Boss::shoot()
     auto patternElapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
         now - _patternChangeTime);
 
-    int patternChangeInterval = std::max(8000 - (_difficulty * 500), 4000);
+    int patternChangeInterval = std::max(10000 - (_difficulty * 600), 5000);
 
     if (patternElapsed.count() > patternChangeInterval &&
         _patterns.size() > 1) {
@@ -140,9 +140,9 @@ void Boss::patternRadialBurst()
     float center_x = pos->x;
     float center_y = pos->y;
 
-    int bullet_count = 16 + _difficulty;
+    int bullet_count = 14 + _difficulty;
     float bullet_speed = 0.5f + (static_cast<float>(_difficulty) * 0.1f);
-    int rings = 5 + _difficulty;
+    int rings = 4 + (_difficulty / 2);
 
     float spawn_radius = std::max(hitBox->width, hitBox->height) / 2.0f + 20.0f;
 
@@ -162,7 +162,7 @@ void Boss::patternRadialBurst()
             this->sendBullet(_factory.createBossBullet(
                 static_cast<int>(_id), spawn_x, spawn_y, acc_x, acc_y));
         }
-        bullet_speed += 0.4f + (static_cast<float>(_difficulty) * 0.1f);
+        bullet_speed += 0.5f + (static_cast<float>(_difficulty) * 0.15f);
     }
 }
 
@@ -178,7 +178,7 @@ void Boss::patternSpiral()
     float center_y = pos->y;
 
     int arms = 3 + _difficulty;
-    int bullets_per_arm = 8 + (_difficulty * 2);
+    int bullets_per_arm = 7 + _difficulty;
     float bullet_speed = 1.5f + (static_cast<float>(_difficulty) * 0.3f);
     float spawn_radius = std::max(hitBox->width, hitBox->height) / 2.0f + 20.0f;
 
@@ -232,7 +232,7 @@ void Boss::patternAimedShot()
     if (player_positions.empty())
         return;
 
-    int shots_per_player = 5 + (_difficulty * 2);
+    int shots_per_player = 4 + _difficulty;
     float bullet_speed = 2.0f + (static_cast<float>(_difficulty) * 0.3f);
     float spawn_radius = std::max(hitBox->width, hitBox->height) / 2.0f + 20.0f;
 
@@ -271,8 +271,8 @@ void Boss::patternWaveSpread()
     float center_x = pos->x;
     float center_y = pos->y;
 
-    int waves = 3 + _difficulty;
-    int bullets_per_wave = 12 + (_difficulty * 3);
+    int waves = 3 + (_difficulty / 2);
+    int bullets_per_wave = 11 + (_difficulty * 2);
     float bullet_speed = 1.0f + (static_cast<float>(_difficulty) * 0.2f);
     float spawn_radius = std::max(hitBox->width, hitBox->height) / 2.0f + 20.0f;
 
@@ -312,8 +312,8 @@ void Boss::patternDoubleSpiral()
     float center_x = pos->x;
     float center_y = pos->y;
 
-    int arms = 2 + _difficulty;
-    int bullets_per_arm = 10 + (_difficulty * 2);
+    int arms = 2 + (_difficulty / 2);
+    int bullets_per_arm = 8 + _difficulty;
     float bullet_speed = 1.2f + (static_cast<float>(_difficulty) * 0.25f);
     float spawn_radius = std::max(hitBox->width, hitBox->height) / 2.0f + 20.0f;
 
@@ -357,7 +357,7 @@ void Boss::patternFlower()
     float center_y = pos->y;
 
     int petals = 5 + _difficulty;
-    int bullets_per_petal = 8 + (_difficulty * 2);
+    int bullets_per_petal = 7 + _difficulty;
     float bullet_speed = 1.0f + (static_cast<float>(_difficulty) * 0.2f);
     float spawn_radius = std::max(hitBox->width, hitBox->height) / 2.0f + 20.0f;
 
