@@ -1,8 +1,10 @@
 #include "GameSystems.hpp"
 #include "ecs/sparse_array/SparseArray.hpp"
+#include "network/packets/Packet.hpp"
 #include "network/packets/impl/DespawnPlayerPacket.hpp"
 #include "network/packets/impl/EnemyDiedPacket.hpp"
 #include "network/packets/impl/LaserActiveUpdatePacket.hpp"
+#include "network/packets/impl/PlayerHitPacket.hpp"
 #include "server/game/components/OutsideBoundaries.hpp"
 #include "server/game/components/Tag.hpp"
 #include "shared/components/Dependence.hpp"
@@ -207,8 +209,10 @@ auto Systems::collision_system(
                         (laser_i.has_value() && !laser_i->active))
                         continue;
 
-                    if (tag_i->tag == EntityTag::BULLET)
+                    if (tag_i->tag == EntityTag::BULLET) {
                         to_kill.insert(i);
+                        nm.queuePacket(create_packet(PlayerHitPacket, j, i));
+                    }
 
                     if ((tag_i->tag == EntityTag::BULLET &&
                          tag_j->tag == EntityTag::PLAYER) ||
@@ -227,8 +231,10 @@ auto Systems::collision_system(
                         (laser_j.has_value() && !laser_j->active))
                         continue;
 
-                    if (tag_j->tag == EntityTag::BULLET)
+                    if (tag_j->tag == EntityTag::BULLET) {
                         to_kill.insert(j);
+                        nm.queuePacket(create_packet(PlayerHitPacket, i, j));
+                    }
 
                     if ((tag_j->tag == EntityTag::BULLET &&
                          tag_i->tag == EntityTag::PLAYER) ||

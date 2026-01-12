@@ -72,8 +72,8 @@ void Game::loop(int ticks)
     } while (running);
 
     this->_networkManager.flush();
-    this->resetPlayersEntities();
     this->_networkManager.clear();
+    this->resetPlayersEntities();
     this->_registry = Registry();
 }
 
