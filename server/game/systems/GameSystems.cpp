@@ -262,7 +262,7 @@ auto Systems::heal_all_players_system(Registry &r, int heal)
     for (auto &&[i, tag] : zipper) {
         if (tag->tag == EntityTag::PLAYER) {
             auto hl = r.get<Health>(i);
-            r.set<Health>(i, hl->pv + heal, hl->max_pv);
+            r.set<Health>(i, (hl->pv + heal), hl->max_pv);
         }
     }
 }
@@ -279,8 +279,12 @@ auto Systems::health_system(
             if (tag->tag == EntityTag::BOSS) {
                 heal_all_players_system(r, r.get<Healer>(i)->healer);
                 nm.queuePacket(std::make_shared<EnemyDiedPacket>(i));
+                // debug ()
+                nm.queuePacket(std::make_shared<DespawnPlayerPacket>(i));
             } else {
                 nm.queuePacket(std::make_shared<PlayerDiedPacket>(i));
+                // debug ()
+                nm.queuePacket(std::make_shared<DespawnPlayerPacket>(i));
             }
             r.kill_entity(r.entity_from_index(i));
         }
