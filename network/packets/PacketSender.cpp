@@ -28,6 +28,7 @@ void PacketSender::sendPacket(std::shared_ptr<Packet> packet)
     this->dataQueue.push_back(packet->getId());
     this->dataQueue.insert(this->dataQueue.end(),
         packet->getData().begin(), packet->getData().end());
+    this->pendingPacket.emplace(packet, 1 + packet->getData().size());
 }
 
 void PacketSender::writePackets()
@@ -43,6 +44,12 @@ void PacketSender::writePackets()
     }
     this->dataQueue.erase(this->dataQueue.begin(),
         this->dataQueue.begin() + bytesWritten);
+    while (!this->pendingPacket.empty() && lastWritten + bytesWritten >= std::get<1>(this->pendingPacket.front())) {
+        PacketLogger::logPacket(std::get<0>(this->pendingPacket.front()),
+                PacketLogger::PacketMethod::SENT, this->_fd);
+        this->lastWritten -= std::get<1>(this->pendingPacket.front());
+        this->pendingPacket.pop();
+    }
 }
 
 void PacketSender::setFd(int fd)

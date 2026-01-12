@@ -9,6 +9,7 @@
     #define PACKETSENDER_HPP_
 
     #include "Packet.hpp"
+    #include <map>
     #include <queue>
 
 class PacketSender {
@@ -21,6 +22,8 @@ public:
     bool shouldSend() const;
 private:
     int _fd;
+    std::size_t lastWritten = 0;
+    std::queue<std::tuple<std::shared_ptr<Packet>, std::size_t>> pendingPacket;
     std::vector<uint8_t> dataQueue;
 };
 
