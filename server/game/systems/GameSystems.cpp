@@ -21,13 +21,6 @@
 #include <network/packets/impl/PositionUpdatePacket.hpp>
 #include <set>
 
-namespace GameConstants
-{
-constexpr float width = 800;
-constexpr float height = 600;
-constexpr float PLAYER_SPEED = 3.0f;
-} // namespace GameConstants
-
 auto Systems::position_system(
     Registry &r,
     containers::indexed_zipper<SparseArray<Position>, SparseArray<Velocity>,

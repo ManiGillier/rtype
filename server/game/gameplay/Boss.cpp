@@ -120,6 +120,12 @@ void Boss::bulletPattern()
         case PatternType::WAVE_SPREAD:
             patternWaveSpread();
             break;
+        case PatternType::DOUBLE_SPIRAL:
+            patternDoubleSpiral();
+            break;
+        case PatternType::FLOWER:
+            patternFlower();
+            break;
     }
 }
 
@@ -288,6 +294,87 @@ void Boss::patternWaveSpread()
                 center_x + spawn_radius * static_cast<float>(std::cos(angle));
             float spawn_y =
                 center_y + spawn_radius * static_cast<float>(std::sin(angle));
+
+            this->sendBullet(_factory.createBossBullet(
+                static_cast<int>(_id), spawn_x, spawn_y, acc_x, acc_y));
+        }
+    }
+}
+
+void Boss::patternDoubleSpiral()
+{
+    auto hitBox = _regisrty.get<HitBox>(_id);
+    auto pos = _regisrty.get<Position>(_id);
+
+    if (!hitBox.has_value() || !pos.has_value())
+        return;
+
+    float center_x = pos->x;
+    float center_y = pos->y;
+
+    int arms = 2 + _difficulty;
+    int bullets_per_arm = 10 + (_difficulty * 2);
+    float bullet_speed = 1.2f + (static_cast<float>(_difficulty) * 0.25f);
+    float spawn_radius = std::max(hitBox->width, hitBox->height) / 2.0f + 20.0f;
+
+    for (int arm = 0; arm < arms; arm++) {
+        float base_angle_cw = static_cast<float>((2.0 * M_PI * arm) / arms) + _patternRotation;
+        float base_angle_ccw = static_cast<float>((2.0 * M_PI * arm) / arms) - _patternRotation;
+
+        for (int i = 0; i < bullets_per_arm; i++) {
+            float spiral_offset = static_cast<float>(i) * 0.25f;
+
+            float angle_cw = base_angle_cw + spiral_offset;
+            float speed_cw = bullet_speed + (static_cast<float>(i) * 0.08f);
+            float acc_x_cw = static_cast<float>(speed_cw * std::cos(angle_cw));
+            float acc_y_cw = static_cast<float>(speed_cw * std::sin(angle_cw));
+            float spawn_x_cw = center_x + spawn_radius * static_cast<float>(std::cos(angle_cw));
+            float spawn_y_cw = center_y + spawn_radius * static_cast<float>(std::sin(angle_cw));
+            this->sendBullet(_factory.createBossBullet(
+                static_cast<int>(_id), spawn_x_cw, spawn_y_cw, acc_x_cw, acc_y_cw));
+
+            float angle_ccw = base_angle_ccw - spiral_offset;
+            float speed_ccw = bullet_speed + (static_cast<float>(i) * 0.08f);
+            float acc_x_ccw = static_cast<float>(speed_ccw * std::cos(angle_ccw));
+            float acc_y_ccw = static_cast<float>(speed_ccw * std::sin(angle_ccw));
+            float spawn_x_ccw = center_x + spawn_radius * static_cast<float>(std::cos(angle_ccw));
+            float spawn_y_ccw = center_y + spawn_radius * static_cast<float>(std::sin(angle_ccw));
+            this->sendBullet(_factory.createBossBullet(
+                static_cast<int>(_id), spawn_x_ccw, spawn_y_ccw, acc_x_ccw, acc_y_ccw));
+        }
+    }
+}
+
+void Boss::patternFlower()
+{
+    auto hitBox = _regisrty.get<HitBox>(_id);
+    auto pos = _regisrty.get<Position>(_id);
+
+    if (!hitBox.has_value() || !pos.has_value())
+        return;
+
+    float center_x = pos->x;
+    float center_y = pos->y;
+
+    int petals = 5 + _difficulty;
+    int bullets_per_petal = 8 + (_difficulty * 2);
+    float bullet_speed = 1.0f + (static_cast<float>(_difficulty) * 0.2f);
+    float spawn_radius = std::max(hitBox->width, hitBox->height) / 2.0f + 20.0f;
+
+    for (int petal = 0; petal < petals; petal++) {
+        float base_angle = static_cast<float>((2.0 * M_PI * petal) / petals) + _patternRotation;
+
+        for (int i = 0; i < bullets_per_petal; i++) {
+            float t = static_cast<float>(i) / static_cast<float>(bullets_per_petal);
+            float curve = static_cast<float>(std::sin(t * M_PI)) * 0.8f;
+            float angle = base_angle + curve;
+
+            float speed = bullet_speed * (1.0f + t * 0.5f);
+            float acc_x = static_cast<float>(speed * std::cos(angle));
+            float acc_y = static_cast<float>(speed * std::sin(angle));
+
+            float spawn_x = center_x + spawn_radius * static_cast<float>(std::cos(angle));
+            float spawn_y = center_y + spawn_radius * static_cast<float>(std::sin(angle));
 
             this->sendBullet(_factory.createBossBullet(
                 static_cast<int>(_id), spawn_x, spawn_y, acc_x, acc_y));

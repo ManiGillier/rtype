@@ -22,6 +22,7 @@ enum GameState { waiting = 0, active, completed };
 struct WaveConfig {
     int difficulty;
     std::vector<PatternType> patterns;
+    std::size_t bossNb;
     int waitTime;
 };
 
@@ -36,6 +37,7 @@ class GamePlay
 
   private:
     void spawnBoss();
+    void checkPos();
     void removeDeadBoss();
     void setupWaves();
     void nextWave();

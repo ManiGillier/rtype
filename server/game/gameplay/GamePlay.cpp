@@ -1,6 +1,9 @@
 #include "GamePlay.hpp"
+#include "../systems/GameSystems.hpp"
 #include "server/game/factories/EntityFactory.hpp"
+#include "server/game/gameplay/Boss.hpp"
 #include "shared/components/Position.hpp"
+#include <algorithm>
 #include <memory>
 
 GamePlay::GamePlay(NetworkManager &nm, Registry &r, EntityFactory &factory)
@@ -26,11 +29,13 @@ int GamePlay::getCurrentDifficulty() const
 
 void GamePlay::setupWaves()
 {
-    _waves.push_back({1, {PatternType::RADIAL_BURST}, 2000});
-    _waves.push_back({1, {PatternType::SPIRAL}, 1500});
-    _waves.push_back({2, {PatternType::AIMED_SHOT}, 1500});
+    _waves.push_back({1, {PatternType::RADIAL_BURST}, 1, 1500});
+    _waves.push_back({1, {PatternType::SPIRAL}, 1, 1500});
+    _waves.push_back({2, {PatternType::AIMED_SHOT}, 2, 1000});
     _waves.push_back(
-        {2, {PatternType::WAVE_SPREAD, PatternType::SPIRAL}, 1500});
+        {2, {PatternType::WAVE_SPREAD, PatternType::SPIRAL}, 1, 1000});
+    _waves.push_back({2, {PatternType::DOUBLE_SPIRAL}, 1, 1000});
+    _waves.push_back({3, {PatternType::FLOWER}, 1, 1000});
 }
 
 WaveConfig GamePlay::getWaveConfig(int wave)
@@ -38,14 +43,12 @@ WaveConfig GamePlay::getWaveConfig(int wave)
     if (wave < static_cast<int>(_waves.size())) {
         return _waves[wave];
     }
-    int difficulty = 2;
+    int difficulty = 3;
     std::vector<PatternType> allPatterns = {
-        PatternType::RADIAL_BURST,
-        PatternType::SPIRAL,
-        PatternType::AIMED_SHOT,
-        PatternType::WAVE_SPREAD,
-    };
-    return {difficulty, allPatterns, 2000};
+        PatternType::RADIAL_BURST,  PatternType::SPIRAL,
+        PatternType::AIMED_SHOT,    PatternType::WAVE_SPREAD,
+        PatternType::DOUBLE_SPIRAL, PatternType::FLOWER};
+    return {difficulty, allPatterns, 1, 2000};
 }
 
 bool GamePlay::update()
@@ -81,11 +84,35 @@ void GamePlay::spawnBoss()
 {
     WaveConfig config = getWaveConfig(_currentWave);
 
-    auto boss = std::make_unique<Boss>(_networkManager, _regisrty, _factory,
-                                       config.difficulty);
+    for (std::size_t i = 0; i < config.bossNb; i++) {
+        auto boss = std::make_unique<Boss>(_networkManager, _regisrty, _factory,
+                                           config.difficulty);
 
-    boss->setPatterns(config.patterns);
-    this->_bosses.push_back(std::move(boss));
+        boss->setPatterns(config.patterns);
+        this->_bosses.push_back(std::move(boss));
+    }
+    this->checkPos();
+}
+
+void GamePlay::checkPos()
+{
+    constexpr float MIN_DISTANCE = 50.0f;
+    constexpr float SEPARATION_OFFSET = 100.0f;
+
+    for (std::size_t i = 0; i < _bosses.size(); ++i) {
+        for (std::size_t j = i + 1; j < _bosses.size(); ++j) {
+            auto pos_i = _regisrty.get<Position>(_bosses[i]->getId());
+            auto pos_j = _regisrty.get<Position>(_bosses[j]->getId());
+
+            if (!pos_i || !pos_j)
+                continue;
+            if (std::abs(pos_i->x - pos_j->x) <= MIN_DISTANCE) {
+                float new_x =  std::min(pos_i->x + SEPARATION_OFFSET,
+                                     GameConstants::width - 50.0f);
+                _regisrty.set<Position>(_bosses[i]->getId(), new_x, pos_i->y);
+            }
+        }
+    }
 }
 
 void GamePlay::nextWave()

@@ -19,6 +19,8 @@ enum class PatternType {
     SPIRAL,
     AIMED_SHOT,
     WAVE_SPREAD,
+    DOUBLE_SPIRAL,
+    FLOWER,
 };
 
 class Boss
@@ -41,6 +43,8 @@ class Boss
     void patternSpiral();
     void patternAimedShot();
     void patternWaveSpread();
+    void patternDoubleSpiral();
+    void patternFlower();
 
     NetworkManager &_networkManager;
     Registry &_regisrty;

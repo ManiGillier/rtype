@@ -26,6 +26,13 @@
 #include <network/packets/PacketManager.hpp>
 #include <network/packets/impl/ClientInputsPacket.hpp>
 
+namespace GameConstants
+{
+constexpr float width = 800;
+constexpr float height = 600;
+constexpr float PLAYER_SPEED = 3.0f;
+} // namespace GameConstants
+
 namespace Systems
 {
 auto position_system(
