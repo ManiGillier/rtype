@@ -262,7 +262,8 @@ auto Systems::heal_all_players_system(Registry &r, int heal)
     for (auto &&[i, tag] : zipper) {
         if (tag->tag == EntityTag::PLAYER) {
             auto hl = r.get<Health>(i);
-            r.set<Health>(i, (hl->pv + heal), hl->max_pv);
+            int new_pv = std::min(hl->pv + heal, hl->max_pv);
+            r.set<Health>(i, new_pv, hl->max_pv);
         }
     }
 }
@@ -272,7 +273,7 @@ auto Systems::health_system(
     NetworkManager &nm) -> void
 {
     for (auto &&[i, health] : zipper) {
-        nm.queuePacket(std::make_shared<HealthUpdatePacket>(i, health->pv), i,
+        nm.queuePacket(std::make_shared<HealthUpdatePacket>(i, health->pv, health->max_pv), i,
                        true);
         if (health->pv <= 0) {
             auto tag = r.get<Tag>(i);
