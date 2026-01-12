@@ -24,6 +24,8 @@ public:
 private:
     std::queue<std::shared_ptr<Packet>> receivedPackets; // les queues c'est banger :D (petits tricks)
     std::shared_ptr<Packet> currentPacket = nullptr;
+    int32_t originalSize = -1;
+    int32_t compressedSize = -1;
     std::vector<uint8_t> readData;
     Packet::PacketMode mode;
     int _fd;

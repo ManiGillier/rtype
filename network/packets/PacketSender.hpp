@@ -17,7 +17,6 @@ public:
     PacketSender(int fd = -1);
     void sendPacket(std::shared_ptr<Packet> packet);
     void writePackets();
-    std::queue<std::shared_ptr<Packet>> getPackets() const;
     void setFd(int fd);
     bool shouldSend() const;
 private:
