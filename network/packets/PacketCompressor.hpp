@@ -42,7 +42,7 @@ class PacketCompressor {
         int result = uncompress(decompressed.data(), &decompressedSize,
             data.data(), compressedSize);
         if (result != Z_OK)
-            throw Packet::PacketException("Could not compress packet.");
+            throw Packet::PacketException("Could not decompress packet.");
         decompressed.resize(decompressedSize);
         return decompressed;
     }

@@ -9,6 +9,7 @@
 #include <network/logger/Logger.hpp>
 #include <network/packets/PacketLogger.hpp>
 #include <network/packets/PacketManager.hpp>
+#include <network/packets/PacketCompressor.hpp>
 #include <unistd.h>
 #include <cstring>
 #include <arpa/inet.h>
@@ -134,9 +135,22 @@ void Client::sendUDPPackets()
                 continue;
             }
             std::vector<uint8_t> toSend;
+            std::vector<uint8_t> compressed;
             toSend.push_back(packet->getId());
-            std::vector<uint8_t> packetData = packet->getData();
-            toSend.insert(toSend.end(), packetData.begin(), packetData.end());
+            
+            try {
+                compressed = PacketCompressor::compress(packet->getData());
+            } catch (const Packet::PacketException &e) {
+                LOG_ERR(e.what());
+                continue;
+            }
+            uint32_t oldPacketSize = (uint32_t) packet->getData().size();
+            uint32_t newPacketSize =  (uint32_t) compressed.size();
+            for (uint8_t bin : Packet::toBinary(oldPacketSize))
+                toSend.push_back(bin);
+            for (uint8_t bin : Packet::toBinary(newPacketSize))
+                toSend.push_back(bin);
+            toSend.insert(toSend.end(), compressed.begin(), compressed.end());
             sendto(this->udpSocket, toSend.data(), toSend.size(), 0,
                 (struct sockaddr*)&(this->udpServerAddress), sizeof(this->udpServerAddress));
             PacketLogger::logPacket(packet, PacketLogger::PacketMethod::SENT, this->udpSocket);
@@ -311,6 +325,8 @@ bool ClientPollableUDP::receiveEvent(short)
         std::shared_ptr<Packet> packet = nullptr;
         uint8_t packetId = 0;
         uint16_t sequenceNum = 0;
+        uint32_t originalSize = 0;
+        uint32_t compressedSize = 0;
         try {
             Packet::fromBinary(receivedData, sequenceNum);
             packetId = receivedData[0];
@@ -320,17 +336,26 @@ bool ClientPollableUDP::receiveEvent(short)
                 LOG_ERR("Received invalid packet ID: " << (int) packetId);
                 break;
             }
-            packet->setData(receivedData);
+            Packet::fromBinary(receivedData, originalSize);
+            Packet::fromBinary(receivedData, compressedSize);
+            if (receivedData.size() < compressedSize) {
+                receivedData.clear();
+                return true;
+            }
+            std::vector<uint8_t> packetData = PacketCompressor::decompress(receivedData,
+                originalSize, compressedSize);
+            packet->setData(packetData);
             packet->unserialize();
-        } catch (const std::exception &) {
-            LOG_ERR("Incomplete packet received with ID (" << (int) packetId << ")");
-            receivedData.erase(receivedData.begin(), std::next(receivedData.begin(), static_cast<std::ptrdiff_t>(packet->getReadCursor())));
+        } catch (const std::exception &e) {
+            LOG_ERR("Could not read UDP packet with ID " << (int) packetId);
+            receivedData.clear();
             break;
         }
         PacketLogger::logPacket(packet, PacketLogger::PacketMethod::RECEIVED,
             this->getFileDescriptor(), sequenceNum);
         addReceivedPacket(sender, packet);
-        receivedData.erase(receivedData.begin(), std::next(receivedData.begin(), static_cast<std::ptrdiff_t>(packet->getReadCursor())));
+        receivedData.erase(receivedData.begin(), 
+            std::next(receivedData.begin(), static_cast<std::ptrdiff_t>(compressedSize)));
         cl.updateSequenceNum(sequenceNum);
     }
     return true;
