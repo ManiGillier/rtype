@@ -69,7 +69,7 @@ void Boss::shoot()
     auto patternElapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
         now - _patternChangeTime);
 
-    int patternChangeInterval = std::max(10000 - (_difficulty * 600), 5000);
+    int patternChangeInterval = std::max(7000 - (_difficulty * 600), 3000);
 
     if (patternElapsed.count() > patternChangeInterval &&
         _patterns.size() > 1) {
