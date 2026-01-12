@@ -34,6 +34,7 @@ message("-- CMake flags:" ${CMAKE_CXX_FLAGS})
 set(SERVER_EXEC_NAME r-type_server)
 set(CLIENT_EXEC_NAME r-type_client)
 set(NETWORK_TEST_EXEC_NAME reseauTypeTester)
+set(GUI_TEST_EXEC_NAME gui_tester)
 
 # all cpp file in src directory only
 file(GLOB_RECURSE server_src server/*.cpp ecs/*.cpp shared/*.cpp)
@@ -43,12 +44,19 @@ file(GLOB_RECURSE client_src client/*.cpp ecs/*.cpp shared/*.cpp)
 file(GLOB_RECURSE network_src network/*.cpp)
 file(GLOB_RECURSE network_src_h network/*.hpp)
 
+# get all cpp files from graphical library
+file(GLOB_RECURSE graphical_lib_src graphical_library/*.cpp)
+file(GLOB_RECURSE graphical_lib_src_h graphical_library/*.hpp)
+
 # Get all subdirectories for includes
 file(GLOB_RECURSE ALL_HEADERS 
     ${CMAKE_SOURCE_DIR}/*.hpp
     ${CMAKE_SOURCE_DIR}/*.h
 )
 
+add_library(graphical_lib STATIC ${graphical_lib_src} ${graphical_lib_src_h})
+target_include_directories(graphical_lib PUBLIC ${CMAKE_SOURCE_DIR})
+target_link_libraries(graphical_lib PRIVATE raylib)
 add_library(network_lib STATIC ${network_src} ${network_src_h})
 target_include_directories(network_lib PUBLIC ${CMAKE_SOURCE_DIR})
 
@@ -76,14 +84,22 @@ if (BUILD_CLIENT)
     )
     add_executable(${CLIENT_EXEC_NAME} ${client_src} ${client_src_h})
     target_include_directories(${CLIENT_EXEC_NAME} PUBLIC ${CMAKE_SOURCE_DIR})
-    target_link_libraries(${CLIENT_EXEC_NAME} PRIVATE network_lib raylib)
+    target_link_libraries(${CLIENT_EXEC_NAME} PRIVATE network_lib graphical_lib raylib)
 endif(BUILD_CLIENT)
 
 file(GLOB_RECURSE network_test_src network_test/src/*.cpp)
 file(GLOB_RECURSE network_test_src_h network_test/src/*.hpp)
 
+file(GLOB_RECURSE gui_test_src gui_test_src/*.cpp)
+file(GLOB_RECURSE gui_test_src_h gui_test_src/*.hpp)
+
 add_executable(${NETWORK_TEST_EXEC_NAME} EXCLUDE_FROM_ALL ${network_test_src} ${network_test_src_h})
 target_include_directories(${NETWORK_TEST_EXEC_NAME} PUBLIC ${CMAKE_SOURCE_DIR})
 target_link_libraries(${NETWORK_TEST_EXEC_NAME} PRIVATE network_lib)
 
+add_executable(${GUI_TEST_EXEC_NAME} EXCLUDE_FROM_ALL ${gui_test_src} ${gui_test_src_h})
+target_include_directories(${GUI_TEST_EXEC_NAME} PUBLIC ${CMAKE_SOURCE_DIR})
+target_link_libraries(${GUI_TEST_EXEC_NAME} PRIVATE graphical_lib)
+
 add_custom_target(reseau DEPENDS ${NETWORK_TEST_EXEC_NAME})
+add_custom_target(gui DEPENDS ${GUI_TEST_EXEC_NAME})

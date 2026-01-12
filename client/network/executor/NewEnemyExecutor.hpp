@@ -8,7 +8,7 @@
 #ifndef NEWENEMY_EXECUTOR_HPP
 #define NEWENEMY_EXECUTOR_HPP
 
-#include "client/states/game/logic.hpp"
+#include "client/state_machine/states/game/Game.hpp"
 
 #include <iostream>
 #include <memory>
@@ -19,13 +19,13 @@ class NewEnemyExecutor : public PacketExecutorImplClient
 <NewEnemyPacket, ClientPollable>
 {
 public:
-    NewEnemyExecutor(InGameStateLogic &logic) : logic(logic) {}
+    NewEnemyExecutor(Game &state) : state(state) {}
 
     bool execute([[maybe_unused]] Client &cl,
                  [[maybe_unused]] std::shared_ptr<ClientPollable> con,
                  [[maybe_unused]] std::shared_ptr<NewEnemyPacket> packet)
     {
-        this->logic.newEnemy(packet->getEntityId());
+        this->state.newEnemy(packet->getEntityId());
         return true;
     }
 
@@ -33,7 +33,7 @@ public:
         return PacketId::NEW_ENEMY;
     }
 private:
-    [[maybe_unused]] InGameStateLogic &logic;
+    [[maybe_unused]] Game &state;
 };
 
 #endif /* NEWENEMY_EXECUTOR_HPP */

@@ -6,21 +6,20 @@
 */
 
 #include "State.hpp"
-#include "IState.hpp"
 #include <memory>
 
-State::State(Registry &registry)
-    : registry(registry)
+State::State(ClientManager &cm, Registry &registry, Sync &s)
+    : clientManager(cm), registry(registry), sync(s)
 {}
-
-auto State::change_state(std::unique_ptr<IState> new_state) -> void
-{
-    this->next_state = std::move(new_state);
-}
 
 auto State::update() -> std::unique_ptr<IState>
 {
     this->registry.update();
     this->registry.render();
     return std::move(this->next_state);
+}
+
+auto State::getGraphicalLibrary() -> gl::GraphicalLibrary &
+{
+    return this->clientManager.getGui();
 }

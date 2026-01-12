@@ -8,7 +8,7 @@
 #ifndef DESPAWNPLAYER_EXECUTOR_HPP
 #define DESPAWNPLAYER_EXECUTOR_HPP
 
-#include "client/states/game/logic.hpp"
+#include "client/state_machine/states/game/Game.hpp"
 
 #include <memory>
 #include <network/packets/listener/PacketExecutor.hpp>
@@ -18,13 +18,17 @@ class DespawnPlayerExecutor : public PacketExecutorImplClient
 <DespawnPlayerPacket, ClientPollable>
 {
 public:
-    DespawnPlayerExecutor(InGameStateLogic &logic) : logic(logic) {}
+    DespawnPlayerExecutor(Game &state) : state(state) {}
 
     bool execute([[maybe_unused]]Client &cl,
                  [[maybe_unused]] std::shared_ptr<ClientPollable> con,
                  [[maybe_unused]] std::shared_ptr<DespawnPlayerPacket> packet)
     {
-        this->logic.despawnEntity(packet->getPlayerId());
+        gl::Sound sound = this->state.getGraphicalLibrary()
+            .getSound("despawn_player");
+
+        this->state.despawnEntity(packet->getPlayerId());
+        this->state.getGraphicalLibrary().play(sound);
         return true;
     }
 
@@ -32,7 +36,7 @@ public:
         return PacketId::DESPAWN_PLAYER;
     }
 private:
-    [[maybe_unused]] InGameStateLogic &logic;
+    [[maybe_unused]] Game &state;
 };
 
 #endif /* DESPAWNPLAYER_EXECUTOR_HPP */

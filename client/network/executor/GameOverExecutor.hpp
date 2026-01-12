@@ -8,7 +8,7 @@
 #ifndef GAMEOVER_EXECUTOR_HPP
 #define GAMEOVER_EXECUTOR_HPP
 
-#include "client/states/game/logic.hpp"
+#include "client/state_machine/states/game/Game.hpp"
 
 #include <memory>
 #include <network/packets/listener/PacketExecutor.hpp>
@@ -18,13 +18,13 @@ class GameOverExecutor : public PacketExecutorImplClient
 <GameOverPacket, ClientPollable>
 {
 public:
-    GameOverExecutor(InGameStateLogic &logic) : logic(logic) {}
+    GameOverExecutor(Game &state) : state(state) {}
 
     bool execute([[maybe_unused]]Client &cl,
                  [[maybe_unused]] std::shared_ptr<ClientPollable> con,
                  [[maybe_unused]] std::shared_ptr<GameOverPacket> packet)
     {
-        this->logic.end();
+        // this->state.end();
         return true;
     }
 
@@ -32,7 +32,7 @@ public:
         return PacketId::GAME_OVER;
     }
 private:
-    [[maybe_unused]] InGameStateLogic &logic;
+    [[maybe_unused]] Game &state;
 };
 
 #endif /* GAMEOVER_EXECUTOR_HPP */

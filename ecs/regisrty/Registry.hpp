@@ -42,8 +42,11 @@ class Registry
         get_components_by_id(const std::type_index &) const;
 
     Entity spawn_entity();
+    Entity spawn_named_entity(std::string name);
     Entity entity_from_index(std::size_t idx);
+    std::optional<Entity> entity_from_name(std::string name);
     void kill_entity(Entity const& e);
+    void kill_entity(std::string name);
 
     template <class Component>
     typename SparseArray<Component>::reference_type
@@ -66,6 +69,9 @@ class Registry
     template <typename Function, class... Args>
     void add_global_update_system(Function&& f, Args&&...);
 
+    void reset_update_systems();
+    void reset_render_systems();
+
     void update();
     void render();
 
@@ -86,6 +92,8 @@ class Registry
     std::queue<size_t> _dead_entities;
     std::vector<system_function_t> _update_systems;
     std::vector<system_function_t> _render_systems;
+    std::unordered_map<std::string, std::size_t> named_entities_ids;
+    std::unordered_map<std::size_t, std::string> named_entities_names;
 };
 
 template <class... Components>
