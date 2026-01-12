@@ -8,7 +8,7 @@
 #include "Renderer.hpp"
 
 Renderer::Renderer() {
-    InitWindow(900, 600, "Wati-Fenêtre");
+    InitWindow(900, 600, "RType");
     SetTargetFPS(60);
     InitAudioDevice();
 }
