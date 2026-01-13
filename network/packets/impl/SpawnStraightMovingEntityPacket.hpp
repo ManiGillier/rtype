@@ -46,7 +46,7 @@ class SpawnStraightMovingEntityPacket : public Packet
 {
 public:
     SpawnStraightMovingEntityPacket(std::vector<StraightMovingEntity> &data)
-    : Packet(SPAWN_STRAIGHT_MOVING_ENTITY_PACKET), data(data) {}
+    : Packet(PacketId::SPAWN_STRAIGHT_MOVING_ENTITY_PACKET), data(data) {}
 
     enum PacketMode getMode() const {
         return PacketMode::TCP;
