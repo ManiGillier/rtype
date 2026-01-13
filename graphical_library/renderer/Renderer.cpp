@@ -18,7 +18,7 @@ Renderer::~Renderer() {
     CloseAudioDevice();
 }
 
-void Renderer::Draw()
+void Renderer::draw()
 {
     for (auto &button : buttons)
         button.Draw();
@@ -30,37 +30,37 @@ void Renderer::Draw()
         inputbox.Draw();
 }
 
-void Renderer::AddButton(int posX, int posY, int sizeX, int sizeY,
+void Renderer::addButton(int posX, int posY, int sizeX, int sizeY,
                          int transparency, Color color,
                          const std::string &text)
 {
     buttons.emplace_back(posX, posY, sizeX, sizeY,
                          color, color, transparency);
-    buttons.back().SetText(text);
+    buttons.back().setText(text);
 }
 
-void Renderer::AddCheckBox(bool checked, int posX, int posY, int size,
+void Renderer::addCheckBox(bool checked, int posX, int posY, int size,
                            int transparency, Color color,
                            const std::string &text)
 {
     checkboxes.emplace_back(posX, posY, size, checked, transparency);
-    checkboxes.back().SetColor(color);
-    checkboxes.back().SetText(text);
+    checkboxes.back().setColor(color);
+    checkboxes.back().setText(text);
 }
 
-void Renderer::DeleteButton(size_t i)
+void Renderer::deleteButton(size_t i)
 {
     if (i < buttons.size())
         buttons.erase(buttons.begin() + (int)i);
 }
 
-void Renderer::DeleteCheckBox(size_t i)
+void Renderer::deleteCheckBox(size_t i)
 {
     if (i < checkboxes.size())
         checkboxes.erase(checkboxes.begin() + (int)i);
 }
 
-void Renderer::Clear()
+void Renderer::clear()
 {
     buttons.clear();
     checkboxes.clear();
@@ -68,27 +68,27 @@ void Renderer::Clear()
     inputboxes.clear();
 }
 
-gl::Button &Renderer::GetButton(int i)
+gl::Button &Renderer::getButton(int i)
 {
     return buttons.at(static_cast<size_t>(i));
 }
 
-const gl::Button &Renderer::GetButton(int i) const
+const gl::Button &Renderer::getButton(int i) const
 {
     return buttons.at(static_cast<size_t>(i));
 }
 
-gl::Checkbox &Renderer::GetCheckBox(int i)
+gl::Checkbox &Renderer::getCheckBox(int i)
 {
     return checkboxes.at(static_cast<size_t>(i));
 }
 
-const gl::Checkbox &Renderer::GetCheckBox(int i) const
+const gl::Checkbox &Renderer::getCheckBox(int i) const
 {
     return checkboxes.at(static_cast<size_t>(i));
 }
 
-void Renderer::AddTextBox(int posX, int posY, int sizeX, int sizeY,
+void Renderer::addTextBox(int posX, int posY, int sizeX, int sizeY,
                           int transparency, Color color,
                           const std::string &text)
 {
@@ -97,53 +97,53 @@ void Renderer::AddTextBox(int posX, int posY, int sizeX, int sizeY,
     textboxes.back().SetText(text);
 }
 
-void Renderer::Update()
+void Renderer::update()
 {
     for (auto &button : buttons)
-        button.Update();
+        button.update();
     for (auto &checkbox : checkboxes)
-        checkbox.Update();
+        checkbox.update();
     for (auto &textbox : textboxes)
-            textbox.Update();
+            textbox.update();
     for (auto &inputbox : inputboxes)
-            inputbox.Update();
-    this->Draw();
+            inputbox.update();
+    this->draw();
     return;
 }
 
-void Renderer::DeleteTextBox(size_t i)
+void Renderer::deleteTextBox(size_t i)
 {
     if (i < textboxes.size())
         textboxes.erase(textboxes.begin() + (int)i);
 }
 
-gl::TextBox &Renderer::GetTextBox(int i)
+gl::TextBox &Renderer::getTextBox(int i)
 {
     return textboxes.at(static_cast<size_t>(i));
 }
 
-const gl::TextBox &Renderer::GetTextBox(int i) const
+const gl::TextBox &Renderer::getTextBox(int i) const
 {
     return textboxes.at(static_cast<size_t>(i));
 }
 
-void Renderer::DeleteInputBox(size_t i)
+void Renderer::deleteInputBox(size_t i)
 {
     if (i < inputboxes.size())
         inputboxes.erase(inputboxes.begin() + (int)i);
 }
 
-const gl::InputBox &Renderer::GetInputBox(int i) const
+const gl::InputBox &Renderer::getInputBox(int i) const
 {
     return inputboxes.at(static_cast<size_t>(i));
 }
 
-gl::InputBox &Renderer::GetInputBox(int i)
+gl::InputBox &Renderer::getInputBox(int i)
 {
     return inputboxes.at(static_cast<size_t>(i));
 }
 
-void Renderer::AddInputBox(int posX, int posY, int sizeX, int sizeY,
+void Renderer::addInputBox(int posX, int posY, int sizeX, int sizeY,
                           int transparency, Color color,
                           const std::string &text)
 {

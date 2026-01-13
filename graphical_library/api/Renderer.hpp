@@ -19,29 +19,29 @@ namespace gl {
     public:
         Renderer() = default;
         virtual ~Renderer() = default;
-        virtual void Draw() = 0;
-        virtual void AddButton(int posX, int posY, int sizeX, int sizeY,
+        virtual void draw() = 0;
+        virtual void addButton(int posX, int posY, int sizeX, int sizeY,
             int transparency, Color color, const std::string &text) = 0;
-        virtual void AddCheckBox(bool checked, int posX, int posY, int size,
+        virtual void addCheckBox(bool checked, int posX, int posY, int size,
             int transparency, Color color, const std::string &text) = 0;
-        virtual auto Update() -> void = 0;
-        virtual void DeleteButton(size_t i) = 0;
-        virtual void DeleteCheckBox(size_t i) = 0;
-        virtual void Clear() = 0;
-        virtual const Button &GetButton(int i) const = 0;
-        virtual const Checkbox &GetCheckBox(int i) const = 0;
-        virtual Button &GetButton(int i) = 0;
-        virtual Checkbox &GetCheckBox(int i) = 0;
-        virtual void AddTextBox(int posX, int posY, int sizeX, int sizeY,
+        virtual auto update() -> void = 0;
+        virtual void deleteButton(size_t i) = 0;
+        virtual void deleteCheckBox(size_t i) = 0;
+        virtual void clear() = 0;
+        virtual const Button &getButton(int i) const = 0;
+        virtual const Checkbox &getCheckBox(int i) const = 0;
+        virtual Button &getButton(int i) = 0;
+        virtual Checkbox &getCheckBox(int i) = 0;
+        virtual void addTextBox(int posX, int posY, int sizeX, int sizeY,
             int transparency, Color color, const std::string& text) = 0;
-        virtual void DeleteTextBox(size_t i) = 0;
-        virtual TextBox &GetTextBox(int i) = 0;
-        virtual const TextBox &GetTextBox(int i) const = 0;
-        virtual void AddInputBox(int posX, int posY, int sizeX, int sizeY,
+        virtual void deleteTextBox(size_t i) = 0;
+        virtual TextBox &getTextBox(int i) = 0;
+        virtual const TextBox &getTextBox(int i) const = 0;
+        virtual void addInputBox(int posX, int posY, int sizeX, int sizeY,
                     int transparency, Color color, const std::string& text) = 0;
-        virtual void DeleteInputBox(size_t i) = 0;
-        virtual InputBox &GetInputBox(int i) = 0;
-        virtual const InputBox &GetInputBox(int i) const = 0;
+        virtual void deleteInputBox(size_t i) = 0;
+        virtual InputBox &getInputBox(int i) = 0;
+        virtual const InputBox &getInputBox(int i) const = 0;
     };
 }
 #endif // RENDERER_HPP_
