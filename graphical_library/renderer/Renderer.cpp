@@ -21,13 +21,13 @@ Renderer::~Renderer() {
 void Renderer::draw()
 {
     for (auto &button : buttons)
-        button.Draw();
+        button.draw();
     for (auto &checkbox : checkboxes)
-        checkbox.Draw();
+        checkbox.draw();
     for (auto &textbox : textboxes)
-        textbox.Draw();
+        textbox.draw();
     for (auto &inputbox : inputboxes)
-        inputbox.Draw();
+        inputbox.draw();
 }
 
 void Renderer::addButton(int posX, int posY, int sizeX, int sizeY,
