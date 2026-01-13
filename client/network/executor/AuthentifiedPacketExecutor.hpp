@@ -8,7 +8,8 @@
 #ifndef AUTHPACKET_EXECUTOR_HPP
 #define AUTHPACKET_EXECUTOR_HPP
 
-#include "client/states/connecting/logic.hpp"
+#include "client/state_machine/states/connecting/Connecting.hpp"
+#include "client/state_machine/states/lobby/Lobby.hpp"
 
 #include <memory>
 #include <network/packets/listener/PacketExecutor.hpp>
@@ -18,13 +19,13 @@ class AuthentifiedPacketExecutor : public PacketExecutorImplClient
 <AuthentifiedPacket, ClientPollable>
 {
 public:
-    AuthentifiedPacketExecutor(ConnectingStateLogic &logic) : logic(logic) {}
+    AuthentifiedPacketExecutor(Connecting &state) : state(state) {}
 
-    bool execute([[maybe_unused]]Client &cl,
+    bool execute([[maybe_unused]] Client &cl,
                  [[maybe_unused]] std::shared_ptr<ClientPollable> con,
                  [[maybe_unused]] std::shared_ptr<AuthentifiedPacket> packet)
     {
-        this->logic.notifyAuthentified();
+        this->state.change_state<Lobby>();
         return true;
     }
 
@@ -32,7 +33,7 @@ public:
         return PacketId::AUTHENTIFIED_PACKET;
     }
 private:
-    [[maybe_unused]] ConnectingStateLogic &logic;
+    [[maybe_unused]] Connecting &state;
 };
 
 #endif /* STARTGAME_EXECUTOR_HPP */
