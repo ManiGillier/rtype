@@ -7,6 +7,7 @@
 #include "../components/Tag.hpp"
 #include "../components/Velocity.hpp"
 #include "../components/Healer.hpp"
+#include "../components/Hitable.hpp"
 #include "shared/components/Dependence.hpp"
 #include "shared/components/Health.hpp"
 #include "shared/components/HitBox.hpp"
@@ -58,6 +59,7 @@ Entity EntityFactory::createBoss()
     _registry.emplace_component<Pattern>(boss, x - 50, y - 20, x + 50, y + 20, 0.0f);
     _registry.emplace_component<Tag>(boss, EntityTag::BOSS);
     _registry.emplace_component<Healer>(boss, 25);
+    _registry.emplace_component<Hitable>(boss, false);
     return boss;
 }
 

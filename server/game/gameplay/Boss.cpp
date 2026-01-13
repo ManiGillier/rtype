@@ -2,6 +2,7 @@
 #include "../factories/EntityFactory.hpp"
 #include "ecs/entity/Entity.hpp"
 #include "network/packets/impl/HitboxSizeUpdatePacket.hpp"
+#include "server/game/components/Hitable.hpp"
 #include "server/game/components/Tag.hpp"
 #include "shared/components/HitBox.hpp"
 #include "shared/components/Position.hpp"
@@ -59,11 +60,13 @@ void Boss::shoot()
     auto elapsed =
         std::chrono::duration_cast<std::chrono::milliseconds>(now - _start);
 
-    int shootInterval = 2000 - (_difficulty * 500);
+    int shootInterval = 2500 - (_difficulty * 400);
 
     if (elapsed.count() > shootInterval) {
         this->bulletPattern();
         _start = now;
+        // set hitable when it start to shoot
+        _regisrty.set<Hitable>(_id, true);
     }
 
     auto patternElapsed = std::chrono::duration_cast<std::chrono::milliseconds>(

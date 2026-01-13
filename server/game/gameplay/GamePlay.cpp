@@ -31,13 +31,13 @@ void GamePlay::setupWaves()
 {
     _waves.push_back({1, {PatternType::RADIAL_BURST}, 1, 1000});
     _waves.push_back({1, {PatternType::SPIRAL}, 1, 750});
-    _waves.push_back({2, {PatternType::AIMED_SHOT}, 2, 500});
+    _waves.push_back({2, {PatternType::AIMED_SHOT}, 1, 500});
     _waves.push_back(
         {2, {PatternType::WAVE_SPREAD, PatternType::SPIRAL}, 1, 500});
     _waves.push_back({2, {PatternType::DOUBLE_SPIRAL}, 1, 500});
     _waves.push_back({3, {PatternType::FLOWER, PatternType::AIMED_SHOT}, 1, 500});
     _waves.push_back(
-        {3, {PatternType::RADIAL_BURST, PatternType::DOUBLE_SPIRAL}, 2, 500});
+        {3, {PatternType::RADIAL_BURST, PatternType::DOUBLE_SPIRAL}, 1, 500});
     _waves.push_back(
         {3, {PatternType::FLOWER, PatternType::WAVE_SPREAD, PatternType::SPIRAL}, 1, 500});
 }

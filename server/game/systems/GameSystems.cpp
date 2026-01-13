@@ -1,17 +1,18 @@
 #include "GameSystems.hpp"
+#include "../components/Healer.hpp"
 #include "ecs/sparse_array/SparseArray.hpp"
 #include "network/packets/Packet.hpp"
 #include "network/packets/impl/DespawnPlayerPacket.hpp"
 #include "network/packets/impl/EnemyDiedPacket.hpp"
 #include "network/packets/impl/LaserActiveUpdatePacket.hpp"
 #include "network/packets/impl/PlayerHitPacket.hpp"
+#include "server/game/components/Hitable.hpp"
 #include "server/game/components/OutsideBoundaries.hpp"
 #include "server/game/components/Tag.hpp"
 #include "shared/components/Dependence.hpp"
 #include "shared/components/Health.hpp"
 #include "shared/components/Laser.hpp"
 #include "shared/components/Position.hpp"
-#include "../components/Healer.hpp"
 #include <memory>
 #include <network/logger/Logger.hpp>
 #include <network/packets/impl/DespawnBulletPacket.hpp>
@@ -208,6 +209,9 @@ auto Systems::collision_system(
                         to_kill.insert(i);
                         nm.queuePacket(create_packet(PlayerHitPacket, j, i));
                     }
+                    if (tag_j->tag == EntityTag::BOSS &&
+                        !r.get<Hitable>(j)->isHitable)
+                        continue;
 
                     if ((tag_i->tag == EntityTag::BULLET &&
                          tag_j->tag == EntityTag::PLAYER) ||
@@ -230,6 +234,9 @@ auto Systems::collision_system(
                         to_kill.insert(j);
                         nm.queuePacket(create_packet(PlayerHitPacket, i, j));
                     }
+                    if (tag_i->tag == EntityTag::BOSS &&
+                        !r.get<Hitable>(i)->isHitable)
+                        continue;
 
                     if ((tag_j->tag == EntityTag::BULLET &&
                          tag_i->tag == EntityTag::PLAYER) ||
@@ -249,8 +256,7 @@ auto Systems::collision_system(
     }
 }
 
-auto Systems::heal_all_players_system(Registry &r, int heal)
-    -> void
+auto Systems::heal_all_players_system(Registry &r, int heal) -> void
 {
     auto zipper = containers::indexed_zipper(r.get_components<Tag>());
 
@@ -268,8 +274,9 @@ auto Systems::health_system(
     NetworkManager &nm) -> void
 {
     for (auto &&[i, health] : zipper) {
-        nm.queuePacket(std::make_shared<HealthUpdatePacket>(i, health->pv, health->max_pv), i,
-                       true);
+        nm.queuePacket(
+            std::make_shared<HealthUpdatePacket>(i, health->pv, health->max_pv),
+            i, true);
         if (health->pv <= 0) {
             auto tag = r.get<Tag>(i);
             if (tag->tag == EntityTag::BOSS) {

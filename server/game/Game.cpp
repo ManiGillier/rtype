@@ -7,9 +7,9 @@
 #include "components/Resistance.hpp"
 #include "components/Tag.hpp"
 #include "components/Velocity.hpp"
+#include "components/Hitable.hpp"
 #include "ecs/regisrty/Registry.hpp"
 #include "gameplay/GamePlay.hpp"
-#include "network/logger/Logger.hpp"
 #include "network/packets/Packet.hpp"
 #include "shared/components/Dependence.hpp"
 #include "shared/components/Health.hpp"
@@ -124,6 +124,7 @@ void Game::initializeComponents()
     _registry.register_component<Pattern>();
     _registry.register_component<Tag>();
     _registry.register_component<Healer>();
+    _registry.register_component<Hitable>();
 }
 
 void Game::initializeSystems()
