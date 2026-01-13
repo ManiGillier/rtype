@@ -15,6 +15,7 @@ struct Pattern {
     uint16_t min_y;
     uint16_t max_x;
     uint16_t max_y;
+    float progress;
 };
 
 #endif /* COMP_PATTERN_HPP */

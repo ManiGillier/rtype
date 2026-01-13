@@ -4,7 +4,10 @@
 #include "../components/OutsideBoundaries.hpp"
 #include "../components/Pattern.hpp"
 #include "../components/Resistance.hpp"
+#include "../components/Tag.hpp"
 #include "../components/Velocity.hpp"
+#include "../components/Healer.hpp"
+#include "../components/Hitable.hpp"
 #include "shared/components/Dependence.hpp"
 #include "shared/components/Health.hpp"
 #include "shared/components/HitBox.hpp"
@@ -24,6 +27,7 @@ Entity EntityFactory::createPlayer(void)
     _registry.emplace_component<Health>(player, 100, 100);
     _registry.emplace_component<Resistance>(player, 10.0f);
     _registry.emplace_component<HitBox>(player, 30.0f, 30.0f);
+    _registry.emplace_component<Tag>(player, EntityTag::PLAYER);
     return player;
 }
 
@@ -35,7 +39,8 @@ Entity EntityFactory::createPlayerLaser(int id)
     _registry.emplace_component<Dependence>(playerLaser, id);
     _registry.emplace_component<HitBox>(playerLaser, 1.0f, 1200.0f);
     _registry.emplace_component<Laser>(playerLaser, false, 0.0f);
-    _registry.emplace_component<Damager>(playerLaser, 10);
+    _registry.emplace_component<Damager>(playerLaser, 8);
+    _registry.emplace_component<Tag>(playerLaser, EntityTag::LASER);
     return playerLaser;
 }
 
@@ -48,11 +53,13 @@ Entity EntityFactory::createBoss()
 
     _registry.emplace_component<Position>(boss, x, y);
     _registry.emplace_component<Acceleration>(boss, 1.0f, 1.0f);
-    _registry.emplace_component<OutsideBoundaries>(boss, false);
-    _registry.emplace_component<Health>(boss, 100, 100);
+    _registry.emplace_component<Health>(boss, 180, 180);
     _registry.emplace_component<Resistance>(boss, 50.0f);
     _registry.emplace_component<HitBox>(boss, 80.0f, 80.0f);
-    _registry.emplace_component<Pattern>(boss, x - 50, y - 20, x + 50, y + 20);
+    _registry.emplace_component<Pattern>(boss, x - 50, y - 20, x + 50, y + 20, 0.0f);
+    _registry.emplace_component<Tag>(boss, EntityTag::BOSS);
+    _registry.emplace_component<Healer>(boss, 25);
+    _registry.emplace_component<Hitable>(boss, false);
     return boss;
 }
 
@@ -68,5 +75,6 @@ Entity EntityFactory::createBossBullet(int id, float x, float y, float acc_x,
     _registry.emplace_component<Damager>(bossBullet, 15);
     _registry.emplace_component<HitBox>(bossBullet, 10.0f, 10.0f);
     _registry.emplace_component<Dependence>(bossBullet, id);
+    _registry.emplace_component<Tag>(bossBullet, EntityTag::BULLET);
     return bossBullet;
 }

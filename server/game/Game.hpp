@@ -23,6 +23,7 @@ class Game
     void loop(int ticks);
     NetworkManager &getNetworkManager();
     std::tuple<std::mutex &, Registry &> getRegistry();
+    bool isRunning();
 
   private:
     /*
@@ -49,6 +50,8 @@ class Game
     std::mutex _registryMutex;
     Registry _registry;
     EntityFactory _factory;
+
+    std::mutex _runningMutex;
     bool _isRunning;
 };
 

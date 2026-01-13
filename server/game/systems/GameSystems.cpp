@@ -1,24 +1,28 @@
 #include "GameSystems.hpp"
+#include "../components/Healer.hpp"
 #include "ecs/sparse_array/SparseArray.hpp"
+#include "network/packets/Packet.hpp"
 #include "network/packets/impl/DespawnPlayerPacket.hpp"
+#include "network/packets/impl/EnemyDiedPacket.hpp"
 #include "network/packets/impl/LaserActiveUpdatePacket.hpp"
+#include "network/packets/impl/PlayerHitPacket.hpp"
+#include "server/game/components/Hitable.hpp"
+#include "server/game/components/OutsideBoundaries.hpp"
+#include "server/game/components/Tag.hpp"
 #include "shared/components/Dependence.hpp"
+#include "shared/components/Health.hpp"
 #include "shared/components/Laser.hpp"
 #include "shared/components/Position.hpp"
 #include <memory>
+#include <mutex>
 #include <network/logger/Logger.hpp>
 #include <network/packets/impl/DespawnBulletPacket.hpp>
 #include <network/packets/impl/GameOverPacket.hpp>
 #include <network/packets/impl/HealthUpdatePacket.hpp>
 #include <network/packets/impl/PlayerDiedPacket.hpp>
 #include <network/packets/impl/PositionUpdatePacket.hpp>
-
-namespace GameConstants
-{
-constexpr float width = 800;
-constexpr float height = 600;
-constexpr float PLAYER_SPEED = 3.0f;
-} // namespace GameConstants
+#include <optional>
+#include <set>
 
 auto Systems::position_system(
     Registry &r,
@@ -72,23 +76,22 @@ auto Systems::pattern_system(
         float height = pat->max_y - pat->min_y;
         float perimeter = 2 * (width + height);
 
-        static float progress = 0.0f;
-        progress += speed;
-        if (progress >= perimeter)
-            progress -= perimeter;
+        pat->progress += speed;
+        if (pat->progress >= perimeter)
+            pat->progress -= perimeter;
 
-        if (progress < width) {
-            pos->x = pat->min_x + progress;
+        if (pat->progress < width) {
+            pos->x = pat->min_x + pat->progress;
             pos->y = pat->min_y;
-        } else if (progress < width + height) {
+        } else if (pat->progress < width + height) {
             pos->x = pat->max_x;
-            pos->y = pat->min_y + (progress - width);
-        } else if (progress < 2 * width + height) {
-            pos->x = pat->max_x - (progress - width - height);
+            pos->y = pat->min_y + (pat->progress - width);
+        } else if (pat->progress < 2 * width + height) {
+            pos->x = pat->max_x - (pat->progress - width - height);
             pos->y = pat->max_y;
         } else {
             pos->x = pat->min_x;
-            pos->y = pat->max_y - (progress - 2 * width - height);
+            pos->y = pat->max_y - (pat->progress - 2 * width - height);
         }
         auto packet = std::make_shared<PositionUpdatePacket>(i, pos->x, pos->y);
         nm.queuePacket(packet, i, true);
@@ -143,6 +146,9 @@ auto Systems::player_laser_system(Registry &r,
     auto &dependences = r.get_components<Dependence>();
     auto &lasers = r.get_components<Laser>();
 
+    if (id >= positions.size() || !positions[id].has_value())
+        return;
+
     auto &pos = positions[id].value();
     auto inputs = packet->getInputs();
 
@@ -157,5 +163,152 @@ auto Systems::player_laser_system(Registry &r,
                 lasers[i].value().length = GameConstants::height - pos.y;
             }
         }
+    }
+}
+
+auto Systems::collision_system(
+    Registry &r,
+    containers::indexed_zipper<SparseArray<Position>, SparseArray<HitBox>>
+        zipper,
+    NetworkManager &nm) -> void
+{
+    std::set<std::size_t> to_kill;
+
+    for (auto &&[i, pos_i, hitbox_i] : zipper) {
+        for (auto &&[j, pos_j, hitbox_j] : zipper) {
+            if (i >= j)
+                continue;
+
+            bool collisionX =
+                pos_i->x - hitbox_i->width / 2 <
+                    pos_j->x + hitbox_j->width / 2 &&
+                pos_i->x + hitbox_i->width / 2 > pos_j->x - hitbox_j->width / 2;
+
+            bool collisionY = pos_i->y - hitbox_i->height / 2 <
+                                  pos_j->y + hitbox_j->height / 2 &&
+                              pos_i->y + hitbox_i->height / 2 >
+                                  pos_j->y - hitbox_j->height / 2;
+
+            if (collisionX && collisionY) {
+                auto damager_i = r.get<Damager>(i);
+                auto damager_j = r.get<Damager>(j);
+
+                auto health_j = r.get<Health>(j);
+                auto health_i = r.get<Health>(i);
+
+                auto tag_i = r.get<Tag>(i);
+                auto tag_j = r.get<Tag>(j);
+
+                if (damager_i.has_value() && health_j.has_value()) {
+                    auto dep_i = r.get<Dependence>(i);
+                    auto laser_i = r.get<Laser>(i);
+
+                    if ((dep_i.has_value() && dep_i->id == j) ||
+                        (laser_i.has_value() && !laser_i->active))
+                        continue;
+
+                    if (tag_i->tag == EntityTag::BULLET) {
+                        to_kill.insert(i);
+                        nm.queuePacket(create_packet(PlayerHitPacket, j, i));
+                    }
+                    if (tag_j->tag == EntityTag::BOSS &&
+                        !r.get<Hitable>(j)->isHitable)
+                        continue;
+
+                    if ((tag_i->tag == EntityTag::BULLET &&
+                         tag_j->tag == EntityTag::PLAYER) ||
+                        (tag_i->tag == EntityTag::LASER &&
+                         tag_j->tag == EntityTag::BOSS)) {
+                        int damage = damager_i->damage;
+                        r.set<Health>(j, health_j->pv - damage,
+                                      health_j->max_pv);
+                    }
+                }
+                if (damager_j.has_value() && health_i.has_value()) {
+                    auto dep_j = r.get<Dependence>(j);
+                    auto laser_j = r.get<Laser>(j);
+
+                    if ((dep_j.has_value() && dep_j->id == i) ||
+                        (laser_j.has_value() && !laser_j->active))
+                        continue;
+
+                    if (tag_j->tag == EntityTag::BULLET) {
+                        to_kill.insert(j);
+                        nm.queuePacket(create_packet(PlayerHitPacket, i, j));
+                    }
+                    if (tag_i->tag == EntityTag::BOSS &&
+                        !r.get<Hitable>(i)->isHitable)
+                        continue;
+
+                    if ((tag_j->tag == EntityTag::BULLET &&
+                         tag_i->tag == EntityTag::PLAYER) ||
+                        (tag_j->tag == EntityTag::LASER &&
+                         tag_i->tag == EntityTag::BOSS)) {
+                        int damage = damager_j->damage;
+                        r.set<Health>(i, health_i->pv - damage,
+                                      health_i->max_pv);
+                    }
+                }
+            }
+        }
+    }
+    for (auto &it : to_kill) {
+        r.kill_entity(r.entity_from_index(it));
+        nm.queuePacket(std::make_shared<DespawnBulletPacket>(it));
+    }
+}
+
+auto Systems::heal_all_players_system(Registry &r, int heal) -> void
+{
+    auto zipper = containers::indexed_zipper(r.get_components<Tag>());
+
+    for (auto &&[i, tag] : zipper) {
+        if (tag->tag == EntityTag::PLAYER) {
+            auto hl = r.get<Health>(i);
+            int new_pv = std::min(hl->pv + heal, hl->max_pv);
+            r.set<Health>(i, new_pv, hl->max_pv);
+        }
+    }
+}
+
+auto Systems::health_system(Registry &r,
+                   containers::indexed_zipper<SparseArray<Health>> zipper,
+                   NetworkManager &nm) -> void
+{
+    for (auto &&[i, health] : zipper) {
+        nm.queuePacket(
+            std::make_shared<HealthUpdatePacket>(i, health->pv, health->max_pv),
+            i, true);
+        if (health->pv <= 0) {
+            auto tag = r.get<Tag>(i);
+            if (tag->tag == EntityTag::BOSS) {
+                heal_all_players_system(r, r.get<Healer>(i)->healer);
+                nm.queuePacket(std::make_shared<EnemyDiedPacket>(i));
+                nm.queuePacket(std::make_shared<DespawnPlayerPacket>(i));
+            } else {
+                nm.queuePacket(std::make_shared<PlayerDiedPacket>(i));
+                nm.queuePacket(std::make_shared<DespawnPlayerPacket>(i));
+                nm.playerDied(i);
+            }
+            r.kill_entity(r.entity_from_index(i));
+        }
+    }
+}
+
+auto Systems::loose_system([[maybe_unused]] Registry &r,
+                           containers::indexed_zipper<SparseArray<Tag>> zipper,
+                           NetworkManager &nm, std::mutex &m, bool &run) -> void
+{
+    int remainingPlayers = 0;
+
+    for (auto &&[i, tag] : zipper)
+        if (tag->tag == EntityTag::PLAYER)
+            remainingPlayers++;
+
+    if (remainingPlayers == 0) {
+        nm.queuePacket(std::make_shared<GameOverPacket>(EndGameState::LOST));
+        m.lock();
+        run = false;
+        m.unlock();
     }
 }

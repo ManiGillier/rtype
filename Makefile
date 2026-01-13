@@ -29,7 +29,7 @@ release:
 	$(call build,client,$(RELEASE))
 
 server:
-	$(call build,network,$(RELEASE))
+	$(call build,network,$(DEBUG))
 	$(call build,server,$(DEBUG))
 
 client:
@@ -38,7 +38,7 @@ client:
 	$(call build,client,$(RELEASE))
 
 reseau:
-	$(call build,network,$(RELEASE))
+	$(call build,network,$(DEBUG))
 	$(call build,server,$(DEBUG),--target reseau)
 
 gui:
