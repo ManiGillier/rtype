@@ -8,6 +8,8 @@
 #ifndef RENDER_SYSTEMS_HPP
 #define RENDER_SYSTEMS_HPP
 
+#include "../Game.hpp"
+
 #include <graphical_library/api/GraphicalLibrary.hpp>
 
 #include "ecs/regisrty/Registry.hpp"
@@ -22,6 +24,8 @@
 #include "shared/components/Laser.hpp"
 #include "shared/components/Dependence.hpp"
 #include "client/components/PlayerId.hpp"
+#include "client/components/StraightMoving.hpp"
+
 #include <optional>
 #include <unordered_map>
 
@@ -64,6 +68,12 @@ auto renderPlayerId([[maybe_unused]] Registry &reg,
 
 auto playerInputs([[maybe_unused]] Registry &r, gl::GraphicalLibrary &gl,
                   NetworkManager &networkManager)
+-> void;
+
+auto updateStraightMoving([[maybe_unused]] Registry &reg,
+    containers::indexed_zipper<SparseArray<Position>,
+                               SparseArray<StraightMovingComp>> zip,
+                  Game &state)
 -> void;
 
 #endif /* RENDER_SYSTEMS_HPP */

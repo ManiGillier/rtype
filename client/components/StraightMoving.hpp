@@ -10,7 +10,9 @@
 
 #include <cstdint>
 
-struct StraightMovingComp {    
+struct StraightMovingComp {
+    uint16_t pos_x_0;
+    uint16_t pos_y_0;
     uint16_t vel_x;
     uint16_t vel_y;
     uint32_t ms_time;
