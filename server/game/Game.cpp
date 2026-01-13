@@ -72,6 +72,7 @@ void Game::loop(int ticks)
             running = _isRunning;
         }
         ticker.wait();
+        this->setDiffTime();
     } while (running);
 
     this->_networkManager.flush();
@@ -82,10 +83,21 @@ void Game::loop(int ticks)
 
 void Game::sendCurrentTime(Ticker &ticker)
 {
-    auto now = ticker.now() - _gameStart;
-    auto time_ms = static_cast<uint32_t>(
-        std::chrono::duration_cast<std::chrono::milliseconds>(now).count());
-    _networkManager.queuePacket(create_packet(TimeNowPacket, time_ms));
+    this->_lastTick = ticker.now();
+    auto diff = this->_lastTick - _gameStart;
+    auto tick = static_cast<uint32_t>(
+        std::chrono::duration_cast<std::chrono::milliseconds>(diff).count());
+    _networkManager.queuePacket(create_packet(TimeNowPacket, tick));
+}
+
+void Game::setDiffTime()
+{
+    auto diff = std::chrono::steady_clock::now() - this->_lastTick;
+
+    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(diff).count();
+    float seconds = static_cast<float>(ms) / 1000.0f;
+    LOG("diff time = "<< seconds);
+    this->_networkManager.setLastTick(seconds);
 }
 
 void Game::initPlayers()

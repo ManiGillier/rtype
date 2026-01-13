@@ -33,8 +33,9 @@ auto Systems::position_system(
     NetworkManager &nm) -> void
 {
     for (auto &&[i, pos, vel, acc, out] : zipper) {
-        pos->x += vel->x;
-        pos->y += vel->y;
+        auto lastTick = nm.getLastTick();
+        pos->x += vel->x * lastTick;
+        pos->y += vel->y * lastTick;
         vel->x = acc->x;
         vel->y = acc->y;
         if (!out->canGoOutside) {

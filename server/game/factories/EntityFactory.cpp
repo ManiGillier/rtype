@@ -52,7 +52,7 @@ Entity EntityFactory::createBoss()
     float y = 500.0f;
 
     _registry.emplace_component<Position>(boss, x, y);
-    _registry.emplace_component<Acceleration>(boss, 1.0f, 1.0f);
+    _registry.emplace_component<Acceleration>(boss, 1.0f * 1.0f, 1.0f * 1.0f);
     _registry.emplace_component<Health>(boss, 180, 180);
     _registry.emplace_component<Resistance>(boss, 50.0f);
     _registry.emplace_component<HitBox>(boss, 80.0f, 80.0f);
@@ -70,7 +70,7 @@ Entity EntityFactory::createBossBullet(int id, float x, float y, float acc_x,
 
     _registry.emplace_component<Position>(bossBullet, x, y);
     _registry.emplace_component<Velocity>(bossBullet, 0.0f, 0.0f);
-    _registry.emplace_component<Acceleration>(bossBullet, acc_x, acc_y);
+    _registry.emplace_component<Acceleration>(bossBullet, acc_x * 80.0f, acc_y * 80.0f);
     _registry.emplace_component<OutsideBoundaries>(bossBullet, true);
     _registry.emplace_component<Damager>(bossBullet, 15);
     _registry.emplace_component<HitBox>(bossBullet, 10.0f, 10.0f);

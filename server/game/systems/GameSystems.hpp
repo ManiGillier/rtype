@@ -31,7 +31,7 @@ namespace GameConstants
 {
 constexpr float width = 800;
 constexpr float height = 600;
-constexpr float PLAYER_SPEED = 3.0f;
+constexpr float PLAYER_SPEED = 200.0f;
 } // namespace GameConstants
 
 namespace Systems

@@ -3,6 +3,7 @@
 #include "ecs/entity/Entity.hpp"
 #include "network/packets/impl/HitboxSizeUpdatePacket.hpp"
 #include "network/packets/impl/SpawnStraightMovingEntityPacket.hpp"
+#include "server/game/components/Acceleration.hpp"
 #include "server/game/components/Hitable.hpp"
 #include "server/game/components/Tag.hpp"
 #include "shared/components/HitBox.hpp"
@@ -107,11 +108,14 @@ void Boss::addBullet(float spawn_x, float spawn_y, float acc_x, float acc_y)
     Entity e = _factory.createBossBullet(static_cast<int>(_id), spawn_x,
                                          spawn_y, acc_x, acc_y);
 
+    auto vel = _regisrty.get<Acceleration>(e.getId());
+    auto pos = _regisrty.get<Position>(e.getId());
+
     sme.id = static_cast<uint16_t>(e.getId());
-    sme.pos_x = static_cast<uint16_t>(spawn_x);
-    sme.pos_y = static_cast<uint16_t>(spawn_y);
-    sme.vel_x = static_cast<uint16_t>(acc_x);
-    sme.vel_y = static_cast<uint16_t>(acc_y);
+    sme.pos_x = static_cast<uint16_t>(pos->x);
+    sme.pos_y = static_cast<uint16_t>(pos->y);
+    sme.vel_x = static_cast<uint16_t>(vel->x);
+    sme.vel_y = static_cast<uint16_t>(vel->y);
 
     auto hitBox = _regisrty.get<HitBox>(e.getId());
     if (hitBox.has_value()) {

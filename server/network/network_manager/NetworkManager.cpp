@@ -49,3 +49,13 @@ void NetworkManager::clearId(std::size_t id)
 {
     this->_filter.reset(id);
 }
+
+void NetworkManager::setLastTick(float last)
+{
+    this->_lastTick = last;
+}
+
+float NetworkManager::getLastTick() const
+{
+    return this->_lastTick;
+}
