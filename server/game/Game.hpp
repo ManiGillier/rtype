@@ -12,6 +12,7 @@
 #include "../network/network_manager/NetworkManager.hpp"
 #include "../player/Player.hpp"
 #include "ecs/regisrty/Registry.hpp"
+#include "server/game/ticker/Ticker.hpp"
 #include <memory>
 
 class Game
@@ -26,6 +27,7 @@ class Game
     bool isRunning();
 
   private:
+    void sendCurrentTime(Ticker &ticker);
     /*
        init helpers to creates players entity then send entity Id to the client
     */

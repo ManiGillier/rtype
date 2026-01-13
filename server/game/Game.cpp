@@ -19,12 +19,14 @@
 #include "systems/GameSystems.hpp"
 #include "ticker/Ticker.hpp"
 #include <chrono>
+#include <cstdint>
 #include <functional>
 #include <memory>
 #include <mutex>
 #include <network/packets/impl/GameOverPacket.hpp>
 #include <network/packets/impl/HitboxSizeUpdatePacket.hpp>
 #include <network/packets/impl/NewPlayerPacket.hpp>
+#include <network/packets/impl/TimeNowPacket.hpp>
 #include <optional>
 #include <thread>
 #include <tuple>
@@ -53,8 +55,7 @@ void Game::loop(int ticks)
     bool running = true;
 
     do {
-        ticker.now();
-
+        this->sendCurrentTime(ticker);
         this->_networkManager.flush();
         {
             std::lock_guard<std::mutex> lock(_registryMutex);
@@ -76,6 +77,16 @@ void Game::loop(int ticks)
     this->_networkManager.clear();
     this->resetPlayersEntities();
     this->_registry = Registry();
+}
+
+void Game::sendCurrentTime(Ticker &ticker)
+{
+    std::chrono::steady_clock::time_point now = ticker.now();
+    auto time_ms = static_cast<uint32_t>(
+        std::chrono::duration_cast<std::chrono::milliseconds>(
+            now.time_since_epoch())
+            .count());
+    _networkManager.queuePacket(create_packet(TimeNowPacket, time_ms));
 }
 
 void Game::initPlayers()

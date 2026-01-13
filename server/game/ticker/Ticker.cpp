@@ -6,9 +6,11 @@ Ticker::Ticker(int ticks)
     _ticks = std::chrono::milliseconds(1000 / ticks);
 }
 
-void Ticker::now()
+ std::chrono::steady_clock::time_point Ticker::now()
 {
-    _start = std::chrono::steady_clock::now();
+    auto now = std::chrono::steady_clock::now();
+    _start = now;
+    return now;
 }
 
 void Ticker::wait()
