@@ -27,8 +27,8 @@ struct StraightMovingEntity {
     uint32_t ms_time;
 };
 
-std::ostream &operator<<(std::ostream &os,
-                         const std::vector<StraightMovingEntity> &data)
+static std::ostream &operator<<(std::ostream &os,
+    const std::vector<StraightMovingEntity> &data)
 {
     for (auto &d : data) {
         os << "Id=" << d.id << "{ "

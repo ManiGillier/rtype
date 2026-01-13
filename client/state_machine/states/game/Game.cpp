@@ -17,6 +17,7 @@
 #include "client/components/HorizontalTiling.hpp"
 #include "client/components/PlayerId.hpp"
 #include "client/components/Texture.hpp"
+#include "client/components/StraightMoving.hpp"
 
 #include "client/network/executor/NewPlayerExecutor.hpp"
 #include "client/network/executor/NewEnemyExecutor.hpp"
@@ -57,6 +58,7 @@ auto Game::init_systems() -> void
     this->registry.register_component<HorizontalTiling>();
     this->registry.register_component<PlayerId>();
     this->registry.register_component<TextureComp>();
+    this->registry.register_component<StraightMovingComp>();
 
     this->registry.add_render_system<HorizontalTiling, TextureComp>
         (animateTiling, std::ref(this->clientManager.getGui()));
@@ -130,15 +132,28 @@ auto Game::newEnemy(std::size_t enemy_id) -> void
     r.add_component<Health>(enemy, {0, 0});
 }
 
-auto Game::newBullet(std::size_t bullet_id) -> void
+auto Game::newBullet(std::vector<StraightMovingEntity> entities) -> void
 {
     Registry &r = this->registry;
-    Entity bullet = r.spawn_entity();
+    for (auto &entity : entities) {
+        Entity bullet = r.spawn_entity();
 
-    this->sync.add(bullet.getId(), bullet_id);
-    r.add_component<Position>(bullet, {-250, -200});
-    r.add_component<HitBox>(bullet, {10, 10});
-    r.add_component<ElementColor>(bullet, {gl::BLUE});
+        this->sync.add(bullet.getId(), entity.id);
+        r.add_component<Position>(bullet, {
+            static_cast<float>(entity.pos_x),
+            static_cast<float>(entity.pos_y)
+        });
+        r.add_component<HitBox>(bullet, {
+            static_cast<float>(entity.hitbox_x),
+            static_cast<float>(entity.hitbox_y)
+        });
+        r.add_component<ElementColor>(bullet, {gl::BLUE});
+        r.add_component<StraightMovingComp>(bullet, {
+            .vel_x = entity.vel_x,
+            .vel_y = entity.vel_y,
+            .ms_time = entity.ms_time
+        });
+    }
 }
 
 auto Game::despawnEntity(std::size_t id) -> void
