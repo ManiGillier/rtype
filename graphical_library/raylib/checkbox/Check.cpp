@@ -1,5 +1,4 @@
 #include "Check.hpp"
-#include <iostream>
 #include <raylib.h>
 
 MyCheckBox::MyCheckBox(int x, int y, int size_, bool checked_,
