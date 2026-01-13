@@ -51,13 +51,13 @@ void Renderer::AddCheckBox(bool checked, int posX, int posY, int size,
 void Renderer::DeleteButton(size_t i)
 {
     if (i < buttons.size())
-        buttons.erase(buttons.begin() + i);
+        buttons.erase(buttons.begin() + (int)i);
 }
 
 void Renderer::DeleteCheckBox(size_t i)
 {
     if (i < checkboxes.size())
-        checkboxes.erase(checkboxes.begin() + i);
+        checkboxes.erase(checkboxes.begin() + (int)i);
 }
 
 void Renderer::Clear()
@@ -114,7 +114,7 @@ void Renderer::Update()
 void Renderer::DeleteTextBox(size_t i)
 {
     if (i < textboxes.size())
-        textboxes.erase(textboxes.begin() + i);
+        textboxes.erase(textboxes.begin() + (int)i);
 }
 
 gl::TextBox &Renderer::GetTextBox(int i)
@@ -130,7 +130,7 @@ const gl::TextBox &Renderer::GetTextBox(int i) const
 void Renderer::DeleteInputBox(size_t i)
 {
     if (i < inputboxes.size())
-        inputboxes.erase(inputboxes.begin() + i);
+        inputboxes.erase(inputboxes.begin() + (int)i);
 }
 
 const gl::InputBox &Renderer::GetInputBox(int i) const
