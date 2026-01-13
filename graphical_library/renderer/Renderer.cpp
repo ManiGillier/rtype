@@ -94,7 +94,7 @@ void Renderer::addTextBox(int posX, int posY, int sizeX, int sizeY,
 {
     textboxes.emplace_back(posX, posY, sizeX, sizeY,
                           color, color, transparency);
-    textboxes.back().SetText(text);
+    textboxes.back().setText(text);
 }
 
 void Renderer::update()
