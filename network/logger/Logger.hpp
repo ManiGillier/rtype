@@ -20,6 +20,8 @@ class Logger {
 
 #define LOG(message) if (Logger::shouldLog) { std::cout << "[R-Type Network] [" << std::format("{:%d/%m/%Y %H:%M:%S}", floor<std::chrono::milliseconds>(std::chrono::system_clock::now())) << "] [*] " << message << std::endl; }
 
+#define LOG_NO_ENDL(message) if (Logger::shouldLog) { std::cout << "[R-Type Network] [" << std::format("{:%d/%m/%Y %H:%M:%S}", floor<std::chrono::milliseconds>(std::chrono::system_clock::now())) << "] [*] " << message; }
+
 #define LOG_ERR(message) if (Logger::shouldLog) { std::cout << "[R-Type Network] [" << std::format("{:%d/%m/%Y %H:%M:%S}", floor<std::chrono::milliseconds>(std::chrono::system_clock::now())) << "] [*] " << message << std::endl; }
 
 #define DEBUG LOG_ERR << __func__ << " - " << __FILE__        \
