@@ -47,7 +47,7 @@ void Game::loop(int ticks)
 
     this->_isRunning = true;
     std::this_thread::sleep_for(
-        std::chrono::milliseconds(200)); // TODO: remove this
+        std::chrono::milliseconds(500)); // TODO: remove this
 
     this->initializeComponents();
     this->initializeSystems();
@@ -96,7 +96,6 @@ void Game::setDiffTime()
 
     auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(diff).count();
     float seconds = static_cast<float>(ms) / 1000.0f;
-    LOG("diff time = "<< seconds);
     this->_networkManager.setLastTick(seconds);
 }
 
@@ -127,8 +126,8 @@ void Game::initPlayers()
             HitBoxSize = create_packet(HitboxSizeUpdatePacket, playerId,
                                        hitBox->width, hitBox->height);
         }
-        _networkManager.queuePacket(HitBoxSize);
         _networkManager.queuePacket(newPlayerPacket);
+        _networkManager.queuePacket(HitBoxSize);
     }
 }
 

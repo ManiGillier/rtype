@@ -11,6 +11,8 @@ void NetworkManager::queuePacket(std::shared_ptr<Packet> packet,
                                  std::size_t playerId, bool filter)
 
 {
+    if (!packet)
+        return;
     if (!filter || (filter && _filter.shouldSend(playerId, packet)))
         _packets.push(packet);
 }
