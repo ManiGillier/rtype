@@ -12,6 +12,7 @@
 #include "../../thread/ThreadPool.hpp"
 #include <memory>
 #include <network/server/Server.hpp>
+#include "../../database/AccountDatabase.hpp"
 
 class RTypeServer : public Server
 {
@@ -32,6 +33,7 @@ class RTypeServer : public Server
     int _nextId;
     LobbyManager _lobbyManager;
     ThreadPool _threadPool;
+    AccountDatabase db;
 };
 
 #endif
