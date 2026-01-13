@@ -48,6 +48,7 @@ class GamePlay
     EntityFactory &_factory;
 
     std::chrono::steady_clock::time_point _start;
+    std::chrono::steady_clock::time_point _start2;
     GameState _state;
 
     std::vector<std::unique_ptr<Boss>> _bosses;

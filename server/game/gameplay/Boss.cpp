@@ -186,7 +186,6 @@ void Boss::patternRadialBurst()
                 center_x + spawn_radius * static_cast<float>(std::cos(angle));
             float spawn_y =
                 center_y + spawn_radius * static_cast<float>(std::sin(angle));
-
             this->addBullet(spawn_x, spawn_y, acc_x, acc_y);
         }
         bullet_speed += 0.5f + (static_cast<float>(_difficulty) * 0.15f);

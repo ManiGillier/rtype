@@ -11,6 +11,7 @@ GamePlay::GamePlay(NetworkManager &nm, Registry &r, EntityFactory &factory)
       _state(GameState::waiting), _currentWave(0), _maxWaveNb(8)
 {
     _start = std::chrono::steady_clock::now();
+    _start2 = std::chrono::steady_clock::now();
     setupWaves();
 }
 
@@ -94,7 +95,7 @@ void GamePlay::spawnBoss()
 
     for (std::size_t i = 0; i < config.bossNb; i++) {
         auto boss = std::make_unique<Boss>(_networkManager, _regisrty, _factory,
-                                           _start, config.difficulty);
+                                           _start2, config.difficulty);
 
         boss->setPatterns(config.patterns);
         this->_bosses.push_back(std::move(boss));
