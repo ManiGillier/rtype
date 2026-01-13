@@ -56,6 +56,7 @@ enum PacketId {
     GAME_START_REQUEST,
     TEST_PACKET,
     SPAWN_STRAIGHT_MOVING_ENTITY_PACKET,
+    TIME_NOW_PACKET,
 };
 
 class PacketDisplay {
