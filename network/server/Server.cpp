@@ -5,6 +5,8 @@
 ** Server
 */
 
+#include <cstdint>
+#include <map>
 #include <network/packets/impl/SAuthentificationPacket.hpp>
 
 #include <network/poll/WakeUpPollable.hpp>
@@ -24,6 +26,7 @@
 #include <poll.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <vector>
 
 Server::Server(int port, int maxConnections)
 {
@@ -156,6 +159,8 @@ void Server::sendUDPPackets()
     std::vector<std::shared_ptr<IPollable>> pool =
         this->getPollManager().getPool();
 
+    std::map<uint32_t, std::pair<sockaddr_in, std::vector<uint8_t>>> totalToSend;
+
     for (std::shared_ptr<IPollable> &p : pool) {
         for (auto &[packet, addr] : p->getPacketsToSendUDP()) {
             if (addr == std::nullopt)
@@ -169,7 +174,9 @@ void Server::sendUDPPackets()
             }
             std::uint16_t &sequenceNum = p->getUDPPacketCount();
 
-            std::vector<uint8_t> toSend;
+            if (!totalToSend.contains(addr.value().sin_addr.s_addr))
+                totalToSend[addr.value().sin_addr.s_addr] = {*addr, {}};
+            std::vector<uint8_t> &toSend = totalToSend[addr.value().sin_addr.s_addr].second;
             std::vector<uint8_t> compressed;
             std::vector<uint8_t> sequenceNumData = Packet::toBinary(sequenceNum);
             toSend.insert(toSend.end(), sequenceNumData.begin(), sequenceNumData.end());
@@ -189,12 +196,17 @@ void Server::sendUDPPackets()
                 toSend.push_back(bin);
             toSend.insert(toSend.end(), compressed.begin(), compressed.end());
 
-            sendto(this->udpFd, toSend.data(), toSend.size(), 0,
-                   (struct sockaddr *)&(addr.value()), sizeof(addr.value()));
             sequenceNum += 1;
             PacketLogger::logPacket(packet, PacketLogger::PacketMethod::SENT,
                                     this->udpFd);
         }
+        for (auto &a : totalToSend) {
+            sockaddr_in addr = a.second.first;
+            std::vector<uint8_t> &toSend = a.second.second;
+            sendto(this->udpFd, toSend.data(), toSend.size(), 0,
+                   (struct sockaddr *)&(addr), sizeof(addr));
+        }
+
         p->getPacketsToSendUDP().clear();
     }
 }
