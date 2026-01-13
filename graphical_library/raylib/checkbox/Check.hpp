@@ -16,20 +16,20 @@ class MyCheckBox : public gl::Checkbox
 {
 public:
     MyCheckBox(int x, int y, int size, bool checked = false, int transparency = 255);
-    void Draw() const override;
-    void Update() override;
-    bool IsClicked() override;
-    bool IsHovered() override;
-    bool IsChecked() const override;
-    void SetChecked(bool checked) override;
-    void Toggle() override;
-    void SetPosition(int x, int y) override;
-    void SetSize(int size) override;
-    void SetTransparency(int transparency) override;
-    void SetColor(Color aColor) override;
-    void SetHoveredColor(Color aColor) override;
-    void SetText(const std::string& str) override;
-    void OnClick() override;
+    void draw() const override;
+    void update() override;
+    bool isClicked() override;
+    bool isHovered() override;
+    bool isChecked() const override;
+    void setChecked(bool checked) override;
+    void toggle() override;
+    void setPosition(int x, int y) override;
+    void setSize(int size) override;
+    void setTransparency(int transparency) override;
+    void setColor(Color aColor) override;
+    void setHoveredColor(Color aColor) override;
+    void setText(const std::string& str) override;
+    void onClick() override;
 private:
     bool hovered = 0;
     bool checked = 0;

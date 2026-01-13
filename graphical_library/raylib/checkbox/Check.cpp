@@ -13,7 +13,7 @@ MyCheckBox::MyCheckBox(int x, int y, int size_, bool checked_,
       color({255, 255, 255, static_cast<unsigned char>(transparency_)}),
       text("") {}
 
-void MyCheckBox::Draw() const {
+void MyCheckBox::draw() const {
     Rectangle box = {
         static_cast<float>(posX),
         static_cast<float>(posY),
@@ -36,7 +36,7 @@ void MyCheckBox::Draw() const {
     }
 }
 
-void MyCheckBox::Update() {
+void MyCheckBox::update() {
     int mouseX = GetMouseX();
     int mouseY = GetMouseY();
 
@@ -44,56 +44,56 @@ void MyCheckBox::Update() {
         this->hovered = true;
     else
         this->hovered = false;
-    if (IsHovered() && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+    if (isHovered() && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         this->checked = !this->checked;
     return;
 }
 
-bool MyCheckBox::IsClicked() {
+bool MyCheckBox::isClicked() {
     return this->checked;
 }
 
-bool MyCheckBox::IsHovered() {
+bool MyCheckBox::isHovered() {
     return this->hovered;
 }
 
-bool MyCheckBox::IsChecked() const {
+bool MyCheckBox::isChecked() const {
     return this->checked;
 }
 
-void MyCheckBox::SetChecked(bool checked_) {
+void MyCheckBox::setChecked(bool checked_) {
     this->checked = checked_;
 }
 
-void MyCheckBox::Toggle() {
+void MyCheckBox::toggle() {
     this->checked = !this->checked;
 }
 
-void MyCheckBox::SetPosition(int x, int y) {
+void MyCheckBox::setPosition(int x, int y) {
     this->posX = x;
     this->posY = y;
 }
 
-void MyCheckBox::SetSize(int size_) {
+void MyCheckBox::setSize(int size_) {
     this->size = size_;
 }
 
-void MyCheckBox::SetTransparency(int transparency_) {
+void MyCheckBox::setTransparency(int transparency_) {
     this->transparency = transparency_;
 }
 
-void MyCheckBox::SetColor(Color color_) {
+void MyCheckBox::setColor(Color color_) {
     this->color = color_;
 }
 
-void MyCheckBox::SetText(const std::string& str) {
+void MyCheckBox::setText(const std::string& str) {
     this->text = str;
 }
 
-void MyCheckBox::OnClick() {
-    this->Toggle();
+void MyCheckBox::onClick() {
+    this->toggle();
 }
 
-void MyCheckBox::SetHoveredColor(Color aColor) {
+void MyCheckBox::setHoveredColor(Color aColor) {
     this->hoveredColor = aColor;
 }
