@@ -14,18 +14,18 @@ class MyInputBox : public gl::InputBox
 public:
     MyInputBox(int x, int y, int width, int height, Color boxColor,
         Color hoveredBoxColor, int transparency = 255);
-    void Draw() const override;
-    void Update() override;
-    void SetPosition(int x, int y) override;
-    void SetSize(int width, int height) override;
-    void SetTransparency(int transparency) override;
-    void SetColor(Color color) override;
-    void SetHoveredColor(Color aColor) override;
-    void SetText(const std::string& str) override;
-    bool IsHovered();
-    bool IsActive();
-    void SetActive(bool active);
-   std::string GetText(void) override;
+    void draw() const override;
+    void update() override;
+    void setPosition(int x, int y) override;
+    void setSize(int width, int height) override;
+    void setTransparency(int transparency) override;
+    void setColor(Color color) override;
+    void setHoveredColor(Color aColor) override;
+    void setText(const std::string& str) override;
+    bool isHovered();
+    bool isActive();
+    void setActive(bool active);
+   std::string getText(void) override;
 
 
 private:

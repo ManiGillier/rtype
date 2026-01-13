@@ -18,7 +18,7 @@ MyInputBox::MyInputBox(int x, int y, int width, int height,
         this->activeColor = (Color){255, 255, 255, 255};
     }
 
-void MyInputBox::Draw() const {
+void MyInputBox::draw() const {
     Rectangle boxRect = {
         static_cast<float>(posX),
         static_cast<float>(posY),
@@ -45,7 +45,7 @@ void MyInputBox::Draw() const {
     );
 }
 
-void MyInputBox::Update()
+void MyInputBox::update()
 {
     int mouseX = GetMouseX();
     int mouseY = GetMouseY();
@@ -55,9 +55,9 @@ void MyInputBox::Update()
     else
         this->hovered = false;
 
-    if (IsHovered() && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+    if (isHovered() && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         this->active = true;
-    else if (!IsHovered() && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+    else if (!isHovered() && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         this->active = false;
 
     if (this->active) {
@@ -75,38 +75,38 @@ void MyInputBox::Update()
         }
 }
 
-bool MyInputBox::IsHovered() {
+bool MyInputBox::isHovered() {
 
     return this->hovered;
 }
 
-void MyInputBox::SetPosition(int x, int y) {
+void MyInputBox::setPosition(int x, int y) {
     this->posX = x;
     this->posY = y;
 }
 
-void MyInputBox::SetSize(int width, int height) {
+void MyInputBox::setSize(int width, int height) {
     this->sizeX = width;
     this->sizeY = height;
 }
 
-void MyInputBox::SetTransparency(int transparency) {
+void MyInputBox::setTransparency(int transparency) {
     this->transparency = transparency;
 }
 
-void MyInputBox::SetColor(Color color) {
+void MyInputBox::setColor(Color color) {
     this->color = color;
 }
 
-void MyInputBox::SetHoveredColor(Color aColor) {
+void MyInputBox::setHoveredColor(Color aColor) {
     this->hoveredColor = aColor;
 }
 
-void MyInputBox::SetText(const std::string& str) {
+void MyInputBox::setText(const std::string& str) {
     this->text = str;
-    this->cursorPosition = this->text.length();
+    this->cursorPosition = (int)this->text.length();
 }
 
-std::string MyInputBox::GetText(void) {
+std::string MyInputBox::getText(void) {
     return this->text;
 }
