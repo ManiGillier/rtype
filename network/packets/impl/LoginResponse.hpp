@@ -43,8 +43,9 @@ public:
     }
 
     PacketDisplay display() const {
-        return reason.empty() ? (PacketDisplay) {"token", this->token} :
-            (PacketDisplay) {"reason", this->reason};
+        if (reason.empty())
+            return {"token", this->token};
+        return {"reason", this->reason};
     }
 private:
     std::string reason;
