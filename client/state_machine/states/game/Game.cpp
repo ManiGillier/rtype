@@ -31,6 +31,7 @@
 #include "client/network/executor/HitboxSizeUpdateExecutor.hpp"
 #include "client/network/executor/LaserActivateUpdateExecutor.hpp"
 #include "client/network/executor/PositionUpdateExecutor.hpp"
+#include "client/network/executor/UpdateTimeExecutor.hpp"
 
 #include "network/packets/impl/ClientInputsPacket.hpp"
 
@@ -97,6 +98,7 @@ auto Game::init_systems() -> void
     nm.addExecutor(std::make_unique<HitboxSizeUpdateExecutor>(*this));
     nm.addExecutor(std::make_unique<LaserActiveUpdateExecutor>(*this));
     nm.addExecutor(std::make_unique<PositionUpdateExecutor>(*this));
+    nm.addExecutor(std::make_unique<TimeNowExecutor>(*this));
 }
 
 auto Game::init_entities() -> void {}

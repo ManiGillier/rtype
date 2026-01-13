@@ -43,7 +43,7 @@ public:
         return make_copy(TimeNowPacket);
     }
 
-    auto getPlayerId() const -> std::size_t { return this->now; }
+    auto getTime() const -> uint32_t { return this->now; }
 private:
     uint32_t now;
 };

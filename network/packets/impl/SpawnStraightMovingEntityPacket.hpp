@@ -18,10 +18,10 @@
 
 struct StraightMovingEntity {
     uint16_t id;
-    uint16_t pos_x;
-    uint16_t pos_y;
-    uint16_t vel_x;
-    uint16_t vel_y;
+    int16_t pos_x;
+    int16_t pos_y;
+    int16_t vel_x;
+    int16_t vel_y;
     uint8_t hitbox_x;
     uint8_t hitbox_y;
     uint32_t ms_time;
@@ -30,6 +30,7 @@ struct StraightMovingEntity {
 static std::ostream &operator<<(std::ostream &os,
     const std::vector<StraightMovingEntity> &data)
 {
+    os << "[";
     for (auto &d : data) {
         os << "Id=" << d.id << "{ "
             << "Pos={" << d.pos_x << "," << d.pos_y << "} "
@@ -37,6 +38,7 @@ static std::ostream &operator<<(std::ostream &os,
             << "Hitbix ={" << d.hitbox_x << "," << d.hitbox_y << "} "
             << "Timestamp=" << d.ms_time << " } ; ";
     }
+    os << "]";
     return os;
 }
 
