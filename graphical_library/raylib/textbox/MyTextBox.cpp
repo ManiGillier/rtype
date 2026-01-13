@@ -14,7 +14,7 @@ MyTextBox::MyTextBox(int x, int y, int width, int height,
     color(boxColor), hoveredColor(hoveredBoxColor),
     transparency(transparency), text(""), cursorPosition(0) {}
 
-void MyTextBox::Draw() const {
+void MyTextBox::draw() const {
     Rectangle boxRect = {
         static_cast<float>(posX),
         static_cast<float>(posY),
@@ -41,7 +41,7 @@ void MyTextBox::Draw() const {
     }
 }
 
-void MyTextBox::Update()
+void MyTextBox::update()
 {
     int mouseX = GetMouseX();
     int mouseY = GetMouseY();
@@ -52,34 +52,34 @@ void MyTextBox::Update()
         this->hovered = false;
 }
 
-bool MyTextBox::IsHovered() {
+bool MyTextBox::isHovered() {
 
     return this->hovered;
 }
 
-void MyTextBox::SetPosition(int x, int y) {
+void MyTextBox::setPosition(int x, int y) {
     this->posX = x;
     this->posY = y;
 }
 
-void MyTextBox::SetSize(int width, int height) {
+void MyTextBox::setSize(int width, int height) {
     this->sizeX = width;
     this->sizeY = height;
 }
 
-void MyTextBox::SetTransparency(int transparency) {
+void MyTextBox::setTransparency(int transparency) {
     this->transparency = transparency;
 }
 
-void MyTextBox::SetColor(Color color) {
+void MyTextBox::setColor(Color color) {
     this->color = color;
 }
 
-void MyTextBox::SetHoveredColor(Color aColor) {
+void MyTextBox::setHoveredColor(Color aColor) {
     this->hoveredColor = aColor;
 }
 
-void MyTextBox::SetText(const std::string& str) {
+void MyTextBox::setText(const std::string& str) {
     this->text = str;
-    this->cursorPosition = this->text.length();
+    this->cursorPosition = (int)this->text.length();
 }
