@@ -35,16 +35,12 @@ public:
         this->read(health);
         this->read(max_health);
     }
-    auto getSize() const -> int { return sizeof(std::size_t)
-                                         + (sizeof(float) * 2); }
-
     const std::string getName() {
         return "HealthUpdatePacket";
     }
 
-    void display() {
-        std::cout << "Id=" << this->id << ", health=" << this->health
-        << ", max_health=" << this->max_health;
+    PacketDisplay display() const {
+        return {"Id", this->id, "health", this->health, "max_health", this->max_health};
     }
 
     std::shared_ptr<Packet> clone() const {

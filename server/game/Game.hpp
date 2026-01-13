@@ -8,45 +8,48 @@
 #ifndef GAME_HPP
 #define GAME_HPP
 
-#include "../../ecs/regisrty/Registry.hpp"
-#include "../../network/packets/Packet.hpp"
-#include "../factories/EntityFactory.hpp"
-#include "ecs/entity/Entity.hpp"
-#include "GameBoss.hpp"
-#include <atomic>
+#include "../game/factories/EntityFactory.hpp"
+#include "../network/network_manager/NetworkManager.hpp"
+#include "../player/Player.hpp"
+#include "ecs/regisrty/Registry.hpp"
 #include <memory>
-#include <mutex>
-#include <unordered_map>
 
 class Game
 {
   public:
-    Game(class Server &server);
+    Game(std::vector<std::shared_ptr<Player>> &players,
+         std::mutex &playersMutex);
     ~Game() = default;
-    void start();
-    void stop();
     void loop(int ticks);
-    std::pair<std::size_t, std::size_t> addPlayer();
-    void RemovePlayer(std::size_t id);
-    Registry &getRegistry();
-    std::mutex &getRegistryMutex();
-    EntityFactory &getFactory();
-    GameBoss &getGameBoss();
-    std::unordered_map<std::size_t, std::size_t> &getPlayers();
-    void sendPackets(std::shared_ptr<Packet> packet);
-    bool isRunning() const;
+    NetworkManager &getNetworkManager();
+    std::tuple<std::mutex &, Registry &> getRegistry();
 
   private:
+    /*
+       init helpers to creates players entity then send entity Id to the client
+    */
+    void initPlayers();
     void initializeComponents();
     void initializeSystems();
-
+    /*
+       reset helpers to reset entities when game has finished
+    */
+    void resetPlayersEntities();
+    /*
+       players set by LobbyManager they need their own method
+       because when player deconnect he needs to be removed from current game by
+       killing his entity
+    */
+    std::mutex &_playersMutex;
+    std::vector<std::shared_ptr<Player>> &_players;
+    NetworkManager _networkManager;
+    /*
+       Registry and Entity factory
+    */
+    std::mutex _registryMutex;
     Registry _registry;
     EntityFactory _factory;
-    std::atomic<bool> _isRunning;
-    class Server &_server;
-    GameBoss _gameBoss;
-    std::unordered_map<std::size_t, std::size_t> _players;
-    std::mutex _registryMutex;
+    bool _isRunning;
 };
 
 #endif /* GAME_HPP */

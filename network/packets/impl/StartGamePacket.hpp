@@ -27,14 +27,13 @@ public:
     }
     void unserialize() {
     }
-    auto getSize() const -> int { return 0; }
 
     const std::string getName() {
         return "StartGamePacket";
     }
 
-    void display() {
-        std::cout << "Id=" << this->getId();
+    PacketDisplay display() const {
+        return {};
     }
 
     std::shared_ptr<Packet> clone() const {

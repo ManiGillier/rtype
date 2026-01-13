@@ -35,16 +35,12 @@ public:
         this->read(width);
         this->read(height);
     }
-    auto getSize() const -> int { return sizeof(std::size_t)
-                                         + (sizeof(float) * 2); }
-
     const std::string getName() {
         return "HitboxSizeUpdatePacket";
     }
 
-    void display() {
-        std::cout << "Id=" << this->id << ", width=" << this->width
-        << ", height=" << this->height;
+    PacketDisplay display() const {
+        return {"Id", this->id, "width", this->width, "height", this->height};
     }
 
     std::shared_ptr<Packet> clone() const {

@@ -34,10 +34,9 @@ public:
         return "NewBulletPacket";
     }
 
-    void display() {
-        std::cout << "Id=" << this->id;
+    PacketDisplay display() const {
+        return {"Id", this->id};
     }
-    auto getSize() const -> int { return sizeof(std::size_t); }
 
     std::shared_ptr<Packet> clone() const {
         return make_copy(NewBulletPacket);

@@ -15,10 +15,7 @@ public:
     AuthentifiedPacket() : Packet(PacketId::AUTHENTIFIED_PACKET) {};
     void serialize() {};
     void unserialize() {};
-    int getSize() const {
-        return 0;
-    }
-
+    
     enum PacketMode getMode() const {
         return PacketMode::TCP;
     }
@@ -31,8 +28,8 @@ public:
         return "AuthentifiedPacket";
     }
 
-    void display() {
-        std::cout << "None";
+    PacketDisplay display() const {
+        return {};
     }
 };
 

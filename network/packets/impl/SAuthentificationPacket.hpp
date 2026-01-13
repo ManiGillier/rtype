@@ -26,10 +26,6 @@ public:
         this->uuid = this->read(this->uuid);
     }
 
-    int getSize() const {
-        return (int) sizeof(uint32_t);
-    }
-
     enum PacketMode getMode() const {
         return PacketMode::TCP;
     }
@@ -50,8 +46,8 @@ public:
         return this->uuid;
     }
 
-    void display() {
-        std::cout << "UUID=" << uuid;
+    PacketDisplay display() const {
+        return {"UUID", this->uuid};
     }
 
 private:

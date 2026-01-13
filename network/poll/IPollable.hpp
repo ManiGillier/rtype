@@ -25,6 +25,7 @@ class IPollable {
         virtual std::optional<sockaddr_in> getClientAddress() const = 0;
         virtual void setClientAddress(std::optional<sockaddr_in> address) = 0;
         virtual void sendPacket(std::shared_ptr<Packet> p, bool wakeUpPoll=true) = 0;
+        virtual uint16_t &getUDPPacketCount() = 0;
         virtual std::queue<std::shared_ptr<Packet>> &getReceivedPackets() = 0;
         virtual std::vector<std::tuple<std::shared_ptr<Packet>,
             std::optional<sockaddr_in>>> &getPacketsToSendUDP() = 0;

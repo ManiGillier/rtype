@@ -19,36 +19,38 @@ PacketSender::PacketSender(int fd)
 void PacketSender::sendPacket(std::shared_ptr<Packet> packet)
 {
     packet->clearData();
-    this->packets.push(packet);
+    try {
+        packet->serialize();
+    } catch (const Packet::PacketException &e) {
+        LOG_ERR(e.what());
+        return;
+    }
+    this->dataQueue.push_back(packet->getId());
+    this->dataQueue.insert(this->dataQueue.end(),
+        packet->getData().begin(), packet->getData().end());
 }
 
 void PacketSender::writePackets()
 {
-    std::vector<uint8_t> toSend;
-    std::queue<uint8_t> packetData;
+    ssize_t bytesWritten = write(this->_fd, this->dataQueue.data(),
+        this->dataQueue.size());
 
-    while (!this->packets.empty()) {
-        std::shared_ptr<Packet> &packet = this->packets.front();
-        packet->serialize();
-        toSend.push_back(packet->getId());
-        packetData = packet->getData();
-        while (!packetData.empty()) {
-            toSend.push_back(packetData.front());
-            packetData.pop();
-        }
-        PacketLogger::logPacket(packet,
-                PacketLogger::PacketMethod::SENT, this->_fd);
-        this->packets.pop();
+    if (bytesWritten < 0) {
+        if (errno == EAGAIN || errno == EWOULDBLOCK)
+            return;
+        this->dataQueue.clear();
+        return;
     }
-    write(this->_fd, toSend.data(), toSend.size());
-}
-
-std::queue<std::shared_ptr<Packet>> PacketSender::getPackets() const
-{
-    return this->packets;
+    this->dataQueue.erase(this->dataQueue.begin(),
+        this->dataQueue.begin() + bytesWritten);
 }
 
 void PacketSender::setFd(int fd)
 {
     this->_fd = fd;
+}
+
+bool PacketSender::shouldSend() const
+{
+    return !this->dataQueue.empty();
 }

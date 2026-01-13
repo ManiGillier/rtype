@@ -5,22 +5,22 @@
 ** Server
 */
 
-#ifndef GAME_EXECUTOR_HPP
-#define GAME_EXECUTOR_HPP
+#ifndef GAME_START_EXECUTOR_HPP
+#define GAME_START_EXECUTOR_HPP
 
-#include "../player/Player.hpp"
+#include "../../player/Player.hpp"
 #include <network/server/Server.hpp>
 #include <network/packets/PacketManager.hpp>
 #include <network/packets/impl/StartGamePacket.hpp>
 
 class RTypeServer;
 
-class GameExecutor
+class GameStartExecutor
     : public PacketExecutorImplServer<StartGamePacket, Player>
 {
   public:
-    GameExecutor(RTypeServer &server);
-    ~GameExecutor() = default;
+    GameStartExecutor(RTypeServer &server);
+    ~GameStartExecutor() = default;
     bool execute(Server &server, std::shared_ptr<Player> player,
                  std::shared_ptr<StartGamePacket> packet);
     int getPacketId() const
@@ -30,7 +30,6 @@ class GameExecutor
 
   private:
     RTypeServer &_rtypeServer;
-    bool _hasStarted;
 };
 
 #endif

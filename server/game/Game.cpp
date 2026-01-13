@@ -1,134 +1,96 @@
 #include "Game.hpp"
-#include "../../shared/components/Dependence.hpp"
-#include "../../shared/components/Health.hpp"
-#include "../../shared/components/HitBox.hpp"
-#include "../../shared/components/Laser.hpp"
-#include "../../shared/components/Position.hpp"
-#include "../RTypeServer.hpp"
-#include "../components/Acceleration.hpp"
-#include "../components/BossTag.hpp"
-#include "../components/Damager.hpp"
-#include "../components/OutsideBoundaries.hpp"
-#include "../components/Resistance.hpp"
-#include "../components/Velocity.hpp"
-#include "../systems/GameSystems.hpp"
+#include "components/Acceleration.hpp"
+#include "components/Damager.hpp"
+#include "components/OutsideBoundaries.hpp"
+#include "components/Pattern.hpp"
+#include "components/Resistance.hpp"
+#include "components/Velocity.hpp"
+#include "gameplay/GamePlay.hpp"
 #include "network/logger/Logger.hpp"
-#include "network/packets/impl/HitboxSizeUpdatePacket.hpp"
-#include "network/server/Server.hpp"
+#include "network/packets/Packet.hpp"
+#include "shared/components/Dependence.hpp"
+#include "shared/components/Health.hpp"
+#include "shared/components/HitBox.hpp"
+#include "shared/components/Laser.hpp"
+#include "shared/components/Position.hpp"
+#include "systems/GameSystems.hpp"
+#include "ticker/Ticker.hpp"
 #include <chrono>
-#include <iostream>
 #include <memory>
+#include <mutex>
+#include <network/packets/impl/HitboxSizeUpdatePacket.hpp>
+#include <network/packets/impl/NewPlayerPacket.hpp>
+#include <optional>
 #include <thread>
-#include <utility>
+#include <tuple>
 
-Game::Game(class Server &server)
-    : _registry(), _factory(_registry), _isRunning(false), _server(server),
-      _gameBoss(*this)
+Game::Game(std::vector<std::shared_ptr<Player>> &players,
+           std::mutex &playersMutex)
+    : _playersMutex(playersMutex), _players(players),
+      _networkManager(playersMutex, _players), _factory(this->_registry),
+      _isRunning(false)
 {
-    initializeComponents();
-    initializeSystems();
-}
-
-void Game::start()
-{
-    if (!_isRunning) {
-        this->_server.setConnect(false);
-        std::this_thread::sleep_for(std::chrono::milliseconds(200));
-        for (auto const &[p_id, l_id] : _players) {
-            auto hitBox = _registry.get<HitBox>(p_id);
-            std::shared_ptr<Packet> newPlayerPacket =
-                create_packet(NewPlayerPacket, p_id, l_id);
-
-            this->sendPackets(newPlayerPacket);
-
-            if (hitBox.has_value()) {
-                std::shared_ptr<Packet> HitBoxSize =
-                    create_packet(HitboxSizeUpdatePacket, p_id, hitBox->width,
-                                  hitBox->height);
-                this->sendPackets(HitBoxSize);
-            }
-        }
-        _isRunning = true;
-    }
-}
-
-void Game::stop()
-{
-    _isRunning = false;
-    auto &r = static_cast<RTypeServer &>(_server);
-    r.setRunning(false);
-    r.getPollManager().wakeUp();
 }
 
 void Game::loop(int ticks)
 {
-    this->start();
-    if (!_isRunning)
-        return;
-    auto tickDuration = std::chrono::milliseconds(1000 / ticks);
+    Ticker ticker(ticks);
+    GamePlay gamePlay(this->_networkManager, this->_registry, this->_factory);
 
-    LOG("Game loop started with: " << ticks << " ticks per second");
+    std::this_thread::sleep_for(
+        std::chrono::milliseconds(200)); // TODO: remove this
 
-    while (_isRunning) {
-        auto startTime = std::chrono::steady_clock::now();
+    this->_isRunning = true;
+    this->initializeComponents();
+    this->initializeSystems();
+    this->initPlayers();
+
+    while (this->_isRunning) {
+        ticker.now();
+
+        this->_networkManager.flush();
         {
             std::lock_guard<std::mutex> lock(_registryMutex);
             _registry.update();
-            if (!_isRunning)
-                break;
-            _gameBoss.update();
+            gamePlay.update();
         }
-        auto endTime = std::chrono::steady_clock::now();
-        auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
-            endTime - startTime);
-        auto sleepTime = tickDuration - elapsed;
-        if (sleepTime.count() > 0) {
-            std::this_thread::sleep_for(sleepTime);
+
+        ticker.wait();
+    }
+    this->resetPlayersEntities();
+    this->_networkManager.clear();
+}
+
+void Game::initPlayers()
+{
+    std::vector<std::pair<std::size_t, std::size_t>> playerData;
+    {
+        std::lock_guard<std::mutex> lockPlayers(_playersMutex);
+        for (auto &pl : _players) {
+            {
+                std::lock_guard<std::mutex> lockRegistry(_registryMutex);
+                Entity player = _factory.createPlayer();
+                Entity laser = _factory.createPlayerLaser(
+                    static_cast<int>(player.getId()));
+                pl->setEntityId(player.getId());
+                playerData.push_back(
+                    std::make_pair(player.getId(), laser.getId()));
+            }
         }
     }
-}
+    for (const auto &[playerId, laserId] : playerData) {
+        auto newPlayerPacket =
+            create_packet(NewPlayerPacket, playerId, laserId);
 
-std::pair<std::size_t, std::size_t> Game::addPlayer()
-{
-    if (_isRunning)
-        return {0, 0};
-    {
-        std::lock_guard<std::mutex> lock(_registryMutex);
-        Entity pl = _factory.createPlayer();
-        Entity laser = _factory.createPlayerLaser(static_cast<int>(pl.getId()));
-
-        _players.emplace(pl.getId(), laser.getId());
-        return {pl.getId(), laser.getId()};
+        auto hitBox = _registry.get<HitBox>(playerId);
+        std::shared_ptr<Packet> HitBoxSize = nullptr;
+        if (hitBox.has_value()) {
+            HitBoxSize = create_packet(HitboxSizeUpdatePacket, playerId,
+                                       hitBox->width, hitBox->height);
+        }
+        _networkManager.queuePacket(HitBoxSize);
+        _networkManager.queuePacket(newPlayerPacket);
     }
-}
-
-void Game::RemovePlayer(std::size_t id)
-{
-    {
-        std::lock_guard<std::mutex> lock(_registryMutex);
-        if (_players.contains(id))
-            _players.erase(id);
-    }
-}
-
-EntityFactory &Game::getFactory()
-{
-    return this->_factory;
-}
-
-GameBoss &Game::getGameBoss()
-{
-    return this->_gameBoss;
-}
-
-Registry &Game::getRegistry()
-{
-    return _registry;
-}
-
-std::mutex &Game::getRegistryMutex()
-{
-    return _registryMutex;
 }
 
 void Game::initializeComponents()
@@ -143,37 +105,33 @@ void Game::initializeComponents()
     _registry.register_component<HitBox>();
     _registry.register_component<Laser>();
     _registry.register_component<Position>();
-    _registry.register_component<BossTag>();
+    _registry.register_component<Pattern>();
 }
 
 void Game::initializeSystems()
 {
     _registry
         .add_update_system<Position, Velocity, Acceleration, OutsideBoundaries>(
-            Systems::movement_system, std::ref(*this));
+            Systems::position_system, std::ref(_networkManager));
+    _registry.add_update_system<Position, Acceleration, Pattern>(
+        Systems::pattern_system, std::ref(_networkManager));
     _registry.add_update_system<Position, Laser>(Systems::update_laser_system,
-                                                 std::ref(*this));
-    _registry.add_update_system<Position, HitBox>(Systems::collision_system,
-                                                  std::ref(*this));
-    _registry.add_update_system<Health>(Systems::cleanup_system,
-                                        std::ref(*this));
+                                                 std::ref(_networkManager));
 }
 
-std::unordered_map<std::size_t, std::size_t> &Game::getPlayers()
+void Game::resetPlayersEntities()
 {
-    return this->_players;
+    std::lock_guard<std::mutex> lock(_playersMutex);
+    for (auto &it : _players)
+        it->setEntityId(std::nullopt);
 }
 
-void Game::sendPackets(std::shared_ptr<Packet> packet)
+std::tuple<std::mutex &, Registry &> Game::getRegistry()
 {
-    std::vector<std::shared_ptr<IPollable>> &pollables =
-        _server.getPollManager().getPool();
-    for (auto &pollable : pollables) {
-        pollable->sendPacket(packet);
-    }
+    return std::tie(this->_registryMutex, this->_registry);
 }
 
-bool Game::isRunning() const
+NetworkManager &Game::getNetworkManager()
 {
-    return _isRunning;
+    return this->_networkManager;
 }

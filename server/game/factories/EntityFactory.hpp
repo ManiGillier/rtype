@@ -8,23 +8,20 @@
 #ifndef ENTITY_FACTORY_HPP
 #define ENTITY_FACTORY_HPP
 
-#include "../../ecs/regisrty/Registry.hpp"
+#include "ecs/entity/Entity.hpp"
+#include "ecs/regisrty/Registry.hpp"
 
 class EntityFactory
 {
   public:
     EntityFactory(Registry &registry);
     ~EntityFactory() = default;
-
     Entity createPlayer(void);
-    Entity createEnemy(int waveNumber);
-    Entity createBoss(int waveNumber);
     Entity createPlayerLaser(int id);
-    Entity createBossBullet(int id, float x, float y);
-    Entity createEnemyBullet(int id, float x, float y);
+    Entity createBoss();
+  Entity createBossBullet(int id, float x, float y, float acc_x, float acc_y);
 
-  private:
-    Registry &_registry;
+      private : Registry &_registry;
 };
 
 #endif /* ENTITY_TYPE_HPP */
