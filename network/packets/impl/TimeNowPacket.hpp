@@ -21,7 +21,7 @@ public:
         Packet(PacketId::TIME_NOW_PACKET), now(now) {}
 
     enum PacketMode getMode() const {
-        return PacketMode::TCP;
+        return PacketMode::UDP;
     }
 
     void serialize() {
