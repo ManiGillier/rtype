@@ -54,6 +54,7 @@ class Game
     EntityFactory _factory;
 
     std::mutex _runningMutex;
+    std::chrono::steady_clock::time_point _gameStart;
     bool _isRunning;
 };
 

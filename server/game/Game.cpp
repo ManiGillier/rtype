@@ -43,6 +43,7 @@ void Game::loop(int ticks)
 {
     Ticker ticker(ticks);
     GamePlay gamePlay(this->_networkManager, this->_registry, this->_factory);
+    this->_gameStart = std::chrono::steady_clock::now();
 
     this->_isRunning = true;
     std::this_thread::sleep_for(
@@ -81,11 +82,9 @@ void Game::loop(int ticks)
 
 void Game::sendCurrentTime(Ticker &ticker)
 {
-    std::chrono::steady_clock::time_point now = ticker.now();
+    auto now = ticker.now() - _gameStart;
     auto time_ms = static_cast<uint32_t>(
-        std::chrono::duration_cast<std::chrono::milliseconds>(
-            now.time_since_epoch())
-            .count());
+        std::chrono::duration_cast<std::chrono::milliseconds>(now).count());
     _networkManager.queuePacket(create_packet(TimeNowPacket, time_ms));
 }
 
