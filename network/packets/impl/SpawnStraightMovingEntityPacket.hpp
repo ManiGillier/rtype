@@ -47,7 +47,7 @@ public:
     : Packet(SPAWN_STRAIGHT_MOVING_ENTITY_PACKET), data(data) {}
 
     enum PacketMode getMode() const {
-        return PacketMode::UDP;
+        return PacketMode::TCP;
     }
 
     void serialize() {

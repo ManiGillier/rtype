@@ -94,6 +94,7 @@ void Boss::rotatePattern()
 
 void Boss::sendBullet(Entity e)
 {
+    _data.
     _networkManager.queuePacket(std::make_shared<NewBulletPacket>(e.getId()));
 
     auto hitBox = _regisrty.get<HitBox>(e.getId());

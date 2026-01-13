@@ -12,6 +12,7 @@
 #include "ecs/regisrty/Registry.hpp"
 #include "server/game/factories/EntityFactory.hpp"
 #include "server/network/network_manager/NetworkManager.hpp"
+#include <network/packets/impl/SpawnStraightMovingEntityPacket.hpp>
 #include <vector>
 
 enum class PatternType {
@@ -54,6 +55,7 @@ class Boss
     std::chrono::steady_clock::time_point _start;
     std::chrono::steady_clock::time_point _patternChangeTime;
 
+    std::vector<StraightMovingEntity> _data;
     std::vector<PatternType> _patterns;
     int _difficulty;
     std::size_t _currentPatternIndex;
