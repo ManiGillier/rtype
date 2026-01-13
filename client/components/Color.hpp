@@ -10,10 +10,10 @@
 
 #include <cstddef>
 
-#include <raylib.h>
+#include <graphical_library/api/GraphicalLibrary.hpp>
 
 struct ElementColor {
-    Color color;
+    gl::Color color;
 };
 
 #endif /* COLOR_COMP_HPP */

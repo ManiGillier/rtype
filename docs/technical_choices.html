@@ -1,97 +1,184 @@
 <!DOCTYPE HTML>
-<html lang="en">
+<html lang="en" class="light" dir="ltr">
     <head>
+        <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
         <title>Technical Choices - R-Type documentation</title>
-        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+
+
+        <!-- Custom HTML head -->
+        
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
 
-        <base href="">
-
-        <link rel="stylesheet" href="book.css">
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
-        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
-
+        <link rel="icon" href="favicon.svg">
         <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
 
-        <!-- Font Awesome -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
 
+        <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="highlight.css">
         <link rel="stylesheet" href="tomorrow-night.css">
         <link rel="stylesheet" href="ayu-highlight.css">
 
-        <!-- Custom theme -->
-        
-
-        
-
-        <!-- Fetch Clipboard.js from CDN but have a local fallback -->
-        <script src="https://cdn.jsdelivr.net/clipboard.js/1.6.1/clipboard.min.js"></script>
-        <script>
-            if (typeof Clipboard == 'undefined') {
-                document.write(unescape("%3Cscript src='clipboard.min.js'%3E%3C/script%3E"));
-            }
-        </script>
-
-        <!-- Fetch JQuery from CDN but have a local fallback -->
-        <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-        <script>
-            if (typeof jQuery == 'undefined') {
-                document.write(unescape("%3Cscript src='jquery.js'%3E%3C/script%3E"));
-            }
-        </script>
-
-        <!-- Fetch store.js from local - TODO add CDN when 2.x.x is available on cdnjs -->
-        <script src="store.js"></script>
+        <!-- Custom theme stylesheets -->
 
     </head>
-    <body class="light">
-        <!-- Set the theme before any content is loaded, prevents flash -->
-        <script type="text/javascript">
-            var theme = store.get('mdbook-theme');
-            if (theme === null || theme === undefined) { theme = 'light'; }
-            $('body').removeClass().addClass(theme);
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
         </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
 
         <!-- Hide / unhide sidebar before it is displayed -->
-        <script type="text/javascript">
-            var sidebar = store.get('mdbook-sidebar');
-            if (sidebar === "hidden") { $("html").addClass("sidebar-hidden") }
-            else if (sidebar === "visible") { $("html").addClass("sidebar-visible") }
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
         </script>
 
-        <div id="sidebar" class="sidebar">
-            <ul class="chapter"><li class="affix"><a href="../../README.html">Introduction</a></li><li><a href="./build.html"><strong>1.</strong> Build Project</a></li><li><a href="./technical_choices.html" class="active"><strong>2.</strong> Technical Choices</a></li><li><a href="./client/README.html"><strong>3.</strong> Client</a></li><li><a href="./server/README.html"><strong>4.</strong> Server</a></li><li><a href="./ecs.html"><strong>5.</strong> Develop with our ECS</a></li></ul>
-        </div>
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="../../index.html">Introduction</a></li><li class="chapter-item expanded "><a href="build.html"><strong aria-hidden="true">1.</strong> Build Project</a></li><li class="chapter-item expanded "><a href="technical_choices.html" class="active"><strong aria-hidden="true">2.</strong> Technical Choices</a></li><li class="chapter-item expanded "><a href="client/index.html"><strong aria-hidden="true">3.</strong> Client</a></li><li class="chapter-item expanded "><a href="server/index.html"><strong aria-hidden="true">4.</strong> Server</a></li><li class="chapter-item expanded "><a href="network/index.html"><strong aria-hidden="true">5.</strong> Network</a></li><li class="chapter-item expanded "><a href="ecs.html"><strong aria-hidden="true">6.</strong> Develop with our ECS</a></li><li class="chapter-item expanded "><a href="graphical_library/index.html"><strong aria-hidden="true">7.</strong> Graphical Library</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
 
         <div id="page-wrapper" class="page-wrapper">
 
-            <div class="page" tabindex="-1">
-                
-                <div id="menu-bar" class="menu-bar">
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
                     <div class="left-buttons">
-                        <i id="sidebar-toggle" class="fa fa-bars" title="Toggle sidebar"></i>
-                        <i id="theme-toggle" class="fa fa-paint-brush" title="Change theme"></i>
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
                     </div>
 
                     <h1 class="menu-title">R-Type documentation</h1>
 
                     <div class="right-buttons">
-                        <a href="print.html">
-                            <i id="print-button" class="fa fa-print" title="Print this book"></i>
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
                         </a>
+
                     </div>
                 </div>
 
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
                 <div id="content" class="content">
-                    <a class="header" href="./technical_choices.html#technical-choices" id="technical-choices"><h1>Technical choices</h1></a>
-<a class="header" href="./technical_choices.html#chosen-language" id="chosen-language"><h2>Chosen Language</h2></a>
+                    <main>
+                        <h1 id="technical-choices"><a class="header" href="#technical-choices">Technical choices</a></h1>
+<h2 id="chosen-language"><a class="header" href="#chosen-language">Chosen Language</a></h2>
 <p>We chose C++ because for a multiplayer game, we needed very good performance.
 The low-level control over memory allows us to optimize our game as much as possible.</p>
 <p>Compared to Java, C# or Zig, we lose a bit of development time but it's worth it thanks to the time we gain on execution speed and resource control.</p>
-<a class="header" href="./technical_choices.html#chosen-graphical-library" id="chosen-graphical-library"><h2>Chosen Graphical Library</h2></a>
+<h2 id="chosen-graphical-library"><a class="header" href="#chosen-graphical-library">Chosen Graphical Library</a></h2>
 <p>For our graphical library, we chose <a href="https://www.raylib.com/">Raylib</a>.</p>
 <p>It offers multiple advantages compared to other libraries:</p>
 <ol>
@@ -117,14 +204,14 @@ The low-level control over memory allows us to optimize our game as much as poss
 <li>It is not really adapted to Object Oriented Programming.<br />
 Indeed, it is not at all constructed with classes, and rely solely on direct calls to global funtions</li>
 </ul>
-<a class="header" href="./technical_choices.html#algorithms-and-data-structures" id="algorithms-and-data-structures"><h2>Algorithms and Data Structures</h2></a>
-<a class="header" href="./technical_choices.html#ecs-entity-component-system" id="ecs-entity-component-system"><h3>ECS (Entity Component System)</h3></a>
+<h2 id="algorithms-and-data-structures"><a class="header" href="#algorithms-and-data-structures">Algorithms and Data Structures</a></h2>
+<h3 id="ecs-entity-component-system"><a class="header" href="#ecs-entity-component-system">ECS (Entity Component System)</a></h3>
 <p>The ECS was a bit of an unusual choice but logical for us.
 Compared to a classic object-oriented architecture with inheritance, the ECS organizes data contiguously in memory, which optimizes the CPU cache on both server and client side.</p>
-<p>Concretely, instead of having &quot;Player&quot; or &quot;Enemy&quot; objects that are subclasses, we group all components of the same type together.</p>
+<p>Concretely, instead of having "Player" or "Enemy" objects that are subclasses, we group all components of the same type together.</p>
 <p>Result: when we update positions or Health, the iteration is much faster.
 For a game with many simultaneous entities, it makes a huge difference.</p>
-<a class="header" href="./technical_choices.html#réseautype-custom" id="réseautype-custom"><h3>RéseauType (custom)</h3></a>
+<h3 id="réseautype-custom"><a class="header" href="#réseautype-custom">RéseauType (custom)</a></h3>
 <p>This is our most strongest yet assumed choice. Instead of using an existing cross-platform library, we developed our own network library. Why?</p>
 <ul>
 <li>We know how it works. If a bug appears, we can fix it ourselves without depending on an external community.</li>
@@ -132,10 +219,10 @@ For a game with many simultaneous entities, it makes a huge difference.</p>
 <li>By controlling the protocol, we can implement packets specific to our game, whereas with an existing library we would have had to adapt to its functioning.</li>
 </ul>
 <p>The fact that we have our own network library allows us to integrate these checks directly into the protocol rather than adding them on top.</p>
-<a class="header" href="./technical_choices.html#storage" id="storage"><h2>Storage</h2></a>
+<h2 id="storage"><a class="header" href="#storage">Storage</a></h2>
 <p>RéseauType uses binary serialization for packet transmission.</p>
 <p>This section compares different serialization methods.</p>
-<a class="header" href="./technical_choices.html#binary-serialization-our-approach" id="binary-serialization-our-approach"><h3>Binary Serialization (Our approach)</h3></a>
+<h3 id="binary-serialization-our-approach"><a class="header" href="#binary-serialization-our-approach">Binary Serialization (Our approach)</a></h3>
 <p>Binary serialization converts packet data into bytes.</p>
 <p>Packets are not stored permanently. They exist only during transmission between client and server.</p>
 <p>It is fast and deterministic.</p>
@@ -145,91 +232,102 @@ For a game with many simultaneous entities, it makes a huge difference.</p>
 <p>This makes bandwidth usage predictable and efficient.</p>
 <p>However, changing packet structure requires updating both client and server code.</p>
 <p>The binary format is also difficult to debug since it is not human-readable. (Although RéseauType comes with a Logger to make debugging easy !)</p>
-<a class="header" href="./technical_choices.html#why-réseautype-uses-binary-serialization" id="why-réseautype-uses-binary-serialization"><h3>Why RéseauType Uses Binary Serialization</h3></a>
+<h3 id="why-réseautype-uses-binary-serialization"><a class="header" href="#why-réseautype-uses-binary-serialization">Why RéseauType Uses Binary Serialization</a></h3>
 <p>RéseauType prioritizes speed and bandwidth usage</p>
 <p>Binary serialization provides the fastest transmission and smallest packet size, which is critical for real-time multiplayer games where latency matters.</p>
 <p>JSON or Protocol Buffers are not optimal for real-time games where performance is the priority.</p>
-<a class="header" href="./technical_choices.html#security" id="security"><h2>Security</h2></a>
+<h2 id="security"><a class="header" href="#security">Security</a></h2>
 <p>The only security challenge of the project is dealing with client output and preventing cheating.
 Clients can be modified or replaced with malicious programs that send fake data to gain unfair advantages.</p>
-<a class="header" href="./technical_choices.html#server-authority" id="server-authority"><h3>Server Authority</h3></a>
+<h3 id="server-authority"><a class="header" href="#server-authority">Server Authority</a></h3>
 <p>The server has authority on everything. It does not trust the client at any point.</p>
 <p>The client only sends its inputs.</p>
 <p>he server calculates the player's position, health, score, and all game state.</p>
 <p>The client does not determine its own position or any game logic.</p>
 <p>This prevents clients from sending false position data or modifying their own stats.</p>
 <p>Even if a cheater modifies their client, they can only send inputs, not results.</p>
-<a class="header" href="./technical_choices.html#connection-validation" id="connection-validation"><h3>Connection Validation</h3></a>
+<h3 id="connection-validation"><a class="header" href="#connection-validation">Connection Validation</a></h3>
 <p>A client is disconnected when it does not connect properly using the RéseauType Client.</p>
 <p>Although this connection method can be mimicked by a custom client, it does not give any advantage over using the RéseauType Client.</p>
 <p>This prevents random programs from spamming the server without proper authentication.</p>
-<a class="header" href="./technical_choices.html#packet-validation" id="packet-validation"><h3>Packet Validation</h3></a>
+<h3 id="packet-validation"><a class="header" href="#packet-validation">Packet Validation</a></h3>
 <p>Our system can disconnect a user based on the data received in a packet.</p>
 <p>An anti-cheat system can easily be implemented by adding packet executors that detect suspicious behavior.</p>
 <p>The server kicks off a player when it receives an unknown packet ID. It only accepts registered packets.</p>
-<a class="header" href="./technical_choices.html#data-integrity" id="data-integrity"><h3>Data Integrity</h3></a>
+<h3 id="data-integrity"><a class="header" href="#data-integrity">Data Integrity</a></h3>
 <p>All packets are serialized in binary with fixed sizes. The server validates packet size before processing. If a packet is incomplete or malformed, it is discarded.</p>
-<a class="header" href="./technical_choices.html#further-security-axis" id="further-security-axis"><h3>Further Security Axis</h3></a>
-<a class="header" href="./technical_choices.html#ddos-attacks" id="ddos-attacks"><h4>DDoS Attacks</h4></a>
+<h3 id="further-security-axis"><a class="header" href="#further-security-axis">Further Security Axis</a></h3>
+<h4 id="ddos-attacks"><a class="header" href="#ddos-attacks">DDoS Attacks</a></h4>
 <p>RéseauType does not currently implement rate limiting or IP blocking. A malicious client could spam packets to overload the server</p>
 <p>Rate limiting can be added to limit the number of packets per second per client.</p>
-<a class="header" href="./technical_choices.html#man-in-the-middle-attacks" id="man-in-the-middle-attacks"><h4>Man-in-the-Middle Attacks</h4></a>
+<h4 id="man-in-the-middle-attacks"><a class="header" href="#man-in-the-middle-attacks">Man-in-the-Middle Attacks</a></h4>
 <p>RéseauType does not encrypt packets. An attacker on the same network could intercept and read packets, or modify them in transit</p>
 <p>Adding encryption (TLS for TCP, DTLS for UDP) could prevent this and could be added.</p>
 
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="build.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="client/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
                 </div>
-
-                <!-- Mobile navigation buttons -->
-                
-                    <a rel="prev" href="./build.html" class="mobile-nav-chapters previous" title="Previous chapter">
-                        <i class="fa fa-angle-left"></i>
-                    </a>
-                
-
-                
-                    <a rel="next" href="./client/README.html" class="mobile-nav-chapters next" title="Next chapter">
-                        <i class="fa fa-angle-right"></i>
-                    </a>
-                
-
             </div>
 
-            
-                <a href="./build.html" class="nav-chapters previous" title="You can navigate through the chapters using the arrow keys">
-                    <i class="fa fa-angle-left"></i>
-                </a>
-            
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="build.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
 
-            
-                <a href="./client/README.html" class="nav-chapters next" title="You can navigate through the chapters using the arrow keys">
-                    <i class="fa fa-angle-right"></i>
-                </a>
-            
+                    <a rel="next prefetch" href="client/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
 
         </div>
 
-
-        <!-- Local fallback for Font Awesome -->
+        <!-- Livereload script (if served using the cli tool) -->
         <script>
-            if ($(".fa").css("font-family") !== "FontAwesome") {
-                $('<link rel="stylesheet" type="text/css" href="_FontAwesome/css/font-awesome.css">').prependTo('head');
+            const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsAddress = wsProtocol + "//" + location.host + "/" + "__livereload";
+            const socket = new WebSocket(wsAddress);
+            socket.onmessage = function (event) {
+                if (event.data === "reload") {
+                    socket.close();
+                    location.reload();
+                }
+            };
+
+            window.onbeforeunload = function() {
+                socket.close();
             }
         </script>
 
-        <!-- Livereload script (if served using the cli tool) -->
-        
 
-        
 
-        
+        <script>
+            window.playground_copyable = true;
+        </script>
 
-        
 
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
         <script src="highlight.js"></script>
         <script src="book.js"></script>
 
-        <!-- Custom JS script -->
-        
+        <!-- Custom JS scripts -->
 
+
+    </div>
     </body>
 </html>

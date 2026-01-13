@@ -8,7 +8,7 @@
 #ifndef NEWBULLET_EXECUTOR_HPP
 #define NEWBULLET_EXECUTOR_HPP
 
-#include "client/states/game/logic.hpp"
+#include "client/state_machine/states/game/Game.hpp"
 
 #include <iostream>
 #include <memory>
@@ -19,13 +19,13 @@ class NewBulletExecutor : public PacketExecutorImplClient
 <NewBulletPacket, ClientPollable>
 {
 public:
-    NewBulletExecutor(InGameStateLogic &logic) : logic(logic) {}
+    NewBulletExecutor(Game &state) : state(state) {}
 
     bool execute([[maybe_unused]] Client &cl,
                  [[maybe_unused]] std::shared_ptr<ClientPollable> con,
                  [[maybe_unused]] std::shared_ptr<NewBulletPacket> packet)
     {
-        this->logic.newBullet(packet->getEntityId());
+        this->state.newBullet(packet->getEntityId());
         return true;
     }
 
@@ -33,7 +33,7 @@ public:
         return PacketId::NEW_BULLET;
     }
 private:
-    [[maybe_unused]] InGameStateLogic &logic;
+    [[maybe_unused]] Game &state;
 };
 
 #endif /* NEWBULLET_EXECUTOR_HPP */

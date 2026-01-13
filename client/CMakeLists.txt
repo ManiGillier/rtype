@@ -16,7 +16,7 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(CPP_CC_FLAGS "-Wall -Werror -Wconversion -Wcast-align -Wunused -Wextra -g3 -Wpedantic -fsanitize=address -Wno-error=sign-conversion -Wno-sign-conversion")
     set(RAYLIB_LOG_LEVEL "-DRAYLIB_LOG_LEVEL=LOG_DEBUG")
 else ()
-    set(CPP_CC_FLAGS "-Wall -Werror -Wconversion -Wcast-align -Wunused -Wextra -Wpedantic")
+    set(CPP_CC_FLAGS "-Wall -Werror -Wconversion -Wcast-align -Wunused -Wextra -Wpedantic -Wno-error=sign-conversion -Wno-sign-conversion")
     set(RAYLIB_LOG_LEVEL "-DRAYLIB_LOG_LEVEL=LOG_ERROR")
 endif()
 
@@ -37,15 +37,7 @@ list(FILTER client_src EXCLUDE REGEX ".*CMakeCXXCompilerId\\.cpp$")
 list(FILTER client_src EXCLUDE REGEX "ecs_exemple\\.cpp$")
 
 add_subdirectory(${PROJECT_ROOT}/network ${CMAKE_BINARY_DIR}/network)
-
-# raylib v5.5 package
-CPMAddPackage(
-    NAME raylib
-    GIT_REPOSITORY https://github.com/raysan5/raylib.git
-    GIT_TAG 5.5
-    OPTIONS
-        "BUILD_EXAMPLES OFF"
-)
+add_subdirectory(${PROJECT_ROOT}/graphical_library ${CMAKE_BINARY_DIR}/graphical_library)
 
 CPMAddPackage(
     NAME SQLiteCpp
@@ -57,4 +49,4 @@ CPMAddPackage(
 
 add_executable(${CLIENT_EXEC_NAME} ${client_src} ${client_src_h})
 target_include_directories(${CLIENT_EXEC_NAME} PUBLIC ${PROJECT_ROOT})
-target_link_libraries(${CLIENT_EXEC_NAME} PRIVATE network_lib raylib SQLiteCpp)
+target_link_libraries(${CLIENT_EXEC_NAME} PRIVATE network_lib SQLiteCpp graphical_library)

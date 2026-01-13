@@ -17,11 +17,13 @@ define build
 endef
 
 debug:
+	$(call build,graphical_library,$(DEBUG))
 	$(call build,network,$(DEBUG))
 	$(call build,server,$(DEBUG))
 	$(call build,client,$(DEBUG))
 
 release:
+	$(call build,graphical_library,$(RELEASE))
 	$(call build,network,$(RELEASE))
 	$(call build,server,$(RELEASE))
 	$(call build,client,$(RELEASE))
@@ -31,12 +33,17 @@ server:
 	$(call build,server,$(DEBUG))
 
 client:
+	$(call build,graphical_library,$(RELEASE))
 	$(call build,network,$(RELEASE))
-	$(call build,client,$(DEBUG))
+	$(call build,client,$(RELEASE))
 
 reseau:
 	$(call build,network,$(RELEASE))
 	$(call build,server,$(DEBUG),--target reseau)
+
+gui:
+	cmake -B ${BUILD_DIR} -DCMAKE_BUILD_TYPE=$(DEBUG)
+	cmake --build ${BUILD_DIR} --target gui -j
 
 lint:
 	clang-tidy $$(find . -type f -name "*.[ch]pp" | grep -v "build")
@@ -68,4 +75,4 @@ re:
 	make -s fclean
 	make -s all
 
-.PHONY: all lint clean fclean re doc open_doc reseau server client
+.PHONY: all lint clean fclean re doc open_doc reseau server client gui
