@@ -35,7 +35,7 @@ static std::ostream &operator<<(std::ostream &os,
         os << "Id=" << d.id << "{ "
             << "Pos={" << d.pos_x << "," << d.pos_y << "} "
             << "Vel={" << d.vel_x << "," << d.vel_y << "} "
-            << "Hitbix ={" << d.hitbox_x << "," << d.hitbox_y << "} "
+            << "Hitbix ={" << (int) d.hitbox_x << "," << (int) d.hitbox_y << "} "
             << "Timestamp=" << d.ms_time << " } ; ";
     }
     os << "]";
