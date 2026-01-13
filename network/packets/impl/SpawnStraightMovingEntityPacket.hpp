@@ -22,6 +22,8 @@ struct StraightMovingEntity {
     uint16_t pos_y;
     uint16_t vel_x;
     uint16_t vel_y;
+    uint8_t hitbox_x;
+    uint8_t hitbox_y;
     uint32_t ms_time;
 };
 
@@ -32,6 +34,7 @@ std::ostream &operator<<(std::ostream &os,
         os << "Id=" << d.id << "{ "
             << "Pos={" << d.pos_x << "," << d.pos_y << "} "
             << "Vel={" << d.vel_x << "," << d.vel_y << "} "
+            << "Hitbix ={" << d.hitbox_x << "," << d.hitbox_y << "} "
             << "Timestamp=" << d.ms_time << " } ; ";
     }
     return os;
@@ -55,6 +58,8 @@ public:
             this->write(d.pos_y);
             this->write(d.vel_x);
             this->write(d.vel_y);
+            this->write(d.hitbox_x);
+            this->write(d.hitbox_y);
             this->write(d.ms_time);
         }
     }
@@ -71,6 +76,8 @@ public:
             this->read(move.pos_y);
             this->read(move.vel_x);
             this->read(move.vel_y);
+            this->read(move.hitbox_x);
+            this->read(move.hitbox_y);
             this->read(move.ms_time);
             this->data.push_back(move);
         }
