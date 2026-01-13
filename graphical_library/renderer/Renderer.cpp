@@ -18,7 +18,6 @@ Renderer::~Renderer() {
     CloseAudioDevice();
 }
 
-
 void Renderer::Draw()
 {
     for (auto &button : buttons)
@@ -26,9 +25,9 @@ void Renderer::Draw()
     for (auto &checkbox : checkboxes)
         checkbox.Draw();
     for (auto &textbox : textboxes)
-            textbox.Draw();
+        textbox.Draw();
     for (auto &inputbox : inputboxes)
-            inputbox.Draw();
+        inputbox.Draw();
 }
 
 void Renderer::AddButton(int posX, int posY, int sizeX, int sizeY,
@@ -66,6 +65,7 @@ void Renderer::Clear()
     buttons.clear();
     checkboxes.clear();
     textboxes.clear();
+    inputboxes.clear();
 }
 
 gl::Button &Renderer::GetButton(int i)
