@@ -17,7 +17,7 @@
 class TimeNowPacket : public Packet
 {
 public:
-    TimeNowPacket(uint32_t now) :
+    TimeNowPacket(uint32_t now = 0) :
         Packet(PacketId::TIME_NOW_PACKET), now(now) {}
 
     enum PacketMode getMode() const {

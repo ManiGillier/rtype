@@ -51,8 +51,8 @@ void PacketManager::registerPackets()
     this->packets.push_back(std::make_shared<CAuthentificationPacket>());
     this->packets.push_back(std::make_shared<AuthentifiedPacket>());
     this->packets.push_back(std::make_shared<StartGamePacket>());
-    this->packets.push_back(std::make_shared<SpawnStraightMovingEntityPacket>({0}));
-    this->packets.push_back(std::make_shared<TimeNowPacket>(0));
+    this->packets.push_back(std::make_shared<SpawnStraightMovingEntityPacket>());
+    this->packets.push_back(std::make_shared<TimeNowPacket>());
     this->packets.push_back(std::make_shared<TestPacket>());
 }
 
