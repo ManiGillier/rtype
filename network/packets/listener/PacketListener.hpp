@@ -38,6 +38,14 @@ class PacketListener {
             return false;
         }
 
+        void disableAllExecutors(std::shared_ptr<IPollable> p) {
+            p->setDisabled(true);
+        }
+
+        void addToWhitelist(uint8_t p) {
+            this->whitelist.push_back(p);
+        }
+
         bool removeExecutor(int packetId) {
             for (auto it = this->executors.begin(); it != this->executors.end(); it++) {
                 if ((*it)->getPacketId() == packetId) {
@@ -48,12 +56,21 @@ class PacketListener {
             return false;
         }
 
+        bool isWhitelisted(uint8_t id) const {
+            for (uint8_t i : this->whitelist) {
+                if (i == id)
+                    return true;
+            }
+            return false;
+        }
+
         bool executePacket(Entity &e, std::shared_ptr<IPollable> con,
             std::shared_ptr<Packet> p) const {
             bool status = true;
+            bool disabled = con->isDisabled();
 
             for (const std::unique_ptr<PacketExecutor<Entity>> &packetExecutor : this->executors) {
-                if (packetExecutor->getPacketId() == p->getId()) {
+                if (packetExecutor->getPacketId() == p->getId() && (!disabled || isWhitelisted((uint8_t) packetExecutor->getPacketId()))) {
                     status &= packetExecutor->executePacket(e, con, p);
                 }
             }
@@ -95,6 +112,7 @@ class PacketListener {
         }
 
     private:
+        std::vector<uint8_t> whitelist;
         std::vector<std::unique_ptr<PacketExecutor<Entity>>> executors;
         std::vector<std::unique_ptr<PacketExecutor<Entity>>> persistentExecutors;
 };

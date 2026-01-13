@@ -42,6 +42,7 @@ std::shared_ptr<IPollable> RTypeServer::createClient(int fd)
 
 void RTypeServer::onClientConnect(std::shared_ptr<IPollable> client)
 {
+    client->setDisabled(true);
     auto player = std::static_pointer_cast<Player>(client);
 
     LOG("Player connected to fd= " << client->getFileDescriptor());
