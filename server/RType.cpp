@@ -78,7 +78,10 @@ void RType::networkLoop()
     this->initExecutor(server);
     server.getPacketListener().addToWhitelist(PacketId::LOGIN_PACKET);
     server.getPacketListener().addToWhitelist(PacketId::REGISTER_PACKET);
-
+    if (!server.getAccountDatabase().isConnected()) {
+        LOG_ERR("Could not connect to database, exiting..");
+        return;
+    }
     while (server.isUp()) {
         server.loop();
         server.cleanFinishedGame();

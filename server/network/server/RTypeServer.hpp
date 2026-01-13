@@ -27,6 +27,7 @@ class RTypeServer : public Server
     LobbyManager &getLobbyManager();
     void cleanFinishedGame();
     ThreadPool &getGameThreadPool();
+    AccountDatabase &getAccountDatabase();
 
   private:
     int _ticks;

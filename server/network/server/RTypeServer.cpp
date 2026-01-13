@@ -34,6 +34,11 @@ ThreadPool &RTypeServer::getGameThreadPool()
     return this->_threadPool;
 }
 
+AccountDatabase & RTypeServer::getAccountDatabase()
+{
+    return this->db;
+}
+
 std::shared_ptr<IPollable> RTypeServer::createClient(int fd)
 {
     // NOTE: id not used yet perhaps remove it later (was usefull during partI)
