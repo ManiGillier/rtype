@@ -7,7 +7,7 @@
 
 #include "ClientManager.hpp"
 
-#include <graphical_library/raylib/Raylib.hpp>
+#include <graphical_library/raylib/InitGraphicalLibrary.hpp>
 
 #include "client/state_machine/states/connecting/Connecting.hpp"
 
@@ -25,7 +25,7 @@ ClientManager::ClientManager()
     : stateMachine(std::make_unique<Connecting>
         (*this, this->registry, this->sync))
 {
-    this->gui = std::make_unique<Raylib>();
+    this->gui = init_raylib();
 
     this->gui->init();
 

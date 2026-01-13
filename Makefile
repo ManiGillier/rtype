@@ -35,7 +35,7 @@ server:
 client:
 	$(call build,graphical_library,$(RELEASE))
 	$(call build,network,$(RELEASE))
-	$(call build,client,$(DEBUG))
+	$(call build,client,$(RELEASE))
 
 reseau:
 	$(call build,network,$(RELEASE))

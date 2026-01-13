@@ -7,6 +7,7 @@
 
 #include "Raylib.hpp"
 #include <iostream>
+#include <memory>
 
 Raylib::Raylib()
 : keymap({
@@ -274,4 +275,9 @@ auto Raylib::isKeyDown(gl::Key key) -> bool
 auto Raylib::convertKey(gl::Key key) -> int
 {
     return this->keymap.at(key);
+}
+
+std::unique_ptr<gl::GraphicalLibrary> init_raylib()
+{
+    return std::make_unique<Raylib>();
 }
