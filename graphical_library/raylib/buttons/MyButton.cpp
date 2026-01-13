@@ -13,7 +13,7 @@ MyButton::MyButton(int x, int y, int width, int height,
     color(buttonColor), hoveredColor(hoveredButtonColor),
     transparency(transparency) {}
 
-    void MyButton::Draw() const {
+    void MyButton::draw() const {
         Rectangle buttonRect = {
             static_cast<float>(posX),
             static_cast<float>(posY),
@@ -32,7 +32,7 @@ MyButton::MyButton(int x, int y, int width, int height,
         );
     }
 
-void MyButton::Update() {
+void MyButton::update() {
     int mouseX = GetMouseX();
     int mouseY = GetMouseY();
 
@@ -40,47 +40,47 @@ void MyButton::Update() {
         this->hovered = true;
     else
         this->hovered = false;
-    if (IsHovered() && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+    if (isHovered() && IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         this->clicked = true;
     else
         this->clicked = false;
     return;
 }
 
-bool MyButton::IsClicked() {
+bool MyButton::isClicked() {
     return this->clicked;
 }
 
-bool MyButton::IsHovered() {
+bool MyButton::isHovered() {
     return this->hovered;
 }
 
-void MyButton::SetPosition(int x, int y) {
+void MyButton::setPosition(int x, int y) {
     this->posX = x;
     this->posY = y;
 }
 
-void MyButton::SetSize(int width, int height) {
+void MyButton::setSize(int width, int height) {
     this->sizeX = width;
     this->sizeY = height;
 }
 
-void MyButton::SetTransparency(int transparency) {
+void MyButton::setTransparency(int transparency) {
     this->transparency = transparency;
 }
 
-void MyButton::SetColor(Color color) {
+void MyButton::setColor(Color color) {
     this->color = color;
 }
 
-void MyButton::SetHoveredColor(Color aColor) {
+void MyButton::setHoveredColor(Color aColor) {
     this->hoveredColor = aColor;
 }
 
-void MyButton::SetText(std::string str) {
+void MyButton::setText(std::string str) {
     this->text = str;
 }
 
-void MyButton::SwitchClick() {
+void MyButton::switchClick() {
     this->clicked = true;
 }
