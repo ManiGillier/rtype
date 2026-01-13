@@ -14,12 +14,14 @@
 #include "shared/components/Laser.hpp"
 #include "shared/components/Position.hpp"
 #include <memory>
+#include <mutex>
 #include <network/logger/Logger.hpp>
 #include <network/packets/impl/DespawnBulletPacket.hpp>
 #include <network/packets/impl/GameOverPacket.hpp>
 #include <network/packets/impl/HealthUpdatePacket.hpp>
 #include <network/packets/impl/PlayerDiedPacket.hpp>
 #include <network/packets/impl/PositionUpdatePacket.hpp>
+#include <optional>
 #include <set>
 
 auto Systems::position_system(
@@ -269,9 +271,9 @@ auto Systems::heal_all_players_system(Registry &r, int heal) -> void
     }
 }
 
-auto Systems::health_system(
-    Registry &r, containers::indexed_zipper<SparseArray<Health>> zipper,
-    NetworkManager &nm) -> void
+auto Systems::health_system(Registry &r,
+                   containers::indexed_zipper<SparseArray<Health>> zipper,
+                   NetworkManager &nm) -> void
 {
     for (auto &&[i, health] : zipper) {
         nm.queuePacket(
@@ -282,12 +284,11 @@ auto Systems::health_system(
             if (tag->tag == EntityTag::BOSS) {
                 heal_all_players_system(r, r.get<Healer>(i)->healer);
                 nm.queuePacket(std::make_shared<EnemyDiedPacket>(i));
-                // debug ()
                 nm.queuePacket(std::make_shared<DespawnPlayerPacket>(i));
             } else {
                 nm.queuePacket(std::make_shared<PlayerDiedPacket>(i));
-                // debug ()
                 nm.queuePacket(std::make_shared<DespawnPlayerPacket>(i));
+                nm.playerDied(i);
             }
             r.kill_entity(r.entity_from_index(i));
         }

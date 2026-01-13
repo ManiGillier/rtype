@@ -2,12 +2,12 @@
 #include "components/Acceleration.hpp"
 #include "components/Damager.hpp"
 #include "components/Healer.hpp"
+#include "components/Hitable.hpp"
 #include "components/OutsideBoundaries.hpp"
 #include "components/Pattern.hpp"
 #include "components/Resistance.hpp"
 #include "components/Tag.hpp"
 #include "components/Velocity.hpp"
-#include "components/Hitable.hpp"
 #include "ecs/regisrty/Registry.hpp"
 #include "gameplay/GamePlay.hpp"
 #include "network/packets/Packet.hpp"
@@ -19,6 +19,7 @@
 #include "systems/GameSystems.hpp"
 #include "ticker/Ticker.hpp"
 #include <chrono>
+#include <functional>
 #include <memory>
 #include <mutex>
 #include <network/packets/impl/GameOverPacket.hpp>
@@ -138,7 +139,6 @@ void Game::initializeSystems()
                                                  std::ref(_networkManager));
     _registry.add_update_system<Position, HitBox>(Systems::collision_system,
                                                   std::ref(_networkManager));
-
     _registry.add_update_system<Health>(Systems::health_system,
                                         std::ref(_networkManager));
     _registry.add_update_system<Tag>(

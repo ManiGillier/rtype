@@ -9,6 +9,7 @@
 #define COMP_POSITION_HPP
 
 #include "../../network/network_manager/NetworkManager.hpp"
+#include "../../player/Player.hpp"
 #include "../components/Acceleration.hpp"
 #include "../components/Damager.hpp"
 #include "../components/OutsideBoundaries.hpp"

@@ -24,6 +24,7 @@ class NetworkManager
     ~NetworkManager() = default;
     void queuePacket(std::shared_ptr<Packet> packet, std::size_t playerId = 0,
                      bool filter = false);
+    void playerDied(std::size_t id);
     void flush();
     void clear();
     void clearId(std::size_t id);
