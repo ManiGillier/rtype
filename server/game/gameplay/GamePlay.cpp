@@ -35,11 +35,15 @@ void GamePlay::setupWaves()
     _waves.push_back(
         {2, {PatternType::WAVE_SPREAD, PatternType::SPIRAL}, 1, 500});
     _waves.push_back({2, {PatternType::DOUBLE_SPIRAL}, 1, 500});
-    _waves.push_back({3, {PatternType::FLOWER, PatternType::AIMED_SHOT}, 1, 500});
+    _waves.push_back(
+        {3, {PatternType::FLOWER, PatternType::AIMED_SHOT}, 1, 500});
     _waves.push_back(
         {3, {PatternType::RADIAL_BURST, PatternType::DOUBLE_SPIRAL}, 1, 500});
     _waves.push_back(
-        {3, {PatternType::FLOWER, PatternType::WAVE_SPREAD, PatternType::SPIRAL}, 1, 500});
+        {3,
+         {PatternType::FLOWER, PatternType::WAVE_SPREAD, PatternType::SPIRAL},
+         1,
+         500});
 }
 
 WaveConfig GamePlay::getWaveConfig(int wave)
@@ -49,13 +53,9 @@ WaveConfig GamePlay::getWaveConfig(int wave)
     }
     int difficulty = 1;
     std::vector<PatternType> allPatterns = {
-        PatternType::SPIRAL,
-        PatternType::RADIAL_BURST, 
-        PatternType::AIMED_SHOT,    
-        PatternType::WAVE_SPREAD,
-        PatternType::DOUBLE_SPIRAL, 
-        PatternType::FLOWER
-    };
+        PatternType::SPIRAL,        PatternType::RADIAL_BURST,
+        PatternType::AIMED_SHOT,    PatternType::WAVE_SPREAD,
+        PatternType::DOUBLE_SPIRAL, PatternType::FLOWER};
     return {difficulty, allPatterns, 1, 2000};
 }
 
@@ -94,7 +94,7 @@ void GamePlay::spawnBoss()
 
     for (std::size_t i = 0; i < config.bossNb; i++) {
         auto boss = std::make_unique<Boss>(_networkManager, _regisrty, _factory,
-                                           config.difficulty);
+                                           _start, config.difficulty);
 
         boss->setPatterns(config.patterns);
         this->_bosses.push_back(std::move(boss));
@@ -115,8 +115,8 @@ void GamePlay::checkPos()
             if (!pos_i || !pos_j)
                 continue;
             if (std::abs(pos_i->x - pos_j->x) <= MIN_DISTANCE) {
-                float new_x =  std::min(pos_i->x + SEPARATION_OFFSET,
-                                     GameConstants::width - 50.0f);
+                float new_x = std::min(pos_i->x + SEPARATION_OFFSET,
+                                       GameConstants::width - 50.0f);
                 _regisrty.set<Position>(_bosses[i]->getId(), new_x, pos_i->y);
             }
         }

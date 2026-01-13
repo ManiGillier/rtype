@@ -53,6 +53,8 @@ auto Systems::position_system(
             r.kill_entity(r.entity_from_index(i));
             continue;
         }
+        if (r.get<Tag>(i)->tag == EntityTag::BULLET)
+            continue;
         auto packet = std::make_shared<PositionUpdatePacket>(i, pos->x, pos->y);
         nm.queuePacket(packet, i, true);
     }
