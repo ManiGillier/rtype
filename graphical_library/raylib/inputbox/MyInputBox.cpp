@@ -14,8 +14,8 @@ MyInputBox::MyInputBox(int x, int y, int width, int height,
     color(boxColor), hoveredColor(hoveredBoxColor),
     transparency(transparency), text(""), cursorPosition(0)
     {
-        this->color = (Color){255, 255, 255, 150};
-        this->activeColor = (Color){255, 255, 255, 255};
+        this->color = {255, 255, 255, 150};
+        this->activeColor = {255, 255, 255, 255};
     }
 
 void MyInputBox::draw() const {
