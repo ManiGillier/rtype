@@ -78,7 +78,7 @@ bool LobbyManager::joinPublicLobby(std::shared_ptr<Player> &player)
     if (!publiclobby.empty()) {
         return this->joinLobby(publiclobby, player);
     } else {
-        newLobby(player, true);
+        this->newLobby(player, true);
         return true;
     }
 }

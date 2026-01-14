@@ -54,12 +54,10 @@ void RTypeServer::onClientConnect(std::shared_ptr<IPollable> client)
 
     this->_lobbyManager.newLobby(player);
     // TODO: join public need to be call by client request (here for debug)
-    this->_lobbyManager.joinPublicLobby(player);
+    // this->_lobbyManager.joinPublicLobby(player);
 
     std::shared_ptr<ServerClient> sc =
         std::static_pointer_cast<ServerClient>(client);
-    // std::shared_ptr<Packet> p = create_packet(PlayerIdPacket, player->getId());
-    // sc->sendPacket(p);
 }
 
 void RTypeServer::onClientDisconnect(std::shared_ptr<IPollable> client)

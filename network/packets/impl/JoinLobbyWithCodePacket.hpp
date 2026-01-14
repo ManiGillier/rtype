@@ -43,6 +43,10 @@ public:
     std::shared_ptr<Packet> clone() const {
         return make_copy(JoinLobbyWithCodePacket);
     }
+
+    std::string getCode() const {
+        return this->code;
+    }
 private:
     std::string code;
 };
