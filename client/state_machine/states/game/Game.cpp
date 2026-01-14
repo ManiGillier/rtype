@@ -39,6 +39,7 @@
 
 #include "systems/Systems.hpp"
 #include <cstdint>
+#include <queue>
 
 Game::Game(ClientManager &cm, Registry &r, Sync &s)
     : State(cm, r, s)
@@ -258,7 +259,17 @@ auto Game::newPlayers(std::vector<PlayerLink> data) -> void
 
 auto Game::destroyEntities(std::vector<uint16_t> ids) -> void
 {
+    std::queue<std::string> deadPlayers;
+
     for (auto id : ids) {
         this->registry.kill_entity(this->registry.entity_from_index(id));
+        for (auto &[name, player] : this->players) {
+            if (player.first == id)
+                deadPlayers.push(name);
+        }
+    }
+    while (!deadPlayers.empty()) {
+        this->players.erase(deadPlayers.front());
+        deadPlayers.pop();
     }
 }
