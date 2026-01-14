@@ -59,6 +59,7 @@ enum PacketId {
     TIME_NOW_PACKET,
     DESTROY_ENTITY_PACKET,
     JOIN_LOBBY_WITH_CODE_PACKET,
+    JOIN_OR_CREATE_PUBLIC_LOBBY_PACKET,
 };
 
 class PacketDisplay {
