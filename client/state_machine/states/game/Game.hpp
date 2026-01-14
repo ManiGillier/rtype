@@ -15,6 +15,7 @@
 #include <optional>
 #include <vector>
 
+#include <network/packets/impl/LaserActiveUpdatePacket.hpp>
 #include <network/packets/impl/PositionUpdatePacket.hpp>
 #include <network/packets/impl/LinkPlayersPacket.hpp>
 #include <network/packets/impl/SpawnStraightMovingEntityPacket.hpp>
@@ -42,6 +43,7 @@ public:
     auto updateLaser(std::size_t id, bool active, float length) -> void;
     auto updatePosition(std::size_t id, float x, float y) -> void;
     auto updatePositions(std::vector<PositionData> data) -> void;
+    auto updateLasers(std::vector<LaserData> data) -> void;
 private:
     std::map<std::string, std::pair<std::size_t, std::size_t>> players;
     std::optional<std::size_t> clientId = std::nullopt;

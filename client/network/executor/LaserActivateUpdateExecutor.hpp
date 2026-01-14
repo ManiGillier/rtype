@@ -24,8 +24,7 @@ public:
                  [[maybe_unused]] std::shared_ptr<ClientPollable> con,
                  [[maybe_unused]] std::shared_ptr<LaserActiveUpdatePacket> packet)
     {
-        this->state.updateLaser(packet->getEntityId(), packet->isActive()
-                                , packet->getLength());
+        this->state.updateLasers(packet->getLaserData());
         return true;
     }
 
