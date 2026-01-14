@@ -11,6 +11,7 @@
 #include "shared/components/Health.hpp"
 #include "shared/components/Laser.hpp"
 #include "shared/components/Position.hpp"
+#include <cstdint>
 #include <memory>
 #include <mutex>
 #include <network/logger/Logger.hpp>
@@ -18,6 +19,7 @@
 #include <network/packets/impl/PositionUpdatePacket.hpp>
 #include <optional>
 #include <set>
+#include <vector>
 
 auto Systems::position_system(
     Registry &r,
@@ -27,6 +29,8 @@ auto Systems::position_system(
         zipper,
     NetworkManager &nm) -> void
 {
+    std::vector<PositionData> posData;
+
     for (auto &&[i, pos, vel, acc, out] : zipper) {
         auto lastTick = nm.getLastTick();
         pos->x += vel->x * lastTick;
@@ -51,9 +55,16 @@ auto Systems::position_system(
         }
         if (r.get<Tag>(i)->tag == EntityTag::BULLET)
             continue;
-        // auto packet = std::make_shared<PositionUpdatePacket>(i, pos->x, pos->y);
-        // nm.queuePacket(packet, i, true);
+
+        PositionData pd = {
+            .id = static_cast<uint32_t>(i),
+            .x = pos->x,
+            .y = pos->y,
+        };
+        posData.push_back(pd);
     }
+    auto posDataPacket = create_packet(PositionUpdatePacket, posData);
+    nm.queuePacket(posDataPacket);
 }
 
 auto Systems::pattern_system(
