@@ -13,6 +13,7 @@
 #include "PacketReader.hpp"
 #include "Packet.hpp"
 #include "PacketLogger.hpp"
+#include "PacketCompressor.hpp"
 #include <network/packets/PacketManager.hpp>
 
 PacketReader::PacketReader(int fd, Packet::PacketMode mode)
@@ -23,33 +24,53 @@ PacketReader::PacketReader(int fd, Packet::PacketMode mode)
 
 bool PacketReader::readPacket(void)
 {
-    if (!this->createBuffer())
+    if (!this->createBuffer()) {
+        currentPacket = nullptr;
+        originalSize = -1;
+        compressedSize = -1;
         return false;
+    }
     while (true) {
         if (readData.empty())
             return true;
+        uint8_t packetId = 0;
         if (currentPacket == nullptr) {
-            currentPacket = PacketManager::getInstance().createPacketById(readData.front(), this->mode);
-            readData.pop();
+            packetId = readData[0];
+            currentPacket = PacketManager::getInstance().createPacketById(packetId, this->mode);
+            readData.erase(readData.begin());
         }
         if (currentPacket == nullptr) {
-            LOG_ERR("Received wrong packet, disconnecting " << this->_fd << std::endl);
+            LOG_ERR("Received wrong packet, disconnecting " << this->_fd << "(ID=" << (int) packetId  << ")");
             return false;
         }
-        std::size_t packetSize = (std::size_t) currentPacket->getSize();
-        if (packetSize > readData.size())
+        if (readData.size() < sizeof(uint32_t) * 2 && originalSize == -1)
             return true;
-        std::queue<uint8_t> _arr;
-        for (std::size_t i = 0; i < packetSize; i++) {
-            _arr.push(readData.front());
-            readData.pop();
+        if (originalSize == -1) {
+            uint32_t origSize = 0;
+            uint32_t compSize = 0;
+            Packet::fromBinary(readData, origSize);
+            Packet::fromBinary(readData, compSize);
+            this->originalSize = (int32_t) origSize;
+            this->compressedSize = (int32_t) compSize;
         }
-        currentPacket->setData(_arr);
-        currentPacket->unserialize();
-        receivedPackets.push(currentPacket);
-        PacketLogger::logPacket(currentPacket,
-                 PacketLogger::PacketMethod::RECEIVED, this->_fd);
+        if (readData.size() < (std::size_t) this->compressedSize)
+            return true;
+        try {
+            std::vector<uint8_t> dataPacket = PacketCompressor::decompress(readData, (std::size_t) originalSize,
+                (std::size_t) compressedSize);
+            currentPacket->setData(dataPacket);
+            currentPacket->unserialize();
+            receivedPackets.push(currentPacket);
+            PacketLogger::logPacket(currentPacket,
+            PacketLogger::PacketMethod::RECEIVED, this->_fd);
+        } catch (const Packet::PacketException &e) {
+            LOG_ERR(e.what());
+        }
+        readData.erase(readData.begin(), std::next(readData.begin(),
+            static_cast<std::ptrdiff_t>(compressedSize)));
         currentPacket = nullptr;
+        originalSize = -1;
+        compressedSize = -1;
     }
     return true;
 }
@@ -63,7 +84,7 @@ bool PacketReader::createBuffer(void)
     if (newlyReadBytes == 0)
         return false;
     for (ssize_t i = 0; i < newlyReadBytes; i++)
-        this->readData.push(_readBuff[i]);
+        this->readData.push_back(_readBuff[i]);
     return true;
 }
 

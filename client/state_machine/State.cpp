@@ -8,14 +8,9 @@
 #include "State.hpp"
 #include <memory>
 
-State::State(ClientManager &cm, Registry &registry)
-    : clientManager(cm), registry(registry)
+State::State(ClientManager &cm, Registry &registry, Sync &s)
+    : clientManager(cm), registry(registry), sync(s)
 {}
-
-auto State::change_state(std::unique_ptr<IState> new_state) -> void
-{
-    this->next_state = std::move(new_state);
-}
 
 auto State::update() -> std::unique_ptr<IState>
 {

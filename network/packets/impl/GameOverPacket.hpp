@@ -46,14 +46,13 @@ public:
     void unserialize() {
         this->read(egs);
     }
-    auto getSize() const -> int { return sizeof(enum EndGameState); }
 
     const std::string getName() {
         return "GameOverPacket";
     }
 
-    void display() {
-        std::cout << "EndGameState=" << egsToString(egs);
+    PacketDisplay display() const {
+        return {"EndGameState", egsToString(egs)};
     }
 
     std::shared_ptr<Packet> clone() const {

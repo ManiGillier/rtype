@@ -10,29 +10,36 @@ OFF = OFF
 all: debug
 
 define build
+	cd $(1) && \
 	cmake -B ${BUILD_DIR} \
-		-DBUILD_SERVER=$(1) \
-		-DBUILD_CLIENT=$(2) \
-		-DCMAKE_BUILD_TYPE=$(3) 
-	cmake --build ${BUILD_DIR} -j 
+		-DCMAKE_BUILD_TYPE=$(2) \
+	&& cmake --build ${BUILD_DIR} $(3) -j 
 endef
 
 debug:
-	$(call build,ON,ON,$(DEBUG))
-	ln -s -f ${BUILD_DIR}/compile_commands.json .
+	$(call build,graphical_library,$(DEBUG))
+	$(call build,network,$(DEBUG))
+	$(call build,server,$(DEBUG))
+	$(call build,client,$(DEBUG))
 
 release:
-	$(call build,ON,ON,$(RELEASE))
+	$(call build,graphical_library,$(RELEASE))
+	$(call build,network,$(RELEASE))
+	$(call build,server,$(RELEASE))
+	$(call build,client,$(RELEASE))
 
 server:
-	$(call build,ON,OFF,$(DEBUG))
+	$(call build,network,$(DEBUG))
+	$(call build,server,$(DEBUG))
 
 client:
-	$(call build,OFF,ON,$(DEBUG))
+	$(call build,graphical_library,$(RELEASE))
+	$(call build,network,$(RELEASE))
+	$(call build,client,$(RELEASE))
 
 reseau:
-	cmake -B ${BUILD_DIR} -DCMAKE_BUILD_TYPE=$(DEBUG)
-	cmake --build ${BUILD_DIR} --target reseau -j
+	$(call build,network,$(DEBUG))
+	$(call build,server,$(DEBUG),--target reseau)
 
 gui:
 	cmake -B ${BUILD_DIR} -DCMAKE_BUILD_TYPE=$(DEBUG)
@@ -55,13 +62,14 @@ clean:
 
 fclean:
 	make -s clean
-	rm -rf ${BUILD_DIR}
+	rm -rf server/${BUILD_DIR}
+	rm -rf client/${BUILD_DIR}
+	rm -rf network/${BUILD_DIR}
 	rm -rf index.html
 
 clean_cache:
 	make -s fclean
 	rm -rf .cpm-cache .cache CPM_modules cpm-package-lock.cmake
-	rm -rf compile_commands.json
 
 re:
 	make -s fclean

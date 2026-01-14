@@ -14,6 +14,9 @@ env:
 
 jobs:
   check_program_compilation:
+    env:
+      CFLAGS:  -Wno-error=sign-conversion -Wno-sign-conversion
+      CXXFLAGS: -Wno-error=sign-conversion -Wno-sign-conversion
     name: check_program_compilation
     runs-on: ubuntu-latest
     container: epitechcontent/epitest-docker
@@ -33,7 +36,7 @@ jobs:
         timeout-minutes: 10
         name: Compilation
         run: |
-          make 
+          make release
       - id: clean
         name: Clean
         run: |

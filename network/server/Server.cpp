@@ -7,8 +7,11 @@
 
 #include <network/packets/impl/SAuthentificationPacket.hpp>
 
+#include <network/poll/WakeUpPollable.hpp>
+
 #include <network/logger/Logger.hpp>
 #include <network/packets/PacketLogger.hpp>
+#include <network/packets/PacketCompressor.hpp>
 #include <network/server/Server.hpp>
 #include <network/server/ServerClient.hpp>
 #include <string>
@@ -158,16 +161,37 @@ void Server::sendUDPPackets()
             if (addr == std::nullopt)
                 continue;
             packet->clearData();
-            packet->serialize();
-            std::vector<uint8_t> toSend;
-            toSend.push_back(packet->getId());
-            std::queue<uint8_t> packetData = packet->getData();
-            while (!packetData.empty()) {
-                toSend.push_back(packetData.front());
-                packetData.pop();
+            try {
+                packet->serialize();
+            } catch (const Packet::PacketException &e) {
+                LOG_ERR(e.what());
+                continue;
             }
+            std::uint16_t &sequenceNum = p->getUDPPacketCount();
+
+            std::vector<uint8_t> toSend;
+            std::vector<uint8_t> compressed;
+            std::vector<uint8_t> sequenceNumData = Packet::toBinary(sequenceNum);
+            toSend.insert(toSend.end(), sequenceNumData.begin(), sequenceNumData.end());
+            toSend.push_back(packet->getId());
+
+            try {
+                compressed = PacketCompressor::compress(packet->getData());
+            } catch (const Packet::PacketException &e) {
+                LOG_ERR(e.what());
+                continue;
+            }
+            uint32_t oldPacketSize = (uint32_t) packet->getData().size();
+            uint32_t newPacketSize =  (uint32_t) compressed.size();
+            for (uint8_t bin : Packet::toBinary(oldPacketSize))
+                toSend.push_back(bin);
+            for (uint8_t bin : Packet::toBinary(newPacketSize))
+                toSend.push_back(bin);
+            toSend.insert(toSend.end(), compressed.begin(), compressed.end());
+
             sendto(this->udpFd, toSend.data(), toSend.size(), 0,
                    (struct sockaddr *)&(addr.value()), sizeof(addr.value()));
+            sequenceNum += 1;
             PacketLogger::logPacket(packet, PacketLogger::PacketMethod::SENT,
                                     this->udpFd);
         }
@@ -183,6 +207,38 @@ bool Server::canConnect() const
 void Server::setConnect(bool c)
 {
     this->enableConnection.store(c);
+}
+
+void Server::sendAll(std::shared_ptr<Packet> p)
+{
+    this->sendAll(this->getPollManager().getPool(), p);
+}
+
+void Server::sendAll(std::vector<std::shared_ptr<IPollable>> clients,
+    std::shared_ptr<Packet> p)
+{
+    if (clients.empty())
+        return;
+    if (p->getMode() == Packet::PacketMode::TCP)
+        std::lock_guard<std::mutex> lck(this->tcpLock);
+    else
+        std::lock_guard<std::mutex> lck(this->udpLock);
+    for (std::shared_ptr<IPollable> cl : clients) {
+        if (std::dynamic_pointer_cast<ServerUDPPollable>(cl) != nullptr ||
+            std::dynamic_pointer_cast<ServerPollable>(cl) != nullptr ||
+            std::dynamic_pointer_cast<WakeUpPollable>(cl) != nullptr)
+            continue;
+        std::shared_ptr<Pollable> pollable = std::dynamic_pointer_cast<Pollable>(cl);
+        if (pollable == nullptr)
+            continue;
+        if (p->getMode() == Packet::PacketMode::TCP) {
+            pollable->getPacketSender().sendPacket(p);
+            this->getPollManager().updateFlags(cl->getFileDescriptor(), cl->getFlags());
+        } else {
+            pollable->getPacketsToSendUDP().emplace_back(p, cl->getClientAddress());
+        }
+        this->getPollManager().wakeUp();
+    }
 }
 
 ServerPollable::ServerPollable(Server &server, int fd)
@@ -239,16 +295,18 @@ bool ServerUDPPollable::receiveEvent(short)
     uint8_t buffer[BUFFER_SIZE];
     struct sockaddr_in sender;
     socklen_t senderLen = sizeof(sender);
-    std::queue<uint8_t> dataQueue;
+    std::vector<uint8_t> receivedData;
     ssize_t bytesRead = recvfrom(this->getFileDescriptor(), buffer, BUFFER_SIZE,
                                  0, (struct sockaddr *)&sender, &senderLen);
     if (bytesRead <= 0)
         return true;
     for (ssize_t i = 0; i < bytesRead; i++)
-        dataQueue.push(buffer[i]);
-    while (!dataQueue.empty()) {
-        uint8_t packetId = dataQueue.front();
-        dataQueue.pop();
+        receivedData.push_back(buffer[i]);
+    while (!receivedData.empty()) {
+        uint8_t packetId = receivedData[0];
+        uint32_t originalSize = 0;
+        uint32_t compressedSize = 0;
+        receivedData.erase(receivedData.begin());
         std::shared_ptr<Packet> packet =
             PacketManager::getInstance().createPacketById(
                 packetId, Packet::PacketMode::UDP);
@@ -256,22 +314,27 @@ bool ServerUDPPollable::receiveEvent(short)
             LOG_ERR("Received invalid packet ID: " << (int)packetId);
             break;
         }
-        std::size_t packetSize = (std::size_t)packet->getSize();
-        if (packetSize > dataQueue.size()) {
-            LOG_ERR("Incomplete packet received with ID (" << (int)packetId
-                                                           << ")");
+        try {
+            Packet::fromBinary(receivedData, originalSize);
+            Packet::fromBinary(receivedData, compressedSize);
+            if (receivedData.size() < compressedSize) {
+                receivedData.clear();
+                return true;
+            }
+            std::vector<uint8_t> packetData = PacketCompressor::decompress(receivedData,
+                originalSize, compressedSize);
+            packet->setData(packetData);
+            packet->unserialize();
+        } catch (const std::exception &) {
+            LOG_ERR("Could not read UDP packet with ID " << (int) packetId);
+            receivedData.clear();
             break;
         }
-        std::queue<uint8_t> packetData;
-        for (std::size_t i = 0; i < packetSize; i++) {
-            packetData.push(dataQueue.front());
-            dataQueue.pop();
-        }
-        packet->setData(packetData);
-        packet->unserialize();
         PacketLogger::logPacket(packet, PacketLogger::PacketMethod::RECEIVED,
                                 this->getFileDescriptor());
         addReceivedPacket(sender, packet);
+        receivedData.erase(receivedData.begin(), 
+            std::next(receivedData.begin(), static_cast<std::ptrdiff_t>(compressedSize)));
     }
     return true;
 }

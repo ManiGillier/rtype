@@ -8,7 +8,7 @@
 #ifndef LASERACTIVEUPDATE_EXECUTOR_HPP
 #define LASERACTIVEUPDATE_EXECUTOR_HPP
 
-#include "client/states/game/logic.hpp"
+#include "client/state_machine/states/game/Game.hpp"
 
 #include <memory>
 #include <network/packets/listener/PacketExecutor.hpp>
@@ -18,13 +18,13 @@ class LaserActiveUpdateExecutor : public PacketExecutorImplClient
 <LaserActiveUpdatePacket, ClientPollable>
 {
 public:
-    LaserActiveUpdateExecutor(InGameStateLogic &logic) : logic(logic) {}
+    LaserActiveUpdateExecutor(Game &state) : state(state) {}
 
     bool execute([[maybe_unused]] Client &cl,
                  [[maybe_unused]] std::shared_ptr<ClientPollable> con,
                  [[maybe_unused]] std::shared_ptr<LaserActiveUpdatePacket> packet)
     {
-        this->logic.updateLaser(packet->getEntityId(), packet->isActive()
+        this->state.updateLaser(packet->getEntityId(), packet->isActive()
                                 , packet->getLength());
         return true;
     }
@@ -33,7 +33,7 @@ public:
         return PacketId::LASER_ACTIVE_UPDATE;
     }
 private:
-    [[maybe_unused]] InGameStateLogic &logic;
+    [[maybe_unused]] Game &state;
 };
 
 #endif /* LASERACTIVEUPDATE_EXECUTOR_HPP */

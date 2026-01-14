@@ -8,7 +8,7 @@
 #ifndef HEALTHUPDATE_EXECUTOR_HPP
 #define HEALTHUPDATE_EXECUTOR_HPP
 
-#include "client/states/game/logic.hpp"
+#include "client/state_machine/states/game/Game.hpp"
 
 #include <memory>
 #include <network/packets/listener/PacketExecutor.hpp>
@@ -18,13 +18,13 @@ class HealthUpdateExecutor : public PacketExecutorImplClient
 <HealthUpdatePacket, ClientPollable>
 {
 public:
-    HealthUpdateExecutor(InGameStateLogic &logic) : logic(logic) {}
+    HealthUpdateExecutor(Game &state) : state(state) {}
 
     bool execute([[maybe_unused]]Client &cl,
                  [[maybe_unused]] std::shared_ptr<ClientPollable> con,
                  [[maybe_unused]] std::shared_ptr<HealthUpdatePacket> packet)
     {
-        this->logic.updateHealth(packet->getEntityId(), packet->getHealth(),
+        this->state.updateHealth(packet->getEntityId(), packet->getHealth(),
                                  packet->getMaxHealth());
         return true;
     }
@@ -33,7 +33,7 @@ public:
         return PacketId::HEALTH_UPDATE;
     }
 private:
-    [[maybe_unused]] InGameStateLogic &logic;
+    [[maybe_unused]] Game &state;
 };
 
 #endif /* HEALTHUPDATE_EXECUTOR_HPP */

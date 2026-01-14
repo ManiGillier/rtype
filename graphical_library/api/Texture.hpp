@@ -8,22 +8,19 @@
 #ifndef CLIENT_GRAPHICAL_LIBRARY_TEXTURE_HPP
 #define CLIENT_GRAPHICAL_LIBRARY_TEXTURE_HPP
 
+#include <cstdint>
 #include <filesystem>
+#include <string>
 #include "Vector.hpp"
 
 namespace gl {
-    class Texture {
-    public:
-        virtual ~Texture() = default;
-
-        virtual auto load(std::filesystem::path) -> void = 0;
-        virtual auto unload() -> void = 0;
-
-        virtual auto draw(gl::WorldPosition, gl::Rotation = 0.0,
-                          gl::Scale = 1.0) -> void = 0;
-
-        virtual auto getWidth() const -> std::uint32_t = 0;
-        virtual auto getHeight() const -> std::uint32_t = 0;
+    struct Texture {
+        std::filesystem::path path;
+        std::string name;
+        Vector2ui size;
+        float scale;
+        Vector2i pos;
+        float rotation;
     };
 }
 

@@ -8,7 +8,7 @@
 #ifndef PLAYERID_EXECUTOR_HPP
 #define PLAYERID_EXECUTOR_HPP
 
-#include "client/states/game/logic.hpp"
+#include "client/state_machine/states/game/Game.hpp"
 
 #include <memory>
 #include <network/packets/listener/PacketExecutor.hpp>
@@ -18,13 +18,13 @@ class PlayerIdExecutor : public PacketExecutorImplClient
 <PlayerIdPacket, ClientPollable>
 {
 public:
-    PlayerIdExecutor(InGameStateLogic &logic) : logic(logic) {}
+    PlayerIdExecutor(Game &state) : state(state) {}
 
     bool execute([[maybe_unused]]Client &cl,
                  [[maybe_unused]] std::shared_ptr<ClientPollable> con,
                  [[maybe_unused]] std::shared_ptr<PlayerIdPacket> packet)
     {
-        this->logic.registerClientId(packet->getId());
+        this->state.registerClientId(packet->getId());
         return true;
     }
 
@@ -32,7 +32,7 @@ public:
         return PacketId::PLAYER_ID;
     }
 private:
-    [[maybe_unused]] InGameStateLogic &logic;
+    [[maybe_unused]] Game &state;
 };
 
 #endif /* PLAYERID_EXECUTOR_HPP */

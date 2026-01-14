@@ -20,9 +20,10 @@ public:
     /**
      * @return new state for change or nullptr
      */
+    [[nodiscard]]
     virtual auto update() -> std::unique_ptr<IState> = 0;
-protected:
-    virtual auto change_state(std::unique_ptr<IState>) -> void = 0;
+
+    virtual auto isEnd() -> bool = 0;
 };
 
 #endif /* CLIENT_ISTATE_HPP */
