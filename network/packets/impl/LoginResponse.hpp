@@ -13,21 +13,21 @@
 
 class LoginResponse : public Packet {
 public:
-    LoginResponse(const std::string &reason="", const std::string &token="") : Packet(PacketId::LOGIN_RESPONSE_PACKET) {
+    LoginResponse(uint8_t succesful=0, const std::string &reason="") : Packet(PacketId::LOGIN_RESPONSE_PACKET) {
+        this->succesful = succesful;
         this->reason = reason;
-        this->token = token;
     }
 
     void serialize() {
-        this->write(reason);
-        if (reason.empty())
-            this->write(token);
+        this->write(succesful);
+        if (!succesful)
+            this->write(reason);
     }
 
     void unserialize() {
-        this->read(reason);
-        if (reason.empty())
-            this->read(token);
+        this->read(succesful);
+        if (!succesful)
+            this->read(reason);
     }
 
     enum PacketMode getMode() const {
@@ -44,11 +44,11 @@ public:
 
     PacketDisplay display() const {
         if (reason.empty())
-            return {"token", this->token};
-        return {"reason", this->reason};
+            return {"succesful", (int) this->succesful};
+        return {"succesful", (int) this->succesful, "reason", this->reason};
     }
 private:
     std::string reason;
-    std::string token;
+    uint8_t succesful;
 };
 #endif /* !LOGINRESPONSE_HPP_ */

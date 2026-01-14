@@ -19,7 +19,7 @@ auto gameStart([[maybe_unused]] Registry &r, NetworkManager &networkManager)
 {
     if (IsKeyPressed(KEY_SPACE)) {
         // std::shared_ptr<Packet> p = std::make_shared<StartGamePacket>();
-        std::shared_ptr<Packet> p = create_packet(RegisterPacket, "meow", "sex");
+        std::shared_ptr<Packet> p = create_packet(RegisterPacket, "sex", "yay");
         networkManager.sendPacket(p);
     }
 }

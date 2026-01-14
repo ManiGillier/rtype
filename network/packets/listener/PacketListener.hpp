@@ -42,6 +42,10 @@ class PacketListener {
             p->setDisabled(true);
         }
 
+        void enableAllExecutors(std::shared_ptr<IPollable> p) {
+            p->setDisabled(false);
+        }
+
         void addToWhitelist(uint8_t p) {
             this->whitelist.push_back(p);
         }

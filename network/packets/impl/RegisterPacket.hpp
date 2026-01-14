@@ -9,7 +9,6 @@
 #define REGISTERPACKET_HPP_
 
     #include <network/packets/Packet.hpp>
-    #define PASSWORD_IS_ALREADY_OWNED_BY(USERNAME) "Sorry, this password is already owned by " USERNAME
 
 class RegisterPacket : public Packet {
 public:
@@ -38,6 +37,14 @@ public:
 
     const std::string getName() {
         return "RegisterResponse";
+    }
+
+    const std::string &getUsername() const {
+        return this->username;
+    }
+
+    const std::string &getPassword() const {
+        return this->password;
     }
 
     PacketDisplay display() const {

@@ -41,7 +41,7 @@ public:
 
     PacketDisplay display() const {
         return {"username", this->username,
-            "EH MEC LE PASSWORD VITE REGARDE C CE TRUC -------> /!\\", this->password};
+                "EH MEC LE PASSWORD VITE REGARDE C CE TRUC -------> /!\\", this->password};
     }
 private:
     std::string username;
