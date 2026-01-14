@@ -34,6 +34,11 @@ ThreadPool &RTypeServer::getGameThreadPool()
     return this->_threadPool;
 }
 
+AccountDatabase & RTypeServer::getAccountDatabase()
+{
+    return this->db;
+}
+
 std::shared_ptr<IPollable> RTypeServer::createClient(int fd)
 {
     // NOTE: id not used yet perhaps remove it later (was usefull during partI)
@@ -42,6 +47,7 @@ std::shared_ptr<IPollable> RTypeServer::createClient(int fd)
 
 void RTypeServer::onClientConnect(std::shared_ptr<IPollable> client)
 {
+    client->setDisabled(true);
     auto player = std::static_pointer_cast<Player>(client);
 
     LOG("Player connected to fd= " << client->getFileDescriptor());
@@ -81,4 +87,19 @@ void RTypeServer::onClientDisconnect(std::shared_ptr<IPollable> client)
         }
     }
     this->_lobbyManager.removePlayer(player);
+}
+
+bool RTypeServer::isConnected(const std::string &username)
+{
+    std::vector<std::shared_ptr<IPollable>> p = this->getPollManager().getPool();
+    std::shared_ptr<Player> player = nullptr;
+
+    for (std::shared_ptr<IPollable> pollable : p) {
+        player = std::dynamic_pointer_cast<Player>(pollable);
+        if (player == nullptr)
+            continue;
+        if (player->getUsername() == username)
+            return true;
+    }
+    return false;
 }

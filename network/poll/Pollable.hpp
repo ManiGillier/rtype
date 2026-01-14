@@ -72,11 +72,20 @@ class Pollable : public IPollable {
             return this->packetCount;
         }
 
+        virtual void setDisabled(bool disabled) {
+            this->disabled = disabled;
+        }
+
+        virtual bool isDisabled() const {
+            return this->disabled;
+        }
+
     protected:
         std::queue<std::shared_ptr<Packet>> toProcess;
         std::vector<std::tuple<std::shared_ptr<Packet>, std::optional<sockaddr_in>>> toProcessUDP;
         uint16_t packetCount = 0;
     private:
+        bool disabled = false;
         std::optional<sockaddr_in> address = std::nullopt;
         uint32_t uuid;
         int _fd;
