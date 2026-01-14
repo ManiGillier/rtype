@@ -75,7 +75,8 @@ auto Systems::pattern_system(
     NetworkManager &nm) -> void
 {
     (void)r;
-    (void)nm;
+
+    std::vector<PositionData> posData;
 
     for (auto &&[i, pos, acc, pat] : zipper) {
         const float speed = acc->x;
@@ -103,9 +104,15 @@ auto Systems::pattern_system(
             pos->x = pat->min_x;
             pos->y = pat->max_y - (pat->progress - 2 * width - height);
         }
-        // auto packet = std::make_shared<PositionUpdatePacket>(i, pos->x, pos->y);
-        // nm.queuePacket(packet, i, true);
+        PositionData pd = {
+            .id = static_cast<uint32_t>(i),
+            .x = pos->x,
+            .y = pos->y,
+        };
+        posData.push_back(pd);
     }
+    auto posDataPacket = create_packet(PositionUpdatePacket, posData);
+    nm.queuePacket(posDataPacket);
 }
 
 auto Systems::update_laser_system(
