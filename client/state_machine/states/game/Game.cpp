@@ -262,7 +262,12 @@ auto Game::destroyEntities(std::vector<uint16_t> ids) -> void
     std::queue<std::string> deadPlayers;
 
     for (auto id : ids) {
-        this->registry.kill_entity(this->registry.entity_from_index(id));
+        std::optional<std::size_t> realId
+            = this->sync.get_mine_from_theirs(id);
+        if (!realId)
+            continue;
+        this->registry.kill_entity
+            (this->registry.entity_from_index(*realId));
         for (auto &[name, player] : this->players) {
             if (player.first == id)
                 deadPlayers.push(name);
