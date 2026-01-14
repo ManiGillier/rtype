@@ -12,6 +12,7 @@
 #include "ecs/regisrty/Registry.hpp"
 #include "server/game/factories/EntityFactory.hpp"
 #include "server/network/network_manager/NetworkManager.hpp"
+#include <network/packets/impl/SpawnStraightMovingEntityPacket.hpp>
 #include <vector>
 
 enum class PatternType {
@@ -27,7 +28,7 @@ class Boss
 {
   public:
     Boss(NetworkManager &nm, Registry &r, EntityFactory &factory,
-         int difficulty = 1);
+         std::chrono::steady_clock::time_point _gameStart, int difficulty = 1);
     ~Boss() = default;
     std::size_t getId() const;
     void shoot();
@@ -35,7 +36,7 @@ class Boss
     int getDifficulty() const;
 
   private:
-    void sendBullet(Entity e);
+    void addBullet(float spawn_x, float spawn_y, float acc_x, float acc_y);
     void bulletPattern();
     void rotatePattern();
 
@@ -51,9 +52,11 @@ class Boss
     EntityFactory _factory;
 
     std::size_t _id;
+    std::chrono::steady_clock::time_point _gameStart;
     std::chrono::steady_clock::time_point _start;
     std::chrono::steady_clock::time_point _patternChangeTime;
 
+    std::vector<StraightMovingEntity> _data;
     std::vector<PatternType> _patterns;
     int _difficulty;
     std::size_t _currentPatternIndex;

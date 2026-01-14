@@ -12,6 +12,8 @@
 #include "../network/network_manager/NetworkManager.hpp"
 #include "../player/Player.hpp"
 #include "ecs/regisrty/Registry.hpp"
+#include "server/game/ticker/Ticker.hpp"
+#include <cstdint>
 #include <memory>
 
 class Game
@@ -26,6 +28,8 @@ class Game
     bool isRunning();
 
   private:
+    void sendCurrentTime(Ticker &ticker);
+    void setDiffTime();
     /*
        init helpers to creates players entity then send entity Id to the client
     */
@@ -52,6 +56,8 @@ class Game
     EntityFactory _factory;
 
     std::mutex _runningMutex;
+    std::chrono::steady_clock::time_point _gameStart;
+    std::chrono::steady_clock::time_point _lastTick;
     bool _isRunning;
 };
 

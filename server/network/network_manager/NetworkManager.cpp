@@ -11,6 +11,8 @@ void NetworkManager::queuePacket(std::shared_ptr<Packet> packet,
                                  std::size_t playerId, bool filter)
 
 {
+    if (!packet)
+        return;
     if (!filter || (filter && _filter.shouldSend(playerId, packet)))
         _packets.push(packet);
 }
@@ -48,4 +50,14 @@ void NetworkManager::clear()
 void NetworkManager::clearId(std::size_t id)
 {
     this->_filter.reset(id);
+}
+
+void NetworkManager::setLastTick(float last)
+{
+    this->_lastTick = last;
+}
+
+float NetworkManager::getLastTick() const
+{
+    return this->_lastTick;
 }

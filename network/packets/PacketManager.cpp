@@ -26,6 +26,9 @@
 #include "impl/PositionUpdatePacket.hpp"
 #include "network/packets/impl/StartGamePacket.hpp"
 #include "network/packets/impl/TestPacket.hpp"
+#include "network/packets/impl/SpawnStraightMovingEntityPacket.hpp"
+#include "network/packets/impl/TimeNowPacket.hpp"
+#include "network/packets/impl/TestPacket.hpp"
 
 void PacketManager::registerPackets()
 {
@@ -48,6 +51,8 @@ void PacketManager::registerPackets()
     this->packets.push_back(std::make_shared<CAuthentificationPacket>());
     this->packets.push_back(std::make_shared<AuthentifiedPacket>());
     this->packets.push_back(std::make_shared<StartGamePacket>());
+    this->packets.push_back(std::make_shared<SpawnStraightMovingEntityPacket>());
+    this->packets.push_back(std::make_shared<TimeNowPacket>());
     this->packets.push_back(std::make_shared<TestPacket>());
 }
 

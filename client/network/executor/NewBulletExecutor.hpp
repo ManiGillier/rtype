@@ -13,24 +13,25 @@
 #include <iostream>
 #include <memory>
 #include <network/packets/listener/PacketExecutor.hpp>
-#include <network/packets/impl/NewBulletPacket.hpp>
+#include <network/packets/impl/SpawnStraightMovingEntityPacket.hpp>
 
 class NewBulletExecutor : public PacketExecutorImplClient
-<NewBulletPacket, ClientPollable>
+<SpawnStraightMovingEntityPacket, ClientPollable>
 {
 public:
     NewBulletExecutor(Game &state) : state(state) {}
 
     bool execute([[maybe_unused]] Client &cl,
                  [[maybe_unused]] std::shared_ptr<ClientPollable> con,
-                 [[maybe_unused]] std::shared_ptr<NewBulletPacket> packet)
+                 [[maybe_unused]] std::shared_ptr
+        <SpawnStraightMovingEntityPacket> packet)
     {
-        this->state.newBullet(packet->getEntityId());
+        this->state.newBullet(packet->getMovingEntities());
         return true;
     }
 
     int getPacketId() const {
-        return PacketId::NEW_BULLET;
+        return PacketId::SPAWN_STRAIGHT_MOVING_ENTITY_PACKET;
     }
 private:
     [[maybe_unused]] Game &state;

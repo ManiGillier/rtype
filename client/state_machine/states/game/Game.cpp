@@ -17,6 +17,7 @@
 #include "client/components/HorizontalTiling.hpp"
 #include "client/components/PlayerId.hpp"
 #include "client/components/Texture.hpp"
+#include "client/components/StraightMoving.hpp"
 
 #include "client/network/executor/NewPlayerExecutor.hpp"
 #include "client/network/executor/NewEnemyExecutor.hpp"
@@ -30,10 +31,12 @@
 #include "client/network/executor/HitboxSizeUpdateExecutor.hpp"
 #include "client/network/executor/LaserActivateUpdateExecutor.hpp"
 #include "client/network/executor/PositionUpdateExecutor.hpp"
+#include "client/network/executor/UpdateTimeExecutor.hpp"
 
 #include "network/packets/impl/ClientInputsPacket.hpp"
 
 #include "systems/Systems.hpp"
+#include <cstdint>
 
 Game::Game(ClientManager &cm, Registry &r, Sync &s)
     : State(cm, r, s)
@@ -57,18 +60,12 @@ auto Game::init_systems() -> void
     this->registry.register_component<HorizontalTiling>();
     this->registry.register_component<PlayerId>();
     this->registry.register_component<TextureComp>();
+    this->registry.register_component<StraightMovingComp>();
 
     this->registry.add_render_system<HorizontalTiling, TextureComp>
         (animateTiling, std::ref(this->clientManager.getGui()));
     this->registry.add_render_system<HorizontalTiling, TextureComp>
         (renderHTiledTexture, std::ref(this->clientManager.getGui()));
-
-    Entity background = this->registry.spawn_named_entity("background");
-    this->registry.add_component<HorizontalTiling>(background, {2, 0, -50});
-    this->registry.add_component<TextureComp>
-        (background, {"background"});
-
-
     this->registry.add_render_system<Position, HitBox, ElementColor>
         (renderSquare, std::ref(this->getGraphicalLibrary()));
     this->registry.add_render_system<Laser, Dependence, ElementColor>
@@ -77,9 +74,17 @@ auto Game::init_systems() -> void
         (renderPlayerId, std::ref(this->getGraphicalLibrary()),
          std::ref(this->clientId));
 
+    this->registry.add_update_system<Position, StraightMovingComp>
+        (updateStraightMoving, std::ref(*this));
+
     this->registry.add_global_update_system
         (playerInputs, std::ref(this->clientManager.getGui()),
          std::ref(this->clientManager.getNetworkManager()));
+
+    Entity background = this->registry.spawn_named_entity("background");
+    this->registry.add_component<HorizontalTiling>(background, {2, 0, -50});
+    this->registry.add_component<TextureComp>
+        (background, {"background"});
 
     nm.addExecutor(std::make_unique<NewPlayerExecutor>(*this));
     nm.addExecutor(std::make_unique<NewEnemyExecutor>(*this));
@@ -93,6 +98,7 @@ auto Game::init_systems() -> void
     nm.addExecutor(std::make_unique<HitboxSizeUpdateExecutor>(*this));
     nm.addExecutor(std::make_unique<LaserActiveUpdateExecutor>(*this));
     nm.addExecutor(std::make_unique<PositionUpdateExecutor>(*this));
+    nm.addExecutor(std::make_unique<TimeNowExecutor>(*this));
 }
 
 auto Game::init_entities() -> void {}
@@ -130,15 +136,30 @@ auto Game::newEnemy(std::size_t enemy_id) -> void
     r.add_component<Health>(enemy, {0, 0});
 }
 
-auto Game::newBullet(std::size_t bullet_id) -> void
+auto Game::newBullet(std::vector<StraightMovingEntity> entities) -> void
 {
     Registry &r = this->registry;
-    Entity bullet = r.spawn_entity();
+    for (auto &entity : entities) {
+        Entity bullet = r.spawn_entity();
 
-    this->sync.add(bullet.getId(), bullet_id);
-    r.add_component<Position>(bullet, {-250, -200});
-    r.add_component<HitBox>(bullet, {10, 10});
-    r.add_component<ElementColor>(bullet, {gl::BLUE});
+        this->sync.add(bullet.getId(), entity.id);
+        r.add_component<Position>(bullet, {
+            static_cast<float>(entity.pos_x),
+            static_cast<float>(entity.pos_y)
+        });
+        r.add_component<HitBox>(bullet, {
+            static_cast<float>(entity.hitbox_x),
+            static_cast<float>(entity.hitbox_y)
+        });
+        r.add_component<ElementColor>(bullet, {gl::BLUE});
+        r.add_component<StraightMovingComp>(bullet, {
+            .pos_x_0 = entity.pos_x,
+            .pos_y_0 = entity.pos_y,
+            .vel_x = entity.vel_x,
+            .vel_y = entity.vel_y,
+            .ms_time = entity.ms_time
+        });
+    }
 }
 
 auto Game::despawnEntity(std::size_t id) -> void
@@ -206,4 +227,14 @@ auto Game::updatePosition(std::size_t id, float x, float y)
         return;
     }
     this->registry.set<Position>(*my_id, x, y);
+}
+
+auto Game::getTime() -> uint32_t
+{
+    return this->startTime;
+}
+
+auto Game::setTime(uint32_t time) -> void
+{
+    this->startTime = time;
 }

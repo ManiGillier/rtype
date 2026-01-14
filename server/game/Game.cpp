@@ -19,12 +19,14 @@
 #include "systems/GameSystems.hpp"
 #include "ticker/Ticker.hpp"
 #include <chrono>
+#include <cstdint>
 #include <functional>
 #include <memory>
 #include <mutex>
 #include <network/packets/impl/GameOverPacket.hpp>
 #include <network/packets/impl/HitboxSizeUpdatePacket.hpp>
 #include <network/packets/impl/NewPlayerPacket.hpp>
+#include <network/packets/impl/TimeNowPacket.hpp>
 #include <optional>
 #include <thread>
 #include <tuple>
@@ -41,10 +43,11 @@ void Game::loop(int ticks)
 {
     Ticker ticker(ticks);
     GamePlay gamePlay(this->_networkManager, this->_registry, this->_factory);
+    this->_gameStart = std::chrono::steady_clock::now();
 
     this->_isRunning = true;
     std::this_thread::sleep_for(
-        std::chrono::milliseconds(200)); // TODO: remove this
+        std::chrono::milliseconds(500)); // TODO: remove this
 
     this->initializeComponents();
     this->initializeSystems();
@@ -53,8 +56,7 @@ void Game::loop(int ticks)
     bool running = true;
 
     do {
-        ticker.now();
-
+        this->sendCurrentTime(ticker);
         this->_networkManager.flush();
         {
             std::lock_guard<std::mutex> lock(_registryMutex);
@@ -70,12 +72,31 @@ void Game::loop(int ticks)
             running = _isRunning;
         }
         ticker.wait();
+        this->setDiffTime();
     } while (running);
 
     this->_networkManager.flush();
     this->_networkManager.clear();
     this->resetPlayersEntities();
     this->_registry = Registry();
+}
+
+void Game::sendCurrentTime(Ticker &ticker)
+{
+    this->_lastTick = ticker.now();
+    auto diff = this->_lastTick - _gameStart;
+    auto tick = static_cast<uint32_t>(
+        std::chrono::duration_cast<std::chrono::milliseconds>(diff).count());
+    _networkManager.queuePacket(create_packet(TimeNowPacket, tick));
+}
+
+void Game::setDiffTime()
+{
+    auto diff = std::chrono::steady_clock::now() - this->_lastTick;
+
+    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(diff).count();
+    float seconds = static_cast<float>(ms) / 1000.0f;
+    this->_networkManager.setLastTick(seconds);
 }
 
 void Game::initPlayers()
@@ -105,8 +126,8 @@ void Game::initPlayers()
             HitBoxSize = create_packet(HitboxSizeUpdatePacket, playerId,
                                        hitBox->width, hitBox->height);
         }
-        _networkManager.queuePacket(HitBoxSize);
         _networkManager.queuePacket(newPlayerPacket);
+        _networkManager.queuePacket(HitBoxSize);
     }
 }
 
