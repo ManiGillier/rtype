@@ -21,7 +21,7 @@
 
 //#include "client/network/executor/NewPlayerExecutor.hpp"
 #include "client/network/executor/NewEnemyExecutor.hpp"
-//#include "client/network/executor/NewBulletExecutor.hpp"
+#include "client/network/executor/NewBulletExecutor.hpp"
 //#include "client/network/executor/DespawnPlayerExecutor.hpp"
 //#include "client/network/executor/DespawnBulletExecutor.hpp"
 //#include "client/network/executor/EnemyDiedExecutor.hpp"
@@ -89,7 +89,7 @@ auto Game::init_systems() -> void
 
 //    nm.addExecutor(std::make_unique<NewPlayerExecutor>(*this));
     nm.addExecutor(std::make_unique<NewEnemyExecutor>(*this));
-//    nm.addExecutor(std::make_unique<NewBulletExecutor>(*this));
+    nm.addExecutor(std::make_unique<NewBulletExecutor>(*this));
 //    nm.addExecutor(std::make_unique<DespawnPlayerExecutor>(*this));
 //    nm.addExecutor(std::make_unique<DespawnBulletExecutor>(*this));
 //    nm.addExecutor(std::make_unique<EnemyDiedExecutor>(*this));
