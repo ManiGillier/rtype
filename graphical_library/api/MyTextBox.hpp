@@ -8,7 +8,7 @@
 #ifndef CLIENT_TEXTBOX_HPP
 #define CLIENT_TEXTBOX_HPP
 
-#include <raylib.h>
+#include "Color.hpp"
 #include <string>
 
 namespace gl {

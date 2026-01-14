@@ -9,7 +9,7 @@
 #include <raylib.h>
 
 MyInputBox::MyInputBox(int x, int y, int width, int height,
-    Color boxColor, Color hoveredBoxColor, int transparency)
+    gl::Color boxColor, gl::Color hoveredBoxColor, int transparency)
     : hovered(false), posX(x), posY(y), sizeX(width), sizeY(height),
     color(boxColor), hoveredColor(hoveredBoxColor),
     transparency(transparency), text(""), cursorPosition(0)
@@ -26,8 +26,8 @@ void MyInputBox::draw() const {
         static_cast<float>(sizeY)
     };
 
-    Color currentColor = this->active ? this->hoveredColor : this->color;
-    DrawRectangleRec(boxRect, currentColor);
+    gl::Color currentColor = this->active ? this->hoveredColor : this->color;
+    DrawRectangleRec(boxRect, {currentColor.r, currentColor.g, currentColor.b, currentColor.a});
 
     if (this->active)
             DrawRectangleLinesEx(boxRect, 3, BLACK);
@@ -94,11 +94,11 @@ void MyInputBox::setTransparency(int transparency) {
     this->transparency = transparency;
 }
 
-void MyInputBox::setColor(Color color) {
+void MyInputBox::setColor(gl::Color color) {
     this->color = color;
 }
 
-void MyInputBox::setHoveredColor(Color aColor) {
+void MyInputBox::setHoveredColor(gl::Color aColor) {
     this->hoveredColor = aColor;
 }
 

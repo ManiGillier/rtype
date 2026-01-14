@@ -24,13 +24,14 @@ void MyCheckBox::draw() const {
     if (this->checked) {
         DrawText("X", this->posX + 5, this->posY + 5, this->size - 10, BLACK);
     }
+    gl::Color currentColor = this->hovered ? this->hoveredColor : this->color;
     if (!this->text.empty()) {
         DrawText(
             this->text.c_str(),
             this->posX + this->size + 10,
             this->posY + (this->size / 2) - 10,
             20,
-            this->hovered ? this->hoveredColor : this->color
+            {currentColor.r, currentColor.g, currentColor.b, currentColor.a}
         );
     }
 }
@@ -81,7 +82,7 @@ void MyCheckBox::setTransparency(int transparency_) {
     this->transparency = transparency_;
 }
 
-void MyCheckBox::setColor(Color color_) {
+void MyCheckBox::setColor(gl::Color color_) {
     this->color = color_;
 }
 
@@ -93,6 +94,6 @@ void MyCheckBox::onClick() {
     this->toggle();
 }
 
-void MyCheckBox::setHoveredColor(Color aColor) {
+void MyCheckBox::setHoveredColor(gl::Color aColor) {
     this->hoveredColor = aColor;
 }

@@ -8,7 +8,7 @@
 #ifndef CLIENT_BUTTON_HPP
 #define CLIENT_BUTTON_HPP
 
-#include <raylib.h>
+#include "Color.hpp"
 #include <string>
 
 namespace gl {

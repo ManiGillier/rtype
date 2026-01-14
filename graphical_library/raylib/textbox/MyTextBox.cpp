@@ -8,10 +8,11 @@
 #include "MyTextBox.hpp"
 #include <raylib.h>
 
+
 MyTextBox::MyTextBox(int x, int y, int width, int height,
-    Color boxColor, Color hoveredBoxColor, int transparency)
+    gl::Color boxColor, gl::Color hoveredBoxColor, int transparency)
     : hovered(false), posX(x), posY(y), sizeX(width), sizeY(height),
-    color(boxColor), hoveredColor(hoveredBoxColor),
+    color(boxColor), hoveredColor({hoveredBoxColor.r,hoveredBoxColor.g,hoveredBoxColor.b,hoveredBoxColor.a}),
     transparency(transparency), text(""), cursorPosition(0) {}
 
 void MyTextBox::draw() const {
@@ -22,8 +23,8 @@ void MyTextBox::draw() const {
         static_cast<float>(sizeY)
     };
 
-    Color currentColor = this->hovered ? this->hoveredColor : this->color;
-    DrawRectangleRec(boxRect, currentColor);
+    gl::Color currentColor = this->hovered ? this->hoveredColor : this->color;
+    DrawRectangleRec(boxRect, {currentColor.r, currentColor.g, currentColor.b, currentColor.a});
 
     if (this->hovered)
         DrawRectangleLinesEx(boxRect, 2, DARKGRAY);
@@ -71,11 +72,11 @@ void MyTextBox::setTransparency(int transparency) {
     this->transparency = transparency;
 }
 
-void MyTextBox::setColor(Color color) {
+void MyTextBox::setColor(gl::Color color) {
     this->color = color;
 }
 
-void MyTextBox::setHoveredColor(Color aColor) {
+void MyTextBox::setHoveredColor(gl::Color aColor) {
     this->hoveredColor = aColor;
 }
 

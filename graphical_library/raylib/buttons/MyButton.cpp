@@ -6,9 +6,10 @@
 */
 
 #include "MyButton.hpp"
+#include <raylib.h>
 
 MyButton::MyButton(int x, int y, int width, int height,
-    Color buttonColor, Color hoveredButtonColor, int transparency)
+    gl::Color buttonColor, gl::Color hoveredButtonColor, int transparency)
     : posX(x), posY(y), sizeX(width), sizeY(height),
     color(buttonColor), hoveredColor(hoveredButtonColor),
     transparency(transparency) {}
@@ -20,8 +21,8 @@ MyButton::MyButton(int x, int y, int width, int height,
             static_cast<float>(sizeX),
             static_cast<float>(sizeY)
         };
-        Color currentColor = this->hovered ? this->hoveredColor : this->color;
-        DrawRectangleRec(buttonRect, currentColor);
+        gl::Color currentColor = this->hovered ? this->hoveredColor : this->color;
+        DrawRectangleRec(buttonRect, {currentColor.r, currentColor.g, currentColor.b, currentColor.a});
         DrawRectangleLinesEx(buttonRect, 2, BLACK);
         DrawText(
             this->text.c_str(),
@@ -69,11 +70,11 @@ void MyButton::setTransparency(int transparency) {
     this->transparency = transparency;
 }
 
-void MyButton::setColor(Color color) {
+void MyButton::setColor(gl::Color color) {
     this->color = color;
 }
 
-void MyButton::setHoveredColor(Color aColor) {
+void MyButton::setHoveredColor(gl::Color aColor) {
     this->hoveredColor = aColor;
 }
 

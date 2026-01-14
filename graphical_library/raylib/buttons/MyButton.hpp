@@ -14,8 +14,8 @@
 class MyButton : public gl::Button
 {
 public:
-    MyButton(int x, int y, int width, int height, Color buttonColor,
-        Color hoveredButtonColor, int transparency = 255);
+    MyButton(int x, int y, int width, int height, gl::Color buttonColor,
+        gl::Color hoveredButtonColor, int transparency = 255);
     void draw() const override;
     void update() override;
     bool isClicked() override;
@@ -23,8 +23,8 @@ public:
     void setPosition(int x, int y) override;
     void setSize(int width, int height) override;
     void setTransparency(int transparency) override;
-    void setColor(Color color) override;
-    void setHoveredColor(Color aColor) override;
+    void setColor(gl::Color color) override;
+    void setHoveredColor(gl::Color aColor) override;
     void setText(const std::string str) override;
     void switchClick() override;
 private:
@@ -33,8 +33,8 @@ private:
     int posY;
     int sizeX;
     int sizeY;
-    Color color;
-    Color hoveredColor;
+    gl::Color color;
+    gl::Color hoveredColor;
     int transparency;
     std::string text;
     bool clicked = false;

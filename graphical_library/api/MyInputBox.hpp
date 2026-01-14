@@ -8,7 +8,7 @@
 #ifndef CLIENT_INPUTBOX_HPP
 #define CLIENT_INPUTBOX_HPP
 
-#include <raylib.h>
+#include "Color.hpp"
 #include <string>
 
 namespace gl {

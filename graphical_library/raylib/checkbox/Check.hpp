@@ -10,7 +10,6 @@
 
 #include <graphical_library/api/MyCheck.hpp>
 #include <string>
-#include <raylib.h>
 
 class MyCheckBox : public gl::Checkbox
 {
@@ -26,8 +25,8 @@ public:
     void setPosition(int x, int y) override;
     void setSize(int size) override;
     void setTransparency(int transparency) override;
-    void setColor(Color aColor) override;
-    void setHoveredColor(Color aColor) override;
+    void setColor(gl::Color aColor) override;
+    void setHoveredColor(gl::Color aColor) override;
     void setText(const std::string& str) override;
     void onClick() override;
 private:
@@ -37,8 +36,8 @@ private:
     int posY;
     int size;
     int transparency;
-    Color color;
-    Color hoveredColor;
+    gl::Color color;
+    gl::Color hoveredColor;
     std::string text;
 };
 

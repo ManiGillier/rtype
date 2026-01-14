@@ -12,15 +12,15 @@
 class MyInputBox : public gl::InputBox
 {
 public:
-    MyInputBox(int x, int y, int width, int height, Color boxColor,
-        Color hoveredBoxColor, int transparency = 255);
+    MyInputBox(int x, int y, int width, int height, gl::Color boxColor,
+        gl::Color hoveredBoxColor, int transparency = 255);
     void draw() const override;
     void update() override;
     void setPosition(int x, int y) override;
     void setSize(int width, int height) override;
     void setTransparency(int transparency) override;
-    void setColor(Color color) override;
-    void setHoveredColor(Color aColor) override;
+    void setColor(gl::Color color) override;
+    void setHoveredColor(gl::Color aColor) override;
     void setText(const std::string& str) override;
     bool isHovered();
     bool isActive();
@@ -35,9 +35,9 @@ private:
     int posY;
     int sizeX;
     int sizeY;
-    Color color;
-    Color hoveredColor;
-    Color activeColor;
+    gl::Color color;
+    gl::Color hoveredColor;
+    gl::Color activeColor;
     int transparency;
     std::string text;
     int cursorPosition;
