@@ -23,12 +23,11 @@ auto renderPlayerId([[maybe_unused]] Registry &reg,
 {
     int height = (int) gl.get_window_size().y;
     for (auto &&[ecsId, pos, playerId] : zip) {
-        gl::Color color = my_id ? (*my_id == ecsId ? gl::YELLOW : gl::WHITE)
-                          : gl::RED;
+        gl::Color color =
+            my_id ? (*my_id == ecsId ? gl::YELLOW : gl::WHITE) : gl::RED;
         const int fontSize = 10;
-        const std::string txt = std::to_string(playerId->id);
         gl::Text text = {
-            txt,
+            playerId->name,
             {
                 (int) pos->x + 15,
                 height - (int) pos->y - 10

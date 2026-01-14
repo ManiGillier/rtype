@@ -11,9 +11,11 @@
 #include "client/state_machine/State.hpp"
 
 #include <cstdint>
+#include <map>
 #include <optional>
 #include <vector>
 
+#include <network/packets/impl/LinkPlayersPacket.hpp>
 #include <network/packets/impl/SpawnStraightMovingEntityPacket.hpp>
 
 class Game : public State {
@@ -25,7 +27,9 @@ public:
 
     auto getTime() -> uint32_t;
     auto setTime(uint32_t) -> void;
-    auto newPlayer(std::size_t player_id, std::size_t laser_id) -> void;
+    auto newPlayers(std::vector<PlayerLink> data) -> void;
+    auto newPlayer(std::string name, std::size_t player_id,
+                   std::size_t laser_id) -> void;
     auto newEnemy(std::size_t enemy_id) -> void;
     auto newBullet(std::vector<StraightMovingEntity>) -> void;
     auto despawnEntity(std::size_t id) -> void;
@@ -36,7 +40,7 @@ public:
     auto updateLaser(std::size_t id, bool active, float length) -> void;
     auto updatePosition(std::size_t id, float x, float y) -> void;
 private:
-    std::size_t playerId = 0;
+    std::map<std::string, std::pair<std::size_t, std::size_t>> players;
     std::optional<std::size_t> clientId = std::nullopt;
     uint32_t startTime = 0;
 };

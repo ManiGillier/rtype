@@ -32,6 +32,7 @@
 //#include "client/network/executor/LaserActivateUpdateExecutor.hpp"
 //#include "client/network/executor/PositionUpdateExecutor.hpp"
 #include "client/network/executor/UpdateTimeExecutor.hpp"
+#include "client/network/executor/LinkPlayersExecutor.hpp"
 
 #include "network/packets/impl/ClientInputsPacket.hpp"
 
@@ -99,11 +100,13 @@ auto Game::init_systems() -> void
 //    nm.addExecutor(std::make_unique<LaserActiveUpdateExecutor>(*this));
 //    nm.addExecutor(std::make_unique<PositionUpdateExecutor>(*this));
     nm.addExecutor(std::make_unique<TimeNowExecutor>(*this));
+    nm.addExecutor(std::make_unique<LinkPlayersExecutor>(*this));
 }
 
 auto Game::init_entities() -> void {}
 
-auto Game::newPlayer(std::size_t player_id, std::size_t laser_id)
+auto Game::newPlayer(std::string name, std::size_t player_id,
+                     std::size_t laser_id)
 -> void
 {
     Registry &r = this->registry;
@@ -116,12 +119,12 @@ auto Game::newPlayer(std::size_t player_id, std::size_t laser_id)
     r.add_component<HitBox>(player, {20, 20});
     r.add_component<ElementColor>(player, {gl::WHITE});
     r.add_component<Health>(player, {0, 0});
-    r.add_component<PlayerId>(player, {this->playerId});
-    this->playerId++;
+    r.add_component<PlayerId>(player, {name});
 
     r.add_component<Dependence>(laser, {player.getId()});
     r.add_component<Laser>(laser, {true, 30});
     r.add_component<ElementColor>(laser, {gl::GREEN});
+    this->players[name] = {player_id, laser_id};
 }
 
 auto Game::newEnemy(std::size_t enemy_id) -> void
@@ -237,4 +240,10 @@ auto Game::getTime() -> uint32_t
 auto Game::setTime(uint32_t time) -> void
 {
     this->startTime = time;
+}
+
+auto Game::newPlayers(std::vector<PlayerLink> data) -> void
+{
+    for (auto &player : data)
+        this->newPlayer(player.name, player.id, player.laserId);
 }
