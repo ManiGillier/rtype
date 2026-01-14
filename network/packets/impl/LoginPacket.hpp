@@ -39,6 +39,14 @@ public:
         return "LoginPacket";
     }
 
+    const std::string &getUsername() const {
+        return this->username;
+    }
+
+    const std::string &getPassword() const {
+        return this->password;
+    }
+
     PacketDisplay display() const {
         return {"username", this->username,
                 "EH MEC LE PASSWORD VITE REGARDE C CE TRUC -------> /!\\", this->password};

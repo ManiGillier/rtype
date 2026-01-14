@@ -14,7 +14,7 @@
 #include <network/server/Server.hpp>
 #include <memory>
 
-#define EMPTY_USERNAME_OR_PASSWORD "tried to register with empty username or password, disconnecting.."
+#define REG_EMPTY_USERNAME_OR_PASSWORD "tried to register with empty username or password, disconnecting.."
 #define PASSWORD_USED_BY "Sorry, password is already being used by user "
 
 class RTypeServer;

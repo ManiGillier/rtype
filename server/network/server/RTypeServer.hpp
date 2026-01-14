@@ -22,6 +22,7 @@ class RTypeServer : public Server
     std::shared_ptr<IPollable> createClient(int fd) override;
     void onClientConnect(std::shared_ptr<IPollable> client) override;
     void onClientDisconnect(std::shared_ptr<IPollable> client) override;
+    bool isConnected(const std::string &username);
     void setTicks(int ticks);
     int getTicks() const;
     LobbyManager &getLobbyManager();

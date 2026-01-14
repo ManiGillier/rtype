@@ -23,7 +23,7 @@ bool RegisterExecutor::execute(Server &server, std::shared_ptr<Player> player,
     if (player->isConnected())
         return true;
     if (username.empty() || password.empty()) {
-        LOG_ERR("User " << player->getFileDescriptor() << EMPTY_USERNAME_OR_PASSWORD);
+        LOG_ERR("User " << player->getFileDescriptor() << REG_EMPTY_USERNAME_OR_PASSWORD);
         return false;
     }
     try {
@@ -38,6 +38,11 @@ bool RegisterExecutor::execute(Server &server, std::shared_ptr<Player> player,
             return true;
         }
         db.put(username, password);
+        if (_rtypeServer.isConnected(username)) {
+            player->sendPacket(create_packet(LoginResponse, (uint8_t) 0,
+                std::string("User " + username + " already connected.")));
+            return true;
+        }
         player->sendPacket(create_packet(LoginResponse, 1, ""));
         player->connect(username);
         server.getPacketListener().enableAllExecutors(player);

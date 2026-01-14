@@ -14,6 +14,8 @@
 #include <network/server/Server.hpp>
 #include <memory>
 
+#define LOG_EMPTY_USERNAME_OR_PASSWORD "tried to login with empty username or password, disconnecting.."
+
 class RTypeServer;
 
 class LoginExecutor
