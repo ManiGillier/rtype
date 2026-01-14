@@ -36,10 +36,10 @@ public:
     }
 
     void serialize() {
-        this->write(inputs);
+        this->write(inputs.byte);
     }
     void unserialize() {
-        this->read(inputs);
+        this->read(inputs.byte);
     }
 
     const std::string getName() {

@@ -10,30 +10,60 @@
 
 #include "network/packets/Packet.hpp"
 #include <cstddef>
+#include <cstdint>
 #include <iostream>
 #include <memory>
+#include <ostream>
+#include <vector>
+
+struct LaserData {
+    uint32_t id;
+    uint8_t active;
+    float length;
+};
+
+inline std::ostream &operator<<(std::ostream &os, const std::vector<LaserData> &d)
+{
+    os << "[";
+    for (auto data : d) {
+        os << "{" << "ID=" << data.id << ",ACTIVE=" << (data.active
+            ? "TRUE" : "FALSE")
+            << ",LENGTH=" << data.length << "};";
+    }
+    os << "]";
+    return os;
+}
 
 class LaserActiveUpdatePacket : public Packet
 {
 public:
-    LaserActiveUpdatePacket(std::size_t id = 0, bool active = false,
-                            float length = 0.0) :
-        Packet(PacketId::LASER_ACTIVE_UPDATE), id(id), active(active),
-        length(length) {}
+    LaserActiveUpdatePacket(std::vector<LaserData> data = {}) :
+        Packet(PacketId::LASER_ACTIVE_UPDATE), data(data) {}
 
     enum PacketMode getMode() const override {
         return PacketMode::UDP;
     }
 
     void serialize() override {
-        this->write(id);
-        this->write(active);
-        this->write(length);
+        this->write(static_cast<uint16_t>(this->data.size()));
+        for (auto &d : this->data) {
+            this->write(d.id);
+            this->write(d.active);
+            this->write(d.length);
+        }
     }
     void unserialize()override {
-        this->read(id);
-        this->read(active);
-        this->read(length);
+        this->data.clear();
+        uint16_t size = 0;
+        this->read(size);
+        this->data.reserve(size);
+        for (uint16_t i = 0; i < size; i++) {
+            LaserData laser;
+            this->read(laser.id);
+            this->read(laser.active);
+            this->read(laser.length);
+            this->data.push_back(laser);
+        }
     }
 
     const std::string getName() override {
@@ -41,32 +71,18 @@ public:
     }
 
     PacketDisplay display() const override {
-        return {"Id", this->id, "active", this->active ? "ON" : "OFF", "length", this->length};
+        return {"Quantity", this->data.size(), "Data", this->data};
     }
 
     std::shared_ptr<Packet> clone() const override {
         return make_copy(LaserActiveUpdatePacket);
     }
 
-    bool isEqual(const Packet &o) const override
-    {
-        if (o.getId() != LASER_ACTIVE_UPDATE) {
-            return false;
-        }
-        const LaserActiveUpdatePacket &other =
-            static_cast<const LaserActiveUpdatePacket &>(o);
-
-        return (this->getLength() == other.getLength() &&
-                this->isActive() == other.isActive());
+    std::vector<LaserData> getLaserData() const {
+        return this->data;
     }
-
-    auto getEntityId() const -> std::size_t { return this->id; }
-    auto isActive() const -> bool { return this->active; }
-    auto getLength() const -> float { return this->length; }
 private:
-    std::size_t id;
-    bool active;
-    float length;
+    std::vector<LaserData> data;
 };
 
 #endif /* LASERACTIVEUPDATE_PACKET_HPP */

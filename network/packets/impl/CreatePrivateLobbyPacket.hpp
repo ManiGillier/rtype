@@ -2,22 +2,22 @@
 ** EPITECH PROJECT, 2025
 ** rtype
 ** File description:
-** PlayerHit packet
+** CreatePrivateLobby packet
 */
 
-#ifndef PLAYERHIT_PACKET_HPP
-#define PLAYERHIT_PACKET_HPP
+#ifndef CREATE_PRIVATE_LOBBY_PACKET_HPP
+#define CREATE_PRIVATE_LOBBY_PACKET_HPP
 
 #include "network/packets/Packet.hpp"
 #include <cstddef>
 #include <iostream>
 #include <memory>
 
-class PlayerHitPacket : public Packet
+class CreatePrivateLobbyPacket : public Packet
 {
 public:
-    PlayerHitPacket() :
-        Packet(PacketId::PLAYER_HIT) {}
+    CreatePrivateLobbyPacket() :
+        Packet(PacketId::CREATE_PRIVATE_LOBBY_PACKET) {}
 
     enum PacketMode getMode() const {
         return PacketMode::TCP;
@@ -25,11 +25,12 @@ public:
 
     void serialize() {
     }
+
     void unserialize() {
     }
 
     const std::string getName() {
-        return "PlayerHitPacket";
+        return "CreatePrivateLobbyPacket";
     }
 
     PacketDisplay display() const {
@@ -37,9 +38,9 @@ public:
     }
 
     std::shared_ptr<Packet> clone() const {
-        return make_copy(PlayerHitPacket);
+        return make_copy(CreatePrivateLobbyPacket);
     }
 private:
 };
 
-#endif /* PLAYERHIT_PACKET_HPP */
+#endif /* CREATE_PRIVATE_LOBBY_PACKET_HPP */

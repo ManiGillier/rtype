@@ -10,22 +10,36 @@
 
 #include "network/packets/Packet.hpp"
 #include <cstddef>
+#include <cstdint>
 #include <iostream>
 #include <memory>
+
+struct GameStartConfig {
+    uint8_t difficuly : 3;
+    uint8_t lives : 3;
+    uint8_t : 2;
+};
+
+union GameStartConfigUnion {
+    GameStartConfig config;
+    uint8_t data;
+};
 
 class StartGamePacket : public Packet
 {
 public:
-    StartGamePacket() :
-        Packet(PacketId::GAME_START_REQUEST) {}
+    StartGamePacket(GameStartConfig config = {0, 0}) :
+        Packet(PacketId::GAME_START_REQUEST), config({.config = config}) {}
 
     enum PacketMode getMode() const {
         return PacketMode::TCP;
     }
 
     void serialize() {
+        this->write(config.data);
     }
     void unserialize() {
+        this->read(config.data);
     }
 
     const std::string getName() {
@@ -33,14 +47,21 @@ public:
     }
 
     PacketDisplay display() const {
-        return {};
+        return {
+            "Difficulty", (int) this->config.config.difficuly,
+            "Lives", (int) this->config.config.lives
+        };
     }
 
     std::shared_ptr<Packet> clone() const {
         return make_copy(StartGamePacket);
     }
-    
+
+    GameStartConfig getConfig() const {
+        return this->config.config;
+    }
 private:
+    GameStartConfigUnion config;
 };
 
 #endif /* STARTGMAE_PACKET_HPP */
