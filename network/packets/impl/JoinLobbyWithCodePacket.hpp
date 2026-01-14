@@ -17,7 +17,7 @@
 class JoinLobbyWithCodePacket : public Packet
 {
 public:
-    JoinLobbyWithCodePacket(std::string code) :
+    JoinLobbyWithCodePacket(std::string code = {}) :
         Packet(PacketId::JOIN_LOBBY_WITH_CODE_PACKET), code(code) {}
 
     enum PacketMode getMode() const {
