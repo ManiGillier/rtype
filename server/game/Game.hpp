@@ -58,7 +58,6 @@ class Game
     std::mutex _runningMutex;
     std::chrono::steady_clock::time_point _gameStart;
     std::chrono::steady_clock::time_point _lastTick;
-    float _diffTime;
     bool _isRunning;
 };
 
