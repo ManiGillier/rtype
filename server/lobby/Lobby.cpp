@@ -1,6 +1,8 @@
 #include "Lobby.hpp"
 #include "network/logger/Logger.hpp"
+#include <network/packets/impl/NewPlayerPacket.hpp>
 #include <mutex>
+#include <vector>
 
 Lobby::Lobby()
     : _isPublic(false), _inGame(false), _game(_players, _playersMutex)
@@ -13,6 +15,15 @@ bool Lobby::addPlayer(std::shared_ptr<Player> &player)
         std::lock_guard<std::mutex> lock(_playersMutex);
         if (this->_players.size() < MAX_PLAYER) {
             this->_players.push_back(player);
+            
+            std::vector<std::string> names;
+            for (auto &p : _players)
+                names.push_back(p->getUsername());
+
+            auto names_p = create_packet(NewPlayerPacket,names);
+            for (auto &p : _players)
+                p->sendPacket(names_p);
+
         }
     }
     return false;

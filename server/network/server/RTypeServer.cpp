@@ -52,10 +52,6 @@ void RTypeServer::onClientConnect(std::shared_ptr<IPollable> client)
 
     LOG("Player connected to fd= " << client->getFileDescriptor());
 
-    // this->_lobbyManager.newLobby(player);
-    // TODO: join public need to be call by client request (here for debug)
-    // this->_lobbyManager.joinPublicLobby(player);
-
     std::shared_ptr<ServerClient> sc =
         std::static_pointer_cast<ServerClient>(client);
 }

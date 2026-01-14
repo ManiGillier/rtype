@@ -25,11 +25,13 @@
 #include <mutex>
 #include <network/packets/impl/GameOverPacket.hpp>
 #include <network/packets/impl/HitboxSizeUpdatePacket.hpp>
+#include <network/packets/impl/LinkPlayersPacket.hpp>
 #include <network/packets/impl/NewPlayerPacket.hpp>
 #include <network/packets/impl/TimeNowPacket.hpp>
 #include <optional>
 #include <thread>
 #include <tuple>
+#include <vector>
 
 Game::Game(std::vector<std::shared_ptr<Player>> &players,
            std::mutex &playersMutex)
@@ -94,14 +96,15 @@ void Game::setDiffTime()
 {
     auto diff = std::chrono::steady_clock::now() - this->_lastTick;
 
-    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(diff).count();
+    auto ms =
+        std::chrono::duration_cast<std::chrono::milliseconds>(diff).count();
     float seconds = static_cast<float>(ms) / 1000.0f;
     this->_networkManager.setLastTick(seconds);
 }
 
 void Game::initPlayers()
 {
-    std::vector<std::pair<std::size_t, std::size_t>> playerData;
+    std::vector<PlayerLink> playerData;
     {
         std::lock_guard<std::mutex> lockPlayers(_playersMutex);
         for (auto &pl : _players) {
@@ -110,23 +113,28 @@ void Game::initPlayers()
                 Entity player = _factory.createPlayer();
                 Entity laser = _factory.createPlayerLaser(
                     static_cast<int>(player.getId()));
+
                 pl->setEntityId(player.getId());
-                playerData.push_back(
-                    std::make_pair(player.getId(), laser.getId()));
+
+                PlayerLink player_link = {
+                    .name = pl->getUsername(),
+                    .id = static_cast<uint16_t>(player.getId()),
+                    .laserId = static_cast<uint16_t>(laser.getId())
+                };
+                playerData.push_back(player_link);
             }
         }
     }
-    for (const auto &[playerId, laserId] : playerData) {
-        // auto newPlayerPacket =
-        //     create_packet(NewPlayerPacket, playerId, laserId);
+    for (const auto &it : playerData) {
+        auto newPlayersPacket = create_packet(LinkPlayersPacket, playerData);
 
-        auto hitBox = _registry.get<HitBox>(playerId);
+        auto hitBox = _registry.get<HitBox>(it.id);
         std::shared_ptr<Packet> HitBoxSize = nullptr;
         if (hitBox.has_value()) {
-            HitBoxSize = create_packet(HitboxSizeUpdatePacket, playerId,
+            HitBoxSize = create_packet(HitboxSizeUpdatePacket, it.id,
                                        hitBox->width, hitBox->height);
         }
-        // _networkManager.queuePacket(newPlayerPacket);
+        _networkManager.queuePacket(newPlayersPacket);
         _networkManager.queuePacket(HitBoxSize);
     }
 }
