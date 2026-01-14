@@ -26,7 +26,7 @@ public:
                  [[maybe_unused]] std::shared_ptr<JoinedLobbyPacket> packet)
     {
         this->state.change_state<Lobby>(packet->getCode());
-        return true;
+        return false;
     }
 
     int getPacketId() const {
