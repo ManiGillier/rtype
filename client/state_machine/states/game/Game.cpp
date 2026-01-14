@@ -19,19 +19,19 @@
 #include "client/components/Texture.hpp"
 #include "client/components/StraightMoving.hpp"
 
-#include "client/network/executor/NewPlayerExecutor.hpp"
-#include "client/network/executor/NewEnemyExecutor.hpp"
-#include "client/network/executor/NewBulletExecutor.hpp"
-#include "client/network/executor/DespawnPlayerExecutor.hpp"
-#include "client/network/executor/DespawnBulletExecutor.hpp"
-#include "client/network/executor/EnemyDiedExecutor.hpp"
-#include "client/network/executor/PlayerIdExecutor.hpp"
-#include "client/network/executor/GameOverExecutor.hpp"
-#include "client/network/executor/HealthUpdateExecutor.hpp"
-#include "client/network/executor/HitboxSizeUpdateExecutor.hpp"
-#include "client/network/executor/LaserActivateUpdateExecutor.hpp"
-#include "client/network/executor/PositionUpdateExecutor.hpp"
-#include "client/network/executor/UpdateTimeExecutor.hpp"
+//#include "client/network/executor/NewPlayerExecutor.hpp"
+//#include "client/network/executor/NewEnemyExecutor.hpp"
+//#include "client/network/executor/NewBulletExecutor.hpp"
+//#include "client/network/executor/DespawnPlayerExecutor.hpp"
+//#include "client/network/executor/DespawnBulletExecutor.hpp"
+//#include "client/network/executor/EnemyDiedExecutor.hpp"
+//#include "client/network/executor/PlayerIdExecutor.hpp"
+//#include "client/network/executor/GameOverExecutor.hpp"
+//#include "client/network/executor/HealthUpdateExecutor.hpp"
+//#include "client/network/executor/HitboxSizeUpdateExecutor.hpp"
+//#include "client/network/executor/LaserActivateUpdateExecutor.hpp"
+//#include "client/network/executor/PositionUpdateExecutor.hpp"
+//#include "client/network/executor/UpdateTimeExecutor.hpp"
 
 #include "network/packets/impl/ClientInputsPacket.hpp"
 
@@ -86,19 +86,19 @@ auto Game::init_systems() -> void
     this->registry.add_component<TextureComp>
         (background, {"background"});
 
-    nm.addExecutor(std::make_unique<NewPlayerExecutor>(*this));
-    nm.addExecutor(std::make_unique<NewEnemyExecutor>(*this));
-    nm.addExecutor(std::make_unique<NewBulletExecutor>(*this));
-    nm.addExecutor(std::make_unique<DespawnPlayerExecutor>(*this));
-    nm.addExecutor(std::make_unique<DespawnBulletExecutor>(*this));
-    nm.addExecutor(std::make_unique<EnemyDiedExecutor>(*this));
-    nm.addExecutor(std::make_unique<PlayerIdExecutor>(*this));
-    nm.addExecutor(std::make_unique<GameOverExecutor>(*this));
-    nm.addExecutor(std::make_unique<HealthUpdateExecutor>(*this));
-    nm.addExecutor(std::make_unique<HitboxSizeUpdateExecutor>(*this));
-    nm.addExecutor(std::make_unique<LaserActiveUpdateExecutor>(*this));
-    nm.addExecutor(std::make_unique<PositionUpdateExecutor>(*this));
-    nm.addExecutor(std::make_unique<TimeNowExecutor>(*this));
+//    nm.addExecutor(std::make_unique<NewPlayerExecutor>(*this));
+//    nm.addExecutor(std::make_unique<NewEnemyExecutor>(*this));
+//    nm.addExecutor(std::make_unique<NewBulletExecutor>(*this));
+//    nm.addExecutor(std::make_unique<DespawnPlayerExecutor>(*this));
+//    nm.addExecutor(std::make_unique<DespawnBulletExecutor>(*this));
+//    nm.addExecutor(std::make_unique<EnemyDiedExecutor>(*this));
+//    nm.addExecutor(std::make_unique<PlayerIdExecutor>(*this));
+//    nm.addExecutor(std::make_unique<GameOverExecutor>(*this));
+//    nm.addExecutor(std::make_unique<HealthUpdateExecutor>(*this));
+//    nm.addExecutor(std::make_unique<HitboxSizeUpdateExecutor>(*this));
+//    nm.addExecutor(std::make_unique<LaserActiveUpdateExecutor>(*this));
+//    nm.addExecutor(std::make_unique<PositionUpdateExecutor>(*this));
+//    nm.addExecutor(std::make_unique<TimeNowExecutor>(*this));
 }
 
 auto Game::init_entities() -> void {}
