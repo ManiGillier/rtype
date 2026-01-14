@@ -16,8 +16,8 @@ class MyButton : public gl::Button
 public:
     MyButton(int x, int y, int width, int height, gl::Color buttonColor,
         gl::Color hoveredButtonColor, int transparency = 255);
-    void draw() const override;
-    void update() override;
+    virtual void draw() const override;
+    virtual void update() override;
     bool isClicked() override;
     bool isHovered() override;
     void setPosition(int x, int y) override;

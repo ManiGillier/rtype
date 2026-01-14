@@ -31,7 +31,7 @@ void Gui::draw()
 }
 
 void Gui::addButton(int posX, int posY, int sizeX, int sizeY,
-                         int transparency, Color color,
+                         int transparency, gl::Color color,
                          const std::string &text)
 {
     buttons.emplace_back(posX, posY, sizeX, sizeY,
@@ -40,7 +40,7 @@ void Gui::addButton(int posX, int posY, int sizeX, int sizeY,
 }
 
 void Gui::addCheckBox(bool checked, int posX, int posY, int size,
-                           int transparency, Color color,
+                           int transparency, gl::Color color,
                            const std::string &text)
 {
     checkboxes.emplace_back(posX, posY, size, checked, transparency);
@@ -89,7 +89,7 @@ const gl::Checkbox &Gui::getCheckBox(int i) const
 }
 
 void Gui::addTextBox(int posX, int posY, int sizeX, int sizeY,
-                          int transparency, Color color,
+                          int transparency, gl::Color color,
                           const std::string &text)
 {
     textboxes.emplace_back(posX, posY, sizeX, sizeY,
@@ -144,7 +144,7 @@ gl::InputBox &Gui::getInputBox(int i)
 }
 
 void Gui::addInputBox(int posX, int posY, int sizeX, int sizeY,
-                          int transparency, Color color,
+                          int transparency, gl::Color color,
                           const std::string &text)
 {
     inputboxes.emplace_back(posX, posY, sizeX, sizeY,

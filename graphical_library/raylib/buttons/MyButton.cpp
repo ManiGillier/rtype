@@ -14,24 +14,24 @@ MyButton::MyButton(int x, int y, int width, int height,
     color(buttonColor), hoveredColor(hoveredButtonColor),
     transparency(transparency) {}
 
-    void MyButton::draw() const {
-        Rectangle buttonRect = {
-            static_cast<float>(posX),
-            static_cast<float>(posY),
-            static_cast<float>(sizeX),
-            static_cast<float>(sizeY)
-        };
-        gl::Color currentColor = this->hovered ? this->hoveredColor : this->color;
-        DrawRectangleRec(buttonRect, {currentColor.r, currentColor.g, currentColor.b, currentColor.a});
-        DrawRectangleLinesEx(buttonRect, 2, BLACK);
-        DrawText(
-            this->text.c_str(),
-            this->posX + 10,
-            this->posY + (this->sizeY / 2) - 10,
-            20,
-            BLACK
-        );
-    }
+void MyButton::draw() const {
+    Rectangle buttonRect = {
+        static_cast<float>(posX),
+        static_cast<float>(posY),
+        static_cast<float>(sizeX),
+        static_cast<float>(sizeY)
+    };
+    gl::Color currentColor = this->hovered ? this->hoveredColor : this->color;
+    DrawRectangleRec(buttonRect, {currentColor.r, currentColor.g, currentColor.b, currentColor.a});
+    DrawRectangleLinesEx(buttonRect, 2, BLACK);
+    DrawText(
+        this->text.c_str(),
+        this->posX + 10,
+        this->posY + (this->sizeY / 2) - 10,
+        20,
+        BLACK
+    );
+}
 
 void MyButton::update() {
     int mouseX = GetMouseX();

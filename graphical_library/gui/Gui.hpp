@@ -21,15 +21,15 @@ class Gui : public gl::Gui
 public:
     Gui();
     ~Gui() override;
-    void draw() override;
+    virtual void draw() override;
     void addButton(int posX, int posY, int sizeX, int sizeY,
-        int transparency, Color color, const std::string& text) override;
+        int transparency, gl::Color color, const std::string& text) override;
     void addCheckBox(bool checked, int posX, int posY, int size,
-        int transparency, Color color, const std::string& text) override;
+        int transparency, gl::Color color, const std::string& text) override;
     void addTextBox(int posX, int posY, int sizeX, int sizeY,
-        int transparency, Color color, const std::string& text) override;
+        int transparency, gl::Color color, const std::string& text) override;
     void addInputBox(int posX, int posY, int sizeX, int sizeY,
-        int transparency, Color color, const std::string& text) override;
+        int transparency, gl::Color color, const std::string& text) override;
     void update() override;
     void deleteButton(size_t i) override;
     void deleteCheckBox(size_t i) override;
