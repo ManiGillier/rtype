@@ -11,7 +11,7 @@
 #include <string>
 
 struct TextureComp {
-    std::string texture_path;
+    std::string texture_name;
 };
 
 #endif /* TEXTURE_COMP_HPP */

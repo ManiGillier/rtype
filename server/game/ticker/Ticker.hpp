@@ -15,7 +15,7 @@ class Ticker
   public:
     Ticker(int ticks_by_sec);
     ~Ticker() = default;
-    void now();
+    std::chrono::steady_clock::time_point now();
     void wait();
 
   private:

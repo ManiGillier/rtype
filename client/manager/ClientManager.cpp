@@ -6,11 +6,14 @@
 */
 
 #include "ClientManager.hpp"
-#include "client/raylib/Raylib.hpp"
 
-#include "client/states/game/InGameState.hpp"
+#include <graphical_library/raylib/InitGraphicalLibrary.hpp>
+
+#include "client/state_machine/states/connecting/Connecting.hpp"
+
+/*#include "client/states/game/InGameState.hpp"
 #include "client/states/lobby/LobbyState.hpp"
-#include "client/states/connecting/ConnectingState.hpp"
+#include "client/states/connecting/ConnectingState.hpp"*/
 
 #include <iostream>
 #include <network/logger/Logger.hpp>
@@ -19,32 +22,43 @@
 #include <memory>
 
 ClientManager::ClientManager()
+    : stateMachine(std::make_unique<Connecting>
+        (*this, this->registry, this->sync))
 {
-    this->gui = std::make_unique<Raylib>(*this);
+    this->gui = init_raylib();
 
-    this->_gameStateFactory[AUTHENTIFICATION] = [this] {
-        return std::make_unique<ConnectingState>(*this);
-    };
-    this->_gameStateFactory[LOBBY] = [this] {
-        return std::make_unique<LobbyState>(*this);
-    };
-    this->_gameStateFactory[IN_GAME] = [this] {
-        return std::make_unique<InGameState>(*this);
-    };
+    this->gui->init();
+
+    this->gui->registerTexture("client/assets/background.jpg", "background");
+    this->gui->registerSound("client/assets/laser.mp3", "laser");
+    this->gui->registerSound("client/assets/new_player.mp3", "new_player");
+    this->gui->registerSound("client/assets/despawn_player.mp3",
+                             "despawn_player");
+
+    this->gui->registerEvent("start_game", gl::Key::SPACE);
+    this->gui->registerEvent("shoot", gl::Key::SPACE);
+    this->gui->registerEvent("move_left", gl::Key::ARROW_LEFT);
+    this->gui->registerEvent("move_right", gl::Key::ARROW_RIGHT);
+    this->gui->registerEvent("move_up", gl::Key::ARROW_UP);
+    this->gui->registerEvent("move_down", gl::Key::ARROW_DOWN);
 }
 
+/*
 inline auto ClientManager::changeInternalState(std::unique_ptr<IGameState> state)
 -> void
 {
     this->_internal_state = std::move(state);
 }
+*/
 
-auto ClientManager::changeState(const State state) -> void
+/*
+auto ClientManager::changeState(const State_old state) -> void
 {
     this->networkManager->resetExecutors();
     this->changeInternalState(this->_gameStateFactory[state]());
     this->_state = state;
 }
+*/
 
 auto ClientManager::launch(int argc, char **argv) -> void
 {
@@ -59,7 +73,8 @@ auto ClientManager::launch(int argc, char **argv) -> void
         std::make_unique<NetworkManager>(argv[1], std::atoi(argv[2]));
 
     LOG("Starting game.");
-    this->changeState(AUTHENTIFICATION);
+    this->gui->loadEverything();
+    this->stateMachine.init();
     this->loop();
 }
 
@@ -68,16 +83,15 @@ auto ClientManager::loop() -> void
     while (true) {
         if (this->networkManager->isStopped())
             break;
-        this->getGui().render(this->getState());
-        if (this->getGui().isStopped())
-            break;
         this->networkManager->getClient().executePackets();
-        State new_state = this->getState().update();
-
-        if (new_state == State::END_STATE)
+        this->getGui().start_new_frame();
+        if (this->stateMachine.update()) {
+            this->getGui().end_frame();
             break;
-        if (new_state != State::NONE)
-            this->changeState(new_state);
+        }
+        this->getGui().end_frame();
+        if (this->getGui().should_close())
+            break;
     }
     this->unload();
 }
@@ -85,6 +99,7 @@ auto ClientManager::loop() -> void
 auto ClientManager::unload() -> void
 {
     LOG("Unloading.");
+    this->gui->deinit();
     this->gui.reset();
     this->getNetworkManager().stop();
 }

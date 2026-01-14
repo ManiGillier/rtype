@@ -12,6 +12,9 @@
 #include "ILogic.hpp"
 #include "ecs/regisrty/Registry.hpp"
 #include "client/states/State.hpp"
+
+#include <graphical_library/api/GraphicalLibrary.hpp>
+
 #include <cstddef>
 
 class IGameState {
@@ -20,7 +23,8 @@ public:
 
     inline auto getRegistry() -> Registry & { return this->reg; }
     virtual auto render() -> void = 0;
-    virtual auto update() -> State = 0;
+    virtual auto update() -> State_old = 0;
+    virtual auto getGraphicalLibrary() -> gl::GraphicalLibrary & = 0;
 protected:
     Registry reg;
     std::unique_ptr<GUI> gui = nullptr;

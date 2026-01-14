@@ -8,7 +8,8 @@
 #ifndef STARTGAME_EXECUTOR_HPP
 #define STARTGAME_EXECUTOR_HPP
 
-#include "client/states/lobby/logic.hpp"
+#include "client/state_machine/states/lobby/Lobby.hpp"
+#include "client/state_machine/states/game/Game.hpp"
 
 #include <memory>
 #include <network/packets/listener/PacketExecutor.hpp>
@@ -18,13 +19,13 @@ class StartGameExecutor : public PacketExecutorImplClient
 <StartGamePacket, ClientPollable>
 {
 public:
-    StartGameExecutor(LobbyStateLogic &logic) : logic(logic) {}
+    StartGameExecutor(Lobby &state) : state(state) {}
 
     bool execute([[maybe_unused]]Client &cl,
                  [[maybe_unused]] std::shared_ptr<ClientPollable> con,
                  [[maybe_unused]] std::shared_ptr<StartGamePacket> packet)
     {
-        this->logic.startGame();
+        this->state.change_state<Game>();
         return true;
     }
 
@@ -32,7 +33,7 @@ public:
         return PacketId::GAME_START_REQUEST;
     }
 private:
-    [[maybe_unused]] LobbyStateLogic &logic;
+    [[maybe_unused]] Lobby &state;
 };
 
 #endif /* STARTGAME_EXECUTOR_HPP */

@@ -58,6 +58,8 @@ enum PacketId {
     LOGIN_PACKET,
     REGISTER_PACKET,
     LOGIN_RESPONSE_PACKET,
+    SPAWN_STRAIGHT_MOVING_ENTITY_PACKET,
+    TIME_NOW_PACKET,
 };
 
 class PacketDisplay {

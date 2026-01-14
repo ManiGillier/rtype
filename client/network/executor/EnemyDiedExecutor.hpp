@@ -8,7 +8,7 @@
 #ifndef ENEMYDIED_EXECUTOR_HPP
 #define ENEMYDIED_EXECUTOR_HPP
 
-#include "client/states/game/logic.hpp"
+#include "client/state_machine/states/game/Game.hpp"
 
 #include <memory>
 #include <network/packets/listener/PacketExecutor.hpp>
@@ -18,13 +18,13 @@ class EnemyDiedExecutor : public PacketExecutorImplClient
 <EnemyDiedPacket, ClientPollable>
 {
 public:
-    EnemyDiedExecutor(InGameStateLogic &logic) : logic(logic) {}
+    EnemyDiedExecutor(Game &state) : state(state) {}
 
     bool execute([[maybe_unused]]Client &cl,
                  [[maybe_unused]] std::shared_ptr<ClientPollable> con,
                  [[maybe_unused]] std::shared_ptr<EnemyDiedPacket> packet)
     {
-        this->logic.despawnEntity(packet->getEnemyId());
+        this->state.despawnEntity(packet->getEnemyId());
         return true;
     }
 
@@ -32,7 +32,7 @@ public:
         return PacketId::ENEMY_DIED;
     }
 private:
-    [[maybe_unused]] InGameStateLogic &logic;
+    [[maybe_unused]] Game &state;
 };
 
 #endif /* ENEMYDIED_EXECUTOR_HPP */

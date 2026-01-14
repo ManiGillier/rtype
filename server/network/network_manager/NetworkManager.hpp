@@ -11,6 +11,7 @@
 #include "../../network/packet_filter/PacketFilter.hpp"
 #include "../../player/Player.hpp"
 #include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <network/packets/Packet.hpp>
 #include <queue>
@@ -24,6 +25,9 @@ class NetworkManager
     ~NetworkManager() = default;
     void queuePacket(std::shared_ptr<Packet> packet, std::size_t playerId = 0,
                      bool filter = false);
+    void playerDied(std::size_t id);
+    void setLastTick(float last);
+    float getLastTick() const;
     void flush();
     void clear();
     void clearId(std::size_t id);
@@ -33,5 +37,6 @@ class NetworkManager
     std::vector<std::shared_ptr<Player>> &_players;
     std::queue<std::shared_ptr<Packet>> _packets;
     PacketFilter _filter;
+    float _lastTick;
 };
 #endif

@@ -15,7 +15,7 @@ class ILogic {
 public:
     virtual ~ILogic() = default;
 
-    virtual auto update(Registry &) -> State = 0;
+    virtual auto update(Registry &) -> State_old = 0;
 };
 
 #endif /* GAME_LOGIC_INTERFACE_HPP */

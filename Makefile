@@ -10,33 +10,29 @@ OFF = OFF
 all: debug
 
 define build
-	cd $(1) && \
-	cmake -B ${BUILD_DIR} \
-		-DCMAKE_BUILD_TYPE=$(2) \
-	&& cmake --build ${BUILD_DIR} $(3) -j 
+	cmake -B ${BUILD_DIR} -DCMAKE_BUILD_TYPE=$(1) \
+		-DBUILD_SERVER=$(2) \
+		-DBUILD_CLIENT=$(3) \
+	&& cmake --build ${BUILD_DIR} $(4) -j 
 endef
 
 debug:
-	$(call build,network,$(DEBUG))
-	$(call build,server,$(DEBUG))
-	$(call build,client,$(DEBUG))
+	$(call build,$(DEBUG),ON,ON)
 
 release:
-	$(call build,network,$(RELEASE))
-	$(call build,server,$(RELEASE))
-	$(call build,client,$(RELEASE))
+	$(call build,$(RELEASE),ON,ON)
 
 server:
-	$(call build,network,$(RELEASE))
-	$(call build,server,$(DEBUG))
+	$(call build,$(DEBUG),ON,OFF)
 
 client:
-	$(call build,network,$(RELEASE))
-	$(call build,client,$(DEBUG))
+	$(call build,$(DEBUG),OFF,ON)
 
 reseau:
-	$(call build,network,$(RELEASE))
-	$(call build,server,$(DEBUG),--target reseau)
+	$(call build,$(DEBUG),OFF,OFF,--target reseau)
+
+gui:
+	$(call build,$(DEBUG),OFF,ON,--target gui)
 
 lint:
 	clang-tidy $$(find . -type f -name "*.[ch]pp" | grep -v "build")
@@ -55,10 +51,7 @@ clean:
 
 fclean:
 	make -s clean
-	rm -rf server/${BUILD_DIR}
-	rm -rf client/${BUILD_DIR}
-	rm -rf network/${BUILD_DIR}
-	rm -rf index.html
+	rm -rf ${BUILD_DIR}
 
 clean_cache:
 	make -s fclean
@@ -68,4 +61,4 @@ re:
 	make -s fclean
 	make -s all
 
-.PHONY: all lint clean fclean re doc open_doc reseau server client
+.PHONY: all lint clean fclean re doc open_doc reseau server client gui

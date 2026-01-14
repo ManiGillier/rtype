@@ -21,6 +21,10 @@ bool ClientInputsExecutor::execute(Server &server,
     }
 
     auto &game = lobby->getGame();
+
+    if (!game.isRunning() || !player->getEntityId().has_value())
+        return true;
+
     auto [regMtx, registry] = game.getRegistry();
     LOG("Client inputs update");
     {
