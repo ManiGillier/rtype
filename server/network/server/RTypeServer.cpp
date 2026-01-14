@@ -1,5 +1,6 @@
 #include "RTypeServer.hpp"
 #include "../../player/Player.hpp"
+#include <network/packets/impl/DestroyEntityPacket.hpp>
 #include <memory>
 #include <mutex>
 #include <optional>
@@ -67,16 +68,17 @@ void RTypeServer::onClientDisconnect(std::shared_ptr<IPollable> client)
     if (hasEntityId) {
         auto lobby = this->_lobbyManager.getLobby(lobbyId);
         if (lobby) {
-            // std::shared_ptr<Packet> playerDisconnect =
-            //     create_packet(DespawnPlayerPacket, player->getEntityId().value());
+            std::vector<uint16_t> toDestroy;
+            toDestroy.push_back(static_cast<uint16_t>(player->getEntityId().value()));
+            auto playerDisconnect = create_packet(DestroyEntityPacket, toDestroy);
 
             auto &playersMutex = lobby->getPlayersMutex();
             {
                 std::lock_guard<std::mutex> lock(playersMutex);
-                // auto &players = lobby->getPlayers();
-                // for (auto &it : players) {
-                //     it->sendPacket(playerDisconnect);
-                // }
+                auto &players = lobby->getPlayers();
+                for (auto &it : players) {
+                    it->sendPacket(playerDisconnect);
+                }
             }
         }
     }

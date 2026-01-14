@@ -2,6 +2,7 @@
 #include "../components/Healer.hpp"
 #include "ecs/sparse_array/SparseArray.hpp"
 #include "network/packets/Packet.hpp"
+#include "network/packets/impl/DestroyEntityPacket.hpp"
 #include "network/packets/impl/LaserActiveUpdatePacket.hpp"
 #include "network/packets/impl/PlayerHitPacket.hpp"
 #include "server/game/components/Hitable.hpp"
@@ -30,6 +31,7 @@ auto Systems::position_system(
     NetworkManager &nm) -> void
 {
     std::vector<PositionData> posData;
+    std::vector<uint16_t> toDestroy;
 
     for (auto &&[i, pos, vel, acc, out] : zipper) {
         auto lastTick = nm.getLastTick();
@@ -49,7 +51,7 @@ auto Systems::position_system(
         } else if (out->canGoOutside &&
                    (pos->x < 0.0f || pos->x > GameConstants::width ||
                     pos->y < 0.0f || pos->y > GameConstants::height)) {
-            // nm.queuePacket(std::make_shared<DespawnBulletPacket>(i));
+            toDestroy.push_back(static_cast<uint16_t>(i));
             r.kill_entity(r.entity_from_index(i));
             continue;
         }
@@ -64,7 +66,9 @@ auto Systems::position_system(
         posData.push_back(pd);
     }
     auto posDataPacket = create_packet(PositionUpdatePacket, posData);
+    auto toDestroyDataPacket = create_packet(DestroyEntityPacket, toDestroy);
     nm.queuePacket(posDataPacket);
+    nm.queuePacket(toDestroyDataPacket);
 }
 
 auto Systems::pattern_system(
@@ -272,10 +276,13 @@ auto Systems::collision_system(
             }
         }
     }
-    for (auto &it : to_kill) {
+    std::vector<uint16_t> toDestroy(to_kill.begin(), to_kill.end());
+
+    auto toDestroyDataPacket = create_packet(DestroyEntityPacket, toDestroy);
+    nm.queuePacket(toDestroyDataPacket);
+
+    for (auto &it : toDestroy)
         r.kill_entity(r.entity_from_index(it));
-        // nm.queuePacket(std::make_shared<DespawnBulletPacket>(it));
-    }
 }
 
 auto Systems::heal_all_players_system(Registry &r, int heal) -> void
@@ -295,6 +302,8 @@ auto Systems::health_system(Registry &r,
                    containers::indexed_zipper<SparseArray<Health>> zipper,
                    NetworkManager &nm) -> void
 {
+    std::vector<uint16_t> toDestroy;
+
     for (auto &&[i, health] : zipper) {
         // nm.queuePacket(
         //     std::make_shared<HealthUpdatePacket>(i, health->pv, health->max_pv),
@@ -303,16 +312,17 @@ auto Systems::health_system(Registry &r,
             auto tag = r.get<Tag>(i);
             if (tag->tag == EntityTag::BOSS) {
                 heal_all_players_system(r, r.get<Healer>(i)->healer);
-                // nm.queuePacket(std::make_shared<EnemyDiedPacket>(i));
-                // nm.queuePacket(std::make_shared<DespawnPlayerPacket>(i));
+                toDestroy.push_back(static_cast<uint16_t>(i));
             } else {
-                // nm.queuePacket(std::make_shared<PlayerDiedPacket>(i));
-                // nm.queuePacket(std::make_shared<DespawnPlayerPacket>(i));
+                // TODO: kill laser here perhaps
+                toDestroy.push_back(static_cast<uint16_t>(i));
                 nm.playerDied(i);
             }
             r.kill_entity(r.entity_from_index(i));
         }
     }
+    auto toDestroyDataPacket = create_packet(DestroyEntityPacket, toDestroy);
+    nm.queuePacket(toDestroyDataPacket);
 }
 
 auto Systems::loose_system([[maybe_unused]] Registry &r,
