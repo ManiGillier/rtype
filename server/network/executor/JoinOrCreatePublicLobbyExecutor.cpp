@@ -17,5 +17,5 @@ bool JoinOrCreatePublicLobbyExecutor::execute(
 
     this->_rtypeServer.getLobbyManager().joinPublicLobby(player);
     player->sendPacket(create_packet(JoinedLobbyPacket, player->getLobbyId()));
-    return false;
+    return true;
 }

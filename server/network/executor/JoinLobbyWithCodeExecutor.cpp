@@ -16,5 +16,5 @@ bool JoinLobbyWithCodeExecutor::execute(
 
     this->_rtypeServer.getLobbyManager().joinLobby(packet->getCode(), player);
     player->sendPacket(create_packet(JoinedLobbyPacket, player->getLobbyId()));
-    return false;
+    return true;
 }

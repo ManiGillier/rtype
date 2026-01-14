@@ -16,5 +16,5 @@ bool CreatePrivateLobbyExecutor::execute(
 
     this->_rtypeServer.getLobbyManager().newLobby(player);
     player->sendPacket(create_packet(JoinedLobbyPacket, player->getLobbyId()));
-    return false;
+    return true;
 }
