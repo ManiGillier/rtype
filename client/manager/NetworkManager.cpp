@@ -55,8 +55,7 @@ auto NetworkManager::getClient() -> Client &
 
 auto NetworkManager::resetExecutors() -> void
 {
-    // TODO: fix this
-    // this->client->getPacketListener().clearExecutors();
+    this->client->getPacketListener().clearExecutors();
 }
 
 auto NetworkManager::sendPacket(std::shared_ptr<Packet> p) -> void
