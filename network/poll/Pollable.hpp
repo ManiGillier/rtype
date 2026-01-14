@@ -85,7 +85,7 @@ class Pollable : public IPollable {
         std::vector<std::tuple<std::shared_ptr<Packet>, std::optional<sockaddr_in>>> toProcessUDP;
         uint16_t packetCount = 0;
     private:
-        bool disabled;
+        bool disabled = false;
         std::optional<sockaddr_in> address = std::nullopt;
         uint32_t uuid;
         int _fd;
