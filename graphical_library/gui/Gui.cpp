@@ -5,20 +5,20 @@
 ** raylib
 */
 
-#include "Renderer.hpp"
+#include "Gui.hpp"
 
-Renderer::Renderer() {
+Gui::Gui() {
     InitWindow(900, 600, "RType");
     SetTargetFPS(60);
     InitAudioDevice();
 }
 
-Renderer::~Renderer() {
+Gui::~Gui() {
     CloseWindow();
     CloseAudioDevice();
 }
 
-void Renderer::draw()
+void Gui::draw()
 {
     for (auto &button : buttons)
         button.draw();
@@ -30,7 +30,7 @@ void Renderer::draw()
         inputbox.draw();
 }
 
-void Renderer::addButton(int posX, int posY, int sizeX, int sizeY,
+void Gui::addButton(int posX, int posY, int sizeX, int sizeY,
                          int transparency, Color color,
                          const std::string &text)
 {
@@ -39,7 +39,7 @@ void Renderer::addButton(int posX, int posY, int sizeX, int sizeY,
     buttons.back().setText(text);
 }
 
-void Renderer::addCheckBox(bool checked, int posX, int posY, int size,
+void Gui::addCheckBox(bool checked, int posX, int posY, int size,
                            int transparency, Color color,
                            const std::string &text)
 {
@@ -48,19 +48,19 @@ void Renderer::addCheckBox(bool checked, int posX, int posY, int size,
     checkboxes.back().setText(text);
 }
 
-void Renderer::deleteButton(size_t i)
+void Gui::deleteButton(size_t i)
 {
     if (i < buttons.size())
         buttons.erase(buttons.begin() + (int)i);
 }
 
-void Renderer::deleteCheckBox(size_t i)
+void Gui::deleteCheckBox(size_t i)
 {
     if (i < checkboxes.size())
         checkboxes.erase(checkboxes.begin() + (int)i);
 }
 
-void Renderer::clear()
+void Gui::clear()
 {
     buttons.clear();
     checkboxes.clear();
@@ -68,27 +68,27 @@ void Renderer::clear()
     inputboxes.clear();
 }
 
-gl::Button &Renderer::getButton(int i)
+gl::Button &Gui::getButton(int i)
 {
     return buttons.at(static_cast<size_t>(i));
 }
 
-const gl::Button &Renderer::getButton(int i) const
+const gl::Button &Gui::getButton(int i) const
 {
     return buttons.at(static_cast<size_t>(i));
 }
 
-gl::Checkbox &Renderer::getCheckBox(int i)
+gl::Checkbox &Gui::getCheckBox(int i)
 {
     return checkboxes.at(static_cast<size_t>(i));
 }
 
-const gl::Checkbox &Renderer::getCheckBox(int i) const
+const gl::Checkbox &Gui::getCheckBox(int i) const
 {
     return checkboxes.at(static_cast<size_t>(i));
 }
 
-void Renderer::addTextBox(int posX, int posY, int sizeX, int sizeY,
+void Gui::addTextBox(int posX, int posY, int sizeX, int sizeY,
                           int transparency, Color color,
                           const std::string &text)
 {
@@ -97,7 +97,7 @@ void Renderer::addTextBox(int posX, int posY, int sizeX, int sizeY,
     textboxes.back().setText(text);
 }
 
-void Renderer::update()
+void Gui::update()
 {
     for (auto &button : buttons)
         button.update();
@@ -111,39 +111,39 @@ void Renderer::update()
     return;
 }
 
-void Renderer::deleteTextBox(size_t i)
+void Gui::deleteTextBox(size_t i)
 {
     if (i < textboxes.size())
         textboxes.erase(textboxes.begin() + (int)i);
 }
 
-gl::TextBox &Renderer::getTextBox(int i)
+gl::TextBox &Gui::getTextBox(int i)
 {
     return textboxes.at(static_cast<size_t>(i));
 }
 
-const gl::TextBox &Renderer::getTextBox(int i) const
+const gl::TextBox &Gui::getTextBox(int i) const
 {
     return textboxes.at(static_cast<size_t>(i));
 }
 
-void Renderer::deleteInputBox(size_t i)
+void Gui::deleteInputBox(size_t i)
 {
     if (i < inputboxes.size())
         inputboxes.erase(inputboxes.begin() + (int)i);
 }
 
-const gl::InputBox &Renderer::getInputBox(int i) const
+const gl::InputBox &Gui::getInputBox(int i) const
 {
     return inputboxes.at(static_cast<size_t>(i));
 }
 
-gl::InputBox &Renderer::getInputBox(int i)
+gl::InputBox &Gui::getInputBox(int i)
 {
     return inputboxes.at(static_cast<size_t>(i));
 }
 
-void Renderer::addInputBox(int posX, int posY, int sizeX, int sizeY,
+void Gui::addInputBox(int posX, int posY, int sizeX, int sizeY,
                           int transparency, Color color,
                           const std::string &text)
 {

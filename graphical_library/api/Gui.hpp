@@ -14,11 +14,11 @@
 #include <graphical_library/api/MyInputBox.hpp>
 
 namespace gl {
-    class Renderer
+    class Gui
     {
     public:
-        Renderer() = default;
-        virtual ~Renderer() = default;
+        Gui() = default;
+        virtual ~Gui() = default;
         virtual void draw() = 0;
         virtual void addButton(int posX, int posY, int sizeX, int sizeY,
             int transparency, Color color, const std::string &text) = 0;

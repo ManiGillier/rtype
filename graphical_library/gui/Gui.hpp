@@ -5,22 +5,22 @@
 ** client graphical lib
 */
 
-#ifndef RENDERER_HPP_
-#define RENDERER_HPP_
+#ifndef GUI_HPP_
+#define GUI_HPP_
 
 #include "../raylib/buttons/MyButton.hpp"
 #include "../raylib/checkbox/Check.hpp"
 #include "../raylib/textbox/MyTextBox.hpp"
 #include "../raylib/inputbox/MyInputBox.hpp"
-#include <graphical_library/api/Renderer.hpp>
+#include <graphical_library/api/Gui.hpp>
 #include <raylib.h>
 #include <vector>
 
-class Renderer : public gl::Renderer
+class Gui : public gl::Gui
 {
 public:
-    Renderer();
-    ~Renderer() override;
+    Gui();
+    ~Gui() override;
     void draw() override;
     void addButton(int posX, int posY, int sizeX, int sizeY,
         int transparency, Color color, const std::string& text) override;
