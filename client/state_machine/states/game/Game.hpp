@@ -33,6 +33,7 @@ public:
                    std::size_t laser_id) -> void;
     auto newEnemy(std::size_t enemy_id) -> void;
     auto newBullet(std::vector<StraightMovingEntity>) -> void;
+    auto destroyEntities(std::vector<uint16_t> ids) -> void;
     auto despawnEntity(std::size_t id) -> void;
     auto registerClientId(std::size_t id) -> void;
     // auto end() -> void;

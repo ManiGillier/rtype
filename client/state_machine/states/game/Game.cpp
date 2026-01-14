@@ -33,6 +33,7 @@
 #include "client/network/executor/PositionUpdateExecutor.hpp"
 #include "client/network/executor/UpdateTimeExecutor.hpp"
 #include "client/network/executor/LinkPlayersExecutor.hpp"
+#include "client/network/executor/DestroyEntityExecutor.hpp"
 
 #include "network/packets/impl/ClientInputsPacket.hpp"
 
@@ -101,6 +102,7 @@ auto Game::init_systems() -> void
     nm.addExecutor(std::make_unique<PositionUpdateExecutor>(*this));
     nm.addExecutor(std::make_unique<TimeNowExecutor>(*this));
     nm.addExecutor(std::make_unique<LinkPlayersExecutor>(*this));
+    nm.addExecutor(std::make_unique<DestroyEntityExecutor>(*this));
 }
 
 auto Game::init_entities() -> void {}
@@ -252,4 +254,11 @@ auto Game::newPlayers(std::vector<PlayerLink> data) -> void
 {
     for (auto &player : data)
         this->newPlayer(player.name, player.id, player.laserId);
+}
+
+auto Game::destroyEntities(std::vector<uint16_t> ids) -> void
+{
+    for (auto id : ids) {
+        this->registry.kill_entity(this->registry.entity_from_index(id));
+    }
 }
