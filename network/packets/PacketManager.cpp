@@ -7,6 +7,7 @@
 
 #include "PacketManager.hpp"
 #include "impl/AuthentifiedPacket.hpp"
+#include "impl/CreatePrivateLobbyPacket.hpp"
 #include "impl/DestroyEntityPacket.hpp"
 #include "impl/JoinLobbyWithCodePacket.hpp"
 #include "impl/JoinOrCreatePublicLobby.hpp"
@@ -60,6 +61,7 @@ void PacketManager::registerPackets()
     this->packets.push_back(std::make_shared<TestPacket>());
     this->packets.push_back(std::make_shared<JoinLobbyWithCodePacket>());
     this->packets.push_back(std::make_shared<JoinOrCreatePublicLobbyPacket>());
+    this->packets.push_back(std::make_shared<CreatePrivateLobbyPacket>());
 }
 
 std::shared_ptr<Packet> PacketManager::createPacketById(uint8_t id, Packet::PacketMode mode) const
