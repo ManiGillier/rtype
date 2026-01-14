@@ -12,11 +12,12 @@
 
 class Lobby : public State {
 public:
-    Lobby(ClientManager &cm, Registry &r, Sync &s);
+    Lobby(ClientManager &cm, Registry &r, Sync &s, std::string code);
 
     auto init_systems() -> void;
     auto init_entities() -> void;
 private:
+    std::string code;
 };
 
 #endif /* CLIENT_LOBBY_STATE_HPP */

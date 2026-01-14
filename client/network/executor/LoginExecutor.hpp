@@ -9,7 +9,7 @@
 #define LOGIN_RESPONSE_EXECUTOR_HPP
 
 #include "client/state_machine/states/login/Login.hpp"
-// #include "client/state_machine/states/menu/Menu.hpp"
+#include "client/state_machine/states/menu/Menu.hpp"
 
 #include <memory>
 #include <network/packets/listener/PacketExecutor.hpp>
@@ -27,7 +27,7 @@ public:
     {
         if (!packet->isSuccesful())
             return true;
-        //state.change_state<Menu>();
+        state.change_state<Menu>();
         return true;
     }
 
