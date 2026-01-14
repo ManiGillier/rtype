@@ -57,6 +57,7 @@ enum PacketId {
     TEST_PACKET,
     SPAWN_STRAIGHT_MOVING_ENTITY_PACKET,
     TIME_NOW_PACKET,
+    DESTROY_ENTITY_PACKET,
 };
 
 class PacketDisplay {
