@@ -47,6 +47,9 @@ public:
             return {"succesful", (int) this->succesful};
         return {"succesful", (int) this->succesful, "reason", this->reason};
     }
+
+    bool isSuccesful() { return this->succesful; }
+    std::string getReason() { return this->reason; }
 private:
     std::string reason;
     uint8_t succesful;
