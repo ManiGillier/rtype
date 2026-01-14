@@ -20,11 +20,6 @@
     /* TMP */
     #include <network/packets/impl/NewPlayerPacket.hpp>
     #include <network/packets/impl/NewEnemyPacket.hpp>
-    #include <network/packets/impl/NewBulletPacket.hpp>
-    #include <network/packets/impl/DespawnPlayerPacket.hpp>
-    #include <network/packets/impl/DespawnBulletPacket.hpp>
-    #include <network/packets/impl/EnemyDiedPacket.hpp>
-    #include <network/packets/impl/PlayerIdPacket.hpp>
     #include <network/packets/impl/GameOverPacket.hpp>
     #include <network/packets/impl/CAuthentificationPacket.hpp>
     #include <network/packets/impl/AuthentifiedPacket.hpp>

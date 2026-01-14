@@ -19,7 +19,7 @@ static std::ostream &operator<<(std::ostream &os, const std::vector<uint16_t> &v
 {
     os << "[";
     for (auto &id : v) {
-        os << v << ", ";
+        os << id << ", ";
     }
     os << "]";
     return os;
