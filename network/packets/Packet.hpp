@@ -55,6 +55,9 @@ enum PacketId {
     AUTHENTIFIED_PACKET,
     GAME_START_REQUEST,
     TEST_PACKET,
+    LOGIN_PACKET,
+    REGISTER_PACKET,
+    LOGIN_RESPONSE_PACKET,
     SPAWN_STRAIGHT_MOVING_ENTITY_PACKET,
     TIME_NOW_PACKET,
     DESTROY_ENTITY_PACKET,
@@ -68,7 +71,7 @@ enum PacketId {
 class PacketDisplay {
 public:
     PacketDisplay() = default;
-    
+
     template<typename... Args>
     PacketDisplay(Args &&...args) {
         addAll(std::forward<Args>(args)...);
@@ -82,7 +85,7 @@ public:
     }
 
     void display() const {
-        for (size_t i = 0; i < fields.size(); ++i) {
+        for (std::size_t i = 0; i < fields.size(); ++i) {
             const auto &[key, printer] = fields[i];
             std::cout << key << "=";
             printer(std::cout);

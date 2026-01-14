@@ -88,7 +88,7 @@ class Server {
         virtual void onClientConnect(std::shared_ptr<IPollable> client) = 0;
         virtual void onClientDisconnect(std::shared_ptr<IPollable> client) = 0;
         int getMaxConnections() const;
-        bool canConnect() const; 
+        bool canConnect() const;
         void setConnect(bool c);
         void sendAll(std::shared_ptr<Packet> p);
         void sendAll(std::vector<std::shared_ptr<IPollable>> clients, std::shared_ptr<Packet> p);

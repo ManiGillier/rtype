@@ -15,7 +15,7 @@ public:
     AuthentifiedPacket() : Packet(PacketId::AUTHENTIFIED_PACKET) {};
     void serialize() {};
     void unserialize() {};
-    
+
     enum PacketMode getMode() const {
         return PacketMode::TCP;
     }

@@ -35,6 +35,14 @@
 #include "impl/SpawnStraightMovingEntityPacket.hpp"
 #include "impl/TimeNowPacket.hpp"
 #include "impl/TestPacket.hpp"
+#include "network/packets/impl/StartGamePacket.hpp"
+#include "network/packets/impl/TestPacket.hpp"
+#include "network/packets/impl/LoginPacket.hpp"
+#include "network/packets/impl/LoginResponse.hpp"
+#include "network/packets/impl/RegisterPacket.hpp"
+#include "network/packets/impl/SpawnStraightMovingEntityPacket.hpp"
+#include "network/packets/impl/TimeNowPacket.hpp"
+#include "network/packets/impl/TestPacket.hpp"
 
 void PacketManager::registerPackets()
 {
@@ -66,6 +74,9 @@ void PacketManager::registerPackets()
     this->packets.push_back(std::make_shared<CreatePrivateLobbyPacket>());
     this->packets.push_back(std::make_shared<JoinedLobbyPacket>());
     this->packets.push_back(std::make_shared<LinkPlayersPacket>());
+    this->packets.push_back(std::make_shared<LoginPacket>());
+    this->packets.push_back(std::make_shared<LoginResponse>());
+    this->packets.push_back(std::make_shared<RegisterPacket>());
 }
 
 std::shared_ptr<Packet> PacketManager::createPacketById(uint8_t id, Packet::PacketMode mode) const
