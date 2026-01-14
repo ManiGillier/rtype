@@ -28,7 +28,7 @@ static std::ostream &operator<<(std::ostream &os, const std::vector<uint16_t> &v
 class DestroyEntityPacket : public Packet
 {
 public:
-    DestroyEntityPacket(std::vector<uint16_t> ids) :
+    DestroyEntityPacket(std::vector<uint16_t> ids = {}) :
         Packet(PacketId::DESTROY_ENTITY_PACKET), ids(ids) {}
 
     enum PacketMode getMode() const {
