@@ -24,8 +24,7 @@ public:
                  [[maybe_unused]] std::shared_ptr<ClientPollable> con,
                  [[maybe_unused]] std::shared_ptr<PositionUpdatePacket> packet)
     {
-        this->state.updatePosition(packet->getEntityId(), packet->getXPos(),
-                                   packet->getYPos());
+        this->state.updatePositions(packet->getPositions());
         return true;
     }
 

@@ -76,6 +76,8 @@ public:
     std::shared_ptr<Packet> clone() const override {
         return make_copy(PositionUpdatePacket);
     }
+
+    std::vector<PositionData> getPositions() const { return this->data; }
 private:
     std::vector<PositionData> data;
 };

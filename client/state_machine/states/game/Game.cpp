@@ -30,7 +30,7 @@
 //#include "client/network/executor/HealthUpdateExecutor.hpp"
 #include "client/network/executor/HitboxSizeUpdateExecutor.hpp"
 //#include "client/network/executor/LaserActivateUpdateExecutor.hpp"
-//#include "client/network/executor/PositionUpdateExecutor.hpp"
+#include "client/network/executor/PositionUpdateExecutor.hpp"
 #include "client/network/executor/UpdateTimeExecutor.hpp"
 #include "client/network/executor/LinkPlayersExecutor.hpp"
 
@@ -98,7 +98,7 @@ auto Game::init_systems() -> void
 //    nm.addExecutor(std::make_unique<HealthUpdateExecutor>(*this));
     nm.addExecutor(std::make_unique<HitboxSizeUpdateExecutor>(*this));
 //    nm.addExecutor(std::make_unique<LaserActiveUpdateExecutor>(*this));
-//    nm.addExecutor(std::make_unique<PositionUpdateExecutor>(*this));
+    nm.addExecutor(std::make_unique<PositionUpdateExecutor>(*this));
     nm.addExecutor(std::make_unique<TimeNowExecutor>(*this));
     nm.addExecutor(std::make_unique<LinkPlayersExecutor>(*this));
 }
@@ -219,6 +219,12 @@ auto Game::updateLaser(std::size_t id, bool active, float length)
     if (!my_id)
         return;
     this->registry.set<Laser>(*my_id, active, length);
+}
+
+auto Game::updatePositions(std::vector<PositionData> data) -> void
+{
+    for (auto &pos : data)
+        this->updatePosition(pos.id, pos.x, pos.y);
 }
 
 auto Game::updatePosition(std::size_t id, float x, float y)
