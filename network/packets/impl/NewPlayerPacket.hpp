@@ -64,6 +64,10 @@ public:
     std::shared_ptr<Packet> clone() const {
         return make_copy(NewPlayerPacket);
     }
+
+    std::vector<std::string> getUsernames() const {
+        return this->usernames;
+    }
 private:
     std::vector<std::string> usernames;
 };

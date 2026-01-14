@@ -8,6 +8,7 @@
 #include "Lobby.hpp"
 
 #include "client/network/executor/StartGameExecutor.hpp"
+#include "client/network/executor/NewPlayerExecutor.hpp"
 #include "systems/Systems.hpp"
 
 #include <iostream>
@@ -30,12 +31,27 @@ auto Lobby::init_systems() -> void
          std::ref(this->clientManager.getNetworkManager()));
     this->registry.add_global_render_system
         (lobbyText, std::ref(this->clientManager.getGui()));
+    this->registry.add_global_render_system
+        (lobbyPlayerList, std::ref(this->clientManager.getGui()),
+         std::ref(*this));
 
     this->clientManager.getNetworkManager()
         .addExecutor(std::make_unique<StartGameExecutor>(*this));
+    this->clientManager.getNetworkManager()
+        .addExecutor(std::make_unique<NewPlayerExecutor>(*this));
 }
 
 auto Lobby::init_entities() -> void
 {
     std::cout << "Init entities" << std::endl;
+}
+
+auto Lobby::updatePlayers(std::vector<std::string> playerList) -> void
+{
+    this->playerList = playerList;
+}
+
+auto Lobby::getPlayerList() -> std::vector<std::string>
+{
+    return this->playerList;
 }
