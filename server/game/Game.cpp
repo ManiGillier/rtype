@@ -117,8 +117,8 @@ void Game::initPlayers()
         }
     }
     for (const auto &[playerId, laserId] : playerData) {
-        auto newPlayerPacket =
-            create_packet(NewPlayerPacket, playerId, laserId);
+        // auto newPlayerPacket =
+        //     create_packet(NewPlayerPacket, playerId, laserId);
 
         auto hitBox = _registry.get<HitBox>(playerId);
         std::shared_ptr<Packet> HitBoxSize = nullptr;
@@ -126,7 +126,7 @@ void Game::initPlayers()
             HitBoxSize = create_packet(HitboxSizeUpdatePacket, playerId,
                                        hitBox->width, hitBox->height);
         }
-        _networkManager.queuePacket(newPlayerPacket);
+        // _networkManager.queuePacket(newPlayerPacket);
         _networkManager.queuePacket(HitBoxSize);
     }
 }

@@ -2,8 +2,6 @@
 #include "../components/Healer.hpp"
 #include "ecs/sparse_array/SparseArray.hpp"
 #include "network/packets/Packet.hpp"
-#include "network/packets/impl/DespawnPlayerPacket.hpp"
-#include "network/packets/impl/EnemyDiedPacket.hpp"
 #include "network/packets/impl/LaserActiveUpdatePacket.hpp"
 #include "network/packets/impl/PlayerHitPacket.hpp"
 #include "server/game/components/Hitable.hpp"
@@ -16,10 +14,7 @@
 #include <memory>
 #include <mutex>
 #include <network/logger/Logger.hpp>
-#include <network/packets/impl/DespawnBulletPacket.hpp>
 #include <network/packets/impl/GameOverPacket.hpp>
-#include <network/packets/impl/HealthUpdatePacket.hpp>
-#include <network/packets/impl/PlayerDiedPacket.hpp>
 #include <network/packets/impl/PositionUpdatePacket.hpp>
 #include <optional>
 #include <set>
@@ -50,14 +45,14 @@ auto Systems::position_system(
         } else if (out->canGoOutside &&
                    (pos->x < 0.0f || pos->x > GameConstants::width ||
                     pos->y < 0.0f || pos->y > GameConstants::height)) {
-            nm.queuePacket(std::make_shared<DespawnBulletPacket>(i));
+            // nm.queuePacket(std::make_shared<DespawnBulletPacket>(i));
             r.kill_entity(r.entity_from_index(i));
             continue;
         }
         if (r.get<Tag>(i)->tag == EntityTag::BULLET)
             continue;
-        auto packet = std::make_shared<PositionUpdatePacket>(i, pos->x, pos->y);
-        nm.queuePacket(packet, i, true);
+        // auto packet = std::make_shared<PositionUpdatePacket>(i, pos->x, pos->y);
+        // nm.queuePacket(packet, i, true);
     }
 }
 
@@ -69,6 +64,7 @@ auto Systems::pattern_system(
     NetworkManager &nm) -> void
 {
     (void)r;
+    (void)nm;
 
     for (auto &&[i, pos, acc, pat] : zipper) {
         const float speed = acc->x;
@@ -96,8 +92,8 @@ auto Systems::pattern_system(
             pos->x = pat->min_x;
             pos->y = pat->max_y - (pat->progress - 2 * width - height);
         }
-        auto packet = std::make_shared<PositionUpdatePacket>(i, pos->x, pos->y);
-        nm.queuePacket(packet, i, true);
+        // auto packet = std::make_shared<PositionUpdatePacket>(i, pos->x, pos->y);
+        // nm.queuePacket(packet, i, true);
     }
 }
 
@@ -107,11 +103,13 @@ auto Systems::update_laser_system(
         zipper,
     NetworkManager &nm) -> void
 {
-    for (auto &&[i, pos, laser] : zipper) {
-        auto packet = create_packet(LaserActiveUpdatePacket, i, laser->active,
-                                    laser->length);
-        nm.queuePacket(packet, i, true);
-    }
+    (void)nm;
+    (void)zipper;
+    // for (auto &&[_, _, _] : zipper) {
+        // auto packet = create_packet(LaserActiveUpdatePacket, i, laser->active,
+        //                             laser->length);
+        // nm.queuePacket(packet, i, true);
+    // }
 }
 
 auto Systems::player_velocity_system(Registry &r,
@@ -175,6 +173,7 @@ auto Systems::collision_system(
         zipper,
     NetworkManager &nm) -> void
 {
+    (void)nm;
     std::set<std::size_t> to_kill;
 
     for (auto &&[i, pos_i, hitbox_i] : zipper) {
@@ -212,7 +211,7 @@ auto Systems::collision_system(
 
                     if (tag_i->tag == EntityTag::BULLET) {
                         to_kill.insert(i);
-                        nm.queuePacket(create_packet(PlayerHitPacket, j, i));
+                        // nm.queuePacket(create_packet(PlayerHitPacket, j, i));
                     }
                     if (tag_j->tag == EntityTag::BOSS &&
                         !r.get<Hitable>(j)->isHitable)
@@ -237,7 +236,7 @@ auto Systems::collision_system(
 
                     if (tag_j->tag == EntityTag::BULLET) {
                         to_kill.insert(j);
-                        nm.queuePacket(create_packet(PlayerHitPacket, i, j));
+                        // nm.queuePacket(create_packet(PlayerHitPacket, i, j));
                     }
                     if (tag_i->tag == EntityTag::BOSS &&
                         !r.get<Hitable>(i)->isHitable)
@@ -257,7 +256,7 @@ auto Systems::collision_system(
     }
     for (auto &it : to_kill) {
         r.kill_entity(r.entity_from_index(it));
-        nm.queuePacket(std::make_shared<DespawnBulletPacket>(it));
+        // nm.queuePacket(std::make_shared<DespawnBulletPacket>(it));
     }
 }
 
@@ -279,18 +278,18 @@ auto Systems::health_system(Registry &r,
                    NetworkManager &nm) -> void
 {
     for (auto &&[i, health] : zipper) {
-        nm.queuePacket(
-            std::make_shared<HealthUpdatePacket>(i, health->pv, health->max_pv),
-            i, true);
+        // nm.queuePacket(
+        //     std::make_shared<HealthUpdatePacket>(i, health->pv, health->max_pv),
+        //     i, true);
         if (health->pv <= 0) {
             auto tag = r.get<Tag>(i);
             if (tag->tag == EntityTag::BOSS) {
                 heal_all_players_system(r, r.get<Healer>(i)->healer);
-                nm.queuePacket(std::make_shared<EnemyDiedPacket>(i));
-                nm.queuePacket(std::make_shared<DespawnPlayerPacket>(i));
+                // nm.queuePacket(std::make_shared<EnemyDiedPacket>(i));
+                // nm.queuePacket(std::make_shared<DespawnPlayerPacket>(i));
             } else {
-                nm.queuePacket(std::make_shared<PlayerDiedPacket>(i));
-                nm.queuePacket(std::make_shared<DespawnPlayerPacket>(i));
+                // nm.queuePacket(std::make_shared<PlayerDiedPacket>(i));
+                // nm.queuePacket(std::make_shared<DespawnPlayerPacket>(i));
                 nm.playerDied(i);
             }
             r.kill_entity(r.entity_from_index(i));

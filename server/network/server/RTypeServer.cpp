@@ -58,8 +58,8 @@ void RTypeServer::onClientConnect(std::shared_ptr<IPollable> client)
 
     std::shared_ptr<ServerClient> sc =
         std::static_pointer_cast<ServerClient>(client);
-    std::shared_ptr<Packet> p = create_packet(PlayerIdPacket, player->getId());
-    sc->sendPacket(p);
+    // std::shared_ptr<Packet> p = create_packet(PlayerIdPacket, player->getId());
+    // sc->sendPacket(p);
 }
 
 void RTypeServer::onClientDisconnect(std::shared_ptr<IPollable> client)
@@ -73,16 +73,16 @@ void RTypeServer::onClientDisconnect(std::shared_ptr<IPollable> client)
     if (hasEntityId) {
         auto lobby = this->_lobbyManager.getLobby(lobbyId);
         if (lobby) {
-            std::shared_ptr<Packet> playerDisconnect =
-                create_packet(DespawnPlayerPacket, player->getEntityId().value());
+            // std::shared_ptr<Packet> playerDisconnect =
+            //     create_packet(DespawnPlayerPacket, player->getEntityId().value());
 
             auto &playersMutex = lobby->getPlayersMutex();
             {
                 std::lock_guard<std::mutex> lock(playersMutex);
-                auto &players = lobby->getPlayers();
-                for (auto &it : players) {
-                    it->sendPacket(playerDisconnect);
-                }
+                // auto &players = lobby->getPlayers();
+                // for (auto &it : players) {
+                //     it->sendPacket(playerDisconnect);
+                // }
             }
         }
     }
