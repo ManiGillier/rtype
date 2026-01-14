@@ -50,7 +50,7 @@ Raylib::Raylib()
 
 auto Raylib::init() -> void
 {
-    raylib::InitWindow(900, 600, "TODO: Change title");
+    raylib::InitWindow(1600, 1200, "TODO: Change title");
     raylib::SetTargetFPS(60);
     raylib::InitAudioDevice();
 }
