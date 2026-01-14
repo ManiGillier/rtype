@@ -24,4 +24,20 @@ auto gameStart([[maybe_unused]] Registry &r, gl::GraphicalLibrary &gl,
         std::shared_ptr<Packet> p = std::make_shared<StartGamePacket>();
         networkManager.sendPacket(p);
     }
+    if (gl.isEventStart("move_left")) {
+        std::shared_ptr<Packet> p = std::make_shared<RegisterPacket>("jaimela", "teub");
+        networkManager.sendPacket(p);
+    }
+    if (gl.isEventStart("move_right")) {
+        std::shared_ptr<Packet> p = std::make_shared<LoginPacket>("jaimela", "teub");
+        networkManager.sendPacket(p);
+    }
+    if (gl.isEventStart("move_up")) {
+        std::shared_ptr<Packet> p = std::make_shared<RegisterPacket>("jaimele", "zgeg");
+        networkManager.sendPacket(p);
+    }
+    if (gl.isEventStart("move_down")) {
+        std::shared_ptr<Packet> p = std::make_shared<LoginPacket>("jaimele", "zgeg");
+        networkManager.sendPacket(p);
+    }
 }
