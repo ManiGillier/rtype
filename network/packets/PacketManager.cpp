@@ -16,19 +16,12 @@
 #include "impl/SAuthentificationPacket.hpp"
 #include "impl/CAuthentificationPacket.hpp"
 #include "impl/ClientInputsPacket.hpp"
-#include "impl/DespawnBulletPacket.hpp"
-#include "impl/DespawnPlayerPacket.hpp"
-#include "impl/EnemyDiedPacket.hpp"
 #include "impl/GameOverPacket.hpp"
-#include "impl/HealthUpdatePacket.hpp"
 #include "impl/HitboxSizeUpdatePacket.hpp"
 #include "impl/LaserActiveUpdatePacket.hpp"
-#include "impl/NewBulletPacket.hpp"
 #include "impl/NewEnemyPacket.hpp"
 #include "impl/NewPlayerPacket.hpp"
-#include "impl/PlayerDiedPacket.hpp"
 #include "impl/PlayerHitPacket.hpp"
-#include "impl/PlayerIdPacket.hpp"
 #include "impl/PositionUpdatePacket.hpp"
 #include "impl/StartGamePacket.hpp"
 #include "impl/TestPacket.hpp"
@@ -47,19 +40,12 @@
 void PacketManager::registerPackets()
 {
     this->packets.push_back(std::make_shared<ClientInputsPacket>());
-    this->packets.push_back(std::make_shared<DespawnBulletPacket>());
-    this->packets.push_back(std::make_shared<DespawnPlayerPacket>());
-    this->packets.push_back(std::make_shared<EnemyDiedPacket>());
     this->packets.push_back(std::make_shared<GameOverPacket>());
-    this->packets.push_back(std::make_shared<HealthUpdatePacket>());
     this->packets.push_back(std::make_shared<HitboxSizeUpdatePacket>());
     this->packets.push_back(std::make_shared<LaserActiveUpdatePacket>());
-    this->packets.push_back(std::make_shared<NewBulletPacket>());
     this->packets.push_back(std::make_shared<NewEnemyPacket>());
     this->packets.push_back(std::make_shared<NewPlayerPacket>());
-    this->packets.push_back(std::make_shared<PlayerDiedPacket>());
     this->packets.push_back(std::make_shared<PlayerHitPacket>());
-    this->packets.push_back(std::make_shared<PlayerIdPacket>());
     this->packets.push_back(std::make_shared<PositionUpdatePacket>());
     this->packets.push_back(std::make_shared<SAuthentificationPacket>());
     this->packets.push_back(std::make_shared<CAuthentificationPacket>());
