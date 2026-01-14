@@ -15,7 +15,7 @@
 #include <memory>
 #include <vector>
 
-static std::ostream &operator<<(std::ostream &os, const std::vector<uint16_t> &v)
+inline std::ostream &operator<<(std::ostream &os, const std::vector<uint16_t> &v)
 {
     os << "[";
     for (auto &id : v) {
@@ -59,7 +59,7 @@ public:
     }
 
     PacketDisplay display() const {
-        return {"Quantity", this->ids.size(), "Data", this->ids};
+        return {"Quantity", this->ids.size()};
     }
 
     std::shared_ptr<Packet> clone() const {

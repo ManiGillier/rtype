@@ -14,7 +14,7 @@
 #include <iostream>
 #include <memory>
 
-static std::ostream &operator<<(std::ostream &os,
+/*static std::ostream &operator<<(std::ostream &os,
     const std::vector<std::string> &data)
 {
     os << "[";
@@ -24,7 +24,7 @@ static std::ostream &operator<<(std::ostream &os,
     os << "]";
     return os;
 }
-
+*/
 class NewPlayerPacket : public Packet
 {
 public:
@@ -58,7 +58,7 @@ public:
     }
 
     PacketDisplay display() const {
-        return {"Quantity", this->usernames.size(), "Data", this->usernames};
+        return {"Quantity", this->usernames.size()};
     }
 
     std::shared_ptr<Packet> clone() const {

@@ -57,7 +57,7 @@ public:
     }
 
     PacketDisplay display() const {
-        return {"Quantity", this->data.size(), "Data", this->data};
+        return {"Quantity", this->data.size()};
     }
 
     std::shared_ptr<Packet> clone() const {

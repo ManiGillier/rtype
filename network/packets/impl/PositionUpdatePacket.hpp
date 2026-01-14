@@ -21,7 +21,7 @@ struct PositionData {
     float y;
 };
 
-inline std::ostream &operator<<(std::ostream &os, std::vector<PositionData> &data)
+/*inline std::ostream &operator<<(std::ostream &os, std::vector<PositionData> &data)
 {
     os << "[";
     for (auto &d : data) {
@@ -32,11 +32,11 @@ inline std::ostream &operator<<(std::ostream &os, std::vector<PositionData> &dat
     os << "]";
     return os;
 }
-
+*/
 class PositionUpdatePacket : public Packet
 {
 public:
-    PositionUpdatePacket(std::vector<PositionData> data) :
+    PositionUpdatePacket(std::vector<PositionData> data = {}) :
         Packet(PacketId::POSITION_UPDATE), data(data) {}
 
     enum PacketMode getMode() const override {
@@ -70,7 +70,7 @@ public:
     }
 
     PacketDisplay display() const override {
-        return {"Quantity", this->data.size(), "Data", this->data};
+        return {"Quantity", this->data.size()};
     }
 
     std::shared_ptr<Packet> clone() const override {
