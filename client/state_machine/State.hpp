@@ -15,6 +15,8 @@
 #include <ecs/sync/Sync.hpp>
 #include <memory>
 
+#include <graphical_library/api/GuiScene.hpp>
+
 class EndState : public IState {
 public:
     auto update() -> std::unique_ptr<IState> { return nullptr; }
@@ -39,6 +41,7 @@ protected:
     ClientManager &clientManager;
     Registry &registry;
     Sync &sync;
+    std::unique_ptr<gl::GuiScene> guiScene = nullptr;
 private:
     std::unique_ptr<IState> next_state = nullptr;
 };
