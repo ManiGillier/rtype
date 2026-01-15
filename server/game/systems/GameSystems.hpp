@@ -5,11 +5,12 @@
  ** position component
  */
 
-#ifndef COMP_POSITION_HPP
-#define COMP_POSITION_HPP
+#ifndef GAME_SYSTEMS_HPP
+#define GAME_SYSTEMS_HPP
 
 #include "../../network/network_manager/NetworkManager.hpp"
 #include "../../player/Player.hpp"
+#include "../gameplay/GameConfig.hpp"
 #include "../components/Acceleration.hpp"
 #include "../components/Damager.hpp"
 #include "../components/OutsideBoundaries.hpp"
@@ -26,13 +27,6 @@
 #include "shared/components/Position.hpp"
 #include <network/packets/PacketManager.hpp>
 #include <network/packets/impl/ClientInputsPacket.hpp>
-
-namespace GameConstants
-{
-constexpr float width = 1600;
-constexpr float height = 900;
-constexpr float PLAYER_SPEED = 200.0f;
-} // namespace GameConstants
 
 namespace Systems
 {
@@ -82,4 +76,4 @@ auto loose_system(Registry &r,
 
 } // namespace Systems
 
-#endif /* COMP_POSITION_HPP */
+#endif /* GAME_SYSTEMS_HPP */
