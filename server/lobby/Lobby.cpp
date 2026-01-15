@@ -56,6 +56,7 @@ void Lobby::removePlayer(std::shared_ptr<Player> &player)
             }
         }
     }
+    this->sendNewUsrnames();
 }
 
 std::mutex &Lobby::getPlayersMutex()

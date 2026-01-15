@@ -127,15 +127,15 @@ void Game::initPlayers()
     }
     for (const auto &it : playerData) {
         auto newPlayersPacket = create_packet(LinkPlayersPacket, playerData);
+        _networkManager.queuePacket(newPlayersPacket);
 
         auto hitBox = _registry.get<HitBox>(it.id);
         std::shared_ptr<Packet> HitBoxSize = nullptr;
         if (hitBox.has_value()) {
             HitBoxSize = create_packet(HitboxSizeUpdatePacket, it.id,
                                        hitBox->width, hitBox->height);
+            _networkManager.queuePacket(HitBoxSize);
         }
-        _networkManager.queuePacket(newPlayersPacket);
-        _networkManager.queuePacket(HitBoxSize);
     }
 }
 
