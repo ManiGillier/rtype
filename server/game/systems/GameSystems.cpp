@@ -118,7 +118,7 @@ auto Systems::update_laser_system(
 {
     (void)nm;
     (void)zipper;
-    
+
     std::vector<LaserData> laserData;
 
     for (auto &&[i, pos, laser] : zipper) {
@@ -305,13 +305,14 @@ auto Systems::heal_all_players_system(Registry &r, int heal) -> void
     }
 }
 
-auto Systems::health_system(Registry &r,
-                   containers::indexed_zipper<SparseArray<Health>> zipper,
-                   NetworkManager &nm) -> void
+auto Systems::health_system(
+    Registry &r, containers::indexed_zipper<SparseArray<Health>> zipper,
+    NetworkManager &nm) -> void
 {
     std::vector<std::size_t> toDestroy;
 
     for (auto &&[i, health] : zipper) {
+        LOG("health curr " << health->pv << " max = " << health->max_pv);
         if (health->pv <= 0) {
             auto tag = r.get<Tag>(i);
             if (tag->tag == EntityTag::BOSS) {
