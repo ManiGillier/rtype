@@ -2,7 +2,6 @@
 #include "../components/Healer.hpp"
 #include "ecs/sparse_array/SparseArray.hpp"
 #include "network/packets/Packet.hpp"
-#include "network/packets/impl/DestroyEntityPacket.hpp"
 #include "network/packets/impl/LaserActiveUpdatePacket.hpp"
 #include "network/packets/impl/PlayerHitPacket.hpp"
 #include "server/game/components/Acceleration.hpp"
@@ -237,7 +236,7 @@ auto Systems::collision_system(
 
                     if (tag_i->tag == EntityTag::BULLET) {
                         to_kill.insert(i);
-                        // nm.queuePacket(create_packet(PlayerHitPacket, j, i));
+                        nm.queuePacket(create_packet(PlayerHitPacket));
                     }
                     if (tag_j->tag == EntityTag::BOSS &&
                         !r.get<Hitable>(j)->isHitable)
@@ -262,7 +261,7 @@ auto Systems::collision_system(
 
                     if (tag_j->tag == EntityTag::BULLET) {
                         to_kill.insert(j);
-                        // nm.queuePacket(create_packet(PlayerHitPacket, i, j));
+                        nm.queuePacket(create_packet(PlayerHitPacket));
                     }
                     if (tag_i->tag == EntityTag::BOSS &&
                         !r.get<Hitable>(i)->isHitable)
@@ -305,10 +304,9 @@ auto Systems::health_system(Registry &r,
                    containers::indexed_zipper<SparseArray<Health>> zipper,
                    NetworkManager &nm) -> void
 {
+    std::vector<std::size_t> toDestroy;
+
     for (auto &&[i, health] : zipper) {
-        // nm.queuePacket(
-        //     std::make_shared<HealthUpdatePacket>(i, health->pv, health->max_pv),
-        //     i, true);
         if (health->pv <= 0) {
             auto tag = r.get<Tag>(i);
             if (tag->tag == EntityTag::BOSS) {
@@ -318,9 +316,11 @@ auto Systems::health_system(Registry &r,
                 nm.queueDiedEntity(static_cast<uint16_t>(i));
                 nm.playerDied(i);
             }
-            r.kill_entity(r.entity_from_index(i));
+            toDestroy.push_back(i);
         }
     }
+    for (auto &it : toDestroy)
+        r.kill_entity(r.entity_from_index(it));
 }
 
 auto Systems::loose_system([[maybe_unused]] Registry &r,
