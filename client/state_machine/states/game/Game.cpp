@@ -87,7 +87,7 @@ auto Game::init_systems() -> void
     nm.addExecutor(std::make_unique<NewBulletExecutor>(*this));
     nm.addExecutor(std::make_unique<GameOverExecutor>(*this));
     nm.addExecutor(std::make_unique<HitboxSizeUpdateExecutor>(*this));
-//    nm.addExecutor(std::make_unique<LaserActiveUpdateExecutor>(*this));
+    nm.addExecutor(std::make_unique<LaserActiveUpdateExecutor>(*this));
     nm.addExecutor(std::make_unique<PositionUpdateExecutor>(*this));
     nm.addExecutor(std::make_unique<TimeNowExecutor>(*this));
     nm.addExecutor(std::make_unique<LinkPlayersExecutor>(*this));
