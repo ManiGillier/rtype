@@ -16,6 +16,8 @@
 #include "server/network/executor/RegisterExecutor.hpp"
 #include "server/network/executor/LoginExecutor.hpp"
 #include <string>
+#include <ctime>
+#include "utils/RandomUtils.hpp"
 #include <filesystem>
 
 RType::RType(int argc, char **argv)
@@ -107,6 +109,7 @@ void RType::networkLoop()
 
 int RType::launch()
 {
+    srand((unsigned) time(NULL));
     if (_displayUsage)
         return displayUsage();
 
@@ -121,7 +124,7 @@ bool RTypeConfig::createConfig()
 
     if (!config.is_open())
         return false;
-    config << "RCON_KEY=" << TO_CHANGE;
+    config << "RCON_KEY=" << RandomUtils::generateRandomUUID(16);
     this->key = TO_CHANGE;
     if (!config)
         return false;
