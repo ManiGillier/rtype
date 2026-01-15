@@ -39,7 +39,6 @@ auto Systems::position_system(
             vel->x = acc->x;
             vel->y = acc->y;
         }
-
         if (!out->canGoOutside) {
             if (pos->x < 0.0f)
                 pos->x = 0.0f;
@@ -123,10 +122,16 @@ auto Systems::update_laser_system(
     std::vector<LaserData> laserData;
 
     for (auto &&[i, pos, laser] : zipper) {
+        auto dep = r.get<Dependence>(i);
+        auto p_pos = r.get<Position>(dep->id);
+
+        pos->x = p_pos.value().x;
+        pos->y = p_pos.value().y;
+
         LaserData ld = {
             .id = static_cast<uint32_t>(i),
             .active = laser->active,
-            .length = laser->length,
+            .length = GameConstants::height - pos->y,
         };
         laserData.push_back(ld);
     }
