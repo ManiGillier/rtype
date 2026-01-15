@@ -116,11 +116,19 @@ auto Systems::update_laser_system(
 {
     (void)nm;
     (void)zipper;
-    // for (auto &&[_, _, _] : zipper) {
-        // auto packet = create_packet(LaserActiveUpdatePacket, i, laser->active,
-        //                             laser->length);
-        // nm.queuePacket(packet, i, true);
-    // }
+    
+    std::vector<LaserData> laserData;
+
+    for (auto &&[i, pos, laser] : zipper) {
+        LaserData ld = {
+            .id = static_cast<uint32_t>(i),
+            .active = laser->active,
+            .length = laser->length,
+        };
+        laserData.push_back(ld);
+    }
+    auto laserUpdPacket = create_packet(LaserActiveUpdatePacket, laserData);
+    nm.queuePacket(laserUpdPacket);
 }
 
 auto Systems::player_velocity_system(Registry &r,
