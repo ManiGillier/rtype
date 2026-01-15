@@ -14,17 +14,29 @@
 class RCONResponse : public Packet {
     public:
         RCONResponse(std::string response=RCON_DEFAULT_RESPONSE) :
-            Packet(PacketId::RCON_RESPONSE), response(response) {}
+            Packet(PacketId::RCON_RESPONSE) {
+                this->responses.push_back(response);
+            }
 
         enum PacketMode getMode() const {
             return PacketMode::TCP;
         }
 
         void serialize() {
-            this->write(response);
+            this->write((uint16_t) this->responses.size());
+            for (const std::string &response : this->responses)
+                this->write(response);
         }
+
         void unserialize() {
-            this->read(response);
+            uint16_t size;
+
+            this->read(size);
+            for (uint16_t i = 0; i < size; i++) {
+                std::string response;
+                this->read(response);
+                this->responses.push_back(response);
+            }
         }
 
         const std::string getName() {
@@ -32,18 +44,39 @@ class RCONResponse : public Packet {
         }
 
         PacketDisplay display() const {
-            return {"response", this->response};
+            return {"response", this->responses};
         }
 
         std::shared_ptr<Packet> clone() const {
             return make_copy(RCONResponse);
         }
 
-        const std::string &getResponse() const {
-            return this->response;
+        const std::vector<std::string> &getResponses() const {
+            return this->responses;
         }
+
+        void addResponse(const std::string &response) {
+            this->responses.push_back(response);
+        }
+
+        void clearResponses() {
+            this->responses.clear();
+        }
+     
     private:
-        std::string response;
+        std::vector<std::string> responses;
 };
+
+inline std::ostream &operator<<(std::ostream &os, const std::vector<std::string> &vec) {
+    os << "[";
+    for (std::size_t i = 0; i < vec.size(); i++) {
+        os << vec[i];
+        if (i < vec.size() - 1)
+            os << ", ";
+    }
+    os << "]";
+    return os;
+}
+
 
 #endif /* !RCONRESPONSE_HPP_ */

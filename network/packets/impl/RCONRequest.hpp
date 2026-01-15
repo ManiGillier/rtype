@@ -54,6 +54,15 @@ class RCONRequest : public Packet {
         RequestType getRequestType() const {
             return this->requestType;
         }
+
+        const std::string &getSpecifiedKey() const {
+            return this->rconKey;
+        }
+
+        const std::string &getTarget() const {
+            return this->target;
+        }
+
     private:
         std::string getRequestTypeAsString(RequestType requestType) const {
             switch (requestType) {
