@@ -16,5 +16,11 @@ bool JoinLobbyWithCodeExecutor::execute(
 
     this->_rtypeServer.getLobbyManager().joinLobby(packet->getCode(), player);
     player->sendPacket(create_packet(JoinedLobbyPacket, player->getLobbyId()));
+    auto lobby = this->_rtypeServer.getLobbyManager().getLobby(player->getLobbyId());
+
+    if (lobby) {
+        LOG("Send new usrName");
+        lobby->sendNewUsrnames();
+    }
     return true;
 }

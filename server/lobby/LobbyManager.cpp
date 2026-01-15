@@ -108,6 +108,7 @@ std::shared_ptr<Lobby> LobbyManager::getLobby(const std::string &lobbyId)
 {
     std::lock_guard<std::mutex> lock(_lobbiesMutex);
     auto it = _lobbies.find(lobbyId);
+
     return (it != _lobbies.end()) ? it->second : nullptr;
 }
 

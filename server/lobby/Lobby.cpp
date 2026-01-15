@@ -16,17 +16,24 @@ bool Lobby::addPlayer(std::shared_ptr<Player> &player)
         if (this->_players.size() < MAX_PLAYER) {
             this->_players.push_back(player);
             
-            std::vector<std::string> names;
-            for (auto &p : _players)
-                names.push_back(p->getUsername());
-
-            auto names_p = create_packet(NewPlayerPacket,names);
-            for (auto &p : _players)
-                p->sendPacket(names_p);
 
         }
     }
     return false;
+}
+
+void Lobby::sendNewUsrnames()
+{
+    std::lock_guard<std::mutex> lock(_playersMutex);
+    std::vector<std::string> names;
+
+    for (auto &p : _players)
+        names.push_back(p->getUsername());
+
+    auto names_p = create_packet(NewPlayerPacket,names);
+
+    for (auto &p : _players)
+        p->sendPacket(names_p);
 }
 
 void Lobby::removePlayer(std::shared_ptr<Player> &player)

@@ -16,5 +16,12 @@ bool CreatePrivateLobbyExecutor::execute(
 
     this->_rtypeServer.getLobbyManager().newLobby(player);
     player->sendPacket(create_packet(JoinedLobbyPacket, player->getLobbyId()));
+
+    auto lobby = this->_rtypeServer.getLobbyManager().getLobby(player->getLobbyId());
+
+    if (lobby) {
+        LOG("Send new usrName");
+        lobby->sendNewUsrnames();
+    }
     return true;
 }
