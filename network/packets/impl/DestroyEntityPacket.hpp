@@ -13,16 +13,18 @@
 #include <cstdint>
 #include <ostream>
 #include <memory>
+#include <sstream>
 #include <vector>
 
-inline std::ostream &operator<<(std::ostream &os, const std::vector<uint16_t> &v)
+inline std::string logData(std::vector<uint16_t> v)
 {
+    std::stringstream os;
     os << "[";
     for (auto &id : v) {
-        os << id << ", ";
+        os << id << ",";
     }
     os << "]";
-    return os;
+    return os.str();
 }
 
 class DestroyEntityPacket : public Packet
@@ -59,7 +61,7 @@ public:
     }
 
     PacketDisplay display() const {
-        return {"Quantity", this->ids.size()};
+        return {"Quantity", this->ids.size(), "Data", logData(this->ids)};
     }
 
     std::shared_ptr<Packet> clone() const {
