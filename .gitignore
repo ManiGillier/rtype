@@ -11,3 +11,4 @@ CPM_modules/
 .vscode
 /vgcore*
 *.db3
+rtype.cfg
