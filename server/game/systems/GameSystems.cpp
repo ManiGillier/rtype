@@ -5,6 +5,7 @@
 #include "network/packets/impl/DestroyEntityPacket.hpp"
 #include "network/packets/impl/LaserActiveUpdatePacket.hpp"
 #include "network/packets/impl/PlayerHitPacket.hpp"
+#include "server/game/components/Acceleration.hpp"
 #include "server/game/components/Hitable.hpp"
 #include "server/game/components/OutsideBoundaries.hpp"
 #include "server/game/components/Tag.hpp"
@@ -34,8 +35,12 @@ auto Systems::position_system(
         auto lastTick = nm.getLastTick();
         pos->x += vel->x * lastTick;
         pos->y += vel->y * lastTick;
-        vel->x = acc->x;
-        vel->y = acc->y;
+
+        if (r.get<Tag>(i)->tag != EntityTag::PLAYER) {
+            vel->x = acc->x;
+            vel->y = acc->y;
+        }
+
         if (!out->canGoOutside) {
             if (pos->x < 0.0f)
                 pos->x = 0.0f;
@@ -54,7 +59,6 @@ auto Systems::position_system(
         }
         if (r.get<Tag>(i)->tag == EntityTag::BULLET)
             continue;
-
         PositionData pd = {
             .id = static_cast<uint32_t>(i),
             .x = pos->x,
@@ -145,6 +149,9 @@ auto Systems::player_velocity_system(Registry &r,
 
     auto inputs = packet->getInputs();
     auto &vel = velocities[id].value();
+
+    vel.x = 0;
+    vel.y = 0;
 
     if (inputs.value.left)
         vel.x -= GameConstants::PLAYER_SPEED;
