@@ -29,7 +29,8 @@ ClientManager::ClientManager()
 
     this->gui->init();
 
-    this->gui->registerTexture("client/assets/background.jpg", "background");
+    this->gui->registerTexture("client/assets/background.jpg", "heart");
+    this->gui->registerTexture("client/assets/heart.png", "background");
     this->gui->registerSound("client/assets/laser.mp3", "laser");
     this->gui->registerSound("client/assets/new_player.mp3", "new_player");
     this->gui->registerSound("client/assets/despawn_player.mp3",
