@@ -101,6 +101,8 @@ auto Game::newPlayer(std::string name, std::size_t player_id,
 -> void
 {
     Registry &r = this->registry;
+    if (this->players.contains(name))
+        return;
     Entity player = r.spawn_entity();
     Entity laser = r.spawn_entity();
 
