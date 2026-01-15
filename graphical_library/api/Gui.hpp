@@ -2,46 +2,32 @@
 ** EPITECH PROJECT, 2025
 ** rtype
 ** File description:
-** raylib
+** GUI
 */
 
-#ifndef CLIENT_RENDERER_HPP
-#define CLIENT_RENDERER_HPP
+#ifndef CLIENT_GUI_HPP
+#define CLIENT_GUI_HPP
 
-#include <graphical_library/api/MyButton.hpp>
-#include <graphical_library/api/MyCheck.hpp>
-#include <graphical_library/api/MyTextBox.hpp>
-#include <graphical_library/api/MyInputBox.hpp>
+#include "Button.hpp"
+#include "Checkbox.hpp"
+#include "TextBox.hpp"
+#include "InputBox.hpp"
+#include "GraphicalLibrary.hpp"
+
+#include <memory>
 
 namespace gl {
     class Gui
     {
     public:
-        Gui() = default;
-        virtual ~Gui() = default;
-        virtual void draw() = 0;
-        virtual void addButton(int posX, int posY, int sizeX, int sizeY,
-            int transparency, gl::Color color, const std::string &text) = 0;
-        virtual void addCheckBox(bool checked, int posX, int posY, int size,
-            int transparency, gl::Color color, const std::string &text) = 0;
-        virtual auto update() -> void = 0;
-        virtual void deleteButton(size_t i) = 0;
-        virtual void deleteCheckBox(size_t i) = 0;
-        virtual void clear() = 0;
-        virtual const Button &getButton(int i) const = 0;
-        virtual const Checkbox &getCheckBox(int i) const = 0;
-        virtual Button &getButton(int i) = 0;
-        virtual Checkbox &getCheckBox(int i) = 0;
-        virtual void addTextBox(int posX, int posY, int sizeX, int sizeY,
-            int transparency, gl::Color color, const std::string& text) = 0;
-        virtual void deleteTextBox(size_t i) = 0;
-        virtual TextBox &getTextBox(int i) = 0;
-        virtual const TextBox &getTextBox(int i) const = 0;
-        virtual void addInputBox(int posX, int posY, int sizeX, int sizeY,
-                    int transparency, Color color, const std::string& text) = 0;
-        virtual void deleteInputBox(size_t i) = 0;
-        virtual InputBox &getInputBox(int i) = 0;
-        virtual const InputBox &getInputBox(int i) const = 0;
+        Gui(GraphicalLibrary &gl);
+        auto draw() -> void;
+        auto update() -> void;
+        auto addButton(std::unique_ptr<Button>) -> void;
+        auto addCheckbox(std::unique_ptr<Checkbox>) -> void;
+        auto addTextBox(std::unique_ptr<TextBox>) -> void;
+        auto addInputBox(std::unique_ptr<InputBox>) -> void;
     };
 }
-#endif // RENDERER_HPP_
+
+#endif // CLIENT_GUI_HPP

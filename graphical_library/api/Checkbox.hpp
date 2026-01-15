@@ -10,7 +10,6 @@
 #include "Color.hpp"
 #include <string>
 
-
 namespace gl {
     class Checkbox {
     public:
