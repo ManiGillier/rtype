@@ -15,11 +15,18 @@
 
 #include <graphical_library/api/GraphicalLibrary.hpp>
 
+#include "../Lobby.hpp"
+
 auto gameStart([[maybe_unused]] Registry &r, gl::GraphicalLibrary &gl,
                NetworkManager &networkManager)
 -> void;
 
 auto lobbyText([[maybe_unused]] Registry &r, gl::GraphicalLibrary &gl)
+-> void;
+
+auto lobbyPlayerList([[maybe_unused]] Registry &r,
+                     gl::GraphicalLibrary &gl,
+                     Lobby &lobby)
 -> void;
 
 #endif /* CLIENT_LOBBY_STATE_SYSTEMS_HPP */

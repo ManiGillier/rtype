@@ -67,7 +67,7 @@ auto renderPlayerId([[maybe_unused]] Registry &reg,
 -> void;
 
 auto playerInputs([[maybe_unused]] Registry &r, gl::GraphicalLibrary &gl,
-                  NetworkManager &networkManager)
+                  NetworkManager &networkManager, Game &game)
 -> void;
 
 auto updateStraightMoving([[maybe_unused]] Registry &reg,

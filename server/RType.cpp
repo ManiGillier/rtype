@@ -7,6 +7,9 @@
 #include <iostream>
 #include "server/network/executor/RegisterExecutor.hpp"
 #include "server/network/executor/LoginExecutor.hpp"
+#include "server/network/executor/JoinOrCreatePublicLobbyExecutor.hpp"
+#include "server/network/executor/CreatePrivateLobbyExecutor.hpp"
+#include "server/network/executor/JoinLobbyWithCodeExecutor.hpp"
 #include <string>
 
 RType::RType(int argc, char **argv)
@@ -65,6 +68,12 @@ void RType::initExecutor(RTypeServer &server)
         std::make_unique<LoginExecutor>(server));
     server.getPacketListener().addExecutor(
         std::make_unique<RegisterExecutor>(server));
+    server.getPacketListener().addExecutor(
+        std::make_unique<JoinLobbyWithCodeExecutor>(server));
+    server.getPacketListener().addExecutor(
+        std::make_unique<CreatePrivateLobbyExecutor>(server));
+    server.getPacketListener().addExecutor(
+        std::make_unique<JoinOrCreatePublicLobbyExecutor>(server));
 }
 
 void RType::networkLoop()

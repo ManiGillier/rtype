@@ -9,7 +9,7 @@
 #define AUTHPACKET_EXECUTOR_HPP
 
 #include "client/state_machine/states/connecting/Connecting.hpp"
-#include "client/state_machine/states/lobby/Lobby.hpp"
+#include "client/state_machine/states/login/Login.hpp"
 
 #include <memory>
 #include <network/packets/listener/PacketExecutor.hpp>
@@ -25,7 +25,7 @@ public:
                  [[maybe_unused]] std::shared_ptr<ClientPollable> con,
                  [[maybe_unused]] std::shared_ptr<AuthentifiedPacket> packet)
     {
-        this->state.change_state<Lobby>();
+        this->state.change_state<Login>();
         return true;
     }
 

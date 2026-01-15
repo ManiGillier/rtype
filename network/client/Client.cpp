@@ -103,12 +103,18 @@ bool Client::sendPacket(std::shared_ptr<Packet> p, bool wakeUpPoll)
 void Client::executePackets()
 {
     this->getPollManager().lock();
+    bool skipping = false;
+
     for (std::shared_ptr<IPollable> &p : this->getPollManager().getPool()) {
         std::queue<std::shared_ptr<Packet>> &q = p->getReceivedPackets();
         while (!q.empty()) {
             std::shared_ptr<Packet> packet = q.front();
-            this->getPacketListener().executePacket(*this, p, packet);
+            skipping = !this->getPacketListener().executePacket(*this, p, packet);
             q.pop();
+            if (skipping) {
+                this->getPollManager().unlock();
+                return;
+            }
         }
     }
     for (auto &[addr, packet] : ClientPollableUDP::getUDPReceivedPackets()) {
@@ -116,7 +122,7 @@ void Client::executePackets()
             this->getPollManager().getPollableByAddress(this->udpServerAddress),
             packet);
     }
-    ClientPollableUDP::getUDPReceivedPackets().clear();
+    //ClientPollableUDP::getUDPReceivedPackets().clear();
     this->getPollManager().unlock();
 }
 

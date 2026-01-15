@@ -10,28 +10,72 @@
 
 #include "network/packets/Packet.hpp"
 #include <cstddef>
+#include <cstdint>
 #include <iostream>
 #include <memory>
+#include <ostream>
 
+struct PositionData {
+    uint32_t id;
+    float x;
+    float y;
+};
+
+inline std::string logData(std::vector<PositionData> data)
+{
+    std::stringstream os;
+    os << "[";
+    for (auto &d : data) {
+        os << "{";
+        os << "ID=" << d.id << ",X=" << d.x << ",Y=" << d.y;
+        os << "};";
+    }
+    os << "]";
+    return os.str();
+}
+
+/*inline std::ostream &operator<<(std::ostream &os, std::vector<PositionData> &data)
+{
+    os << "[";
+    for (auto &d : data) {
+        os << "{";
+        os << "ID=" << d.id << ",X=" << d.x << ",Y=" << d.y;
+        os << "};";
+    }
+    os << "]";
+    return os;
+}
+*/
 class PositionUpdatePacket : public Packet
 {
 public:
-    PositionUpdatePacket(std::size_t id = 0, float x = 0.0, float y = 0.0) :
-        Packet(PacketId::POSITION_UPDATE), id(id), x(x), y(y) {}
+    PositionUpdatePacket(std::vector<PositionData> data = {}) :
+        Packet(PacketId::POSITION_UPDATE), data(data) {}
 
     enum PacketMode getMode() const override {
         return PacketMode::UDP;
     }
 
     void serialize() override {
-        this->write(id);
-        this->write(x);
-        this->write(y);
+        this->write<uint16_t>(static_cast<uint16_t>(data.size()));
+        for (auto &d : data) {
+            this->write(d.id);
+            this->write(d.x);
+            this->write(d.y);
+        }
     }
     void unserialize() override {
-        this->read(id);
-        this->read(x);
-        this->read(y);
+        uint16_t size = 0;
+        this->read(size);
+        this->data.clear();
+        this->data.reserve(size);
+        for (uint16_t i = 0; i < size; i++) {
+            PositionData d;
+            this->read(d.id);
+            this->read(d.x);
+            this->read(d.y);
+            this->data.push_back(d);
+        }
     }
 
     const std::string getName() override {
@@ -39,32 +83,16 @@ public:
     }
 
     PacketDisplay display() const override {
-        return {"Id", this->id, "x", this->x, "y", this->y};
+        return {"Quantity", this->data.size(), "Data", logData(this->data)};
     }
 
     std::shared_ptr<Packet> clone() const override {
         return make_copy(PositionUpdatePacket);
     }
 
-    bool isEqual(const Packet &o) const override
-    {
-        if (o.getId() != POSITION_UPDATE) {
-            return false;
-        }
-        const PositionUpdatePacket &other =
-            static_cast<const PositionUpdatePacket &>(o);
-
-        return (this->getXPos() == other.getXPos() &&
-                this->getYPos() == other.getYPos());
-    }
-
-    auto getEntityId() const -> std::size_t { return this->id; }
-    auto getXPos() const -> float { return this->x; }
-    auto getYPos() const -> float { return this->y; }
+    std::vector<PositionData> getPositions() const { return this->data; }
 private:
-    std::size_t id;
-    float x;
-    float y;
+    std::vector<PositionData> data;
 };
 
 #endif /* POSITIONUPDATE_PACKET_HPP */
