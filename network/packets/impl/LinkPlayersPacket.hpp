@@ -12,12 +12,30 @@
 #include <cstddef>
 #include <iostream>
 #include <memory>
+#include <sstream>
+#include <string>
+#include <vector>
 
 struct PlayerLink {
     std::string name;
     uint16_t id;
     uint16_t laserId;
 };
+
+inline std::string logData(std::vector<PlayerLink> data) {
+    std::stringstream ss;
+
+    ss << "[";
+    for (auto &link : data) {
+        ss << "{"
+        << "Name=" << link.name << ","
+        << "Id=" << link.id << ","
+        << "LaserId=" << link.laserId
+        << "};";
+    }
+    ss << "]";
+    return ss.str();
+}
 
 class LinkPlayersPacket : public Packet
 {
@@ -57,7 +75,7 @@ public:
     }
 
     PacketDisplay display() const {
-        return {"Quantity", this->data.size()};
+        return {"Quantity", this->data.size(), "Data", logData(this->data)};
     }
 
     std::shared_ptr<Packet> clone() const {
