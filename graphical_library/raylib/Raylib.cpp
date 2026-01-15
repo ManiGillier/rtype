@@ -6,6 +6,7 @@
 */
 
 #include "Raylib.hpp"
+#include <cstdint>
 #include <iostream>
 #include <memory>
 
@@ -280,4 +281,34 @@ auto Raylib::convertKey(gl::Key key) -> int
 std::unique_ptr<gl::GraphicalLibrary> init_raylib()
 {
     return std::make_unique<Raylib>();
+}
+
+auto Raylib::draw(gl::AnimatedSprite &sprite) -> void
+{
+    float dt = this->getDeltaTime();
+    raylib::Texture rtext = this->textures[sprite.name].second;
+    gl::Texture gltext = this->textures[sprite.name].first;
+    gltext.scale = (float) sprite.finalHeight / (float) gltext.size.y;
+
+    sprite.timeUntilNextStep -= dt;
+    if (sprite.timeUntilNextStep <= 0) {
+        sprite.timeUntilNextStep = 1.0f / sprite.animationSpeed;
+        sprite.animationCurrentStep++;
+        sprite.animationCurrentStep %= sprite.animationSteps;
+    }
+    raylib::Rectangle source = {
+        ((float) gltext.size.x / (float) sprite.animationSteps)
+            * (float) sprite.animationCurrentStep,
+        ((float) gltext.size.y / (float) sprite.verticalChoices)
+            * (float) sprite.verticalIndex,
+        ((float) gltext.size.x / (float) sprite.animationSteps),
+        ((float) gltext.size.y / (float) sprite.verticalChoices)
+    };
+    raylib::Rectangle dest = {
+        (float) sprite.pos.x, (float) sprite.pos.y,
+        ((float) gltext.size.x * gltext.scale / (float) sprite.animationSteps),
+        ((float) gltext.size.y * gltext.scale / (float) sprite.verticalChoices)
+    };
+    raylib::DrawTexturePro(rtext, source, dest,
+                           { 0.0, 0.0 }, 0.0f, raylib::WHITE);
 }

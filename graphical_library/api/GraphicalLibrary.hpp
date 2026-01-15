@@ -8,6 +8,7 @@
 #ifndef CLIENT_GRAPHICAL_LIBRARY_HPP
 #define CLIENT_GRAPHICAL_LIBRARY_HPP
 
+#include "AnimatedSprite.hpp"
 #include "Color.hpp"
 #include "Key.hpp"
 #include "Sound.hpp"
@@ -39,6 +40,7 @@ namespace gl {
         virtual auto draw(gl::Rectangle rect) -> void = 0;
         virtual auto draw(gl::Text text) -> void = 0;
         virtual auto draw(gl::Texture texture) -> void = 0;
+        virtual auto draw(gl::AnimatedSprite &sprite) -> void = 0;
 
         virtual auto getTextWidth(gl::Text text) -> int = 0;
         virtual auto getTextWidth(const std::string &txt, int fontSize)
