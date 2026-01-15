@@ -60,6 +60,8 @@ enum PacketId {
     LOGIN_RESPONSE_PACKET,
     SPAWN_STRAIGHT_MOVING_ENTITY_PACKET,
     TIME_NOW_PACKET,
+    RCON_RESPONSE,
+    RCON_REQUEST
 };
 
 class PacketDisplay {
