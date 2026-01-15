@@ -23,6 +23,8 @@ class IPollable {
         virtual bool receiveEvent(short revent) = 0;
         virtual uint32_t getUUID() const = 0;
         virtual std::optional<sockaddr_in> getClientAddress() const = 0;
+        virtual void setDisabled(bool disabled)  = 0;
+        virtual bool isDisabled() const = 0;
         virtual void setClientAddress(std::optional<sockaddr_in> address) = 0;
         virtual void sendPacket(std::shared_ptr<Packet> p, bool wakeUpPoll=true) = 0;
         virtual uint16_t &getUDPPacketCount() = 0;

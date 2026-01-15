@@ -17,7 +17,7 @@ bool ClientInputsExecutor::execute(Server &server,
     auto lobby = _rtypeServer.getLobbyManager().getLobby(player->getLobbyId());
     if (!lobby) {
         LOG("Error: Lobby not found for player " << player->getId());
-        return false;
+        return true;
     }
 
     auto &game = lobby->getGame();

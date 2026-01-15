@@ -1,5 +1,6 @@
 #include "RTypeServer.hpp"
 #include "../../player/Player.hpp"
+#include <network/packets/impl/DestroyEntityPacket.hpp>
 #include <memory>
 #include <mutex>
 #include <optional>
@@ -34,6 +35,11 @@ ThreadPool &RTypeServer::getGameThreadPool()
     return this->_threadPool;
 }
 
+AccountDatabase & RTypeServer::getAccountDatabase()
+{
+    return this->db;
+}
+
 std::shared_ptr<IPollable> RTypeServer::createClient(int fd)
 {
     // NOTE: id not used yet perhaps remove it later (was usefull during partI)
@@ -42,18 +48,13 @@ std::shared_ptr<IPollable> RTypeServer::createClient(int fd)
 
 void RTypeServer::onClientConnect(std::shared_ptr<IPollable> client)
 {
+    client->setDisabled(true);
     auto player = std::static_pointer_cast<Player>(client);
 
     LOG("Player connected to fd= " << client->getFileDescriptor());
 
-    this->_lobbyManager.newLobby(player);
-    // TODO: join public need to be call by client request (here for debug)
-    this->_lobbyManager.joinPublicLobby(player);
-
     std::shared_ptr<ServerClient> sc =
         std::static_pointer_cast<ServerClient>(client);
-    std::shared_ptr<Packet> p = create_packet(PlayerIdPacket, player->getId());
-    sc->sendPacket(p);
 }
 
 void RTypeServer::onClientDisconnect(std::shared_ptr<IPollable> client)
@@ -67,8 +68,9 @@ void RTypeServer::onClientDisconnect(std::shared_ptr<IPollable> client)
     if (hasEntityId) {
         auto lobby = this->_lobbyManager.getLobby(lobbyId);
         if (lobby) {
-            std::shared_ptr<Packet> playerDisconnect =
-                create_packet(DespawnPlayerPacket, player->getEntityId().value());
+            std::vector<uint16_t> toDestroy;
+            toDestroy.push_back(static_cast<uint16_t>(player->getEntityId().value()));
+            auto playerDisconnect = create_packet(DestroyEntityPacket, toDestroy);
 
             auto &playersMutex = lobby->getPlayersMutex();
             {
@@ -81,4 +83,19 @@ void RTypeServer::onClientDisconnect(std::shared_ptr<IPollable> client)
         }
     }
     this->_lobbyManager.removePlayer(player);
+}
+
+bool RTypeServer::isConnected(const std::string &username)
+{
+    std::vector<std::shared_ptr<IPollable>> p = this->getPollManager().getPool();
+    std::shared_ptr<Player> player = nullptr;
+
+    for (std::shared_ptr<IPollable> pollable : p) {
+        player = std::dynamic_pointer_cast<Player>(pollable);
+        if (player == nullptr)
+            continue;
+        if (player->getUsername() == username)
+            return true;
+    }
+    return false;
 }

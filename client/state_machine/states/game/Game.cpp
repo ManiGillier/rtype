@@ -19,24 +19,21 @@
 #include "client/components/Texture.hpp"
 #include "client/components/StraightMoving.hpp"
 
-#include "client/network/executor/NewPlayerExecutor.hpp"
 #include "client/network/executor/NewEnemyExecutor.hpp"
 #include "client/network/executor/NewBulletExecutor.hpp"
-#include "client/network/executor/DespawnPlayerExecutor.hpp"
-#include "client/network/executor/DespawnBulletExecutor.hpp"
-#include "client/network/executor/EnemyDiedExecutor.hpp"
-#include "client/network/executor/PlayerIdExecutor.hpp"
 #include "client/network/executor/GameOverExecutor.hpp"
-#include "client/network/executor/HealthUpdateExecutor.hpp"
 #include "client/network/executor/HitboxSizeUpdateExecutor.hpp"
 #include "client/network/executor/LaserActivateUpdateExecutor.hpp"
 #include "client/network/executor/PositionUpdateExecutor.hpp"
 #include "client/network/executor/UpdateTimeExecutor.hpp"
+#include "client/network/executor/LinkPlayersExecutor.hpp"
+#include "client/network/executor/DestroyEntityExecutor.hpp"
 
 #include "network/packets/impl/ClientInputsPacket.hpp"
 
 #include "systems/Systems.hpp"
 #include <cstdint>
+#include <queue>
 
 Game::Game(ClientManager &cm, Registry &r, Sync &s)
     : State(cm, r, s)
@@ -79,34 +76,34 @@ auto Game::init_systems() -> void
 
     this->registry.add_global_update_system
         (playerInputs, std::ref(this->clientManager.getGui()),
-         std::ref(this->clientManager.getNetworkManager()));
+         std::ref(this->clientManager.getNetworkManager()),
+         std::ref(*this));
 
     Entity background = this->registry.spawn_named_entity("background");
     this->registry.add_component<HorizontalTiling>(background, {2, 0, -50});
     this->registry.add_component<TextureComp>
         (background, {"background"});
 
-    nm.addExecutor(std::make_unique<NewPlayerExecutor>(*this));
     nm.addExecutor(std::make_unique<NewEnemyExecutor>(*this));
     nm.addExecutor(std::make_unique<NewBulletExecutor>(*this));
-    nm.addExecutor(std::make_unique<DespawnPlayerExecutor>(*this));
-    nm.addExecutor(std::make_unique<DespawnBulletExecutor>(*this));
-    nm.addExecutor(std::make_unique<EnemyDiedExecutor>(*this));
-    nm.addExecutor(std::make_unique<PlayerIdExecutor>(*this));
     nm.addExecutor(std::make_unique<GameOverExecutor>(*this));
-    nm.addExecutor(std::make_unique<HealthUpdateExecutor>(*this));
     nm.addExecutor(std::make_unique<HitboxSizeUpdateExecutor>(*this));
     nm.addExecutor(std::make_unique<LaserActiveUpdateExecutor>(*this));
     nm.addExecutor(std::make_unique<PositionUpdateExecutor>(*this));
     nm.addExecutor(std::make_unique<TimeNowExecutor>(*this));
+    nm.addExecutor(std::make_unique<LinkPlayersExecutor>(*this));
+    nm.addExecutor(std::make_unique<DestroyEntityExecutor>(*this));
 }
 
 auto Game::init_entities() -> void {}
 
-auto Game::newPlayer(std::size_t player_id, std::size_t laser_id)
+auto Game::newPlayer(std::string name, std::size_t player_id,
+                     std::size_t laser_id)
 -> void
 {
     Registry &r = this->registry;
+    if (this->players.contains(name))
+        return;
     Entity player = r.spawn_entity();
     Entity laser = r.spawn_entity();
 
@@ -116,12 +113,15 @@ auto Game::newPlayer(std::size_t player_id, std::size_t laser_id)
     r.add_component<HitBox>(player, {20, 20});
     r.add_component<ElementColor>(player, {gl::WHITE});
     r.add_component<Health>(player, {0, 0});
-    r.add_component<PlayerId>(player, {this->playerId});
-    this->playerId++;
+    r.add_component<PlayerId>(player, {name});
 
     r.add_component<Dependence>(laser, {player.getId()});
     r.add_component<Laser>(laser, {true, 30});
     r.add_component<ElementColor>(laser, {gl::GREEN});
+    this->players[name] = {
+        static_cast<std::size_t>(player),
+        static_cast<std::size_t>(laser)
+    };
 }
 
 auto Game::newEnemy(std::size_t enemy_id) -> void
@@ -218,6 +218,12 @@ auto Game::updateLaser(std::size_t id, bool active, float length)
     this->registry.set<Laser>(*my_id, active, length);
 }
 
+auto Game::updatePositions(std::vector<PositionData> data) -> void
+{
+    for (auto &pos : data)
+        this->updatePosition(pos.id, pos.x, pos.y);
+}
+
 auto Game::updatePosition(std::size_t id, float x, float y)
 -> void
 {
@@ -237,4 +243,48 @@ auto Game::getTime() -> uint32_t
 auto Game::setTime(uint32_t time) -> void
 {
     this->startTime = time;
+}
+
+auto Game::newPlayers(std::vector<PlayerLink> data) -> void
+{
+    for (auto &player : data)
+        this->newPlayer(player.name, player.id, player.laserId);
+}
+
+auto Game::destroyEntities(std::vector<uint16_t> ids) -> void
+{
+    std::queue<std::string> deadPlayers;
+
+    for (auto id : ids) {
+        std::optional<std::size_t> realId
+            = this->sync.get_mine_from_theirs(id);
+        if (!realId)
+            continue;
+        this->registry.kill_entity
+            (this->registry.entity_from_index(*realId));
+        for (auto &[name, player] : this->players) {
+            if (player.first == id)
+                deadPlayers.push(name);
+        }
+    }
+    while (!deadPlayers.empty()) {
+        this->players.erase(deadPlayers.front());
+        deadPlayers.pop();
+    }
+}
+
+auto Game::updateLasers(std::vector<LaserData> data) -> void
+{
+    for (auto &laser : data)
+        this->updateLaser(laser.id, laser.active, laser.length);
+}
+
+auto Game::getLastClientInputs() -> ClientInputs
+{
+    return this->lastClientInputs;
+}
+
+auto Game::setLastClientInputs(ClientInputs input) -> void
+{
+    this->lastClientInputs = input;
 }

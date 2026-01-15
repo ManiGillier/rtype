@@ -17,13 +17,10 @@ class PacketCompressor {
         static std::vector<uint8_t> compress(const std::vector<uint8_t> &data) {
             if (data.empty())
                 return {};
-            
             uLongf compressedSize = compressBound(data.size());
             std::vector<uint8_t> compressed(compressedSize);
-            
             int result = compress2(compressed.data(), &compressedSize,
-                data.data(), data.size(), Z_DEFAULT_COMPRESSION);
-            
+                data.data(), data.size(), Z_DEFAULT_COMPRESSION);    
             if (result != Z_OK)
                 throw Packet::PacketException("Could not compress packet.");
 
@@ -32,8 +29,8 @@ class PacketCompressor {
         }
 
     static std::vector<uint8_t> decompress(const std::vector<uint8_t> &data, 
-                                            size_t originalSize,
-                                            size_t compressedSize) {
+                                            std::size_t originalSize,
+                                            std::size_t compressedSize) {
         if (data.empty())
             return {};
         std::vector<uint8_t> decompressed(originalSize);

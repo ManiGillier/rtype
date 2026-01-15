@@ -14,6 +14,7 @@
 #include <cstdint>
 #include <memory>
 #include <network/packets/Packet.hpp>
+#include <network/packets/impl/PositionUpdatePacket.hpp>
 #include <queue>
 #include <vector>
 
@@ -23,20 +24,23 @@ class NetworkManager
     NetworkManager(std::mutex &playersMutex,
                    std::vector<std::shared_ptr<Player>> &players);
     ~NetworkManager() = default;
-    void queuePacket(std::shared_ptr<Packet> packet, std::size_t playerId = 0,
-                     bool filter = false);
+    void queuePacket(std::shared_ptr<Packet> packet);
+    void queuePosUpdate(PositionData pos);
+    void queueDiedEntity(uint16_t toKill);
     void playerDied(std::size_t id);
     void setLastTick(float last);
     float getLastTick() const;
     void flush();
     void clear();
-    void clearId(std::size_t id);
 
   private:
+    void sendEntityUpdate();
+    void clearEntityUpdate();
     std::mutex &_playersMutex;
     std::vector<std::shared_ptr<Player>> &_players;
     std::queue<std::shared_ptr<Packet>> _packets;
-    PacketFilter _filter;
+    std::vector<PositionData> _posData;
+    std::vector<uint16_t> _toDestroy;
     float _lastTick;
 };
 #endif

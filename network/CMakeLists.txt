@@ -1,32 +1,6 @@
-cmake_minimum_required(VERSION 3.15)
-project(R-Type LANGUAGES CXX)
-
-include("${CMAKE_SOURCE_DIR}/../cmake/CPM.cmake")
-set(CPM_SOURCE_CACHE "${CMAKE_SOURCE_DIR}/../.cpm-cache")
-
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
-set(CMAKE_CXX_EXTENSIONS OFF)
-
-## add executable to root
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/..)
-
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(CPP_CC_FLAGS "-Wall -Werror -Wconversion -Wcast-align -Wunused -Wextra -g3 -Wpedantic -fsanitize=address")
-else ()
-    set(CPP_CC_FLAGS "-Wall -Werror -Wconversion -Wcast-align -Wunused -Wextra -Wpedantic")
-endif()
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CPP_CC_FLAGS}")
-message("-- CMake flags:" ${CMAKE_CXX_FLAGS}) 
-
-set(PROJECT_ROOT ${CMAKE_SOURCE_DIR}/..)
-
-# get all cpp files from network library
-file(GLOB_RECURSE network_src ${PROJECT_ROOT}/network/*.cpp)
-file(GLOB_RECURSE network_src_h ${PROJECT_ROOT}/network/*.hpp)
+file(GLOB_RECURSE network_src CONFIGURE_DEPENDS
+    ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
+)
 
 # zlib v1.3.1 package
 CPMAddPackage(
@@ -37,11 +11,21 @@ CPMAddPackage(
         "ZLIB_BUILD_EXAMPLES OFF"
 )
 
-add_library(network_lib STATIC ${network_src} ${network_src_h})
-target_link_libraries(network_lib PUBLIC zlibstatic)
+add_library(network STATIC ${network_src})
 
-target_include_directories(network_lib PUBLIC 
-    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>"
-    "$<BUILD_INTERFACE:${zlib_SOURCE_DIR}>"
-    "$<BUILD_INTERFACE:${zlib_BINARY_DIR}>"
+target_include_directories(network PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/..
 )
+target_link_libraries(network PUBLIC zlibstatic)
+
+# network tester
+set(NETWORK_TEST_EXEC_NAME reseauTypeTester)
+file(GLOB_RECURSE network_test_src ${PROJECT_ROOT}/network_test/src/*.cpp)
+file(GLOB_RECURSE network_test_src_h ${PROJECT_ROOT}/network_test/src/*.hpp)
+
+if(network_test_src)
+    add_executable(${NETWORK_TEST_EXEC_NAME} EXCLUDE_FROM_ALL ${network_test_src} ${network_test_src_h})
+    target_include_directories(${NETWORK_TEST_EXEC_NAME} PUBLIC ${PROJECT_ROOT})
+    target_link_libraries(${NETWORK_TEST_EXEC_NAME} PRIVATE network)
+    add_custom_target(reseau DEPENDS ${NETWORK_TEST_EXEC_NAME})
+endif()

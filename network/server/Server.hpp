@@ -20,11 +20,6 @@
     /* TMP */
     #include <network/packets/impl/NewPlayerPacket.hpp>
     #include <network/packets/impl/NewEnemyPacket.hpp>
-    #include <network/packets/impl/NewBulletPacket.hpp>
-    #include <network/packets/impl/DespawnPlayerPacket.hpp>
-    #include <network/packets/impl/DespawnBulletPacket.hpp>
-    #include <network/packets/impl/EnemyDiedPacket.hpp>
-    #include <network/packets/impl/PlayerIdPacket.hpp>
     #include <network/packets/impl/GameOverPacket.hpp>
     #include <network/packets/impl/CAuthentificationPacket.hpp>
     #include <network/packets/impl/AuthentifiedPacket.hpp>
@@ -88,7 +83,7 @@ class Server {
         virtual void onClientConnect(std::shared_ptr<IPollable> client) = 0;
         virtual void onClientDisconnect(std::shared_ptr<IPollable> client) = 0;
         int getMaxConnections() const;
-        bool canConnect() const; 
+        bool canConnect() const;
         void setConnect(bool c);
         void sendAll(std::shared_ptr<Packet> p);
         void sendAll(std::vector<std::shared_ptr<IPollable>> clients, std::shared_ptr<Packet> p);

@@ -29,3 +29,29 @@ std::optional<std::size_t> Player::getEntityId() const
 {
     return this->_entityId;
 }
+
+void Player::setConnected(bool connected)
+{
+    this->connected = connected;
+}
+
+bool Player::isConnected() const
+{
+    return this->connected;
+}
+
+const std::string &Player::getUsername() const
+{
+    return this->username;
+}
+
+void Player::setUsername(const std::string &username)
+{
+    this->username = username;
+}
+
+void Player::connect(const std::string &username)
+{
+    this->setConnected(true);
+    this->setUsername(username);
+}

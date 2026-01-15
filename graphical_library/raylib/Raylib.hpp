@@ -38,6 +38,7 @@ public:
     auto draw(gl::Rectangle rect) -> void;
     auto draw(gl::Text text) -> void;
     auto draw(gl::Texture texture) -> void;
+    auto draw(gl::AnimatedSprite &sprite) -> void;
 
     auto getTextWidth(gl::Text text) -> int;
     auto getTextWidth(const std::string &txt, int fontSize) -> int;

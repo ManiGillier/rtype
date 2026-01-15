@@ -8,11 +8,11 @@
 #ifndef PLAYER_ID_COMP_HPP
 #define PLAYER_ID_COMP_HPP
 
-#include <cstddef>
+#include <string>
 
 struct PlayerId
 {
-    std::size_t id;
+    std::string name;
 };
 
 #endif /* PLAYER_ID_COMP_HPP */

@@ -25,7 +25,7 @@ public:
     }
 
     enum PacketMode getMode() const {
-    return PacketMode::UDP;
+        return PacketMode::UDP;
     }
 
     std::shared_ptr<Packet> clone() const {

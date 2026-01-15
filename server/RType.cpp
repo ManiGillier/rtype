@@ -5,6 +5,11 @@
 #include "server/network/executor/ClientInputsExecutor.hpp"
 #include "server/network/server/RTypeServer.hpp"
 #include <iostream>
+#include "server/network/executor/RegisterExecutor.hpp"
+#include "server/network/executor/LoginExecutor.hpp"
+#include "server/network/executor/JoinOrCreatePublicLobbyExecutor.hpp"
+#include "server/network/executor/CreatePrivateLobbyExecutor.hpp"
+#include "server/network/executor/JoinLobbyWithCodeExecutor.hpp"
 #include <string>
 
 RType::RType(int argc, char **argv)
@@ -59,6 +64,16 @@ void RType::initExecutor(RTypeServer &server)
         std::make_unique<GameStartExecutor>(server));
     server.getPacketListener().addExecutor(
         std::make_unique<ClientInputsExecutor>(server));
+    server.getPacketListener().addExecutor(
+        std::make_unique<LoginExecutor>(server));
+    server.getPacketListener().addExecutor(
+        std::make_unique<RegisterExecutor>(server));
+    server.getPacketListener().addExecutor(
+        std::make_unique<JoinLobbyWithCodeExecutor>(server));
+    server.getPacketListener().addExecutor(
+        std::make_unique<CreatePrivateLobbyExecutor>(server));
+    server.getPacketListener().addExecutor(
+        std::make_unique<JoinOrCreatePublicLobbyExecutor>(server));
 }
 
 void RType::networkLoop()
@@ -70,7 +85,8 @@ void RType::networkLoop()
     }
 
     this->initExecutor(server);
-
+    server.getPacketListener().addToWhitelist(PacketId::LOGIN_PACKET);
+    server.getPacketListener().addToWhitelist(PacketId::REGISTER_PACKET);
     while (server.isUp()) {
         server.loop();
         server.cleanFinishedGame();
