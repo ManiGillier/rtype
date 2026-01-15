@@ -17,13 +17,20 @@ namespace gl {
         virtual ~InputBox() = default;
         virtual auto draw() const -> void = 0;
         virtual auto update() -> void = 0;
-        virtual auto setPosition(int x, int y) -> void = 0;
-        virtual auto setSize(int width, int height) -> void = 0;
-        virtual auto setTransparency(int transparency) -> void = 0;
-        virtual auto setColor(Color aColor) -> void = 0;
-        virtual auto setHoveredColor(Color aColor) -> void = 0;
-        virtual auto setText(const std::string& str) -> void = 0;
-        virtual auto getText(void) -> std::string = 0;
+
+        virtual auto onTextChange() -> void = 0;
+        virtual auto getText() -> std::string = 0;
+    protected:
+        int x;
+        int y;
+        int width;
+        int height;
+        Color idleColor;
+        Color selectedColor;
+
+        std::string text;
+
+        bool selected;
     };
 }
 #endif // CLIENT_INPUTBOX_HPP
