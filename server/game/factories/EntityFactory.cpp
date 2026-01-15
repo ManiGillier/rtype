@@ -21,7 +21,8 @@ Entity EntityFactory::createPlayer(void)
 {
     Entity player = _registry.spawn_entity();
 
-    _registry.emplace_component<Position>(player, 400.0f, 300.0f);
+    _registry.emplace_component<Position>(player, GameConstants::width / 2,
+                                          GameConstants::height / 2);
     _registry.emplace_component<Velocity>(player, 5.0f, 5.0f);
     _registry.emplace_component<Acceleration>(player, 0.0f, 0.0f);
     _registry.emplace_component<OutsideBoundaries>(player, false);
