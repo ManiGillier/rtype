@@ -10,6 +10,7 @@
 
 #include "Button.hpp"
 #include "Checkbox.hpp"
+#include "KeybindSelect.hpp"
 #include "TextBox.hpp"
 #include "InputBox.hpp"
 #include "GraphicalLibrary.hpp"
@@ -24,16 +25,18 @@ namespace gl {
         Gui(GraphicalLibrary &gl);
         auto draw() -> void;
         auto update() -> void;
-        auto addButton(std::unique_ptr<Button>) -> void;
-        auto addCheckbox(std::unique_ptr<Checkbox>) -> void;
-        auto addTextBox(std::unique_ptr<TextBox>) -> void;
-        auto addInputBox(std::unique_ptr<InputBox>) -> void;
+        auto add(std::unique_ptr<Button>) -> void;
+        auto add(std::unique_ptr<Checkbox>) -> void;
+        auto add(std::unique_ptr<TextBox>) -> void;
+        auto add(std::unique_ptr<InputBox>) -> void;
+        auto add(std::unique_ptr<KeybindSelect>) -> void;
     private:
         GraphicalLibrary &gl;
         std::vector<std::unique_ptr<Button>> buttons;
         std::vector<std::unique_ptr<Checkbox>> checkboxes;
         std::vector<std::unique_ptr<TextBox>> textBoxes;
         std::vector<std::unique_ptr<InputBox>> inputBoxes;
+        std::vector<std::unique_ptr<KeybindSelect>> keybindSelects;
     };
 }
 
