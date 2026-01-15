@@ -30,7 +30,7 @@ namespace gl {
 
         int key;
 
-        bool selected;
+        bool selected = false;
     };
 }
 #endif // CLIENT_KEYBINDSELECT_HPP

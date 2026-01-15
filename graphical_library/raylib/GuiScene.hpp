@@ -20,7 +20,7 @@ public:
     auto update() -> void;
 
     template<class Type, class... Args>
-    auto addButton(Args&&... args) {
+    auto add(Args&&... args) {
         this->gui.add(std::make_unique<Type>(args...));
     }
 private:

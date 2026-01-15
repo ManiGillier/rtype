@@ -32,9 +32,9 @@ namespace gl {
 
         std::string text;
 
-        bool clicked;
-        bool hovered;
-        bool checked;
+        bool clicked = false;
+        bool hovered = false;
+        bool checked = false;
     };
 }
 #endif

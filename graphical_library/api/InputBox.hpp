@@ -30,7 +30,7 @@ namespace gl {
 
         std::string text;
 
-        bool selected;
+        bool selected = false;
     };
 }
 #endif // CLIENT_INPUTBOX_HPP

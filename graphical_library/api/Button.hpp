@@ -31,8 +31,8 @@ namespace gl {
 
         std::string text;
 
-        bool clicked;
-        bool hovered;
+        bool clicked = false;
+        bool hovered = false;
     };
 }
 #endif // BUTTON_HPP_
