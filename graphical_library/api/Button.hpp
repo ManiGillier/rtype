@@ -28,6 +28,7 @@ namespace gl {
         Color idleColor;
         Color hoverColor;
         Color pressedColor;
+
         std::string text;
 
         bool clicked;
