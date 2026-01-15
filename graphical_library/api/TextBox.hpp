@@ -17,12 +17,14 @@ namespace gl {
         virtual ~TextBox() = default;
         virtual auto draw() const -> void = 0;
         virtual auto update() -> void = 0;
-        virtual auto setPosition(int x, int y) -> void = 0;
-        virtual auto setSize(int width, int height) -> void = 0;
-        virtual auto setTransparency(int transparency) -> void = 0;
-        virtual auto setColor(Color aColor) -> void = 0;
-        virtual auto setHoveredColor(Color aColor) -> void = 0;
-        virtual auto setText(const std::string& str) -> void = 0;
+    protected:
+        int x;
+        int y;
+        int width;
+        int height;
+        Color color;
+
+        std::string text;
     };
 }
 #endif // TEXTBOX_HPP_
