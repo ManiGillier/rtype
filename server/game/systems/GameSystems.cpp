@@ -12,6 +12,7 @@
 #include "shared/components/Health.hpp"
 #include "shared/components/Laser.hpp"
 #include "shared/components/Position.hpp"
+#include <cstddef>
 #include <cstdint>
 #include <memory>
 #include <mutex>
@@ -30,6 +31,8 @@ auto Systems::position_system(
         zipper,
     NetworkManager &nm) -> void
 {
+    std::vector<std::size_t> toKill;
+
     for (auto &&[i, pos, vel, acc, out] : zipper) {
         auto lastTick = nm.getLastTick();
         pos->x += vel->x * lastTick;
@@ -52,7 +55,7 @@ auto Systems::position_system(
                    (pos->x < 0.0f || pos->x > GameConstants::width ||
                     pos->y < 0.0f || pos->y > GameConstants::height)) {
             nm.queueDiedEntity(static_cast<uint16_t>(i));
-            r.kill_entity(r.entity_from_index(i));
+            toKill.push_back(i);
             continue;
         }
         if (r.get<Tag>(i)->tag == EntityTag::BULLET)
@@ -64,6 +67,8 @@ auto Systems::position_system(
         };
         nm.queuePosUpdate(pd);
     }
+    for (auto &it : toKill)
+        r.kill_entity(r.entity_from_index(it));
 }
 
 auto Systems::pattern_system(
