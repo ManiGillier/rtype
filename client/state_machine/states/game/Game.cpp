@@ -76,7 +76,8 @@ auto Game::init_systems() -> void
 
     this->registry.add_global_update_system
         (playerInputs, std::ref(this->clientManager.getGui()),
-         std::ref(this->clientManager.getNetworkManager()));
+         std::ref(this->clientManager.getNetworkManager()),
+         std::ref(*this));
 
     Entity background = this->registry.spawn_named_entity("background");
     this->registry.add_component<HorizontalTiling>(background, {2, 0, -50});
@@ -276,4 +277,14 @@ auto Game::updateLasers(std::vector<LaserData> data) -> void
 {
     for (auto &laser : data)
         this->updateLaser(laser.id, laser.active, laser.length);
+}
+
+auto Game::getLastClientInputs() -> ClientInputs
+{
+    return this->lastClientInputs;
+}
+
+auto Game::setLastClientInputs(ClientInputs input) -> void
+{
+    this->lastClientInputs = input;
 }
