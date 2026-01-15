@@ -15,6 +15,7 @@
 #include "GraphicalLibrary.hpp"
 
 #include <memory>
+#include <vector>
 
 namespace gl {
     class Gui
@@ -27,6 +28,12 @@ namespace gl {
         auto addCheckbox(std::unique_ptr<Checkbox>) -> void;
         auto addTextBox(std::unique_ptr<TextBox>) -> void;
         auto addInputBox(std::unique_ptr<InputBox>) -> void;
+    private:
+        GraphicalLibrary &gl;
+        std::vector<std::unique_ptr<Button>> buttons;
+        std::vector<std::unique_ptr<Checkbox>> checkboxes;
+        std::vector<std::unique_ptr<TextBox>> textBoxes;
+        std::vector<std::unique_ptr<InputBox>> inputBoxes;
     };
 }
 
