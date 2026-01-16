@@ -18,6 +18,15 @@ CPMAddPackage(
         "SQLITECPP_BUILD_EXAMPLES OFF"
 )
 
+CPMAddPackage(
+    NAME libconfig
+    GIT_REPOSITORY https://github.com/hyperrealm/libconfig
+    GIT_TAG v1.8.2
+    OPTIONS
+        "BUILD_EXAMPLES OFF"
+        "BUILD_CXX ON"
+)
+
 add_executable(${SERVER_EXEC_NAME} ${server_src} ${server_src_h})
 target_include_directories(${SERVER_EXEC_NAME} PUBLIC ${PROJECT_ROOT})
-target_link_libraries(${SERVER_EXEC_NAME} PRIVATE ecs network SQLiteCpp)
+target_link_libraries(${SERVER_EXEC_NAME} PRIVATE ecs network SQLiteCpp config)
