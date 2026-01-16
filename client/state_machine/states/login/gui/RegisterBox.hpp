@@ -13,6 +13,8 @@
 #include <graphical_library/raylib/buttons/Button.hpp>
 #include <graphical_library/raylib/inputbox/InputBox.hpp>
 
+#include "../Login.hpp"
+
 namespace R {
 [[maybe_unused]] int const START_X = 825;
 [[maybe_unused]] int const START_Y = 350;
@@ -55,8 +57,8 @@ public:
 class RegisterUsername : public InputBox
 {
 public:
-RegisterUsername():
-    InputBox()
+RegisterUsername(Login &login):
+    InputBox(), login(login)
     {
         using namespace R;
         this->width = TOTAL_WIDTH - (int) (3.5 * SPACE_X);
@@ -71,14 +73,18 @@ RegisterUsername():
     }
 
     auto onTextChange() -> void
-    {}
+    {
+        this->login.setRegisterUsername(this->text);
+    }
+private:
+    Login &login;
 };
 
 class RegisterPassword : public InputBox
 {
 public:
-RegisterPassword():
-    InputBox()
+RegisterPassword(Login &login):
+    InputBox(), login(login)
     {
         using namespace R;
         this->width = TOTAL_WIDTH - (int) (3.5 * SPACE_X);
@@ -93,13 +99,17 @@ RegisterPassword():
     }
 
     auto onTextChange() -> void
-    {}
+    {
+        this->login.setRegisterPassword(this->text);
+    }
+private:
+    Login &login;
 };
 
 class RegisterButton : public Button
 {
 public:
-    RegisterButton() : Button()
+    RegisterButton(Login &login) : Button(), login(login)
     {
         using namespace R;
         this->width = TOTAL_WIDTH - (int) (3.5 * SPACE_X);
@@ -115,7 +125,11 @@ public:
     }
 
     auto onClick() -> void
-    {}
+    {
+        this->login.register_();
+    }
+private:
+    Login &login;
 };
 
 #endif /* REGISTER_BOX_HPP */

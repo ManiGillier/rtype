@@ -13,6 +13,8 @@
 #include <graphical_library/raylib/buttons/Button.hpp>
 #include <graphical_library/raylib/inputbox/InputBox.hpp>
 
+#include "../Login.hpp"
+
 namespace L {
 [[maybe_unused]] int const START_X = 50;
 [[maybe_unused]] int const START_Y = 350;
@@ -55,8 +57,8 @@ public:
 class LoginUsername : public InputBox
 {
 public:
-LoginUsername():
-    InputBox()
+LoginUsername(Login &login):
+    InputBox(), login(login)
     {
         using namespace L;
         this->width = TOTAL_WIDTH - (int) (3.5 * SPACE_X);
@@ -71,14 +73,18 @@ LoginUsername():
     }
 
     auto onTextChange() -> void
-    {}
+    {
+        this->login.setLoginUsername(this->text);
+    }
+private:
+    Login &login;
 };
 
 class LoginPassword : public InputBox
 {
 public:
-LoginPassword():
-    InputBox()
+LoginPassword(Login &login):
+    InputBox(), login(login)
     {
         using namespace L;
         this->width = TOTAL_WIDTH - (int) (3.5 * SPACE_X);
@@ -93,13 +99,17 @@ LoginPassword():
     }
 
     auto onTextChange() -> void
-    {}
+    {
+        this->login.setLoginPassword(this->text);
+    }
+private:
+    Login &login;
 };
 
 class LoginButton : public Button
 {
 public:
-    LoginButton() : Button()
+    LoginButton(Login &login) : Button(), login(login)
     {
         using namespace L;
         this->width = TOTAL_WIDTH - (int) (3.5 * SPACE_X);
@@ -115,7 +125,11 @@ public:
     }
 
     auto onClick() -> void
-    {}
+    {
+        this->login.login();
+    }
+private:
+    Login &login;
 };
 
 #endif /* LOGIN_BOX_HPP */
