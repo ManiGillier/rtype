@@ -23,6 +23,9 @@ namespace gl {
         int width;
         int height;
         Color color;
+        Color cColor = {0, 0, 0, 255};
+        float lineThickness = 1;
+
 
         std::string text;
     };

@@ -27,8 +27,11 @@ void TextBox::draw() const {
         this->color.b,
         this->color.a
     };
+
+    raylib::Color linesColor = {cColor.r, cColor.b, cColor.b, cColor.a};
+
     raylib::DrawRectangleRec(boxRect, rcolor);
-    raylib::DrawRectangleLinesEx(boxRect, 1, raylib::BLACK);
+    raylib::DrawRectangleLinesEx(boxRect, lineThickness, linesColor);
 
     int fontSize = this->height / 2;
     DrawText(
