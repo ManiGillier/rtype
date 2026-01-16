@@ -22,6 +22,7 @@ UsernameBox():
         this->y = 900 - this->height - 600;
         this->idleColor = { 200, 200, 200, 255 };
         this->selectedColor = {250, 250, 250, 255};
+        this->textColor = gl::BLACK;
         this->text = "";
     }
 

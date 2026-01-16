@@ -24,6 +24,7 @@ public:
         this->idleColor = { 100, 100, 100, 255 };
         this->hoverColor = { 70, 70, 70, 255 };
         this->pressedColor = { 150, 150, 150, 255 };
+        this->textColor = gl::BLACK;
         this->text = "LOGIN";
     }
 
