@@ -13,3 +13,4 @@ CPM_modules/
 /vgcore*
 *.db3
 rtype.cfg
+account_db.*

@@ -16,7 +16,7 @@
     #include <rcon/commands/impl/HelpCommand.hpp>
     #include <rcon/commands/impl/ListCommand.hpp>
     #include <rcon/commands/impl/KickCommand.hpp>
-
+    #include <rcon/commands/impl/BanCommand.hpp>
 
 class CommandManager {
     public:
@@ -38,6 +38,7 @@ class CommandManager {
             commands.push_back(std::make_unique<HelpCommand>());
             commands.push_back(std::make_unique<ListCommand>());
             commands.push_back(std::make_unique<KickCommand>());
+            commands.push_back(std::make_unique<BanCommand>());
         }
 
         void execute(Client &cl, const std::string &line,

@@ -58,9 +58,22 @@ void RCONRequestExecutor::kick(std::shared_ptr<Player> player, const std::string
 
 void RCONRequestExecutor::ban(std::shared_ptr<Player> player, const std::string &target)
 {
-    (void) player;
-    (void) target;
-    return;
+    AccountDatabase &db = _rtypeServer.getAccountDatabase();
+    std::shared_ptr<RCONResponse> rsp = std::make_shared<RCONResponse>();
+
+    rsp->clearResponses();
+    if (!db.hasUsername(target)) {
+        rsp->addResponse(NO_SUCH_PLAYER_REGISTERED + target + ".");
+    } else if (db.isBanned(target)) {
+        rsp->addResponse(PLAYER_IS_ALREADY_BANNED + target + ".");
+    } else {
+        db.setBanned(target, true);
+        std::shared_ptr<Player> p = _rtypeServer.getPlayerByUsername(target);
+        if (p)
+            _rtypeServer.disconnectClient(p);
+        rsp->addResponse(SUCCESSFULLY_BANNED + target + ".");
+    }
+    player->sendPacket(rsp);
 }
 
 void RCONRequestExecutor::list(std::shared_ptr<Player> player)

@@ -45,9 +45,7 @@ bool RegisterExecutor::execute(Server &server, std::shared_ptr<Player> player,
         }
         player->sendPacket(create_packet(LoginResponse, 1, ""));
         player->connect(username);
-        server.getPacketListener().enableAllExecutors(player);
-        player->setConnected(true);
-        player->setUsername(username);
+        server.getPacketListener().enableAllExecutors(player);;
     } catch (const AccountDatabase::DatabaseError &e) {
         player->sendPacket(create_packet(LoginResponse, (uint8_t) 0, e.what()));
     }

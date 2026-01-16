@@ -16,7 +16,10 @@
 
 #define HERE_IS_THE_LIST_OF_PLAYERS "Here is the current list of all the connected players: "
 #define NO_SUCH_PLAYER_ONLINE "No such player currently online: "
+#define NO_SUCH_PLAYER_REGISTERED "No such player registered: "
+#define PLAYER_IS_ALREADY_BANNED "This player is already banned: "
 #define SUCCESSFULLY_KICKED "Succesfully kicked player: "
+#define SUCCESSFULLY_BANNED "Succesfully banned player: "
 
 class RTypeServer;
 
