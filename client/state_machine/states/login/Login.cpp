@@ -13,6 +13,8 @@
 #include <iostream>
 #include <memory>
 
+#include "gui/LoginScene.hpp"
+
 Login::Login(ClientManager &cm, Registry &r, Sync &s)
     : State(cm, r, s)
 {}
@@ -20,6 +22,10 @@ Login::Login(ClientManager &cm, Registry &r, Sync &s)
 auto Login::init_systems() -> void
 {
     std::cout << "Init systems" << std::endl;
+
+    this->guiScene = std::make_unique<LoginScene>(this->getGraphicalLibrary());
+    this->guiScene->init();
+
     this->registry.reset_update_systems();
     this->registry.reset_render_systems();
 
