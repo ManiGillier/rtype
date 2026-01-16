@@ -16,6 +16,9 @@
 #include "server/network/executor/RegisterExecutor.hpp"
 #include "server/network/executor/LoginExecutor.hpp"
 #include "server/network/executor/RCONRequestExecutor.hpp"
+#include "server/network/executor/JoinOrCreatePublicLobbyExecutor.hpp"
+#include "server/network/executor/CreatePrivateLobbyExecutor.hpp"
+#include "server/network/executor/JoinLobbyWithCodeExecutor.hpp"
 #include <string>
 #include <ctime>
 #include "utils/RandomUtils.hpp"
@@ -79,6 +82,11 @@ void RType::initExecutor(RTypeServer &server)
         std::make_unique<RegisterExecutor>(server));
     server.getPacketListener().addExecutor(
         std::make_unique<RCONRequestExecutor>(server));
+        std::make_unique<JoinLobbyWithCodeExecutor>(server));
+    server.getPacketListener().addExecutor(
+        std::make_unique<CreatePrivateLobbyExecutor>(server));
+    server.getPacketListener().addExecutor(
+        std::make_unique<JoinOrCreatePublicLobbyExecutor>(server));
 }
 
 void RType::networkLoop()

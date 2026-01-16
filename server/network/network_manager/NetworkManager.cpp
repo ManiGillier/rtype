@@ -1,4 +1,7 @@
 #include "NetworkManager.hpp"
+#include "network/packets/Packet.hpp"
+#include "network/packets/impl/DestroyEntityPacket.hpp"
+#include "network/packets/impl/PositionUpdatePacket.hpp"
 #include <mutex>
 
 NetworkManager::NetworkManager(std::mutex &playersMutex,
@@ -7,14 +10,22 @@ NetworkManager::NetworkManager(std::mutex &playersMutex,
 {
 }
 
-void NetworkManager::queuePacket(std::shared_ptr<Packet> packet,
-                                 std::size_t playerId, bool filter)
+void NetworkManager::queuePacket(std::shared_ptr<Packet> packet)
 
 {
     if (!packet)
         return;
-    if (!filter || (filter && _filter.shouldSend(playerId, packet)))
-        _packets.push(packet);
+    _packets.push(packet);
+}
+
+void NetworkManager::queuePosUpdate(PositionData pos)
+{
+    _posData.push_back(pos);
+}
+
+void NetworkManager::queueDiedEntity(uint16_t toKill)
+{
+    _toDestroy.push_back(toKill);
 }
 
 void NetworkManager::playerDied(std::size_t id)
@@ -26,8 +37,32 @@ void NetworkManager::playerDied(std::size_t id)
     }
 }
 
+void NetworkManager::sendEntityUpdate()
+{
+    auto entityPosPacket =
+        !this->_posData.empty()
+            ? create_packet(PositionUpdatePacket, this->_posData)
+            : nullptr;
+    auto entityToDestroyPacket =
+        !this->_toDestroy.empty()
+            ? create_packet(DestroyEntityPacket, this->_toDestroy)
+            : nullptr;
+
+    if (entityPosPacket)
+        this->queuePacket(entityPosPacket);
+    if (entityToDestroyPacket)
+        this->queuePacket(entityToDestroyPacket);
+}
+
+void NetworkManager::clearEntityUpdate()
+{
+    this->_posData.clear();
+    this->_toDestroy.clear();
+}
+
 void NetworkManager::flush()
 {
+    this->sendEntityUpdate();
     while (!_packets.empty()) {
         auto p = _packets.front();
         {
@@ -38,18 +73,13 @@ void NetworkManager::flush()
         }
         _packets.pop();
     }
+    this->clearEntityUpdate();
 }
 
 void NetworkManager::clear()
 {
     while (!_packets.empty())
         _packets.pop();
-    this->_filter.resetAll();
-}
-
-void NetworkManager::clearId(std::size_t id)
-{
-    this->_filter.reset(id);
 }
 
 void NetworkManager::setLastTick(float last)

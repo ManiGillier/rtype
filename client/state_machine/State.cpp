@@ -14,6 +14,10 @@ State::State(ClientManager &cm, Registry &registry, Sync &s)
 
 auto State::update() -> std::unique_ptr<IState>
 {
+    if (this->guiScene) {
+        this->guiScene->update();
+        this->guiScene->draw();
+    }
     this->registry.update();
     this->registry.render();
     return std::move(this->next_state);

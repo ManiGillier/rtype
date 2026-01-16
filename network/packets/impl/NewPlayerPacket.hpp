@@ -10,26 +10,47 @@
 
 #include "network/packets/Packet.hpp"
 #include <cstddef>
+#include <cstdint>
 #include <iostream>
 #include <memory>
 
+/*static std::ostream &operator<<(std::ostream &os,
+    const std::vector<std::string> &data)
+{
+    os << "[";
+    for (auto &d : data) {
+        os << "\"" << d << "\", ";
+    }
+    os << "]";
+    return os;
+}
+*/
 class NewPlayerPacket : public Packet
 {
 public:
-    NewPlayerPacket(std::size_t id = 0, std::size_t laser_id = 0) :
-        Packet(PacketId::NEW_PLAYER), id(id), laser_id(laser_id) {}
+    NewPlayerPacket(std::vector<std::string> usernames = {}) :
+        Packet(PacketId::NEW_PLAYER), usernames(usernames) {}
 
     enum PacketMode getMode() const {
         return PacketMode::TCP;
     }
 
     void serialize() {
-        this->write(id);
-        this->write(laser_id);
+        this->write(static_cast<uint8_t>(this->usernames.size()));
+        for (auto &username : this->usernames) {
+            this->write(username);
+        }
     }
     void unserialize() {
-        this->read(id);
-        this->read(laser_id);
+        uint8_t size = 0;
+        this->read(size);
+        this->usernames.clear();
+        this->usernames.reserve(size);
+        for (uint8_t i = 0; i < size; i++) {
+            std::string username = {};
+            this->read(username);
+            this->usernames.push_back(username);
+        }
     }
 
     const std::string getName() {
@@ -37,18 +58,18 @@ public:
     }
 
     PacketDisplay display() const {
-        return {"playerId", this->id, "laserId", this->laser_id};
+        return {"Quantity", this->usernames.size()};
     }
 
     std::shared_ptr<Packet> clone() const {
         return make_copy(NewPlayerPacket);
     }
 
-    auto getPlayerId() const -> std::size_t { return this->id; }
-    auto getLaserId() const -> std::size_t { return this->laser_id; }
+    std::vector<std::string> getUsernames() const {
+        return this->usernames;
+    }
 private:
-    std::size_t id;
-    std::size_t laser_id;
+    std::vector<std::string> usernames;
 };
 
 #endif /* NEWPLAYER_PACKET_HPP */

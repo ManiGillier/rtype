@@ -1,5 +1,6 @@
 #include "RTypeServer.hpp"
 #include "../../player/Player.hpp"
+#include <network/packets/impl/DestroyEntityPacket.hpp>
 #include <memory>
 #include <mutex>
 #include <optional>
@@ -57,14 +58,8 @@ void RTypeServer::onClientConnect(std::shared_ptr<IPollable> client)
 
     LOG("Player connected to fd= " << client->getFileDescriptor());
 
-    this->_lobbyManager.newLobby(player);
-    // TODO: join public need to be call by client request (here for debug)
-    this->_lobbyManager.joinPublicLobby(player);
-
     std::shared_ptr<ServerClient> sc =
         std::static_pointer_cast<ServerClient>(client);
-    std::shared_ptr<Packet> p = create_packet(PlayerIdPacket, player->getId());
-    sc->sendPacket(p);
 }
 
 void RTypeServer::onClientDisconnect(std::shared_ptr<IPollable> client)
@@ -78,8 +73,9 @@ void RTypeServer::onClientDisconnect(std::shared_ptr<IPollable> client)
     if (hasEntityId) {
         auto lobby = this->_lobbyManager.getLobby(lobbyId);
         if (lobby) {
-            std::shared_ptr<Packet> playerDisconnect =
-                create_packet(DespawnPlayerPacket, player->getEntityId().value());
+            std::vector<uint16_t> toDestroy;
+            toDestroy.push_back(static_cast<uint16_t>(player->getEntityId().value()));
+            auto playerDisconnect = create_packet(DestroyEntityPacket, toDestroy);
 
             auto &playersMutex = lobby->getPlayersMutex();
             {

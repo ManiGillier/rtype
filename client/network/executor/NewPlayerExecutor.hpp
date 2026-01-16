@@ -8,7 +8,7 @@
 #ifndef NEWPLAYER_EXECUTOR_HPP
 #define NEWPLAYER_EXECUTOR_HPP
 
-#include "client/state_machine/states/game/Game.hpp"
+#include "client/state_machine/states/lobby/Lobby.hpp"
 
 #include <iostream>
 #include <memory>
@@ -19,7 +19,7 @@ class NewPlayerExecutor : public PacketExecutorImplClient
 <NewPlayerPacket, ClientPollable>
 {
 public:
-    NewPlayerExecutor(Game &state) : state(state) {}
+    NewPlayerExecutor(Lobby &state) : state(state) {}
 
     bool execute([[maybe_unused]] Client &cl,
                  [[maybe_unused]] std::shared_ptr<ClientPollable> con,
@@ -28,7 +28,7 @@ public:
         gl::Sound sound = this->state.getGraphicalLibrary()
             .getSound("new_player");
 
-        this->state.newPlayer(packet->getPlayerId(), packet->getLaserId());
+        this->state.updatePlayers(packet->getUsernames());
         this->state.getGraphicalLibrary().play(sound);
         return true;
     }
@@ -37,7 +37,7 @@ public:
         return PacketId::NEW_PLAYER;
     }
 private:
-    [[maybe_unused]] Game &state;
+    [[maybe_unused]] Lobby &state;
 };
 
 #endif /* NEWPLAYER_EXECUTOR_HPP */

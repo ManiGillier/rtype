@@ -17,6 +17,7 @@ class Lobby
     ~Lobby() = default;
     bool addPlayer(std::shared_ptr<Player> &player);
     void removePlayer(std::shared_ptr<Player> &player);
+    void sendNewUsrnames();
     std::mutex &getPlayersMutex();
     std::vector<std::shared_ptr<Player>> &getPlayers();
     std::size_t size() const;

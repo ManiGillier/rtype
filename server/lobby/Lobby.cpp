@@ -1,6 +1,8 @@
 #include "Lobby.hpp"
 #include "network/logger/Logger.hpp"
+#include <network/packets/impl/NewPlayerPacket.hpp>
 #include <mutex>
+#include <vector>
 
 Lobby::Lobby()
     : _isPublic(false), _inGame(false), _game(_players, _playersMutex)
@@ -13,9 +15,25 @@ bool Lobby::addPlayer(std::shared_ptr<Player> &player)
         std::lock_guard<std::mutex> lock(_playersMutex);
         if (this->_players.size() < MAX_PLAYER) {
             this->_players.push_back(player);
+            
+
         }
     }
     return false;
+}
+
+void Lobby::sendNewUsrnames()
+{
+    std::lock_guard<std::mutex> lock(_playersMutex);
+    std::vector<std::string> names;
+
+    for (auto &p : _players)
+        names.push_back(p->getUsername());
+
+    auto names_p = create_packet(NewPlayerPacket,names);
+
+    for (auto &p : _players)
+        p->sendPacket(names_p);
 }
 
 void Lobby::removePlayer(std::shared_ptr<Player> &player)
@@ -32,14 +50,13 @@ void Lobby::removePlayer(std::shared_ptr<Player> &player)
                     std::lock_guard<std::mutex> lock(regMtx);
                     reg.kill_entity(
                         reg.entity_from_index(player->getEntityId().value()));
-                    _game.getNetworkManager().clearId(
-                        player->getEntityId().value());
                     player->setEntityId(std::nullopt);
                 }
                 break;
             }
         }
     }
+    this->sendNewUsrnames();
 }
 
 std::mutex &Lobby::getPlayersMutex()
