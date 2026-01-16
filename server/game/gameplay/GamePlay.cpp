@@ -1,22 +1,28 @@
 #include "GamePlay.hpp"
+#include "network/logger/Logger.hpp"
 #include "server/game/components/Pattern.hpp"
 #include "server/game/factories/EntityFactory.hpp"
 #include "server/game/gameplay/GameConfig.hpp"
+#include "server/game/gameplay/WaveConfigLoader.hpp"
 #include "server/game/gameplay/enemies/Boss.hpp"
 #include "server/game/gameplay/enemies/Enemy.hpp"
 #include "shared/components/Position.hpp"
 #include <algorithm>
 #include <memory>
 
-GamePlay::GamePlay(NetworkManager &nm, Registry &r, EntityFactory &factory)
+GamePlay::GamePlay(NetworkManager &nm, Registry &r, EntityFactory &factory,
+                   const std::string &configPath)
     : _networkManager(nm), _regisrty(r), _factory(factory)
 {
     _state = GameState::waiting;
     _currentWave = 0;
-    _maxWaveNb = 8;
     _start = std::chrono::steady_clock::now();
     _gameStartTime = std::chrono::steady_clock::now();
-    setupWaves();
+
+    if (!loadConfig(configPath)) {
+        LOG_ERR("Failed to load config");
+        loadDefaultWaves();
+    }
 }
 
 int GamePlay::getCurrentWave() const
@@ -32,8 +38,19 @@ int GamePlay::getCurrentDifficulty() const
     return 1;
 }
 
-void GamePlay::setupWaves()
+bool GamePlay::loadConfig(const std::string &configPath)
 {
+    if (!_configLoader.load(configPath))
+        return false;
+
+    _waves = _configLoader.getWaves();
+    _maxWaveNb = _configLoader.getMaxWaves();
+    return true;
+}
+
+void GamePlay::loadDefaultWaves()
+{
+    _maxWaveNb = 8;
     BossConfig bc = {
         .pv = 200,
         .size = 80,
@@ -44,15 +61,14 @@ void GamePlay::setupWaves()
         .bulletSize = 10.0f,
         .speed = 1.0f,
     };
-
     _waves.push_back({1, {PatternType::SPIRAL}, 750, 1, bc});
     _waves.push_back({1, {PatternType::RADIAL_BURST}, 1000, 1, bc});
     _waves.push_back({2, {PatternType::AIMED_SHOT}, 500, 1, bc});
-    _waves.push_back( {2, {PatternType::WAVE_SPREAD, PatternType::SPIRAL}, 500, 1, bc});
+    _waves.push_back({2, {PatternType::WAVE_SPREAD, PatternType::SPIRAL}, 500, 1, bc});
     _waves.push_back({2, {PatternType::DOUBLE_SPIRAL}, 500, 1, bc});
-    _waves.push_back( {3, {PatternType::FLOWER, PatternType::AIMED_SHOT}, 500, 1, bc});
-    _waves.push_back( {3, {PatternType::RADIAL_BURST, PatternType::DOUBLE_SPIRAL}, 500, 1, bc});
-    _waves.push_back( {3, {PatternType::FLOWER, PatternType::WAVE_SPREAD, PatternType::SPIRAL}, 500, 1, bc});
+    _waves.push_back({3, {PatternType::FLOWER, PatternType::AIMED_SHOT}, 500, 1, bc});
+    _waves.push_back({3, {PatternType::RADIAL_BURST, PatternType::DOUBLE_SPIRAL}, 500, 1, bc});
+    _waves.push_back({3, {PatternType::FLOWER, PatternType::WAVE_SPREAD, PatternType::SPIRAL}, 500, 1, bc});
 }
 
 WaveConfig GamePlay::getWaveConfig(int wave)
@@ -70,7 +86,6 @@ WaveConfig GamePlay::getWaveConfig(int wave)
         .bulletSize = 10.0f,
         .speed = 1.0f,
     };
-
     std::vector<PatternType> allPatterns = {
         PatternType::SPIRAL,        PatternType::RADIAL_BURST,
         PatternType::AIMED_SHOT,    PatternType::WAVE_SPREAD,
@@ -81,7 +96,6 @@ WaveConfig GamePlay::getWaveConfig(int wave)
 bool GamePlay::update()
 {
     this->removeDeadBoss();
-
     if (this->gameOver())
         return true;
 

@@ -14,7 +14,7 @@ AEnemy::AEnemy(NetworkManager &networkManager, Registry &registry,
     Entity boss = _factory.createBoss(bc);
     auto hitBox = _registry.get<HitBox>(boss.getId());
 
-    networkManager.queuePacket(std::make_shared<NewEnemyPacket>(boss.getId()));
+    networkManager.queuePacket(std::make_shared<NewEnemyPacket>(boss.getId(), bc.type));
 
     if (hitBox.has_value()) {
         std::shared_ptr<Packet> HitBoxSize =

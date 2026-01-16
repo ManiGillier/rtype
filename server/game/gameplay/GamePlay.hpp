@@ -11,27 +11,23 @@
 #include "ecs/entity/Entity.hpp"
 #include "ecs/regisrty/Registry.hpp"
 #include "server/game/gameplay/enemies/AEnemy.hpp"
+#include "server/game/gameplay/WaveConfig.hpp"
+#include "server/game/gameplay/WaveConfigLoader.hpp"
 #include "server/network/network_manager/NetworkManager.hpp"
 #include "../factories/EntityFactory.hpp"
 #include "enemies/Boss.hpp"
 #include <chrono>
 #include <memory>
+#include <string>
 #include <vector>
 
 enum GameState { waiting = 0, active};
 
-struct WaveConfig {
-    int difficulty;
-    std::vector<PatternType> patterns;
-    int waitTime;
-    std::size_t enemyNb;
-    BossConfig bossConfig;
-};
-
 class GamePlay
 {
   public:
-    GamePlay(NetworkManager &nm, Registry &r, EntityFactory &factory);
+    GamePlay(NetworkManager &nm, Registry &r, EntityFactory &factory,
+             const std::string &configPath = "server/config.cfg");
     ~GamePlay() = default;
     bool update();
     int getCurrentWave() const;
@@ -41,7 +37,8 @@ class GamePlay
     void spawnBoss();
     void checkPos();
     void removeDeadBoss();
-    void setupWaves();
+    bool loadConfig(const std::string &configPath);
+    void loadDefaultWaves();
     void nextWave();
     WaveConfig getWaveConfig(int wave);
     bool gameOver();
@@ -58,6 +55,7 @@ class GamePlay
     int _currentWave;
     int _maxWaveNb;
     std::vector<WaveConfig> _waves;
+    WaveConfigLoader _configLoader;
 };
 
 #endif /* GAMEPLAY_HPP */

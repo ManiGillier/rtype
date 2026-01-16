@@ -10,6 +10,7 @@
 
 #include "ecs/entity/Entity.hpp"
 #include "ecs/regisrty/Registry.hpp"
+#include "network/packets/impl/NewEnemyPacket.hpp"
 
 typedef struct BossConfig {
     int pv;
@@ -20,6 +21,7 @@ typedef struct BossConfig {
     int damagePerBullet;
     float bulletSize;
     float speed;
+    EnemyType type = EnemyType::Boss;
 
     BossConfig toEnemy()
     {
@@ -32,6 +34,7 @@ typedef struct BossConfig {
             .damagePerBullet = this->damagePerBullet * 2,
             .bulletSize = this->bulletSize * 3,
             .speed = this->speed * 4,
+            .type = EnemyType::Enemy,
         };
         return bc;
     }

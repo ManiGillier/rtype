@@ -29,4 +29,4 @@ CPMAddPackage(
 
 add_executable(${SERVER_EXEC_NAME} ${server_src} ${server_src_h})
 target_include_directories(${SERVER_EXEC_NAME} PUBLIC ${PROJECT_ROOT})
-target_link_libraries(${SERVER_EXEC_NAME} PRIVATE ecs network SQLiteCpp config)
+target_link_libraries(${SERVER_EXEC_NAME} PRIVATE ecs network SQLiteCpp config++)
