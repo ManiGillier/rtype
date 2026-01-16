@@ -30,12 +30,19 @@ void TextBox::draw() const {
     raylib::DrawRectangleRec(boxRect, rcolor);
     raylib::DrawRectangleLinesEx(boxRect, 1, raylib::BLACK);
 
+    raylib::Color rTextColor = {
+        this->textColor.r, 
+        this->textColor.g,
+        this->textColor.b,
+        this->textColor.a
+    };
+
     DrawText(
         this->text.c_str(),
         this->x + 10,
         this->y + (this->height / 2) - 10,
         20,
-        raylib::BLACK
+        rTextColor
     );
 }
 
