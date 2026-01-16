@@ -8,10 +8,10 @@
 #ifndef LOGIN_SCENE_HPP
 #define LOGIN_SCENE_HPP
 
-#include "LoginButton.hpp"
-#include "PasswordBox.hpp"
-#include "UsernameBox.hpp"
 #include <graphical_library/raylib/GuiScene.hpp>
+
+#include "LoginBox.hpp"
+#include "RegisterBox.hpp"
 
 class LoginScene : public GuiScene
 {
@@ -20,9 +20,17 @@ public:
 
     auto init() -> void
     {
+        this->add<LoginBox>();
+        this->add<LoginText>();
         this->add<LoginButton>();
-        this->add<UsernameBox>();
-        this->add<PasswordBox>();
+        this->add<LoginPassword>();
+        this->add<LoginUsername>();
+
+        this->add<RegisterBox>();
+        this->add<RegisterText>();
+        this->add<RegisterButton>();
+        this->add<RegisterPassword>();
+        this->add<RegisterUsername>();
     }
 };
 
