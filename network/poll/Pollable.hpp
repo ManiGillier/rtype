@@ -19,7 +19,6 @@
 class Pollable : public IPollable {
     public:
 
-        /* TODO : Make IDs more random lol */
         Pollable(int fd, PollManager &pm,
             Packet::PacketMode mode=Packet::PacketMode::TCP) :
             _fd(fd), sender(fd), pm(pm), reader(fd, mode) {

@@ -28,7 +28,7 @@ class PacketCompressor {
             return compressed;
         }
 
-    static std::vector<uint8_t> decompress(const std::vector<uint8_t> &data, 
+    static std::vector<uint8_t> decompress(const std::vector<uint8_t> &data,
                                             std::size_t originalSize,
                                             std::size_t compressedSize) {
         if (data.empty())

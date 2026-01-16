@@ -13,6 +13,8 @@
 #include <cstddef>
 #include <optional>
 
+class RTypeServer;
+
 class Player : public ServerClient
 {
   public:
@@ -28,8 +30,13 @@ class Player : public ServerClient
     const std::string &getUsername() const;
     void setUsername(const std::string &username);
     void connect(const std::string &username);
+    int getScore() const;
+    void setScore(int newScore);
+    void addScore(int toAdd);
+    void saveScore(RTypeServer &srv) const;
 
   private:
+    int score;
     std::size_t _id;
     std::optional<std::size_t> _entityId;
     std::string _lobbyId;
