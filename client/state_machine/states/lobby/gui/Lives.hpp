@@ -19,10 +19,11 @@ public:
     {
         this->width = 120;
         this->height = 40;
-        this->x = 100;
-        this->y = 280;
-        this->color = {255, 255, 255, 255};
-        this->text = "Lives :";
+        this->x = 250;
+        this->y = 300;
+        this->color = {255, 255, 255, 0};
+        this->text = "Lives 🧡";
+        this->cColor = {0,0,0,0};
     }
 
     auto onClick() -> void

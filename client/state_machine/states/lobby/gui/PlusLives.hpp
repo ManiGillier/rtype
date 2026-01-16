@@ -18,7 +18,7 @@ public:
     : Button()
     {
         this->x = 370;
-        this->y = 280;
+        this->y = 360;
         this->width = 40;
         this->height = 40;
         this->idleColor = {100, 100, 100, 255};
