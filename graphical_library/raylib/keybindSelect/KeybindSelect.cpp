@@ -103,12 +103,19 @@ void KeybindSelect::draw() const {
 
     raylib::DrawRectangleLinesEx(boxRect, 2, raylib::BLACK);
 
+    raylib::Color rTextColor = {
+        this->textColor.r, 
+        this->textColor.g,
+        this->textColor.b,
+        this->textColor.a
+    };
+
     raylib::DrawText(
         keyToString(this->key).c_str(),
         this->x + 10,
         this->y + (this->y / 2) - 10,
         20,
-        raylib::BLACK
+        rTextColor
     );
 }
 

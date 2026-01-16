@@ -24,6 +24,7 @@ namespace gl {
         int height;
         Color color;
 
+        Color textColor;
         std::string text;
     };
 }
