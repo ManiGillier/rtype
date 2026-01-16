@@ -22,6 +22,7 @@
         #define COULD_NOT_SET_SCORE "Could not set account score"
         #define COULD_NOT_SET_BANNED "Could not set account banned status"
         #define COULD_NOT_GET_BANNED_STATUS "Could not get account banned status"
+        #define COULD_NOT_GET_BANNED_PLAYERS "Could not get list of banned players"
 
 class AccountDatabase {
 private:
@@ -53,6 +54,7 @@ public:
     void setScore(const std::string &username, int score) const;
     void setBanned(const std::string &username, bool banned) const;
     bool isBanned(const std::string &username) const;
+    std::vector<std::string> getAllBans() const;
 };
 
 #endif /* !ACCOUNTDATABASE_HPP_ */

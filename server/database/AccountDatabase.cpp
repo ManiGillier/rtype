@@ -174,3 +174,20 @@ bool AccountDatabase::isBanned(const std::string &username) const
     }
 }
 
+std::vector<std::string> AccountDatabase::getAllBans() const
+{
+    try {
+        SQLite::Statement query(db, 
+            "SELECT username FROM accounts WHERE isBanned=1");
+        std::vector<std::string> bannedPlayers;
+
+        while (query.executeStep()) {
+            bannedPlayers.push_back(query.getColumn(0).getString());
+        }
+        return bannedPlayers;
+    } catch (std::exception &e) {
+        LOG_ERR("SQLite error: " << e.what());
+        throw DatabaseError(COULD_NOT_GET_BANNED_PLAYERS);
+    }
+}
+

@@ -35,6 +35,11 @@ bool RCONRequestExecutor::execute(Server &server,
         case RCONRequest::BAN:
             ban(player, packet->getTarget());
             break;
+        case RCONRequest::UNBAN:
+            unban(player, packet->getTarget());
+            break;
+        case RCONRequest::BANLIST:
+            banlist(player);
         default:
             break;
     }
@@ -62,16 +67,62 @@ void RCONRequestExecutor::ban(std::shared_ptr<Player> player, const std::string 
     std::shared_ptr<RCONResponse> rsp = std::make_shared<RCONResponse>();
 
     rsp->clearResponses();
-    if (!db.hasUsername(target)) {
-        rsp->addResponse(NO_SUCH_PLAYER_REGISTERED + target + ".");
-    } else if (db.isBanned(target)) {
-        rsp->addResponse(PLAYER_IS_ALREADY_BANNED + target + ".");
-    } else {
-        db.setBanned(target, true);
-        std::shared_ptr<Player> p = _rtypeServer.getPlayerByUsername(target);
-        if (p)
-            _rtypeServer.disconnectClient(p);
-        rsp->addResponse(SUCCESSFULLY_BANNED + target + ".");
+    try {
+        if (!db.hasUsername(target)) {
+            rsp->addResponse(NO_SUCH_PLAYER_REGISTERED + target + ".");
+        } else if (db.isBanned(target)) {
+            rsp->addResponse(PLAYER_IS_ALREADY_BANNED + target + ".");
+        } else {
+            db.setBanned(target, true);
+            std::shared_ptr<Player> p = _rtypeServer.getPlayerByUsername(target);
+            if (p)
+                _rtypeServer.disconnectClient(p);
+            rsp->addResponse(SUCCESSFULLY_BANNED + target + ".");
+        }
+    } catch (const AccountDatabase::DatabaseError &e) {
+        rsp->addResponse(e.what());
+    }
+    player->sendPacket(rsp);
+}
+
+void RCONRequestExecutor::unban(std::shared_ptr<Player> player,
+                                const std::string &target)
+{
+    AccountDatabase &db = _rtypeServer.getAccountDatabase();
+    std::shared_ptr<RCONResponse> rsp = std::make_shared<RCONResponse>();
+    
+    rsp->clearResponses();
+    try {
+        if (!db.hasUsername(target)) {
+            rsp->addResponse(NO_SUCH_PLAYER_REGISTERED + target + ".");
+        } else if (db.isBanned(target)) {
+            db.setBanned(target, false);
+            rsp->addResponse(SUCCESSFULLY_UNBANNED + target + ".");
+        } else {
+            rsp->addResponse(PLAYER_IS_NOT_BANNED + target + ".");
+        }
+    } catch (const AccountDatabase::DatabaseError &e) {
+        rsp->addResponse(e.what());
+    }
+    player->sendPacket(rsp);
+}
+
+void RCONRequestExecutor::banlist(std::shared_ptr<Player> player)
+{
+    std::vector<std::shared_ptr<IPollable>> pollables =
+        _rtypeServer.getPollManager().getPool();
+    std::shared_ptr<RCONResponse> rsp = std::make_shared<RCONResponse>();
+
+    rsp->clearResponses();
+    rsp->addResponse(HERE_IS_THE_BANLIST);
+    try {
+        std::vector<std::string> bannedUsers = _rtypeServer.getAccountDatabase().
+            getAllBans();
+        for (const std::string &bannedUser : bannedUsers) {
+            rsp->addResponse("- " + bannedUser);
+        }
+    } catch (const AccountDatabase::DatabaseError &e) {
+        rsp->addResponse(e.what());
     }
     player->sendPacket(rsp);
 }
