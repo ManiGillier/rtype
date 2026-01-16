@@ -12,13 +12,16 @@
     #include <vector>
     #include <network/client/Client.hpp>
 
+class CommandManager;
+
 class ICommand {
     public:
         virtual std::string getCommandName() const = 0;
         virtual std::size_t getArgumentCount() const = 0;
         virtual void executeCommand(Client &cl,
             std::vector<std::string> args,
-            const std::string &key) const = 0;
+            const std::string &key,
+            CommandManager &cm) const = 0;
         virtual std::string getHelp() const = 0;
         virtual std::string getUsage() const = 0;
 };

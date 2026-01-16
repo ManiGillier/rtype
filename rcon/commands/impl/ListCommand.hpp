@@ -2,26 +2,27 @@
 ** EPITECH PROJECT, 2026
 ** rtype [WSL: Ubuntu-24.04]
 ** File description:
-** ExitCommand
+** ListCommand
 */
 
-#ifndef EXITCOMMAND_HPP_
-    #define EXITCOMMAND_HPP_
+#ifndef LISTCOMMAND_HPP_
+    #define LISTCOMMAND_HPP_
 
     #include <rcon/commands/ICommand.hpp>
+    #include <network/packets/impl/RCONRequest.hpp>
 
-class ExitCommand : public ICommand {
+class ListCommand : public ICommand {
     public:
         std::string getCommandName() const {
-            return "exit";
+            return "list";
         }
 
         std::string getHelp() const {
-            return "Exits the program";
+            return "Get a list of all players";
         }
 
         std::string getUsage() const {
-            return "exit";
+            return "list";
         }
 
         std::size_t getArgumentCount() const {
@@ -31,12 +32,11 @@ class ExitCommand : public ICommand {
         void executeCommand(Client &cl,
             std::vector<std::string> args, const std::string &key,
             CommandManager &cm) const {
-                (void) cl;
                 (void) args;
-                (void) key;
                 (void) cm;
-                exit(0);
-        }
+
+                cl.sendPacket(create_packet(RCONRequest, RCONRequest::LIST, key));
+            }
 };
 
-#endif /* !EXITCOMMAND_HPP_ */
+#endif /* !LISTCOMMAND_HPP_ */

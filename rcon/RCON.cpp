@@ -15,10 +15,10 @@
 
 #include <network/client/Client.hpp>
 #include <network/packets/impl/RCONResponse.hpp>
+#include <rcon/Logger.hpp>
 
 #include <rcon/commands/CommandManager.hpp>
 
-#define RCON_LOG(message) std::cout << "[R-Type RCON] [" << std::format("{:%d/%m/%Y %H:%M:%S}", floor<std::chrono::milliseconds>(std::chrono::system_clock::now())) << "] [*] " << message << std::endl
 #define CONFIG_FILE "rtype.cfg"
 
 static bool readConfig(std::string &rconKey)

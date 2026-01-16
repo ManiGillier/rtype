@@ -2,26 +2,26 @@
 ** EPITECH PROJECT, 2026
 ** rtype [WSL: Ubuntu-24.04]
 ** File description:
-** ExitCommand
+** HelpCommand
 */
 
-#ifndef EXITCOMMAND_HPP_
-    #define EXITCOMMAND_HPP_
+#ifndef HELPCOMMAND_HPP_
+    #define HELPCOMMAND_HPP_
 
     #include <rcon/commands/ICommand.hpp>
 
-class ExitCommand : public ICommand {
+class HelpCommand : public ICommand {
     public:
         std::string getCommandName() const {
-            return "exit";
+            return "help";
         }
 
         std::string getHelp() const {
-            return "Exits the program";
+            return "Displays the help menu";
         }
 
         std::string getUsage() const {
-            return "exit";
+            return "help";
         }
 
         std::size_t getArgumentCount() const {
@@ -30,13 +30,6 @@ class ExitCommand : public ICommand {
 
         void executeCommand(Client &cl,
             std::vector<std::string> args, const std::string &key,
-            CommandManager &cm) const {
-                (void) cl;
-                (void) args;
-                (void) key;
-                (void) cm;
-                exit(0);
-        }
+            CommandManager &cm) const;
 };
-
-#endif /* !EXITCOMMAND_HPP_ */
+#endif /* !HELPCOMMAND_HPP_ */

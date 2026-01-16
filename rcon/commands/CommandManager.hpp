@@ -9,9 +9,12 @@
     #define COMMANDMANAGER_HPP_
 
     #include <vector>
-    #include <rcon/commands/impl/ExitCommand.hpp>
     #include <memory>
     #include <exception>
+
+    #include <rcon/commands/impl/ExitCommand.hpp>
+    #include <rcon/commands/impl/HelpCommand.hpp>
+    #include <rcon/commands/impl/ListCommand.hpp>
 
 
 class CommandManager {
@@ -31,6 +34,8 @@ class CommandManager {
 
         CommandManager() {
             commands.push_back(std::make_unique<ExitCommand>());
+            commands.push_back(std::make_unique<HelpCommand>());
+            commands.push_back(std::make_unique<ListCommand>());
         }
 
         void execute(Client &cl, const std::string &line,
@@ -48,14 +53,18 @@ class CommandManager {
             for (std::unique_ptr<ICommand> &cmd : this->commands) {
                 if (cmd->getCommandName() == commandName) {
                     if (cmd->getArgumentCount() == tokens.size()) {
-                        cmd->executeCommand(cl, tokens, key);
-                        break;
+                        cmd->executeCommand(cl, tokens, key, *this);
+                        return;
                     }
                     throw CommandException("Wrong argument count for " + commandName
                         + ". Usage: " + cmd->getUsage());
                 }
             }
             throw CommandException("No such command " + commandName + " found.");
+        }
+
+        const std::vector<std::unique_ptr<ICommand>> &getCommands() const {
+            return this->commands;
         }
 
     private:

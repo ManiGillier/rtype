@@ -32,6 +32,7 @@ class RCONResponse : public Packet {
             uint16_t size;
 
             this->read(size);
+            this->responses.clear();
             for (uint16_t i = 0; i < size; i++) {
                 std::string response;
                 this->read(response);

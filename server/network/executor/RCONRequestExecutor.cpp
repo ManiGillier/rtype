@@ -58,12 +58,13 @@ void RCONRequestExecutor::list(std::shared_ptr<Player> player)
     std::shared_ptr<RCONResponse> rsp = std::make_shared<RCONResponse>();
     
     rsp->clearResponses();
+    rsp->addResponse(HERE_IS_THE_LIST_OF_PLAYERS);
     for (std::shared_ptr<IPollable> &p : pollables) {
         std::shared_ptr<Player> player = std::dynamic_pointer_cast<Player>(p);
         if (!player || (player && !player->isConnected()) ||
             (player && player->getUsername().empty()))
             continue;
-        rsp->addResponse(player->getUsername());
+        rsp->addResponse("- " + player->getUsername());
     }
     player->sendPacket(rsp);
 }

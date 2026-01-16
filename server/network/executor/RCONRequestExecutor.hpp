@@ -14,6 +14,8 @@
 #include <network/server/Server.hpp>
 #include <memory>
 
+#define HERE_IS_THE_LIST_OF_PLAYERS "Here is the current list of all the connected players: "
+
 class RTypeServer;
 
 class RCONRequestExecutor
