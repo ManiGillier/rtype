@@ -25,8 +25,11 @@ public:
                  [[maybe_unused]] std::shared_ptr<ClientPollable> con,
                  [[maybe_unused]] std::shared_ptr<LoginResponse> packet)
     {
-        if (!packet->isSuccesful())
+        if (!packet->isSuccesful()) {
+            this->state.setErrorMessage(packet->getReason());
             return true;
+        }
+        this->state.setErrorMessage("");
         state.change_state<Menu>();
         return true;
     }

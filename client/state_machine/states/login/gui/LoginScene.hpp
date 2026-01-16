@@ -14,6 +14,7 @@
 
 #include "LoginBox.hpp"
 #include "RegisterBox.hpp"
+#include "ErrorMessage.hpp"
 
 class LoginScene : public GuiScene
 {
@@ -34,6 +35,8 @@ public:
         this->add<RegisterButton>(login);
         this->add<RegisterPassword>(login);
         this->add<RegisterUsername>(login);
+
+        this->add<ErrorMessage>(login);
     }
 private:
     Login &login;
