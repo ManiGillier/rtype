@@ -108,3 +108,19 @@ bool RTypeServer::isConnected(const std::string &username)
     }
     return false;
 }
+
+std::shared_ptr<Player> RTypeServer::getPlayerByUsername(
+    const std::string &username)
+{
+    std::vector<std::shared_ptr<IPollable>> p = this->getPollManager().getPool();
+    std::shared_ptr<Player> player = nullptr;
+
+    for (std::shared_ptr<IPollable> pollable : p) {
+        player = std::dynamic_pointer_cast<Player>(pollable);
+        if (player == nullptr)
+            continue;
+        if (player->getUsername() == username)
+            return player;
+    }
+    return nullptr;
+}

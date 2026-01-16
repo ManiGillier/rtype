@@ -214,6 +214,12 @@ void Server::sendAll(std::shared_ptr<Packet> p)
     this->sendAll(this->getPollManager().getPool(), p);
 }
 
+void Server::disconnectClient(std::shared_ptr<IPollable> client)
+{
+    this->onClientDisconnect(this->getPollManager().
+        removePollable(client->getFileDescriptor()));
+}
+
 void Server::sendAll(std::vector<std::shared_ptr<IPollable>> clients,
     std::shared_ptr<Packet> p)
 {

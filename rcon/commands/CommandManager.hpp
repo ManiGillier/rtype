@@ -15,6 +15,7 @@
     #include <rcon/commands/impl/ExitCommand.hpp>
     #include <rcon/commands/impl/HelpCommand.hpp>
     #include <rcon/commands/impl/ListCommand.hpp>
+    #include <rcon/commands/impl/KickCommand.hpp>
 
 
 class CommandManager {
@@ -36,6 +37,7 @@ class CommandManager {
             commands.push_back(std::make_unique<ExitCommand>());
             commands.push_back(std::make_unique<HelpCommand>());
             commands.push_back(std::make_unique<ListCommand>());
+            commands.push_back(std::make_unique<KickCommand>());
         }
 
         void execute(Client &cl, const std::string &line,

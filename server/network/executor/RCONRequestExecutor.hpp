@@ -15,6 +15,8 @@
 #include <memory>
 
 #define HERE_IS_THE_LIST_OF_PLAYERS "Here is the current list of all the connected players: "
+#define NO_SUCH_PLAYER_ONLINE "No such player currently online: "
+#define SUCCESSFULLY_KICKED "Succesfully kicked player: "
 
 class RTypeServer;
 

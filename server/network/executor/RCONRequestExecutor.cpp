@@ -7,6 +7,7 @@
 
 #include "RCONRequestExecutor.hpp"
 #include "../server/RTypeServer.hpp"
+#include <network/packets/Packet.hpp>
 #include <network/packets/impl/RCONResponse.hpp>
 
 RCONRequestExecutor::RCONRequestExecutor(RTypeServer &server) : _rtypeServer(server) {}
@@ -19,8 +20,11 @@ bool RCONRequestExecutor::execute(Server &server,
     const std::string &packetKey = packet->getSpecifiedKey();
 
     (void) server;
-    if (rconKey != packetKey)
+    if (rconKey != packetKey) {
+        std::shared_ptr<RCONResponse> rsp = std::make_shared<RCONResponse>();
+        player->sendPacket(rsp);
         return true;
+    }
     switch (packet->getRequestType()) {
         case RCONRequest::LIST:
             list(player);
@@ -39,9 +43,17 @@ bool RCONRequestExecutor::execute(Server &server,
 
 void RCONRequestExecutor::kick(std::shared_ptr<Player> player, const std::string &target)
 {
-    (void) player;
-    (void) target;
-    return;
+    std::shared_ptr<Player> p = _rtypeServer.getPlayerByUsername(target);
+    std::shared_ptr<RCONResponse> rsp = std::make_shared<RCONResponse>();
+
+    rsp->clearResponses();
+    if (!p) {
+        rsp->addResponse(NO_SUCH_PLAYER_ONLINE + target + ".");
+    } else {
+        _rtypeServer.disconnectClient(p);
+        rsp->addResponse(SUCCESSFULLY_KICKED + target + ".");
+    }
+    player->sendPacket(rsp);
 }
 
 void RCONRequestExecutor::ban(std::shared_ptr<Player> player, const std::string &target)
