@@ -27,7 +27,7 @@ void Button::draw() const {
     DrawText(
         this->text.c_str(),
         this->x + 10,
-        this->y + (this->y / 2) - 10,
+        this->y + (this->height / 2) - 10,
         20,
         raylib::BLACK
     );
