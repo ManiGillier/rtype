@@ -8,29 +8,17 @@
 #ifndef BUTTON_HPP
 #define BUTTON_HPP
 
-namespace bt {
-    class Button {
-    public:
-        Button(int x, int y, int width, int height, int transparency = 255);
-        virtual auto Draw() const -> void = 0;
-        virtual auto Update() -> void = 0;
-        virtual auto IsClicked() const -> bool = 0;
-        virtual auto IsHovered() const -> bool = 0;
-        virtual auto SetPosition(int x, int y) -> void = 0;
-        virtual auto SetSize(int width, int height) -> void = 0;
-        virtual auto SetTransparency(int transparency) -> void = 0;
-        virtual auto SetColor(Color color) -> void = 0;
-        virtual auto SetText(string str) -> void = 0;
-        virtual auto OnClick() -> void = 0;
-    private:
-        bool hovered;
-        int posX;
-        int posY;
-        int sizeX;
-        int sizeY;
-        int transparency;
-        Color color;
-        string text;
-    };
-}
+#include <graphical_library/api/Button.hpp>
+
+class Button : public gl::Button
+{
+public:
+    Button();
+    auto draw() const -> void;
+    auto update() -> void;
+
+    inline virtual auto onClick() -> void {}
+    inline virtual auto onHover() -> void {}
+private:
+};
 #endif // BUTTON_HPP_
