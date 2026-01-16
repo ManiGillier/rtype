@@ -14,16 +14,18 @@ gl::Gui::Gui(gl::GraphicalLibrary &gl)
 
 auto gl::Gui::draw() -> void
 {
+    for (auto &box : this->boxes)
+        box->draw();
     for (auto &button : this->buttons)
         button->draw();
     for (auto &checkbox : this->checkboxes)
         checkbox->draw();
-    for (auto &textBox : this->textBoxes)
-        textBox->draw();
     for (auto &inputBox : this->inputBoxes)
         inputBox->draw();
     for (auto &keybindSelect : this->keybindSelects)
         keybindSelect->draw();
+    for (auto &textBox : this->textBoxes)
+        textBox->draw();
 }
 
 auto gl::Gui::update() -> void
@@ -38,6 +40,8 @@ auto gl::Gui::update() -> void
         inputBox->update();
     for (auto &keybindSelect : this->keybindSelects)
         keybindSelect->update();
+    for (auto &box : this->boxes)
+        box->update();
 }
 
 auto gl::Gui::add(std::unique_ptr<Button> button) -> void
@@ -63,4 +67,9 @@ auto gl::Gui::add(std::unique_ptr<InputBox> inputBox) -> void
 auto gl::Gui::add(std::unique_ptr<KeybindSelect> keybindSelect) -> void
 {
     this->keybindSelects.push_back(std::move(keybindSelect));
+}
+
+auto gl::Gui::add(std::unique_ptr<Box> box) -> void
+{
+    this->boxes.push_back(std::move(box));
 }
