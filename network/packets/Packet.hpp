@@ -103,6 +103,19 @@ private:
     std::vector<std::pair<std::string, std::function<void(std::ostream&)>>> fields;
 };
 
+template<>
+inline void PacketDisplay::add<std::vector<std::string>>(const std::string &key, const std::vector<std::string> &value) {
+    fields.emplace_back(key, [value](std::ostream &os) {
+        os << "[";
+        for (std::size_t i = 0; i < value.size(); i++) {
+            os << value[i];
+            if (i < value.size() - 1)
+                os << ", ";
+        }
+        os << "]";
+    });
+}
+
 class Packet {
     public:
         enum PacketMode {TCP, UDP};

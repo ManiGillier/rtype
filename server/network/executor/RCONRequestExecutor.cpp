@@ -18,6 +18,7 @@ bool RCONRequestExecutor::execute(Server &server,
     const std::string &rconKey = _rtypeServer.getRTypeConfig().getKey();
     const std::string &packetKey = packet->getSpecifiedKey();
 
+    (void) server;
     if (rconKey != packetKey)
         return true;
     switch (packet->getRequestType()) {
@@ -38,11 +39,15 @@ bool RCONRequestExecutor::execute(Server &server,
 
 void RCONRequestExecutor::kick(std::shared_ptr<Player> player, const std::string &target)
 {
+    (void) player;
+    (void) target;
     return;
 }
 
 void RCONRequestExecutor::ban(std::shared_ptr<Player> player, const std::string &target)
 {
+    (void) player;
+    (void) target;
     return;
 }
 

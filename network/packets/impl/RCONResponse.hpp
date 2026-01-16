@@ -67,16 +67,4 @@ class RCONResponse : public Packet {
         std::vector<std::string> responses;
 };
 
-inline std::ostream &operator<<(std::ostream &os, const std::vector<std::string> &vec) {
-    os << "[";
-    for (std::size_t i = 0; i < vec.size(); i++) {
-        os << vec[i];
-        if (i < vec.size() - 1)
-            os << ", ";
-    }
-    os << "]";
-    return os;
-}
-
-
 #endif /* !RCONRESPONSE_HPP_ */
