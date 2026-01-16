@@ -9,6 +9,7 @@
 #define PASSWORD_BOX_HPP
 
 #include <graphical_library/raylib/inputbox/InputBox.hpp>
+#include <iostream>
 
 class PasswordBox : public InputBox
 {
@@ -25,9 +26,9 @@ PasswordBox():
         this->text = "";
     }
 
-    auto getText() -> std::string
+    auto onTextChange() -> void
     {
-        return this->text;
+        std::cout << this->getText() << std::endl;
     }
 };
 
