@@ -106,6 +106,7 @@ void RType::networkLoop()
         LOG_ERR("Could not read RType Config, trying to reset it..");
         if (!cfg.createConfig()) {
             LOG_ERR("Could not reset RType Confg, aborting..");
+            return;
         }
         LOG("Could reset config !");
     }
