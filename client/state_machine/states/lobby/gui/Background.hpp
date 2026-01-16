@@ -1,0 +1,36 @@
+/*
+** EPITECH PROJECT, 2026
+** rtype
+** File description:
+** test lobby button
+*/
+
+#ifndef BACKGROUND_HPP
+#define BACKGROUND_HPP
+
+#include <graphical_library/raylib/buttons/Button.hpp>
+#include <iostream>
+
+class Background : public Button
+{
+public:
+    Background()
+    : Button()
+    {
+        this->x = 175;
+        this->y = 100;
+        this->width = 300;
+        this->height = 400;
+        this->idleColor = {150, 150, 150, 255};
+        this->hoverColor = {150, 150, 150, 255};
+        this->pressedColor = {150, 150, 150, 255};
+        this->text = "";
+    }
+
+    auto onClick() -> void
+    {
+        std::cerr << "Just clicked the button !" << std::endl;
+    }
+};
+
+#endif /* BACKGROUND_HPP */
