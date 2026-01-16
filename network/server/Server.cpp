@@ -102,6 +102,11 @@ void Server::loop()
     this->sendUDPPackets();
     for (std::shared_ptr<IPollable> pd : this->getPollManager().pollSockets())
         this->onClientDisconnect(pd);
+    for (std::shared_ptr<IPollable> pd : this->toDisconnect) {
+        this->getPollManager().removePollable(pd->getFileDescriptor());
+        this->onClientDisconnect(pd);
+    }
+    this->toDisconnect.clear();
     this->executePackets();
 }
 
@@ -216,8 +221,8 @@ void Server::sendAll(std::shared_ptr<Packet> p)
 
 void Server::disconnectClient(std::shared_ptr<IPollable> client)
 {
-    this->onClientDisconnect(this->getPollManager().
-        removePollable(client->getFileDescriptor()));
+    this->toDisconnect.push_back(client);
+    client->setDisabled(true);
 }
 
 void Server::sendAll(std::vector<std::shared_ptr<IPollable>> clients,

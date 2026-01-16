@@ -92,6 +92,7 @@ class Server {
         std::mutex udpLock;
         std::mutex tcpLock;
     private:
+        std::vector<std::shared_ptr<IPollable>> toDisconnect;
         void executePackets();
         void sendUDPPackets();
         int port;
