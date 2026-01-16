@@ -12,6 +12,8 @@
 #include <fstream>
 #include <format>
 #include <thread>
+#include <poll.h>
+#include <unistd.h>
 
 #include <network/client/Client.hpp>
 #include <network/packets/impl/RCONResponse.hpp>
@@ -86,16 +88,39 @@ static int rcon_shell(const std::string &key, const std::string &ip, int port)
     CommandManager cmdManager;
 
     std::string command;
+    bool promptShown = false;
+    
     while (cl.isConnected()) {
-        std::cout << "❯ ";
-        std::getline(std::cin, command);
+        if (!promptShown) {
+            std::cout << "❯ " << std::flush;
+            promptShown = true;
+        }
+        
+        struct pollfd pfd = { STDIN_FILENO, POLLIN, 0 };
+        int ret = poll(&pfd, 1, 100);
 
-        try {
-            cmdManager.execute(cl, command, key);
-        } catch (const CommandManager::CommandException &e) {
-            RCON_LOG(e.what());
+        if (ret > 0 && (pfd.revents & POLLIN)) {
+            std::getline(std::cin, command);
+            promptShown = false;
+            
+            if (!cl.isConnected()) {
+                break;
+            }
+            
+            try {
+                cmdManager.execute(cl, command, key);
+            } catch (const CommandManager::CommandException &e) {
+                RCON_LOG(e.what());
+            }
+        } else if (ret < 0) {
+            break;
         }
     }
+    if (!cl.isConnected()) {
+        std::cout << std::endl;
+        RCON_LOG("Connection lost.");
+    } 
+    networkTest.join();
     return 0; 
 }
 
