@@ -8,6 +8,7 @@
 #ifndef BOSS_HPP
 #define BOSS_HPP
 
+#include "AEnemy.hpp"
 #include "ecs/entity/Entity.hpp"
 #include "ecs/regisrty/Registry.hpp"
 #include "server/game/factories/EntityFactory.hpp"
@@ -24,22 +25,21 @@ enum class PatternType {
     FLOWER,
 };
 
-class Boss
+class Boss : public AEnemy
 {
   public:
     Boss(NetworkManager &nm, Registry &r, EntityFactory &factory,
-         std::chrono::steady_clock::time_point _gameStart, int difficulty = 1);
+         std::chrono::steady_clock::time_point gameStart, BossConfig bc,
+         int difficulty = 1);
     ~Boss() = default;
-    std::size_t getId() const;
-    void shoot();
+    void shoot() override;
+
     void setPatterns(const std::vector<PatternType> &patterns);
     int getDifficulty() const;
 
   private:
-    void addBullet(float spawn_x, float spawn_y, float acc_x, float acc_y);
     void bulletPattern();
     void rotatePattern();
-
     void patternRadialBurst();
     void patternSpiral();
     void patternAimedShot();
@@ -47,16 +47,9 @@ class Boss
     void patternDoubleSpiral();
     void patternFlower();
 
-    NetworkManager &_networkManager;
-    Registry &_regisrty;
-    EntityFactory _factory;
-
-    std::size_t _id;
-    std::chrono::steady_clock::time_point _gameStart;
     std::chrono::steady_clock::time_point _start;
     std::chrono::steady_clock::time_point _patternChangeTime;
 
-    std::vector<StraightMovingEntity> _data;
     std::vector<PatternType> _patterns;
     int _difficulty;
     std::size_t _currentPatternIndex;

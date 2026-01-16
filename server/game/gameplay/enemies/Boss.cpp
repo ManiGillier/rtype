@@ -1,44 +1,28 @@
 #include "Boss.hpp"
-#include "../factories/EntityFactory.hpp"
+#include "../../factories/EntityFactory.hpp"
 #include "ecs/entity/Entity.hpp"
-#include "network/packets/impl/HitboxSizeUpdatePacket.hpp"
-#include "network/packets/impl/SpawnStraightMovingEntityPacket.hpp"
-#include "server/game/components/Acceleration.hpp"
 #include "server/game/components/Hitable.hpp"
 #include "server/game/components/Tag.hpp"
+#include "server/game/gameplay/enemies/AEnemy.hpp"
 #include "shared/components/HitBox.hpp"
 #include "shared/components/Position.hpp"
 #include <chrono>
 #include <cmath>
-#include <cstdint>
 #include <cstdlib>
 #include <math.h>
 
 Boss::Boss(NetworkManager &nm, Registry &r, EntityFactory &factory,
-           std::chrono::steady_clock::time_point gameStart, int difficulty)
-    : _networkManager(nm), _regisrty(r), _factory(factory),
-      _gameStart(gameStart), _difficulty(difficulty), _currentPatternIndex(0),
-      _patternRotation(0.0f)
+           std::chrono::steady_clock::time_point gameStart,BossConfig bc , int difficulty)
+    : AEnemy(nm, r, factory, gameStart, bc)
 {
-    Entity boss = _factory.createBoss();
-    auto hitBox = _regisrty.get<HitBox>(boss.getId());
+    // init
+    _difficulty = difficulty;
+    _currentPatternIndex = 0;
+    _patternRotation = 0.0f;
 
-    nm.queuePacket(std::make_shared<NewEnemyPacket>(boss.getId()));
-    if (hitBox.has_value()) {
-        std::shared_ptr<Packet> HitBoxSize =
-            create_packet(HitboxSizeUpdatePacket, boss.getId(), hitBox->width,
-                          hitBox->height);
-        nm.queuePacket(HitBoxSize);
-    }
-    _id = boss.getId();
     _start = std::chrono::steady_clock::now();
     _patternChangeTime = std::chrono::steady_clock::now();
     _patterns = {PatternType::RADIAL_BURST};
-}
-
-std::size_t Boss::getId() const
-{
-    return _id;
 }
 
 int Boss::getDifficulty() const
@@ -58,7 +42,7 @@ void Boss::setPatterns(const std::vector<PatternType> &patterns)
 void Boss::shoot()
 {
     // Check if boss entity still exists
-    auto bossPos = _regisrty.get<Position>(_id);
+    auto bossPos = _registry.get<Position>(_id);
     if (!bossPos.has_value())
         return;
 
@@ -69,13 +53,12 @@ void Boss::shoot()
     int shootInterval = 2500 - (_difficulty * 400);
 
     if (elapsed.count() > shootInterval) {
-        this->_data.clear();
+        this->clearBullet();
         this->bulletPattern();
         _start = now;
         // set hitable when it start to shoot
-        _regisrty.set<Hitable>(_id, true);
-        _networkManager.queuePacket(
-            create_packet(SpawnStraightMovingEntityPacket, _data));
+        _registry.set<Hitable>(_id, true);
+        this->sendBullet();
     }
 
     auto patternElapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -99,33 +82,6 @@ void Boss::rotatePattern()
     if (_patterns.empty())
         return;
     _currentPatternIndex = (_currentPatternIndex + 1) % _patterns.size();
-}
-
-void Boss::addBullet(float spawn_x, float spawn_y, float acc_x, float acc_y)
-{
-    StraightMovingEntity sme;
-
-    Entity e = _factory.createBossBullet(static_cast<int>(_id), spawn_x,
-                                         spawn_y, acc_x, acc_y);
-
-    auto vel = _regisrty.get<Acceleration>(e.getId());
-    auto pos = _regisrty.get<Position>(e.getId());
-
-    sme.id = static_cast<uint16_t>(e.getId());
-    sme.pos_x = static_cast<uint16_t>(pos->x);
-    sme.pos_y = static_cast<uint16_t>(pos->y);
-    sme.vel_x = static_cast<uint16_t>(vel->x);
-    sme.vel_y = static_cast<uint16_t>(vel->y);
-
-    auto hitBox = _regisrty.get<HitBox>(e.getId());
-    if (hitBox.has_value()) {
-        sme.hitbox_x = static_cast<uint8_t>(hitBox.value().height);
-        sme.hitbox_y = static_cast<uint8_t>(hitBox.value().width);
-    }
-    auto diff = std::chrono::steady_clock::now() - _gameStart;
-    sme.ms_time = static_cast<uint32_t>(
-        std::chrono::duration_cast<std::chrono::milliseconds>(diff).count());
-    _data.push_back(sme);
 }
 
 void Boss::bulletPattern()
@@ -159,8 +115,8 @@ void Boss::bulletPattern()
 
 void Boss::patternRadialBurst()
 {
-    auto hitBox = _regisrty.get<HitBox>(_id);
-    auto pos = _regisrty.get<Position>(_id);
+    auto hitBox = _registry.get<HitBox>(_id);
+    auto pos = _registry.get<Position>(_id);
 
     if (!hitBox.has_value() || !pos.has_value())
         return;
@@ -194,8 +150,8 @@ void Boss::patternRadialBurst()
 
 void Boss::patternSpiral()
 {
-    auto hitBox = _regisrty.get<HitBox>(_id);
-    auto pos = _regisrty.get<Position>(_id);
+    auto hitBox = _registry.get<HitBox>(_id);
+    auto pos = _registry.get<Position>(_id);
 
     if (!hitBox.has_value() || !pos.has_value())
         return;
@@ -231,8 +187,8 @@ void Boss::patternSpiral()
 
 void Boss::patternAimedShot()
 {
-    auto hitBox = _regisrty.get<HitBox>(_id);
-    auto pos = _regisrty.get<Position>(_id);
+    auto hitBox = _registry.get<HitBox>(_id);
+    auto pos = _registry.get<Position>(_id);
 
     if (!hitBox.has_value() || !pos.has_value())
         return;
@@ -240,8 +196,8 @@ void Boss::patternAimedShot()
     float center_x = pos->x;
     float center_y = pos->y;
 
-    auto &positions = _regisrty.get_components<Position>();
-    auto &tags = _regisrty.get_components<Tag>();
+    auto &positions = _registry.get_components<Position>();
+    auto &tags = _registry.get_components<Tag>();
 
     std::vector<std::pair<float, float>> player_positions;
 
@@ -284,8 +240,8 @@ void Boss::patternAimedShot()
 
 void Boss::patternWaveSpread()
 {
-    auto hitBox = _regisrty.get<HitBox>(_id);
-    auto pos = _regisrty.get<Position>(_id);
+    auto hitBox = _registry.get<HitBox>(_id);
+    auto pos = _registry.get<Position>(_id);
 
     if (!hitBox.has_value() || !pos.has_value())
         return;
@@ -323,8 +279,8 @@ void Boss::patternWaveSpread()
 
 void Boss::patternDoubleSpiral()
 {
-    auto hitBox = _regisrty.get<HitBox>(_id);
-    auto pos = _regisrty.get<Position>(_id);
+    auto hitBox = _registry.get<HitBox>(_id);
+    auto pos = _registry.get<Position>(_id);
 
     if (!hitBox.has_value() || !pos.has_value())
         return;
@@ -377,8 +333,8 @@ void Boss::patternDoubleSpiral()
 
 void Boss::patternFlower()
 {
-    auto hitBox = _regisrty.get<HitBox>(_id);
-    auto pos = _regisrty.get<Position>(_id);
+    auto hitBox = _registry.get<HitBox>(_id);
+    auto pos = _registry.get<Position>(_id);
 
     if (!hitBox.has_value() || !pos.has_value())
         return;

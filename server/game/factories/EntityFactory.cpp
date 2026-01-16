@@ -46,7 +46,7 @@ Entity EntityFactory::createPlayerLaser(int id)
     return playerLaser;
 }
 
-Entity EntityFactory::createBoss()
+Entity EntityFactory::createBoss(BossConfig bc)
 {
     Entity boss = _registry.spawn_entity();
 
@@ -56,31 +56,31 @@ Entity EntityFactory::createBoss()
     float y = GameConstants::height - 150;
 
     _registry.emplace_component<Position>(boss, x, y);
-    _registry.emplace_component<Acceleration>(boss, 1.0f * 1.0f, 1.0f * 1.0f);
-    _registry.emplace_component<Health>(boss, 180, 180);
-    _registry.emplace_component<Resistance>(boss, 50.0f);
-    _registry.emplace_component<HitBox>(boss, 80.0f, 80.0f);
-    _registry.emplace_component<Pattern>(boss, x - 50, y - 20, x + 50, y + 20,
+    _registry.emplace_component<Acceleration>(boss, bc.speed, bc.speed);
+    _registry.emplace_component<Health>(boss, bc.pv, bc.pv);
+    _registry.emplace_component<HitBox>(boss, bc.size, bc.size);
+    _registry.emplace_component<Pattern>(boss, x - bc.patternX, y - bc.patternY,
+                                         x + bc.patternX, y + bc.patternY,
                                          0.0f);
-    _registry.emplace_component<Tag>(boss, EntityTag::BOSS);
-    _registry.emplace_component<Healer>(boss, 25);
+    _registry.emplace_component<Healer>(boss, bc.healer);
     _registry.emplace_component<Hitable>(boss, false);
+    _registry.emplace_component<Tag>(boss, EntityTag::BOSS);
     return boss;
 }
 
-Entity EntityFactory::createBossBullet(int id, float x, float y, float acc_x,
-                                       float acc_y)
+Entity EntityFactory::createBossBullet(BulletConfig buc)
 {
     Entity bossBullet = _registry.spawn_entity();
 
-    _registry.emplace_component<Position>(bossBullet, x, y);
+    _registry.emplace_component<Position>(bossBullet, buc.x, buc.y);
     _registry.emplace_component<Velocity>(bossBullet, 0.0f, 0.0f);
-    _registry.emplace_component<Acceleration>(bossBullet, acc_x * 50.0f,
-                                              acc_y * 50.0f);
+    _registry.emplace_component<Acceleration>(bossBullet, buc.acc_x * 50.0f,
+                                              buc.acc_y * 50.0f);
     _registry.emplace_component<OutsideBoundaries>(bossBullet, true);
-    _registry.emplace_component<Damager>(bossBullet, 15);
-    _registry.emplace_component<HitBox>(bossBullet, 10.0f, 10.0f);
-    _registry.emplace_component<Dependence>(bossBullet, id);
+    _registry.emplace_component<Damager>(bossBullet, buc.damagePerBullet);
+    _registry.emplace_component<HitBox>(bossBullet, buc.bulletSize,
+                                        buc.bulletSize);
+    _registry.emplace_component<Dependence>(bossBullet, buc.id);
     _registry.emplace_component<Tag>(bossBullet, EntityTag::BULLET);
     return bossBullet;
 }

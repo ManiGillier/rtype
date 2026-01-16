@@ -18,7 +18,7 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(CPP_CC_FLAGS "-Wall -Werror -Wconversion -Wcast-align -Wunused -Wextra -g3 -Wpedantic -fsanitize=address -Wno-error=sign-conversion -Wno-sign-conversion")
     set(RAYLIB_LOG_LEVEL "-DRAYLIB_LOG_LEVEL=LOG_DEBUG")
 else ()
-    set(CPP_CC_FLAGS "-O2")
+    set(CPP_CC_FLAGS "-O3")
     set(RAYLIB_LOG_LEVEL "-DRAYLIB_LOG_LEVEL=LOG_ERROR")
 endif()
 

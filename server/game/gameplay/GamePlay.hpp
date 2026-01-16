@@ -10,20 +10,22 @@
 
 #include "ecs/entity/Entity.hpp"
 #include "ecs/regisrty/Registry.hpp"
+#include "server/game/gameplay/enemies/AEnemy.hpp"
 #include "server/network/network_manager/NetworkManager.hpp"
 #include "../factories/EntityFactory.hpp"
-#include "Boss.hpp"
+#include "enemies/Boss.hpp"
 #include <chrono>
 #include <memory>
 #include <vector>
 
-enum GameState { waiting = 0, active, completed };
+enum GameState { waiting = 0, active};
 
 struct WaveConfig {
     int difficulty;
     std::vector<PatternType> patterns;
-    std::size_t bossNb;
     int waitTime;
+    std::size_t enemyNb;
+    BossConfig bossConfig;
 };
 
 class GamePlay
@@ -42,16 +44,17 @@ class GamePlay
     void setupWaves();
     void nextWave();
     WaveConfig getWaveConfig(int wave);
+    bool gameOver();
 
     NetworkManager &_networkManager;
     Registry &_regisrty;
     EntityFactory &_factory;
+    std::chrono::steady_clock::time_point _gameStartTime;
 
     std::chrono::steady_clock::time_point _start;
-    std::chrono::steady_clock::time_point _start2;
     GameState _state;
 
-    std::vector<std::unique_ptr<Boss>> _bosses;
+    std::vector<std::unique_ptr<AEnemy>> _enemies;
     int _currentWave;
     int _maxWaveNb;
     std::vector<WaveConfig> _waves;
