@@ -82,6 +82,7 @@ void RType::initExecutor(RTypeServer &server)
         std::make_unique<RegisterExecutor>(server));
     server.getPacketListener().addExecutor(
         std::make_unique<RCONRequestExecutor>(server));
+    server.getPacketListener().addExecutor(
         std::make_unique<JoinLobbyWithCodeExecutor>(server));
     server.getPacketListener().addExecutor(
         std::make_unique<CreatePrivateLobbyExecutor>(server));
