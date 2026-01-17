@@ -33,10 +33,10 @@ class Player : public ServerClient
     int getScore() const;
     void setScore(int newScore);
     void addScore(int toAdd);
-    void saveScore(RTypeServer &srv) const;
+    void saveScore() const;
 
   private:
-    int score;
+    int score = 0;
     std::size_t _id;
     std::optional<std::pair<std::size_t, std::size_t>> _entityId;
     std::string _lobbyId;

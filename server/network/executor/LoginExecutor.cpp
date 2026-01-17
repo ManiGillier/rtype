@@ -46,6 +46,11 @@ bool LoginExecutor::execute(Server &server, std::shared_ptr<Player> player,
             player->sendPacket(create_packet(LoginResponse, 1, ""));
             player->connect(username);
             server.getPacketListener().enableAllExecutors(player);
+            try {
+                player->setScore(db.getScore(username));
+            } catch (AccountDatabase::DatabaseError &e) {
+                LOG_ERR(e.what());
+            }
         } else {
             player->sendPacket(create_packet(LoginResponse, 0, "Sorry, the password isn't right, you probably meant to type: " + realPassword));
         }
