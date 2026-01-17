@@ -33,7 +33,7 @@ namespace gl {
         auto add(std::unique_ptr<KeybindSelect>) -> void;
         auto add(std::unique_ptr<Box>) -> void;
     private:
-        GraphicalLibrary &gl;
+        [[maybe_unused]] GraphicalLibrary &gl;
         std::vector<std::unique_ptr<Button>> buttons;
         std::vector<std::unique_ptr<Checkbox>> checkboxes;
         std::vector<std::unique_ptr<TextBox>> textBoxes;
