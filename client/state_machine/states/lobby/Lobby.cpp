@@ -25,7 +25,7 @@ auto Lobby::init_systems() -> void
     std::cout << "Init systems" << std::endl;
 
     this->guiScene =
-        std::make_unique<LobbyScene>(this->getGraphicalLibrary());
+        std::make_unique<LobbyScene>(this->getGraphicalLibrary(), *this);
     this->guiScene->init();
 
     this->registry.reset_update_systems();
@@ -33,11 +33,6 @@ auto Lobby::init_systems() -> void
 
     this->clientManager.getNetworkManager().resetExecutors();
 
-    this->registry.add_global_update_system
-        (gameStart, std::ref(this->clientManager.getGui()),
-         std::ref(this->clientManager.getNetworkManager()));
-    this->registry.add_global_render_system
-        (lobbyText, std::ref(this->clientManager.getGui()));
     this->registry.add_global_render_system
         (lobbyPlayerList, std::ref(this->clientManager.getGui()),
          std::ref(*this));
@@ -61,4 +56,25 @@ auto Lobby::updatePlayers(std::vector<std::string> playerList) -> void
 auto Lobby::getPlayerList() -> std::vector<std::string>
 {
     return this->playerList;
+}
+
+auto Lobby::getConfig() -> GameStartConfig
+{
+    return this->config;
+}
+
+auto Lobby::setConfig(GameStartConfig config) -> void
+{
+    this->config = config;
+}
+
+auto Lobby::getCode() -> std::string
+{
+    return this->code;
+}
+
+auto Lobby::startGame() -> void
+{
+    std::shared_ptr<Packet> p = std::make_shared<StartGamePacket>(this->config);
+    this->clientManager.getNetworkManager().sendPacket(p);
 }

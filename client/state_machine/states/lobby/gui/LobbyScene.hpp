@@ -22,10 +22,13 @@
 #include "client/state_machine/states/lobby/gui/StartButton.hpp"
 #include <graphical_library/raylib/GuiScene.hpp>
 
+#include "../Lobby.hpp"
+
 class LobbyScene : public GuiScene
 {
 public:
-    LobbyScene(gl::GraphicalLibrary &gl) : GuiScene(gl) {}
+    LobbyScene(gl::GraphicalLibrary &gl, Lobby &lobby)
+    : GuiScene(gl), lobby(lobby) {}
 
     auto init() -> void
     {
@@ -33,16 +36,18 @@ public:
         this->add<Background>();
         this->add<SecondBackground>();
         this->add<Difficulty>();
-        this->add<MinusDifficulty>();
-        this->add<PlusDifficulty>();
-        this->add<PlusLives>();
+        this->add<MinusDifficulty>(this->lobby);
+        this->add<PlusDifficulty>(this->lobby);
+        this->add<PlusLives>(this->lobby);
         this->add<Lives>();
-        this->add<LivesNumber>();
-        this->add<MinusLives>();
-        this->add<DifficultyNumber>();
-        this->add<StartButton>();
-        this->add<RoomCode>();
+        this->add<LivesNumber>(this->lobby);
+        this->add<MinusLives>(this->lobby);
+        this->add<DifficultyNumber>(this->lobby);
+        this->add<StartButton>(this->lobby);
+        this->add<RoomCode>(this->lobby.getCode());
     }
+private:
+    Lobby &lobby;
 };
 
 #endif /* TEST_LOBBY_SCENE_HPP */

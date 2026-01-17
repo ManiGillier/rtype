@@ -8,14 +8,17 @@
 #ifndef MINUS_DIFFICULTY_BUTTON_HPP
 #define MINUS_DIFFICULTY_BUTTON_HPP
 
+#include <cstdint>
 #include <graphical_library/raylib/buttons/Button.hpp>
 #include <iostream>
+
+#include "../Lobby.hpp"
 
 class MinusDifficulty : public Button
 {
 public:
-    MinusDifficulty()
-    : Button()
+    MinusDifficulty(Lobby &lobby)
+    : Button(), lobby(lobby)
     {
         this->x = 250;
         this->y = 360;
@@ -29,8 +32,14 @@ public:
 
     auto onClick() -> void
     {
-        std::cerr << "Just clicked the button !" << std::endl;
+        GameStartConfig config = this->lobby.getConfig();
+
+        if (config.difficuly > 1)
+            config.difficuly--;
+        this->lobby.setConfig(config);
     }
+private:
+    Lobby &lobby;
 };
 
 #endif /* MINUS_DIFFICULTY_BUTTON_HPP */

@@ -26,11 +26,6 @@ public:
         this->pressedColor = {150, 150, 150, 255};
         this->text = "";
     }
-
-    auto onClick() -> void
-    {
-        std::cerr << "Just clicked the button !" << std::endl;
-    }
 };
 
 #endif /* SECOND_BACKGROUND_HPP */

@@ -11,11 +11,13 @@
 #include <graphical_library/raylib/buttons/Button.hpp>
 #include <iostream>
 
+#include "../Lobby.hpp"
+
 class PlusLives : public Button
 {
 public:
-    PlusLives()
-    : Button()
+    PlusLives(Lobby &lobby)
+    : Button(), lobby(lobby)
     {
         this->x = 370;
         this->y = 560;
@@ -29,8 +31,14 @@ public:
 
     auto onClick() -> void
     {
-        std::cerr << "Just clicked the button !" << std::endl;
+        GameStartConfig config = this->lobby.getConfig();
+
+        if (config.lives < 15)
+            config.lives++;
+        this->lobby.setConfig(config);
     }
+private:
+    Lobby &lobby;
 };
 
 #endif /* PLUS_LIVES_BUTTON_HPP */
