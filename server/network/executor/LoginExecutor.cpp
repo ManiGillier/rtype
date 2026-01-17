@@ -39,11 +39,13 @@ bool LoginExecutor::execute(Server &server, std::shared_ptr<Player> player,
         }
         std::string realPassword = db.getPasswordByUsername(username);
         if (realPassword == password) {
+            if (db.isBanned(username)) {
+                player->sendPacket(create_packet(LoginResponse, 0, "You were banned from the server."));
+                return true;
+            }
             player->sendPacket(create_packet(LoginResponse, 1, ""));
             player->connect(username);
             server.getPacketListener().enableAllExecutors(player);
-            player->setConnected(true);
-            player->setUsername(username);
         } else {
             player->sendPacket(create_packet(LoginResponse, 0, "Sorry, the password isn't right, you probably meant to type: " + realPassword));
         }

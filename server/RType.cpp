@@ -1,3 +1,10 @@
+/*
+** EPITECH PROJECT, 2026
+** rtype
+** File description:
+** RType
+*/
+
 #include "RType.hpp"
 #include "./error/ArgsError.hpp"
 #include "network/logger/Logger.hpp"
@@ -5,12 +12,17 @@
 #include "server/network/executor/ClientInputsExecutor.hpp"
 #include "server/network/server/RTypeServer.hpp"
 #include <iostream>
+#include <fstream>
 #include "server/network/executor/RegisterExecutor.hpp"
 #include "server/network/executor/LoginExecutor.hpp"
+#include "server/network/executor/RCONRequestExecutor.hpp"
 #include "server/network/executor/JoinOrCreatePublicLobbyExecutor.hpp"
 #include "server/network/executor/CreatePrivateLobbyExecutor.hpp"
 #include "server/network/executor/JoinLobbyWithCodeExecutor.hpp"
 #include <string>
+#include <ctime>
+#include "utils/RandomUtils.hpp"
+#include <filesystem>
 
 RType::RType(int argc, char **argv)
 {
@@ -69,6 +81,8 @@ void RType::initExecutor(RTypeServer &server)
     server.getPacketListener().addExecutor(
         std::make_unique<RegisterExecutor>(server));
     server.getPacketListener().addExecutor(
+        std::make_unique<RCONRequestExecutor>(server));
+    server.getPacketListener().addExecutor(
         std::make_unique<JoinLobbyWithCodeExecutor>(server));
     server.getPacketListener().addExecutor(
         std::make_unique<CreatePrivateLobbyExecutor>(server));
@@ -83,10 +97,24 @@ void RType::networkLoop()
         LOG_ERR("RType server Can't connect");
         return;
     }
-
+    RTypeConfig &cfg = server.getRTypeConfig();
+    if (cfg.shouldCreateConfig() && !cfg.createConfig()) {
+        LOG_ERR("Could not create RType Config, aborting..");
+        return;
+    }
+    if (!cfg.readConfig()) {
+        LOG_ERR("Could not read RType Config, trying to reset it..");
+        if (!cfg.createConfig()) {
+            LOG_ERR("Could not reset RType Confg, aborting..");
+            return;
+        }
+        LOG("Could reset config !");
+    }
+    LOG("Could get RCON Key=" << cfg.getKey());
     this->initExecutor(server);
     server.getPacketListener().addToWhitelist(PacketId::LOGIN_PACKET);
     server.getPacketListener().addToWhitelist(PacketId::REGISTER_PACKET);
+    server.getPacketListener().addToWhitelist(PacketId::RCON_REQUEST);
     while (server.isUp()) {
         server.loop();
         server.cleanFinishedGame();
@@ -95,10 +123,60 @@ void RType::networkLoop()
 
 int RType::launch()
 {
+    srand((unsigned) time(NULL));
     if (_displayUsage)
         return displayUsage();
 
     std::thread server(&RType::networkLoop, this);
     server.join();
     return 0;
+}
+
+bool RTypeConfig::createConfig()
+{
+    std::ofstream config(CONFIG_FILE);
+
+    if (!config.is_open())
+        return false;
+    config << "RCON_KEY=" << RandomUtils::generateRandomUUID(16);
+    this->key = TO_CHANGE;
+    if (!config)
+        return false;
+    config << std::endl;
+    config.close();
+    return true;
+}
+
+bool RTypeConfig::readConfig()
+{
+    std::ifstream config(CONFIG_FILE);
+    std::string key;
+    std::string value;
+
+    if (!config.is_open())
+        return false;
+    std::string line;
+    while (std::getline(config, line)) {
+        std::size_t pos = line.find('=');
+        if (pos != std::string::npos) {
+            key = line.substr(0, pos);
+            value = line.substr(pos + 1);
+            if (key == "RCON_KEY")
+                this->key = value;
+        }
+    }
+    if (!config.eof() && config.fail())
+        return false;
+    config.close();
+    return true;
+}
+
+bool RTypeConfig::shouldCreateConfig() const
+{
+    return !std::filesystem::exists(CONFIG_FILE);
+}
+
+const std::string &RTypeConfig::getKey() const
+{
+    return this->key;
 }

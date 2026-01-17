@@ -13,12 +13,14 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
 
 option(BUILD_SERVER "Build server" ON)
 option(BUILD_CLIENT "Build client" ON)
+option(BUILD_RCON "Build rcon" ON)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(CPP_CC_FLAGS "-Wall -Werror -Wconversion -Wcast-align -Wunused -Wextra -g3 -Wpedantic -fsanitize=address -Wno-error=sign-conversion -Wno-sign-conversion")
+    # -Werror removed to build server/libconfig
+    set(CPP_CC_FLAGS "-Wall -Wconversion -Wcast-align -Wunused -Wextra -g3 -Wpedantic -fsanitize=address -Wno-error=sign-conversion -Wno-sign-conversion")
     set(RAYLIB_LOG_LEVEL "-DRAYLIB_LOG_LEVEL=LOG_DEBUG")
 else ()
-    set(CPP_CC_FLAGS "-O2")
+    set(CPP_CC_FLAGS "-O3")
     set(RAYLIB_LOG_LEVEL "-DRAYLIB_LOG_LEVEL=LOG_ERROR")
 endif()
 
@@ -33,6 +35,10 @@ add_subdirectory(ecs)
 if(BUILD_SERVER)
     add_subdirectory(server)
 endif(BUILD_SERVER)
+
+if(BUILD_RCON)
+    add_subdirectory(rcon)
+endif(BUILD_RCON)
 
 if(BUILD_CLIENT)
     add_subdirectory(graphical_library)

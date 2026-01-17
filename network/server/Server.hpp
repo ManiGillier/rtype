@@ -86,11 +86,13 @@ class Server {
         bool canConnect() const;
         void setConnect(bool c);
         void sendAll(std::shared_ptr<Packet> p);
+        void disconnectClient(std::shared_ptr<IPollable> client);
         void sendAll(std::vector<std::shared_ptr<IPollable>> clients, std::shared_ptr<Packet> p);
         virtual ~Server() = default;
         std::mutex udpLock;
         std::mutex tcpLock;
     private:
+        std::vector<std::shared_ptr<IPollable>> toDisconnect;
         void executePackets();
         void sendUDPPackets();
         int port;

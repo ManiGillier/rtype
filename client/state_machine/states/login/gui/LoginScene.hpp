@@ -8,22 +8,38 @@
 #ifndef LOGIN_SCENE_HPP
 #define LOGIN_SCENE_HPP
 
-#include "LoginButton.hpp"
-#include "PasswordBox.hpp"
-#include "UsernameBox.hpp"
 #include <graphical_library/raylib/GuiScene.hpp>
+
+#include "../Login.hpp"
+
+#include "LoginBox.hpp"
+#include "RegisterBox.hpp"
+#include "ErrorMessage.hpp"
 
 class LoginScene : public GuiScene
 {
 public:
-    LoginScene(gl::GraphicalLibrary &gl) : GuiScene(gl) {}
+    LoginScene(gl::GraphicalLibrary &gl, Login &login)
+    : GuiScene(gl), login(login) {}
 
     auto init() -> void
     {
-        this->add<LoginButton>();
-        this->add<UsernameBox>();
-        this->add<PasswordBox>();
+        this->add<LoginBox>();
+        this->add<LoginText>();
+        this->add<LoginButton>(login);
+        this->add<LoginPassword>(login);
+        this->add<LoginUsername>(login);
+
+        this->add<RegisterBox>();
+        this->add<RegisterText>();
+        this->add<RegisterButton>(login);
+        this->add<RegisterPassword>(login);
+        this->add<RegisterUsername>(login);
+
+        this->add<ErrorMessage>(login);
     }
+private:
+    Login &login;
 };
 
 #endif /* LOGIN_SCENE_HPP */

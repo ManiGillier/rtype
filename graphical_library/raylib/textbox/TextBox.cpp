@@ -34,6 +34,13 @@ void TextBox::draw() const {
     raylib::DrawRectangleLinesEx(boxRect, lineThickness, linesColor);
 
 
+    raylib::Color rTextColor = {
+        this->textColor.r, 
+        this->textColor.g,
+        this->textColor.b,
+        this->textColor.a
+    };
+
     int fontSize = this->height / 2;
     int textLenght = raylib::MeasureText(this->text.c_str(), fontSize);
     if (this->alignment == LEFT) {
@@ -42,7 +49,7 @@ void TextBox::draw() const {
         this->x + 10,
         this->y + (this->height / 2) - 10,
         fontSize,
-        raylib::BLACK
+        rTextColor
     );
     } else if (this->alignment == CENTER) {
         DrawText(

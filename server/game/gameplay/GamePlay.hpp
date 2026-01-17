@@ -10,26 +10,24 @@
 
 #include "ecs/entity/Entity.hpp"
 #include "ecs/regisrty/Registry.hpp"
+#include "server/game/gameplay/enemies/AEnemy.hpp"
+#include "server/game/gameplay/WaveConfig.hpp"
+#include "server/game/gameplay/WaveConfigLoader.hpp"
 #include "server/network/network_manager/NetworkManager.hpp"
 #include "../factories/EntityFactory.hpp"
-#include "Boss.hpp"
+#include "enemies/Boss.hpp"
 #include <chrono>
 #include <memory>
+#include <string>
 #include <vector>
 
-enum GameState { waiting = 0, active, completed };
-
-struct WaveConfig {
-    int difficulty;
-    std::vector<PatternType> patterns;
-    std::size_t bossNb;
-    int waitTime;
-};
+enum GameState { waiting = 0, active};
 
 class GamePlay
 {
   public:
-    GamePlay(NetworkManager &nm, Registry &r, EntityFactory &factory);
+    GamePlay(NetworkManager &nm, Registry &r, EntityFactory &factory,
+             const std::string &configPath = "server/config.cfg");
     ~GamePlay() = default;
     bool update();
     int getCurrentWave() const;
@@ -39,22 +37,25 @@ class GamePlay
     void spawnBoss();
     void checkPos();
     void removeDeadBoss();
-    void setupWaves();
+    bool loadConfig(const std::string &configPath);
+    void loadDefaultWaves();
     void nextWave();
     WaveConfig getWaveConfig(int wave);
+    bool gameOver();
 
     NetworkManager &_networkManager;
     Registry &_regisrty;
     EntityFactory &_factory;
+    std::chrono::steady_clock::time_point _gameStartTime;
 
     std::chrono::steady_clock::time_point _start;
-    std::chrono::steady_clock::time_point _start2;
     GameState _state;
 
-    std::vector<std::unique_ptr<Boss>> _bosses;
+    std::vector<std::unique_ptr<AEnemy>> _enemies;
     int _currentWave;
     int _maxWaveNb;
     std::vector<WaveConfig> _waves;
+    WaveConfigLoader _configLoader;
 };
 
 #endif /* GAMEPLAY_HPP */

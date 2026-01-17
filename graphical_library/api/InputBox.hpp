@@ -30,6 +30,8 @@ namespace gl {
 
         std::string text;
 
+        Color textColor;
+
         bool selected = false;
     };
 }

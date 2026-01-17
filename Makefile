@@ -1,6 +1,7 @@
 BUILD_DIR = build
 SERVER_EXEC_NAME = r-type_server
 CLIENT_EXEC_NAME = r-type_client
+RCON_EXEC_NAME = r-type_rcon
 NETWORK_TEST_EXEC_NAME = reseauTypeTester
 DEBUG = Debug
 RELEASE = Release
@@ -13,26 +14,30 @@ define build
 	cmake -B ${BUILD_DIR} -DCMAKE_BUILD_TYPE=$(1) \
 		-DBUILD_SERVER=$(2) \
 		-DBUILD_CLIENT=$(3) \
-	&& cmake --build ${BUILD_DIR} $(4) -j 
+		-DBUILD_RCON=$(4) \
+	&& cmake --build ${BUILD_DIR} $(5) -j 
 endef
 
 debug:
-	$(call build,$(DEBUG),ON,ON)
+	$(call build,$(DEBUG),ON,ON,ON)
 
 release:
-	$(call build,$(RELEASE),ON,ON)
+	$(call build,$(RELEASE),ON,ON,ON)
 
 server:
-	$(call build,$(DEBUG),ON,OFF)
+	$(call build,$(DEBUG),ON,OFF,OFF)
 
 client:
-	$(call build,$(DEBUG),OFF,ON)
+	$(call build,$(DEBUG),OFF,ON,OFF)
+
+rcon:
+	$(call build,$(DEBUG),OFF,OFF,ON)
 
 reseau:
-	$(call build,$(DEBUG),OFF,OFF,--target reseau)
+	$(call build,$(DEBUG),OFF,OFF,OFF,--target reseau)
 
 gui:
-	$(call build,$(DEBUG),OFF,ON,--target gui)
+	$(call build,$(DEBUG),OFF,ON,OFF,--target gui)
 
 lint:
 	clang-tidy $$(find . -type f -name "*.[ch]pp" | grep -v "build")
@@ -47,7 +52,8 @@ open_doc:
 	cd doc && mdbook serve --open
 
 clean:
-	rm -rf ${SERVER_EXEC_NAME} ${CLIENT_EXEC_NAME} ${NETWORK_TEST_EXEC_NAME}
+	rm -rf ${SERVER_EXEC_NAME} ${CLIENT_EXEC_NAME} \
+		${NETWORK_TEST_EXEC_NAME} ${RCON_EXEC_NAME}
 
 fclean:
 	make -s clean
@@ -61,4 +67,4 @@ re:
 	make -s fclean
 	make -s all
 
-.PHONY: all lint clean fclean re doc open_doc reseau server client gui
+.PHONY: all lint clean fclean re doc open_doc reseau server client rcon gui

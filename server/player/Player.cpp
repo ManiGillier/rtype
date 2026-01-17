@@ -1,4 +1,12 @@
+/*
+** EPITECH PROJECT, 2026
+** rtype [WSL: Ubuntu-24.04]
+** File description:
+** Player
+*/
+
 #include "Player.hpp"
+#include "../network/server/RTypeServer.hpp"
 
 Player::Player(int fd, Server &s, std::size_t id, std::optional<std::size_t> entityId)
     : ServerClient(fd, s), _id(id), _entityId(entityId)
@@ -54,4 +62,24 @@ void Player::connect(const std::string &username)
 {
     this->setConnected(true);
     this->setUsername(username);
+}
+
+int Player::getScore() const
+{
+    return this->score;
+}
+
+void Player::setScore(int newScore)
+{
+    this->score = newScore;
+}
+
+void Player::addScore(int toAdd)
+{
+    this->score += toAdd;
+}
+
+void Player::saveScore(RTypeServer &srv) const
+{
+    srv.getAccountDatabase().setScore(this->getUsername(), this->getScore());
 }

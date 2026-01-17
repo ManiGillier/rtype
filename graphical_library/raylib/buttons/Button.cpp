@@ -27,12 +27,19 @@ void Button::draw() const {
     int fontSize = this->height / 2;
     int textLenght = raylib::MeasureText(this->text.c_str(), fontSize);
     if (this->alignment == LEFT) {
+
+    raylib::Color rTextColor = {
+        this->textColor.r, 
+        this->textColor.g,
+        this->textColor.b,
+        this->textColor.a
+    };
     DrawText(
         this->text.c_str(),
         this->x + 10,
         this->y + (this->height / 2) - 10,
         fontSize,
-        raylib::BLACK
+        rTextColor
     );
     } else if (this->alignment == CENTER) {
         DrawText(
@@ -40,7 +47,7 @@ void Button::draw() const {
             this->x + (this->width - textLenght) / 2,
             this->y + (this->height / 2) - 10,
             fontSize,
-            raylib::BLACK
+            rTextColor
         );
     } else {
         DrawText(
@@ -48,7 +55,7 @@ void Button::draw() const {
             this->x + (this->width - textLenght) - 10,
             this->y + (this->height / 2) - 10,
             fontSize,
-            raylib::BLACK
+            rTextColor
         );
     }
 

@@ -103,6 +103,9 @@ void Server::loop()
     for (std::shared_ptr<IPollable> pd : this->getPollManager().pollSockets())
         this->onClientDisconnect(pd);
     this->executePackets();
+    for (std::shared_ptr<IPollable> toDc : this->toDisconnect)
+        this->getPollManager().removePollable(toDc->getFileDescriptor());
+    this->toDisconnect.clear();
 }
 
 PacketListener<Server> &Server::getPacketListener()
@@ -212,6 +215,11 @@ void Server::setConnect(bool c)
 void Server::sendAll(std::shared_ptr<Packet> p)
 {
     this->sendAll(this->getPollManager().getPool(), p);
+}
+
+void Server::disconnectClient(std::shared_ptr<IPollable> client)
+{
+    this->toDisconnect.push_back(client);
 }
 
 void Server::sendAll(std::vector<std::shared_ptr<IPollable>> clients,

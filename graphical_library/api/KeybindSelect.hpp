@@ -30,6 +30,8 @@ namespace gl {
 
         int key;
 
+        Color textColor;
+
         bool selected = false;
     };
 }

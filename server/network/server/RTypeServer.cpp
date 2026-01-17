@@ -40,6 +40,11 @@ AccountDatabase & RTypeServer::getAccountDatabase()
     return this->db;
 }
 
+RTypeConfig &RTypeServer::getRTypeConfig()
+{
+   return this->config;
+}
+
 std::shared_ptr<IPollable> RTypeServer::createClient(int fd)
 {
     // NOTE: id not used yet perhaps remove it later (was usefull during partI)
@@ -62,9 +67,13 @@ void RTypeServer::onClientDisconnect(std::shared_ptr<IPollable> client)
     auto player = std::static_pointer_cast<Player>(client);
     LOG("Player disconnected to fd= " << client->getFileDescriptor());
 
-    bool hasEntityId = player->getEntityId().has_value();
     auto lobbyId = player->getLobbyId();
-
+    
+    // Remove player first (this handles entity cleanup)
+    this->_lobbyManager.removePlayer(player);
+    
+    // THEN notify other players
+    bool hasEntityId = player->getEntityId().has_value();
     if (hasEntityId) {
         auto lobby = this->_lobbyManager.getLobby(lobbyId);
         if (lobby) {
@@ -73,16 +82,13 @@ void RTypeServer::onClientDisconnect(std::shared_ptr<IPollable> client)
             auto playerDisconnect = create_packet(DestroyEntityPacket, toDestroy);
 
             auto &playersMutex = lobby->getPlayersMutex();
-            {
-                std::lock_guard<std::mutex> lock(playersMutex);
-                auto &players = lobby->getPlayers();
-                for (auto &it : players) {
-                    it->sendPacket(playerDisconnect);
-                }
+            std::lock_guard<std::mutex> lock(playersMutex);
+            auto &players = lobby->getPlayers();
+            for (auto &it : players) {
+                it->sendPacket(playerDisconnect);
             }
         }
     }
-    this->_lobbyManager.removePlayer(player);
 }
 
 bool RTypeServer::isConnected(const std::string &username)
@@ -98,4 +104,20 @@ bool RTypeServer::isConnected(const std::string &username)
             return true;
     }
     return false;
+}
+
+std::shared_ptr<Player> RTypeServer::getPlayerByUsername(
+    const std::string &username)
+{
+    std::vector<std::shared_ptr<IPollable>> p = this->getPollManager().getPool();
+    std::shared_ptr<Player> player = nullptr;
+
+    for (std::shared_ptr<IPollable> pollable : p) {
+        player = std::dynamic_pointer_cast<Player>(pollable);
+        if (player == nullptr)
+            continue;
+        if (player->getUsername() == username)
+            return player;
+    }
+    return nullptr;
 }

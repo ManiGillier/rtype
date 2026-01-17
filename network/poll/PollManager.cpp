@@ -94,14 +94,14 @@ std::size_t PollManager::getConnectionCount() const
     return this->pollables.size();
 }
 
-std::vector<std::shared_ptr<IPollable>> &PollManager::getPool()
+std::vector<std::shared_ptr<IPollable>> PollManager::getPool()
 {
     return this->pollables;
 }
 
 std::shared_ptr<IPollable> PollManager::getPollableByAddress(sockaddr_in s)
 {
-    for (std::shared_ptr<IPollable> &p : this->getPool()) {
+    for (std::shared_ptr<IPollable> &p : this->pollables) {
         std::optional<sockaddr_in> addr = p->getClientAddress();
         if (addr.has_value()) {
             if (addr.value().sin_addr.s_addr == s.sin_addr.s_addr &&

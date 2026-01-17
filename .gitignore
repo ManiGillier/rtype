@@ -2,6 +2,7 @@ compile_commands.json
 build
 r-type_client
 r-type_server
+r-type_rcon
 reseauTypeTester
 .cpm-cache/
 .cache
@@ -11,3 +12,5 @@ CPM_modules/
 .vscode
 /vgcore*
 *.db3
+rtype.cfg
+account_db.*
