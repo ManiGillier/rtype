@@ -43,7 +43,7 @@ public:
         this->add<LivesNumber>(this->lobby);
         this->add<MinusLives>(this->lobby);
         this->add<DifficultyNumber>(this->lobby);
-        this->add<StartButton>();
+        this->add<StartButton>(this->lobby);
         this->add<RoomCode>(this->lobby.getCode());
     }
 private:

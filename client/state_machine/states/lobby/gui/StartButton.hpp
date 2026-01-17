@@ -11,13 +11,14 @@
 #include <graphical_library/raylib/buttons/Button.hpp>
 #include <iostream>
 
+#include "../Lobby.hpp"
+
 class StartButton
 : public Button
 {
 public:
-    StartButton
-    ()
-    : Button()
+    StartButton (Lobby &lobby)
+    : Button(), lobby(lobby)
     {
         this->x = 675;
         this->y = 650;
@@ -31,8 +32,10 @@ public:
 
     auto onClick() -> void
     {
-        std::cout << "START" << std::endl;
+        this->lobby.startGame();
     }
+private:
+    Lobby &lobby;
 };
 
 #endif /* START_BUTTON_HPP */

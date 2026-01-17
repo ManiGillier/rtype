@@ -24,6 +24,7 @@ public:
     auto getConfig() -> GameStartConfig;
     auto setConfig(GameStartConfig config) -> void;
     auto getCode() -> std::string;
+    auto startGame() -> void;
 private:
     GameStartConfig config = { 1, 1 };
     std::string code;
