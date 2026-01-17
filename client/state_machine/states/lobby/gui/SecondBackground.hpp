@@ -5,20 +5,20 @@
 ** test lobby button
 */
 
-#ifndef BACKGROUND_HPP
-#define BACKGROUND_HPP
+#ifndef SECOND_BACKGROUND_HPP
+#define SECOND_BACKGROUND_HPP
 
 #include <graphical_library/raylib/buttons/Button.hpp>
 #include <iostream>
 
-class Background : public Button
+class SecondBackground : public Button
 {
 public:
-    Background()
+    SecondBackground()
     : Button()
     {
         this->x = 175;
-        this->y = 100;
+        this->y = 300;
         this->width = 300;
         this->height = 120;
         this->idleColor = {150, 150, 150, 255};
@@ -33,4 +33,4 @@ public:
     }
 };
 
-#endif /* BACKGROUND_HPP */
+#endif /* SECOND_BACKGROUND_HPP */

@@ -17,13 +17,15 @@ public:
     Lives()
     : TextBox()
     {
-        this->width = 120;
+        this->x = 175;
+        this->y = 300;
+
+        this->width = 300;
         this->height = 40;
-        this->x = 250;
         this->y = 300;
         this->color = {255, 255, 255, 0};
-        this->text = "Lives 🧡";
-        this->cColor = {0,0,0,0};
+        this->text = "Lives";
+        this->cColor = {0,0,0,255};
     }
 
     auto onClick() -> void
