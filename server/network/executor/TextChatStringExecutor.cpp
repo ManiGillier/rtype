@@ -8,14 +8,14 @@ bool TextChatStringExecutor::execute(
 {
     (void)server;
 
-    LOG("Get chat string from" << player->getId());
+    LOG("Got chat string from" << player->getId());
 
     auto lobbyId = player->getLobbyId();
     auto lobby = this->_rtypeServer.getLobbyManager().getLobby(lobbyId);
     std::string textToSend;
 
     if (!lobby) {
-        LOG("Eror: Lobby " << lobbyId << " not found");
+        LOG("Error: Lobby " << lobbyId << " not found");
         return true;
     }
 

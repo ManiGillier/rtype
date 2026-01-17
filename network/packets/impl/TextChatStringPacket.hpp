@@ -40,7 +40,7 @@ class TextChatStringPacket : public Packet
 
     PacketDisplay display() const
     {
-        return {"Now", this->str};
+        return {"message:", this->str};
     }
 
     std::shared_ptr<Packet> clone() const
