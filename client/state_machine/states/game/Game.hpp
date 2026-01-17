@@ -47,6 +47,9 @@ public:
     auto updateLasers(std::vector<LaserData> data) -> void;
     auto getLastClientInputs() -> ClientInputs;
     auto setLastClientInputs(ClientInputs) -> void;
+
+    auto getMaxHealth() -> int;
+    auto getCurrentHealth() -> int;
 private:
     std::map<std::string, std::pair<std::size_t, std::size_t>> players;
     std::optional<std::size_t> clientId = std::nullopt;

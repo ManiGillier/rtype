@@ -79,6 +79,10 @@ auto Game::init_systems() -> void
          std::ref(this->clientManager.getNetworkManager()),
          std::ref(*this));
 
+    this->registry.add_global_render_system
+        (renderHealth, std::ref(this->clientManager.getGui()),
+         std::ref(*this));
+
     Entity background = this->registry.spawn_named_entity("background");
     this->registry.add_component<HorizontalTiling>(background, {2, 0, -50});
     this->registry.add_component<TextureComp>
@@ -287,4 +291,14 @@ auto Game::getLastClientInputs() -> ClientInputs
 auto Game::setLastClientInputs(ClientInputs input) -> void
 {
     this->lastClientInputs = input;
+}
+
+auto Game::getMaxHealth() -> int
+{
+    return 5;
+}
+
+auto Game::getCurrentHealth() -> int
+{
+    return 2;
 }
