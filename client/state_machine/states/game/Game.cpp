@@ -104,6 +104,7 @@ auto Game::init_systems() -> void
     nm.addExecutor(std::make_unique<TimeNowExecutor>(*this));
     nm.addExecutor(std::make_unique<LinkPlayersExecutor>(*this));
     nm.addExecutor(std::make_unique<DestroyEntityExecutor>(*this));
+    nm.addExecutor(std::make_unique<PlayerHitExecutor>(*this));
 }
 
 auto Game::init_entities() -> void {}

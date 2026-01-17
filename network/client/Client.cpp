@@ -333,36 +333,43 @@ bool ClientPollableUDP::receiveEvent(short)
         uint16_t sequenceNum = 0;
         uint32_t originalSize = 0;
         uint32_t compressedSize = 0;
+        std::size_t bytesToSkip = 0;
         try {
+            std::size_t initialSize = receivedData.size();
             Packet::fromBinary(receivedData, sequenceNum);
+            if (receivedData.empty()) {
+                break;
+            }
             packetId = receivedData[0];
             receivedData.erase(receivedData.begin());
             packet = PacketManager::getInstance().createPacketById(packetId, Packet::PacketMode::UDP);
             if (packet == nullptr) {
                 LOG_ERR("Received invalid packet ID: " << (int) packetId);
+                receivedData.clear();
                 break;
             }
             Packet::fromBinary(receivedData, originalSize);
             Packet::fromBinary(receivedData, compressedSize);
             if (receivedData.size() < compressedSize) {
                 receivedData.clear();
-                return true;
+                break;
             }
+            bytesToSkip = compressedSize;
             std::vector<uint8_t> packetData = PacketCompressor::decompress(receivedData,
                 originalSize, compressedSize);
             packet->setData(packetData);
             packet->unserialize();
+            PacketLogger::logPacket(packet, PacketLogger::PacketMethod::RECEIVED,
+                this->getFileDescriptor(), sequenceNum);
+            addReceivedPacket(sender, packet);
+            receivedData.erase(receivedData.begin(),
+                std::next(receivedData.begin(), static_cast<std::ptrdiff_t>(bytesToSkip)));
+            cl.updateSequenceNum(sequenceNum);
         } catch (const std::exception &e) {
-            LOG_ERR("Could not read UDP packet with ID " << (int) packetId);
+            LOG_ERR("Could not read UDP packet with ID " << (int) packetId << ": " << e.what());
             receivedData.clear();
             break;
         }
-        PacketLogger::logPacket(packet, PacketLogger::PacketMethod::RECEIVED,
-            this->getFileDescriptor(), sequenceNum);
-        addReceivedPacket(sender, packet);
-        receivedData.erase(receivedData.begin(), 
-            std::next(receivedData.begin(), static_cast<std::ptrdiff_t>(compressedSize)));
-        cl.updateSequenceNum(sequenceNum);
     }
     return true;
 }
