@@ -42,7 +42,6 @@ class Boss : public AEnemy
     void rotatePattern();
     void patternRadialBurst();
     void patternSpiral();
-    void patternAimedShot();
     void patternWaveSpread();
     void patternDoubleSpiral();
     void patternFlower();

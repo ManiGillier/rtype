@@ -9,9 +9,7 @@
 #define STARTGMAE_PACKET_HPP
 
 #include "network/packets/Packet.hpp"
-#include <cstddef>
 #include <cstdint>
-#include <iostream>
 #include <memory>
 
 struct GameStartConfig {

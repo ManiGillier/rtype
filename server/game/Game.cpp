@@ -11,6 +11,7 @@
 #include "ecs/regisrty/Registry.hpp"
 #include "gameplay/GamePlay.hpp"
 #include "network/packets/Packet.hpp"
+#include "network/packets/impl/StartGamePacket.hpp"
 #include "shared/components/Dependence.hpp"
 #include "shared/components/Health.hpp"
 #include "shared/components/HitBox.hpp"
@@ -29,7 +30,6 @@
 #include <network/packets/impl/NewPlayerPacket.hpp>
 #include <network/packets/impl/TimeNowPacket.hpp>
 #include <optional>
-#include <thread>
 #include <tuple>
 #include <utility>
 #include <vector>
@@ -42,19 +42,17 @@ Game::Game(std::vector<std::shared_ptr<Player>> &players,
 {
 }
 
-void Game::loop(int ticks)
+void Game::loop(GameStartConfig config, int ticks)
 {
     Ticker ticker(ticks);
-    GamePlay gamePlay(this->_networkManager, this->_registry, this->_factory);
+    GamePlay gamePlay(this->_networkManager, this->_registry, this->_factory,
+        config.difficuly);
     this->_gameStart = std::chrono::steady_clock::now();
 
     this->_isRunning = true;
-    // std::this_thread::sleep_for(
-    //     std::chrono::milliseconds(500)); // TODO: remove this
-
     this->initializeComponents();
     this->initializeSystems();
-    this->initPlayers();
+    this->initPlayers(config.lives);
 
     bool running = true;
 
@@ -104,7 +102,7 @@ void Game::setDiffTime()
     this->_networkManager.setLastTick(seconds);
 }
 
-void Game::initPlayers()
+void Game::initPlayers(int lives)
 {
     std::vector<PlayerLink> playerData;
     {
@@ -112,7 +110,7 @@ void Game::initPlayers()
         for (auto &pl : _players) {
             {
                 std::lock_guard<std::mutex> lockRegistry(_registryMutex);
-                Entity player = _factory.createPlayer();
+                Entity player = _factory.createPlayer(lives);
                 Entity laser = _factory.createPlayerLaser(
                     static_cast<int>(player.getId()));
 

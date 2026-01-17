@@ -12,6 +12,7 @@
 #include "../network/network_manager/NetworkManager.hpp"
 #include "../player/Player.hpp"
 #include "ecs/regisrty/Registry.hpp"
+#include "network/packets/impl/StartGamePacket.hpp"
 #include "server/game/ticker/Ticker.hpp"
 #include <memory>
 
@@ -21,7 +22,7 @@ class Game
     Game(std::vector<std::shared_ptr<Player>> &players,
          std::mutex &playersMutex);
     ~Game() = default;
-    void loop(int ticks);
+    void loop(GameStartConfig config, int ticks);
     NetworkManager &getNetworkManager();
     std::tuple<std::mutex &, Registry &> getRegistry();
     bool isRunning();
@@ -32,7 +33,7 @@ class Game
     /*
        init helpers to creates players entity then send entity Id to the client
     */
-    void initPlayers();
+    void initPlayers(int lives);
     void initializeComponents();
     void initializeSystems();
     /*

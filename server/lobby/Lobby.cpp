@@ -1,5 +1,6 @@
 #include "Lobby.hpp"
 #include "network/logger/Logger.hpp"
+#include "network/packets/impl/StartGamePacket.hpp"
 #include <network/packets/impl/NewPlayerPacket.hpp>
 #include <mutex>
 #include <vector>
@@ -95,9 +96,9 @@ void Lobby::setIsInGame(bool iig)
     this->_inGame = iig;
 }
 
-void Lobby::startGame(int ticks)
+void Lobby::startGame(GameStartConfig config, int ticks)
 {
-    this->_game.loop(ticks);
+    this->_game.loop(config, ticks);
     LOG("game end");
     this->_inGame = false;
 }
