@@ -3,6 +3,7 @@
 
 #include "../player/Player.hpp"
 #include "Lobby.hpp"
+#include "network/packets/impl/StartGamePacket.hpp"
 #include <memory>
 #include <unordered_map>
 
@@ -16,7 +17,7 @@ class LobbyManager
     bool joinLobby(const std::string &lobbyId, std::shared_ptr<Player> &player);
     bool joinPublicLobby(std::shared_ptr<Player> &player);
     void leaveLobby(std::shared_ptr<Player> &player);
-    void startGame(const std::string &lobbyId);
+    void startGame(GameStartConfig config, const std::string &lobbyId);
     std::shared_ptr<Lobby> getLobby(const std::string& lobbyId);
 
   private:

@@ -28,6 +28,7 @@ class AEnemy
     void addBullet(float spawn_x, float spawn_y, float acc_x, float acc_y);
     void sendBullet();
     void clearBullet();
+    void patternAimedShot(int shotsByPlayer, int difficulty);
 
   protected:
     NetworkManager &_networkManager;

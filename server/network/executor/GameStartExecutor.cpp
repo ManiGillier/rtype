@@ -6,8 +6,7 @@
 #include <memory>
 #include <mutex>
 
-GameStartExecutor::GameStartExecutor(RTypeServer &server)
-    : _rtypeServer(server)
+GameStartExecutor::GameStartExecutor(RTypeServer &server) : _rtypeServer(server)
 {
 }
 
@@ -33,7 +32,9 @@ bool GameStartExecutor::execute(Server &server, std::shared_ptr<Player> player,
             std::lock_guard<std::mutex> lock(lobby->getPlayersMutex());
             playersCopy = lobby->getPlayers();
         }
-        auto startPacket = create_packet(StartGamePacket);
+
+        auto config = packet->getConfig();
+        auto startPacket = create_packet(StartGamePacket, config);
 
         for (auto &player : playersCopy)
             player->sendPacket(startPacket);
@@ -47,7 +48,7 @@ bool GameStartExecutor::execute(Server &server, std::shared_ptr<Player> player,
 
         auto *lobbyManagerPtr = &this->_rtypeServer.getLobbyManager();
         this->_rtypeServer.getGameThreadPool().push_task(
-            &LobbyManager::startGame, lobbyManagerPtr, lobbyId);
+            &LobbyManager::startGame, lobbyManagerPtr, config, lobbyId);
     }
     return true;
 }

@@ -26,7 +26,7 @@ enum GameState { waiting = 0, active};
 class GamePlay
 {
   public:
-    GamePlay(NetworkManager &nm, Registry &r, EntityFactory &factory,
+    GamePlay(NetworkManager &nm, Registry &r, EntityFactory &factory, int difficuly,
              const std::string &configPath = "server/config.cfg");
     ~GamePlay() = default;
     bool update();
@@ -39,6 +39,7 @@ class GamePlay
     void removeDeadBoss();
     bool loadConfig(const std::string &configPath);
     void loadDefaultWaves();
+    void setGameDifficulty();
     void nextWave();
     WaveConfig getWaveConfig(int wave);
     bool gameOver();
@@ -46,6 +47,7 @@ class GamePlay
     NetworkManager &_networkManager;
     Registry &_regisrty;
     EntityFactory &_factory;
+    int _difficuly = 1;
     std::chrono::steady_clock::time_point _gameStartTime;
 
     std::chrono::steady_clock::time_point _start;

@@ -22,7 +22,7 @@ class Lobby
     std::vector<std::shared_ptr<Player>> &getPlayers();
     std::size_t size() const;
     bool isFull() const;
-    void startGame(int ticks); // start game when requested
+    void startGame(GameStartConfig config, int ticks);
     bool isInGame();
     void setIsInGame(bool iig);
     Game &getGame();

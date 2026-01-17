@@ -89,7 +89,7 @@ void LobbyManager::leaveLobby(std::shared_ptr<Player> &player)
     this->newLobby(player, false);
 }
 
-void LobbyManager::startGame(const std::string &lobbyId)
+void LobbyManager::startGame(GameStartConfig config, const std::string &lobbyId)
 {
     std::shared_ptr<Lobby> lobby;
     {
@@ -101,7 +101,7 @@ void LobbyManager::startGame(const std::string &lobbyId)
         }
         lobby = it->second;
     }
-    lobby->startGame(this->_ticks);
+    lobby->startGame(config, this->_ticks);
 }
 
 std::shared_ptr<Lobby> LobbyManager::getLobby(const std::string &lobbyId)

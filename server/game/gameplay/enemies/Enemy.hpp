@@ -18,7 +18,6 @@ class Enemy : public AEnemy
           EntityFactory &factory,
           std::chrono::steady_clock::time_point gameStart, BossConfig bc);
     ~Enemy() override = default;
-
     void shoot() override;
 
   private:

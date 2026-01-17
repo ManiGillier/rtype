@@ -31,7 +31,7 @@ typedef struct BossConfig {
             .healer = this->healer / 3,
             .patternX = this->patternX * 6,
             .patternY = this->patternY,
-            .damagePerBullet = this->damagePerBullet * 2,
+            .damagePerBullet = this->damagePerBullet,
             .bulletSize = this->bulletSize * 3,
             .speed = this->speed * 4,
             .type = EnemyType::Enemy,
@@ -55,7 +55,7 @@ class EntityFactory
   public:
     EntityFactory(Registry &registry);
     ~EntityFactory() = default;
-    Entity createPlayer(void);
+    Entity createPlayer(int lives);
     Entity createPlayerLaser(int id);
     Entity createBoss(BossConfig boc);
     Entity createBossBullet(BulletConfig buc);

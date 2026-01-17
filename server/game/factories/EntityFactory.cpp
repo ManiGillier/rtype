@@ -17,16 +17,18 @@
 
 EntityFactory::EntityFactory(Registry &registry) : _registry(registry) {}
 
-Entity EntityFactory::createPlayer(void)
+Entity EntityFactory::createPlayer(int lives)
 {
     Entity player = _registry.spawn_entity();
+
+    int bulletDamage = 10; /* set to 10 to do healt = lives * damage */
 
     _registry.emplace_component<Position>(player, GameConstants::width / 2,
                                           GameConstants::height / 2);
     _registry.emplace_component<Velocity>(player, 5.0f, 5.0f);
     _registry.emplace_component<Acceleration>(player, 0.0f, 0.0f);
     _registry.emplace_component<OutsideBoundaries>(player, false);
-    _registry.emplace_component<Health>(player, 100, 100);
+    _registry.emplace_component<Health>(player, lives * bulletDamage, lives * bulletDamage);
     _registry.emplace_component<Resistance>(player, 10.0f);
     _registry.emplace_component<HitBox>(player, 30.0f, 30.0f);
     _registry.emplace_component<Tag>(player, EntityTag::PLAYER);

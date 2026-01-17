@@ -12,8 +12,9 @@
 #include <memory>
 
 GamePlay::GamePlay(NetworkManager &nm, Registry &r, EntityFactory &factory,
-                   const std::string &configPath)
-    : _networkManager(nm), _regisrty(r), _factory(factory)
+                   int difficuly, const std::string &configPath)
+    : _networkManager(nm), _regisrty(r), _factory(factory),
+      _difficuly(difficuly)
 {
     _state = GameState::waiting;
     _currentWave = 0;
@@ -23,6 +24,7 @@ GamePlay::GamePlay(NetworkManager &nm, Registry &r, EntityFactory &factory,
     if (!loadConfig(configPath)) {
         LOG_ERR("Failed to load config");
         loadDefaultWaves();
+        setGameDifficulty();
     }
 }
 
@@ -52,25 +54,40 @@ bool GamePlay::loadConfig(const std::string &configPath)
 void GamePlay::loadDefaultWaves()
 {
     _maxWaveNb = 8;
-    BossConfig bc = {
-        .pv = 200,
-        .size = 80,
-        .healer = 50,
-        .patternX = 50.0f,
-        .patternY = 20.0f,
-        .damagePerBullet = 15,
-        .bulletSize = 10.0f,
-        .speed = 1.0f,
-        .type = EnemyType::Boss
-    };
+    BossConfig bc = {.pv = 200,
+                     .size = 80,
+                     .healer = 50,
+                     .patternX = 50.0f,
+                     .patternY = 20.0f,
+                     .damagePerBullet = 15,
+                     .bulletSize = 10.0f,
+                     .speed = 1.0f,
+                     .type = EnemyType::Boss};
     _waves.push_back({1, {PatternType::SPIRAL}, 750, 1, bc});
     _waves.push_back({1, {PatternType::RADIAL_BURST}, 1000, 1, bc});
     _waves.push_back({2, {PatternType::AIMED_SHOT}, 500, 1, bc});
-    _waves.push_back({2, {PatternType::WAVE_SPREAD, PatternType::SPIRAL}, 500, 1, bc});
+    _waves.push_back(
+        {2, {PatternType::WAVE_SPREAD, PatternType::SPIRAL}, 500, 1, bc});
     _waves.push_back({2, {PatternType::DOUBLE_SPIRAL}, 500, 1, bc});
-    _waves.push_back({3, {PatternType::FLOWER, PatternType::AIMED_SHOT}, 500, 1, bc});
-    _waves.push_back({3, {PatternType::RADIAL_BURST, PatternType::DOUBLE_SPIRAL}, 500, 1, bc});
-    _waves.push_back({3, {PatternType::FLOWER, PatternType::WAVE_SPREAD, PatternType::SPIRAL}, 500, 1, bc});
+    _waves.push_back(
+        {3, {PatternType::FLOWER, PatternType::AIMED_SHOT}, 500, 1, bc});
+    _waves.push_back({3,
+                      {PatternType::RADIAL_BURST, PatternType::DOUBLE_SPIRAL},
+                      500,
+                      1,
+                      bc});
+    _waves.push_back(
+        {3,
+         {PatternType::FLOWER, PatternType::WAVE_SPREAD, PatternType::SPIRAL},
+         500,
+         1,
+         bc});
+}
+
+void GamePlay::setGameDifficulty()
+{
+    for (auto &it : _waves)
+        it.difficulty *= _difficuly;
 }
 
 WaveConfig GamePlay::getWaveConfig(int wave)
@@ -78,17 +95,15 @@ WaveConfig GamePlay::getWaveConfig(int wave)
     if (wave < static_cast<int>(_waves.size()))
         return _waves[wave];
 
-    BossConfig bc = {
-        .pv = 200,
-        .size = 80,
-        .healer = 50,
-        .patternX = 20,
-        .patternY = 20,
-        .damagePerBullet = 15,
-        .bulletSize = 10.0f,
-        .speed = 1.0f,
-        .type = EnemyType::Boss
-    };
+    BossConfig bc = {.pv = 200,
+                     .size = 80,
+                     .healer = 50,
+                     .patternX = 20,
+                     .patternY = 20,
+                     .damagePerBullet = 15,
+                     .bulletSize = 10.0f,
+                     .speed = 1.0f,
+                     .type = EnemyType::Boss};
     std::vector<PatternType> allPatterns = {
         PatternType::SPIRAL,        PatternType::RADIAL_BURST,
         PatternType::AIMED_SHOT,    PatternType::WAVE_SPREAD,
@@ -134,13 +149,15 @@ void GamePlay::spawnBoss()
     WaveConfig config = getWaveConfig(_currentWave);
 
     auto boss = std::make_unique<Boss>(_networkManager, _regisrty, _factory,
-                                       _gameStartTime,config.bossConfig, config.difficulty);
+                                       _gameStartTime, config.bossConfig,
+                                       config.difficulty);
     boss->setPatterns(config.patterns);
     this->_enemies.push_back(std::move(boss));
 
     for (std::size_t i = 0; i < config.enemyNb; i++) {
         this->_enemies.push_back(std::make_unique<Enemy>(
-            _networkManager, _regisrty, _factory, _gameStartTime, config.bossConfig.toEnemy()));
+            _networkManager, _regisrty, _factory, _gameStartTime,
+            config.bossConfig.toEnemy()));
     }
     this->checkPos();
 }
