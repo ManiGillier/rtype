@@ -26,21 +26,20 @@ void Button::draw() const {
     DrawRectangleLinesEx(buttonRect, 2, raylib::BLACK);
     int fontSize = this->height / 2;
     int textLenght = raylib::MeasureText(this->text.c_str(), fontSize);
-    if (this->alignment == LEFT) {
-
     raylib::Color rTextColor = {
         this->textColor.r, 
         this->textColor.g,
         this->textColor.b,
         this->textColor.a
     };
-    DrawText(
-        this->text.c_str(),
-        this->x + 10,
-        this->y + (this->height / 2) - 10,
-        fontSize,
-        rTextColor
-    );
+    if (this->alignment == LEFT) {
+        DrawText(
+            this->text.c_str(),
+            this->x + 10,
+            this->y + (this->height / 2) - 10,
+            fontSize,
+            rTextColor
+        );
     } else if (this->alignment == CENTER) {
         DrawText(
             this->text.c_str(),
