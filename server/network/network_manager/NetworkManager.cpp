@@ -106,7 +106,6 @@ void NetworkManager::playerScoreUpsate(std::size_t id, int score)
 void NetworkManager::savePlayersScore()
 {
     std::lock_guard<std::mutex> lock(_playersMutex);
-    for (auto &it : _players) {
-            // it->saveScore();
-    }
+    for (auto &it : _players)
+        it->saveScore();
 }
