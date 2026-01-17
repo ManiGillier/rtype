@@ -122,7 +122,7 @@ void Client::executePackets()
             this->getPollManager().getPollableByAddress(this->udpServerAddress),
             packet);
     }
-    //ClientPollableUDP::getUDPReceivedPackets().clear();
+    ClientPollableUDP::getUDPReceivedPackets().clear();
     this->getPollManager().unlock();
 }
 
