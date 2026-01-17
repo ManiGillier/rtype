@@ -28,6 +28,7 @@ class NetworkManager
     void queuePosUpdate(PositionData pos);
     void queueDiedEntity(uint16_t toKill);
     void playerDied(std::size_t id);
+    void sendToUniqueId(std::size_t id, std::shared_ptr<Packet> packet);
     void playerScoreUpsate(std::size_t id, int score);
     void savePlayersScore();
     void setLastTick(float last);

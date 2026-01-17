@@ -103,6 +103,16 @@ void NetworkManager::playerScoreUpsate(std::size_t id, int score)
     }
 }
 
+void NetworkManager::sendToUniqueId(std::size_t id, std::shared_ptr<Packet> packet)
+{
+    std::lock_guard<std::mutex> lock(_playersMutex);
+    for (auto &it : _players) {
+        if (it->getEntityId().has_value() &&
+            it->getEntityId().value().first == id)
+            it->sendPacket(packet);
+    }
+}
+
 void NetworkManager::savePlayersScore()
 {
     std::lock_guard<std::mutex> lock(_playersMutex);
