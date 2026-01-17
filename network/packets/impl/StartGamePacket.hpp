@@ -15,9 +15,8 @@
 #include <memory>
 
 struct GameStartConfig {
-    uint8_t difficuly : 3;
-    uint8_t lives : 3;
-    uint8_t : 2;
+    uint8_t difficuly : 4;
+    uint8_t lives : 4;
 };
 
 union GameStartConfigUnion {

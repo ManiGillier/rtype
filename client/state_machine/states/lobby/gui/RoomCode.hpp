@@ -14,7 +14,7 @@
 class RoomCode : public TextBox
 {
 public:
-    RoomCode()
+    RoomCode(std::string code)
     : TextBox()
     {
         this->width = 120;
@@ -22,12 +22,7 @@ public:
         this->x = 740;
         this->y = 50;
         this->color = {255, 255, 255, 255};
-        this->text = "[CODE]";
-    }
-
-    auto onClick() -> void
-    {
-        std::cerr << this->text << std::endl;
+        this->text = code;
     }
 };
 

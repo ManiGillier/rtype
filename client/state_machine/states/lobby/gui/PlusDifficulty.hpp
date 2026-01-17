@@ -11,11 +11,13 @@
 #include <graphical_library/raylib/buttons/Button.hpp>
 #include <iostream>
 
+#include "../Lobby.hpp"
+
 class PlusDifficulty : public Button
 {
 public:
-    PlusDifficulty()
-    : Button()
+    PlusDifficulty(Lobby &lobby)
+    : Button(), lobby(lobby)
     {
         this->x = 370;
         this->y = 360;
@@ -29,8 +31,14 @@ public:
 
     auto onClick() -> void
     {
-        std::cerr << "Just clicked the button !" << std::endl;
+        GameStartConfig config = this->lobby.getConfig();
+
+        if (config.difficuly < 15)
+            config.difficuly++;
+        this->lobby.setConfig(config);
     }
+private:
+    Lobby &lobby;
 };
 
 #endif /* PLUS_DIFFICULTY_BUTTON_HPP */

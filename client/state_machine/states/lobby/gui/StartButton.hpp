@@ -31,7 +31,7 @@ public:
 
     auto onClick() -> void
     {
-        std::cerr << "Just clicked the button !" << std::endl;
+        std::cout << "START" << std::endl;
     }
 };
 

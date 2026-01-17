@@ -25,7 +25,7 @@ auto Lobby::init_systems() -> void
     std::cout << "Init systems" << std::endl;
 
     this->guiScene =
-        std::make_unique<LobbyScene>(this->getGraphicalLibrary());
+        std::make_unique<LobbyScene>(this->getGraphicalLibrary(), *this);
     this->guiScene->init();
 
     this->registry.reset_update_systems();
@@ -61,4 +61,19 @@ auto Lobby::updatePlayers(std::vector<std::string> playerList) -> void
 auto Lobby::getPlayerList() -> std::vector<std::string>
 {
     return this->playerList;
+}
+
+auto Lobby::getConfig() -> GameStartConfig
+{
+    return this->config;
+}
+
+auto Lobby::setConfig(GameStartConfig config) -> void
+{
+    this->config = config;
+}
+
+auto Lobby::getCode() -> std::string
+{
+    return this->code;
 }

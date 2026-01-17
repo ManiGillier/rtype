@@ -10,12 +10,15 @@
 
 #include <graphical_library/raylib/textbox/TextBox.hpp>
 #include <iostream>
+#include <string>
+
+#include "../Lobby.hpp"
 
 class DifficultyNumber : public TextBox
 {
 public:
-    DifficultyNumber()
-    : TextBox()
+    DifficultyNumber(Lobby &lobby)
+    : TextBox(), lobby(lobby)
     {
         this->width = 40;
         this->height = 40;
@@ -25,10 +28,13 @@ public:
         this->text = "12";
     }
 
-    auto onClick() -> void
-    {
-        std::cerr << this->text << std::endl;
+    inline auto update() -> void override {
+        int const difficulty = this->lobby.getConfig().difficuly;
+
+        this->text = std::to_string(difficulty);
     }
+private:
+    Lobby &lobby;
 };
 
 #endif /* DIFFICULTY_NUMBER_HPP */

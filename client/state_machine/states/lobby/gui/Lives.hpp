@@ -27,11 +27,6 @@ public:
         this->text = "Lives";
         this->cColor = {0,0,0,255};
     }
-
-    auto onClick() -> void
-    {
-        std::cerr << this->text << std::endl;
-    }
 };
 
 #endif /* LIVES_HPP */
