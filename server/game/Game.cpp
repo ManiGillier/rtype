@@ -82,6 +82,7 @@ void Game::loop(int ticks)
     this->_networkManager.clear();
     this->resetPlayersEntities();
     this->_registry = Registry();
+    this->_networkManager.savePlayersScore();
 }
 
 void Game::sendCurrentTime(Ticker &ticker)
