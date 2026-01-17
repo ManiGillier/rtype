@@ -36,12 +36,19 @@ void Checkbox::draw() const {
         checkColor.r, checkColor.g, checkColor.b, checkColor.a
     };
 
+    raylib::Color rTextColor = {
+        textColor.r,
+        textColor.g,
+        textColor.b,
+        textColor.a,
+    };
+
     DrawRectangleRec(checkRect, rCheckColor);
     DrawText(this->text.c_str(),
              this->x + this->size + 10,
              this->y + (this->size / 2) - 10,
-             20,
-             rBackgroundColor);
+             50,
+             rTextColor);
 }
 
 void Checkbox::update() {
@@ -63,4 +70,9 @@ void Checkbox::update() {
         else
             this->onUncheck();
     }
+}
+
+bool Checkbox::isChecked() const
+{
+    return this->checked;
 }
