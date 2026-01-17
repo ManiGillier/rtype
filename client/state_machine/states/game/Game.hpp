@@ -10,6 +10,7 @@
 
 #include "client/state_machine/State.hpp"
 
+#include <cstddef>
 #include <cstdint>
 #include <map>
 #include <optional>
@@ -52,10 +53,11 @@ public:
     auto getMaxHealth() -> int;
     auto getCurrentHealth() -> int;
     auto hit() -> void;
+    auto getPlayerList() -> std::vector<std::pair<std::string, bool>>;
 private:
     GameStartConfig config;
     int lifeRemaining;
-    std::map<std::string, std::pair<std::size_t, std::size_t>> players;
+    std::map<std::size_t, std::pair<std::string, bool>> players;
     std::optional<std::size_t> clientId = std::nullopt;
     uint32_t startTime = 0;
     ClientInputs lastClientInputs = { .byte = 0 };
