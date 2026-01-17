@@ -49,7 +49,9 @@ void Lobby::removePlayer(std::shared_ptr<Player> &player)
                     auto [regMtx, reg] = _game.getRegistry();
                     std::lock_guard<std::mutex> lock(regMtx);
                     reg.kill_entity(
-                        reg.entity_from_index(player->getEntityId().value()));
+                        reg.entity_from_index(player->getEntityId().value().first));
+                    reg.kill_entity(
+                        reg.entity_from_index(player->getEntityId().value().second));
                     player->setEntityId(std::nullopt);
                 }
                 break;

@@ -32,7 +32,7 @@ void NetworkManager::playerDied(std::size_t id)
 {
     std::lock_guard<std::mutex> lock(_playersMutex);
     for (auto it : _players) {
-        if (it->getEntityId().has_value() && it->getEntityId().value() == id)
+        if (it->getEntityId().has_value() && it->getEntityId().value().first == id)
             it->setEntityId(std::nullopt);
     }
 }

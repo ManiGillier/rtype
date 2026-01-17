@@ -103,8 +103,10 @@ void Server::loop()
     for (std::shared_ptr<IPollable> pd : this->getPollManager().pollSockets())
         this->onClientDisconnect(pd);
     this->executePackets();
-    for (std::shared_ptr<IPollable> toDc : this->toDisconnect)
+    for (std::shared_ptr<IPollable> toDc : this->toDisconnect) {
         this->getPollManager().removePollable(toDc->getFileDescriptor());
+        this->onClientDisconnect(toDc);
+    }
     this->toDisconnect.clear();
 }
 

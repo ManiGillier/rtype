@@ -130,15 +130,17 @@ auto Systems::update_laser_system(
         auto dep = r.get<Dependence>(i);
         auto p_pos = r.get<Position>(dep->id);
 
-        pos->x = p_pos.value().x;
-        pos->y = p_pos.value().y;
+        if (p_pos.has_value()) {
+            pos->x = p_pos.value().x;
+            pos->y = p_pos.value().y;
 
-        LaserData ld = {
-            .id = static_cast<uint32_t>(i),
-            .active = laser->active,
-            .length = GameConstants::height - pos->y,
-        };
-        laserData.push_back(ld);
+            LaserData ld = {
+                .id = static_cast<uint32_t>(i),
+                .active = laser->active,
+                .length = GameConstants::height - pos->y,
+            };
+            laserData.push_back(ld);
+        }
     }
     auto laserUpdPacket = create_packet(LaserActiveUpdatePacket, laserData);
     nm.queuePacket(laserUpdPacket);
@@ -310,6 +312,17 @@ auto Systems::heal_all_players_system(Registry &r, int heal) -> void
     }
 }
 
+auto Systems::get_player_laser(Registry &r, std::size_t id)
+    -> std::optional<std::size_t>
+{
+    auto zipper = containers::indexed_zipper(r.get_components<Dependence>());
+
+    for (auto &&[i, dep] : zipper)
+        if (dep->id == id)
+            return dep->id;
+    return std::nullopt;
+}
+
 auto Systems::health_system(
     Registry &r, containers::indexed_zipper<SparseArray<Health>> zipper,
     NetworkManager &nm) -> void
@@ -325,6 +338,10 @@ auto Systems::health_system(
                 nm.queueDiedEntity(static_cast<uint16_t>(i));
             } else {
                 nm.queueDiedEntity(static_cast<uint16_t>(i));
+                auto playerLaserDep = Systems::get_player_laser(r, i);
+                if (playerLaserDep.has_value())
+                    nm.queueDiedEntity(
+                        static_cast<uint16_t>(playerLaserDep.value()));
                 nm.playerDied(i);
             }
             toDestroy.push_back(i);

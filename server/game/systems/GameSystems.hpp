@@ -69,6 +69,7 @@ auto health_system(Registry &r,
                    NetworkManager &nm) -> void;
 
 auto heal_all_players_system(Registry &r, int heal) -> void;
+auto get_player_laser(Registry &r, std::size_t id) -> std::optional<std::size_t>;
 
 auto loose_system(Registry &r,
                   containers::indexed_zipper<SparseArray<Tag>> zipper,

@@ -29,7 +29,8 @@ bool ClientInputsExecutor::execute(Server &server,
     LOG("Client inputs update");
     {
         std::lock_guard<std::mutex> lock(regMtx);
-        Systems::player_velocity_system(registry, packet, player->getEntityId().value());
+        Systems::player_velocity_system(registry, packet,
+                                        player->getEntityId().value().first);
     }
     return true;
 }

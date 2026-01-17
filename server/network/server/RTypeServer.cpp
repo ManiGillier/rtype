@@ -68,27 +68,24 @@ void RTypeServer::onClientDisconnect(std::shared_ptr<IPollable> client)
     LOG("Player disconnected to fd= " << client->getFileDescriptor());
 
     auto lobbyId = player->getLobbyId();
-    
-    // Remove player first (this handles entity cleanup)
-    this->_lobbyManager.removePlayer(player);
-    
-    // THEN notify other players
-    bool hasEntityId = player->getEntityId().has_value();
-    if (hasEntityId) {
+    auto entityId = player->getEntityId();
+
+    if (entityId) {
         auto lobby = this->_lobbyManager.getLobby(lobbyId);
         if (lobby) {
             std::vector<uint16_t> toDestroy;
-            toDestroy.push_back(static_cast<uint16_t>(player->getEntityId().value()));
+            toDestroy.push_back(static_cast<uint16_t>(player->getEntityId().value().first));
+            toDestroy.push_back(static_cast<uint16_t>(player->getEntityId().value().second));
             auto playerDisconnect = create_packet(DestroyEntityPacket, toDestroy);
 
             auto &playersMutex = lobby->getPlayersMutex();
             std::lock_guard<std::mutex> lock(playersMutex);
             auto &players = lobby->getPlayers();
-            for (auto &it : players) {
+            for (auto &it : players)
                 it->sendPacket(playerDisconnect);
-            }
         }
     }
+    this->_lobbyManager.removePlayer(player);
 }
 
 bool RTypeServer::isConnected(const std::string &username)

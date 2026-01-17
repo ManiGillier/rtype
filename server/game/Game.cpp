@@ -31,6 +31,7 @@
 #include <optional>
 #include <thread>
 #include <tuple>
+#include <utility>
 #include <vector>
 
 Game::Game(std::vector<std::shared_ptr<Player>> &players,
@@ -114,7 +115,7 @@ void Game::initPlayers()
                 Entity laser = _factory.createPlayerLaser(
                     static_cast<int>(player.getId()));
 
-                pl->setEntityId(player.getId());
+                pl->setEntityId(std::make_pair(player.getId(), laser.getId()) );
 
                 PlayerLink player_link = {
                     .name = pl->getUsername(),
