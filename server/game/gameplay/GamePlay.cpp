@@ -87,7 +87,8 @@ void GamePlay::loadDefaultWaves()
 void GamePlay::setGameDifficulty()
 {
     for (auto &it : _waves)
-        it.difficulty *= _difficuly;
+        it.difficulty *=
+            static_cast<int>(static_cast<float>(_difficuly) * 0.2f);
 }
 
 WaveConfig GamePlay::getWaveConfig(int wave)
