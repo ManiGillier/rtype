@@ -25,7 +25,7 @@ public:
                  [[maybe_unused]] std::shared_ptr<ClientPollable> con,
                  [[maybe_unused]] std::shared_ptr<StartGamePacket> packet)
     {
-        this->state.change_state<Game>();
+        this->state.change_state<Game>(packet->getConfig());
         return true;
     }
 
