@@ -89,6 +89,11 @@ auto Game::init_systems() -> void
         (lobbyPlayerList, std::ref(this->clientManager.getGui()),
          std::ref(*this));
 
+    this->registry.add_global_render_system
+        (renderPacketLoss, std::ref(this->clientManager.getGui()),
+         std::ref(this->clientManager.getNetworkManager()));
+
+
     Entity background = this->registry.spawn_named_entity("background");
     this->registry.add_component<HorizontalTiling>(background, {2, 0, -50});
     this->registry.add_component<TextureComp>
@@ -103,7 +108,6 @@ auto Game::init_systems() -> void
     nm.addExecutor(std::make_unique<TimeNowExecutor>(*this));
     nm.addExecutor(std::make_unique<LinkPlayersExecutor>(*this));
     nm.addExecutor(std::make_unique<DestroyEntityExecutor>(*this));
-    nm.addExecutor(std::make_unique<PlayerHitExecutor>(*this));
 }
 
 auto Game::init_entities() -> void {}

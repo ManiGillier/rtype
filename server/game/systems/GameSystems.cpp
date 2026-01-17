@@ -248,7 +248,7 @@ auto Systems::collision_system(
 
                     if (tag_i->tag == EntityTag::BULLET) {
                         to_kill.insert(i);
-                        nm.queuePacket(create_packet(PlayerHitPacket));
+                        nm.sendToUniqueId(j, create_packet(PlayerHitPacket));
                     }
                     if (tag_j->tag == EntityTag::BOSS &&
                         !r.get<Hitable>(j)->isHitable)
@@ -277,7 +277,7 @@ auto Systems::collision_system(
 
                     if (tag_j->tag == EntityTag::BULLET) {
                         to_kill.insert(j);
-                        nm.queuePacket(create_packet(PlayerHitPacket));
+                        nm.sendToUniqueId(i, create_packet(PlayerHitPacket));
                     }
                     if (tag_i->tag == EntityTag::BOSS &&
                         !r.get<Hitable>(i)->isHitable)
@@ -342,7 +342,6 @@ auto Systems::health_system(
         if (health->pv <= 0) {
             auto tag = r.get<Tag>(i);
             if (tag->tag == EntityTag::BOSS) {
-                heal_all_players_system(r, r.get<Healer>(i)->healer);
                 nm.queueDiedEntity(static_cast<uint16_t>(i));
             } else {
                 nm.queueDiedEntity(static_cast<uint16_t>(i));
