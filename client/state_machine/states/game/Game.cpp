@@ -35,6 +35,7 @@
 #include "systems/Systems.hpp"
 #include <cstdint>
 #include <queue>
+#include <utility>
 
 Game::Game(ClientManager &cm, Registry &r, Sync &s, GameStartConfig config)
     : State(cm, r, s), config(config)
@@ -84,6 +85,9 @@ auto Game::init_systems() -> void
     this->registry.add_global_render_system
         (renderHealth, std::ref(this->clientManager.getGui()),
          std::ref(*this));
+    this->registry.add_global_render_system
+        (lobbyPlayerList, std::ref(this->clientManager.getGui()),
+         std::ref(*this));
 
     this->registry.add_global_render_system
         (renderPacketLoss, std::ref(this->clientManager.getGui()),
@@ -114,8 +118,6 @@ auto Game::newPlayer(std::string name, std::size_t player_id,
 -> void
 {
     Registry &r = this->registry;
-    if (this->players.contains(name))
-        return;
     Entity player = r.spawn_entity();
     Entity laser = r.spawn_entity();
 
@@ -130,9 +132,9 @@ auto Game::newPlayer(std::string name, std::size_t player_id,
     r.add_component<Dependence>(laser, {player.getId()});
     r.add_component<Laser>(laser, {true, 30});
     r.add_component<ElementColor>(laser, {gl::GREEN});
-    this->players[name] = {
-        static_cast<std::size_t>(player),
-        static_cast<std::size_t>(laser)
+    this->players[static_cast<std::size_t>(player)] = {
+        name,
+        true
     };
 }
 
@@ -265,8 +267,6 @@ auto Game::newPlayers(std::vector<PlayerLink> data) -> void
 
 auto Game::destroyEntities(std::vector<uint16_t> ids) -> void
 {
-    std::queue<std::string> deadPlayers;
-
     for (auto id : ids) {
         std::optional<std::size_t> realId
             = this->sync.get_mine_from_theirs(id);
@@ -274,14 +274,8 @@ auto Game::destroyEntities(std::vector<uint16_t> ids) -> void
             continue;
         this->registry.kill_entity
             (this->registry.entity_from_index(*realId));
-        for (auto &[name, player] : this->players) {
-            if (player.first == id)
-                deadPlayers.push(name);
-        }
-    }
-    while (!deadPlayers.empty()) {
-        this->players.erase(deadPlayers.front());
-        deadPlayers.pop();
+        if (this->players.contains(*realId))
+            this->players[*realId].second = false;
     }
 }
 
@@ -316,4 +310,12 @@ auto Game::getCurrentHealth() -> int
 auto Game::hit() -> void
 {
     this->lifeRemaining--;
+}
+
+auto Game::getPlayerList() -> std::vector<std::pair<std::string, bool>>
+{
+    std::vector<std::pair<std::string, bool>> vector;
+    for (auto &player : this->players)
+        vector.push_back(player.second);
+    return vector;
 }
