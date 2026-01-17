@@ -37,11 +37,12 @@ void TextBox::draw() const {
         this->textColor.a
     };
 
+    int fontSize = this->height / 2;
     DrawText(
         this->text.c_str(),
         this->x + 10,
         this->y + (this->height / 2) - 10,
-        20,
+        fontSize,
         rTextColor
     );
 }

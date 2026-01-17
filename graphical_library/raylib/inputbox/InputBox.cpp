@@ -39,7 +39,7 @@ void InputBox::draw() const {
     raylib::DrawText(
         this->text.c_str(),
         this->x + 10,
-        this->y + (this->y / 2) - 10,
+        this->y + (this->height / 2) - 10,
         20,
         rTextColor
     );
@@ -62,15 +62,22 @@ void InputBox::update()
         return;
 
     int key = raylib::GetCharPressed();
+    bool changed = false;
     while (key > 0) {
         if (key >= 32 && key <= 125) {
             this->text += (char)key;
+            changed = true;
         }
         key = raylib::GetCharPressed();
     }
 
-    if (raylib::IsKeyPressed(raylib::KEY_BACKSPACE) && !this->text.empty())
+    if (raylib::IsKeyPressed(raylib::KEY_BACKSPACE) && !this->text.empty()) {
         this->text.pop_back();
+        changed = true;
+    }
+
+    if (changed)
+        this->onTextChange();
 }
 
 std::string InputBox::getText(void) {
