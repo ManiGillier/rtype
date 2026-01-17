@@ -81,7 +81,7 @@ static std::string keyToString(int key)
         case raylib::KEY_NUM_LOCK: return "NUM_LOCK";
         case raylib::KEY_PRINT_SCREEN: return "PRINT_SCREEN";
         case raylib::KEY_PAUSE: return "PAUSE";
-        default: return "UNKOWN";
+        default: return "UNKNOWN";
     }
 }
 
@@ -104,7 +104,7 @@ void KeybindSelect::draw() const {
     raylib::DrawRectangleLinesEx(boxRect, 2, raylib::BLACK);
 
     raylib::Color rTextColor = {
-        this->textColor.r, 
+        this->textColor.r,
         this->textColor.g,
         this->textColor.b,
         this->textColor.a
@@ -113,7 +113,7 @@ void KeybindSelect::draw() const {
     raylib::DrawText(
         keyToString(this->key).c_str(),
         this->x + 10,
-        this->y + (this->y / 2) - 10,
+        this->y + (this->height / 2) - 10,
         20,
         rTextColor
     );
@@ -130,6 +130,8 @@ void KeybindSelect::update()
 
     if (overButton && pressed)
         this->selected = true;
+    if (!overButton && pressed)
+        this->selected = false;
     if (!this->selected)
         return;
 
