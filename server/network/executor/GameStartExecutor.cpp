@@ -32,7 +32,9 @@ bool GameStartExecutor::execute(Server &server, std::shared_ptr<Player> player,
             std::lock_guard<std::mutex> lock(lobby->getPlayersMutex());
             playersCopy = lobby->getPlayers();
         }
-        auto startPacket = create_packet(StartGamePacket);
+
+        auto config = packet->getConfig();
+        auto startPacket = create_packet(StartGamePacket, config);
 
         for (auto &player : playersCopy)
             player->sendPacket(startPacket);
@@ -44,18 +46,9 @@ bool GameStartExecutor::execute(Server &server, std::shared_ptr<Player> player,
         LOG("Game has started from lobby " << lobbyId);
         lobby->setIsInGame(true);
 
-        auto config = packet->getConfig();
-
-        // this to debug else game can't start
-        if (config.difficuly == 0 && config.lives == 0) {
-            config.difficuly = 1;
-            config.lives = 1;
-        }
-
         auto *lobbyManagerPtr = &this->_rtypeServer.getLobbyManager();
         this->_rtypeServer.getGameThreadPool().push_task(
-            &LobbyManager::startGame, lobbyManagerPtr, config,
-            lobbyId);
+            &LobbyManager::startGame, lobbyManagerPtr, config, lobbyId);
     }
     return true;
 }
