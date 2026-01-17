@@ -29,6 +29,7 @@ namespace gl {
         Color hoverColor;
         Color pressedColor;
         Color checkedColor;
+        Color textColor = gl::BLACK;
 
         std::string text;
 
