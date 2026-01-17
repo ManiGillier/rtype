@@ -10,7 +10,6 @@
 
 #include "client/state_machine/states/login/Login.hpp"
 #include "client/state_machine/states/menu/Menu.hpp"
-#include "client/state_machine/states/settings/Settings.hpp"
 
 #include <memory>
 #include <network/packets/listener/PacketExecutor.hpp>
@@ -31,7 +30,7 @@ public:
             return true;
         }
         this->state.setErrorMessage("");
-        state.change_state<Settings>();
+        state.change_state<Menu>();
         return true;
     }
 
