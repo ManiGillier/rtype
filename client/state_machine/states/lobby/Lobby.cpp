@@ -75,6 +75,6 @@ auto Lobby::getCode() -> std::string
 
 auto Lobby::startGame() -> void
 {
-    std::shared_ptr<Packet> p = std::make_shared<StartGamePacket>();
+    std::shared_ptr<Packet> p = std::make_shared<StartGamePacket>(this->config);
     this->clientManager.getNetworkManager().sendPacket(p);
 }
