@@ -20,10 +20,11 @@
 #include <network/packets/impl/LinkPlayersPacket.hpp>
 #include <network/packets/impl/SpawnStraightMovingEntityPacket.hpp>
 #include <network/packets/impl/ClientInputsPacket.hpp>
+#include <network/packets/impl/StartGamePacket.hpp>
 
 class Game : public State {
 public:
-    Game(ClientManager &cm, Registry &r, Sync &s);
+    Game(ClientManager &cm, Registry &r, Sync &s, GameStartConfig config);
 
     auto init_systems() -> void;
     auto init_entities() -> void;
@@ -47,7 +48,13 @@ public:
     auto updateLasers(std::vector<LaserData> data) -> void;
     auto getLastClientInputs() -> ClientInputs;
     auto setLastClientInputs(ClientInputs) -> void;
+
+    auto getMaxHealth() -> int;
+    auto getCurrentHealth() -> int;
+    auto hit() -> void;
 private:
+    GameStartConfig config;
+    int lifeRemaining;
     std::map<std::string, std::pair<std::size_t, std::size_t>> players;
     std::optional<std::size_t> clientId = std::nullopt;
     uint32_t startTime = 0;

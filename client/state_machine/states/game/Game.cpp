@@ -28,6 +28,7 @@
 #include "client/network/executor/UpdateTimeExecutor.hpp"
 #include "client/network/executor/LinkPlayersExecutor.hpp"
 #include "client/network/executor/DestroyEntityExecutor.hpp"
+#include "client/network/executor/PlayerHitExecutor.hpp"
 
 #include "network/packets/impl/ClientInputsPacket.hpp"
 
@@ -35,12 +36,13 @@
 #include <cstdint>
 #include <queue>
 
-Game::Game(ClientManager &cm, Registry &r, Sync &s)
-    : State(cm, r, s)
+Game::Game(ClientManager &cm, Registry &r, Sync &s, GameStartConfig config)
+    : State(cm, r, s), config(config)
 {}
 
 auto Game::init_systems() -> void
 {
+    this->lifeRemaining = this->config.lives == 0 ? 5 : this->config.lives;
     NetworkManager &nm = this->clientManager.getNetworkManager();
 
     this->registry.reset_update_systems();
@@ -79,6 +81,10 @@ auto Game::init_systems() -> void
          std::ref(this->clientManager.getNetworkManager()),
          std::ref(*this));
 
+    this->registry.add_global_render_system
+        (renderHealth, std::ref(this->clientManager.getGui()),
+         std::ref(*this));
+
     Entity background = this->registry.spawn_named_entity("background");
     this->registry.add_component<HorizontalTiling>(background, {2, 0, -50});
     this->registry.add_component<TextureComp>
@@ -93,6 +99,7 @@ auto Game::init_systems() -> void
     nm.addExecutor(std::make_unique<TimeNowExecutor>(*this));
     nm.addExecutor(std::make_unique<LinkPlayersExecutor>(*this));
     nm.addExecutor(std::make_unique<DestroyEntityExecutor>(*this));
+    nm.addExecutor(std::make_unique<PlayerHitExecutor>(*this));
 }
 
 auto Game::init_entities() -> void {}
@@ -287,4 +294,21 @@ auto Game::getLastClientInputs() -> ClientInputs
 auto Game::setLastClientInputs(ClientInputs input) -> void
 {
     this->lastClientInputs = input;
+}
+
+auto Game::getMaxHealth() -> int
+{
+    if (this->config.lives == 0)
+        return 5;
+    return this->config.lives;
+}
+
+auto Game::getCurrentHealth() -> int
+{
+    return this->lifeRemaining;
+}
+
+auto Game::hit() -> void
+{
+    this->lifeRemaining--;
 }

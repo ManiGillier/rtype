@@ -76,4 +76,9 @@ auto updateStraightMoving([[maybe_unused]] Registry &reg,
                   Game &state)
 -> void;
 
+auto renderHealth([[maybe_unused]] Registry &r,
+    gl::GraphicalLibrary &gl,
+    Game &game
+) -> void;
+
 #endif /* RENDER_SYSTEMS_HPP */
