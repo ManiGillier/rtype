@@ -31,7 +31,7 @@ namespace gl {
 
         std::string text;
 
-        Color textColor;
+        Color textColor = gl::BLACK;
 
         bool clicked = false;
         bool hovered = false;

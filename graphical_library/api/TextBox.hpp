@@ -27,7 +27,7 @@ namespace gl {
         Color cColor = {0, 0, 0, 255};
         float lineThickness = 1;
 
-        Color textColor;
+        Color textColor = gl::BLACK;
         std::string text;
         enum TextAlign {
           CENTER,
