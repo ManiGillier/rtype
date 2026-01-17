@@ -24,8 +24,17 @@ namespace gl {
         int height;
         Color color;
 
-        Color textColor;
+        Color cColor = {0, 0, 0, 255};
+        float lineThickness = 1;
+
+        Color textColor = gl::BLACK;
         std::string text;
+        enum TextAlign {
+          CENTER,
+          LEFT,
+          RIGHT
+        };
+        TextAlign alignment = CENTER;
     };
 }
 #endif // TEXTBOX_HPP_

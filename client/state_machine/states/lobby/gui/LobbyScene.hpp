@@ -8,6 +8,8 @@
 #ifndef TEST_LOBBY_SCENE_HPP
 #define TEST_LOBBY_SCENE_HPP
 
+#include "client/state_machine/states/lobby/gui/Background.hpp"
+#include "client/state_machine/states/lobby/gui/SecondBackground.hpp"
 #include "client/state_machine/states/lobby/gui/Difficulty.hpp"
 #include "client/state_machine/states/lobby/gui/DifficultyNumber.hpp"
 #include "client/state_machine/states/lobby/gui/Lives.hpp"
@@ -28,6 +30,8 @@ public:
     auto init() -> void
     {
         // this->add<TestLobbyButton>();
+        this->add<Background>();
+        this->add<SecondBackground>();
         this->add<Difficulty>();
         this->add<MinusDifficulty>();
         this->add<PlusDifficulty>();

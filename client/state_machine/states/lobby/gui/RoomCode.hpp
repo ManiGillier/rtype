@@ -17,9 +17,9 @@ public:
     RoomCode()
     : TextBox()
     {
-        this->width = 200;
+        this->width = 120;
         this->height = 60;
-        this->x = 700;
+        this->x = 740;
         this->y = 50;
         this->color = {255, 255, 255, 255};
         this->text = "[CODE]";

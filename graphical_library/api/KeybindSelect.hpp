@@ -30,7 +30,7 @@ namespace gl {
 
         int key;
 
-        Color textColor;
+        Color textColor = gl::BLACK;
 
         bool selected = false;
     };

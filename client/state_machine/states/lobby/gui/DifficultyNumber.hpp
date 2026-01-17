@@ -20,7 +20,7 @@ public:
         this->width = 40;
         this->height = 40;
         this->x = 310;
-        this->y = 200;
+        this->y = 360;
         this->color = {255, 255, 255, 255};
         this->text = "12";
     }

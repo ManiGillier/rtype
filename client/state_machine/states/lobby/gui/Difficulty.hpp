@@ -17,12 +17,14 @@ public:
     Difficulty()
     : TextBox()
     {
-        this->width = 120;
+        this->x = 175;
+        this->width = 300;
+        this->y = 300;
         this->height = 40;
-        this->x = 100;
-        this->y = 200;
-        this->color = {255, 255, 255, 255};
-        this->text = "Difficulty :";
+        this->color = {0, 0, 0, 75};
+        this->text = "Difficulty";
+        this->cColor = {0,0,0,255};
+        this->alignment = CENTER;
     }
 
     auto onClick() -> void
