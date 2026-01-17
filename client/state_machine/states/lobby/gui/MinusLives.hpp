@@ -33,7 +33,7 @@ public:
     {
         GameStartConfig config = this->lobby.getConfig();
 
-        if (config.lives > 0)
+        if (config.lives > 1)
             config.lives--;
         this->lobby.setConfig(config);
      }

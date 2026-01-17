@@ -34,7 +34,7 @@ public:
     {
         GameStartConfig config = this->lobby.getConfig();
 
-        if (config.difficuly > 0)
+        if (config.difficuly > 1)
             config.difficuly--;
         this->lobby.setConfig(config);
     }
