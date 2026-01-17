@@ -81,4 +81,9 @@ auto renderHealth([[maybe_unused]] Registry &r,
     Game &game
 ) -> void;
 
+auto renderPacketLoss([[maybe_unused]] Registry &r,
+    gl::GraphicalLibrary &gl,
+    NetworkManager &nm
+) -> void;
+
 #endif /* RENDER_SYSTEMS_HPP */

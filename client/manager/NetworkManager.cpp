@@ -62,3 +62,8 @@ auto NetworkManager::sendPacket(std::shared_ptr<Packet> p) -> void
 {
     this->client->sendPacket(p);
 }
+
+auto NetworkManager::getPacketLoss() -> double
+{
+    return this->client->getPacketLossPercentage();
+}
