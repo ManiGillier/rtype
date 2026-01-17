@@ -116,21 +116,19 @@ void Game::initPlayers()
                 Entity laser = _factory.createPlayerLaser(
                     static_cast<int>(player.getId()));
 
-                pl->setEntityId(std::make_pair(player.getId(), laser.getId()) );
+                pl->setEntityId(std::make_pair(player.getId(), laser.getId()));
 
                 PlayerLink player_link = {
                     .name = pl->getUsername(),
                     .id = static_cast<uint16_t>(player.getId()),
-                    .laserId = static_cast<uint16_t>(laser.getId())
-                };
+                    .laserId = static_cast<uint16_t>(laser.getId())};
                 playerData.push_back(player_link);
             }
         }
     }
+    auto newPlayersPacket = create_packet(LinkPlayersPacket, playerData);
+    _networkManager.queuePacket(newPlayersPacket);
     for (const auto &it : playerData) {
-        auto newPlayersPacket = create_packet(LinkPlayersPacket, playerData);
-        _networkManager.queuePacket(newPlayersPacket);
-
         auto hitBox = _registry.get<HitBox>(it.id);
         std::shared_ptr<Packet> HitBoxSize = nullptr;
         if (hitBox.has_value()) {
