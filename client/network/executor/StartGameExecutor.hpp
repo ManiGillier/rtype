@@ -26,7 +26,7 @@ public:
                  [[maybe_unused]] std::shared_ptr<StartGamePacket> packet)
     {
         this->state.change_state<Game>(packet->getConfig());
-        return true;
+        return false;
     }
 
     int getPacketId() const {
