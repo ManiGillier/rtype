@@ -1,5 +1,6 @@
 #include "GamePlay.hpp"
 #include "network/logger/Logger.hpp"
+#include "network/packets/impl/NewEnemyPacket.hpp"
 #include "server/game/components/Pattern.hpp"
 #include "server/game/factories/EntityFactory.hpp"
 #include "server/game/gameplay/GameConfig.hpp"
@@ -60,6 +61,7 @@ void GamePlay::loadDefaultWaves()
         .damagePerBullet = 15,
         .bulletSize = 10.0f,
         .speed = 1.0f,
+        .type = EnemyType::Boss
     };
     _waves.push_back({1, {PatternType::SPIRAL}, 750, 1, bc});
     _waves.push_back({1, {PatternType::RADIAL_BURST}, 1000, 1, bc});
@@ -85,6 +87,7 @@ WaveConfig GamePlay::getWaveConfig(int wave)
         .damagePerBullet = 15,
         .bulletSize = 10.0f,
         .speed = 1.0f,
+        .type = EnemyType::Boss
     };
     std::vector<PatternType> allPatterns = {
         PatternType::SPIRAL,        PatternType::RADIAL_BURST,

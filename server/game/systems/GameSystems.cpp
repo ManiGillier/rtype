@@ -106,6 +106,9 @@ auto Systems::pattern_system(
             pos->x = pat->min_x;
             pos->y = pat->max_y - (pat->progress - 2 * width - height);
         }
+        LOG("pos x " << pos->x << " pos y = " << pos->y);
+        if (pos->x > 1800 || pos->x < -100 || pos->y > 1300 || pos->y < -100)
+            exit(9);
         PositionData pd = {
             .id = static_cast<uint32_t>(i),
             .x = pos->x,
