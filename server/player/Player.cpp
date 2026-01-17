@@ -79,7 +79,13 @@ void Player::addScore(int toAdd)
     this->score += toAdd;
 }
 
-void Player::saveScore(RTypeServer &srv) const
+void Player::saveScore() const
 {
-    srv.getAccountDatabase().setScore(this->getUsername(), this->getScore());
+    AccountDatabase db;
+
+    try {
+        db.setScore(this->getUsername(), this->getScore());
+    } catch (const AccountDatabase::DatabaseError &e) {
+        LOG_ERR(e.what());
+    }
 }
