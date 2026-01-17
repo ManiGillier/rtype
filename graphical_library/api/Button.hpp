@@ -33,6 +33,13 @@ namespace gl {
 
         bool clicked = false;
         bool hovered = false;
+
+        enum TextAlign {
+          CENTER,
+          LEFT,
+          RIGHT
+        };
+        TextAlign alignment = CENTER;
     };
 }
 #endif // BUTTON_HPP_

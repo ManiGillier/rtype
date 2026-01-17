@@ -24,13 +24,34 @@ void Button::draw() const {
     raylib::Color rcolor = { color.r, color.g, color.b, color.a };
     DrawRectangleRec(buttonRect, rcolor);
     DrawRectangleLinesEx(buttonRect, 2, raylib::BLACK);
+    int fontSize = this->height / 2;
+    int textLenght = raylib::MeasureText(this->text.c_str(), fontSize);
+    if (this->alignment == LEFT) {
     DrawText(
         this->text.c_str(),
         this->x + 10,
         this->y + (this->height / 2) - 10,
-        20,
+        fontSize,
         raylib::BLACK
     );
+    } else if (this->alignment == CENTER) {
+        DrawText(
+            this->text.c_str(),
+            this->x + (this->width - textLenght) / 2,
+            this->y + (this->height / 2) - 10,
+            fontSize,
+            raylib::BLACK
+        );
+    } else {
+        DrawText(
+            this->text.c_str(),
+            this->x + (this->width - textLenght) - 10,
+            this->y + (this->height / 2) - 10,
+            fontSize,
+            raylib::BLACK
+        );
+    }
+
 }
 
 void Button::update() {
