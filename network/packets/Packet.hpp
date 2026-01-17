@@ -61,6 +61,7 @@ enum PacketId {
     CREATE_PRIVATE_LOBBY_PACKET,
     JOINED_LOBBY_PACKET,
     LINK_PLAYERS_PACKET,
+    SCORE_PACKET
 };
 
 class PacketDisplay {

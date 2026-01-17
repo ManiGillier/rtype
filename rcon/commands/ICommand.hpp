@@ -16,6 +16,7 @@ class CommandManager;
 
 class ICommand {
     public:
+        virtual ~ICommand() = default;
         virtual std::string getCommandName() const = 0;
         virtual std::size_t getArgumentCount() const = 0;
         virtual void executeCommand(Client &cl,

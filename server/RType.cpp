@@ -19,6 +19,7 @@
 #include "server/network/executor/JoinOrCreatePublicLobbyExecutor.hpp"
 #include "server/network/executor/CreatePrivateLobbyExecutor.hpp"
 #include "server/network/executor/JoinLobbyWithCodeExecutor.hpp"
+#include "server/network/executor/ScoreExecutor.hpp"
 #include <string>
 #include <ctime>
 #include "utils/RandomUtils.hpp"
@@ -65,7 +66,7 @@ int RType::displayUsage()
     std::cout << "\t ./r-type_server {-p port} [-t tick (between 1 and "
                  "120) ] [-d]"
               << std::endl;
-    std::cout << "\t : {} = mendatory" << std::endl;
+    std::cout << "\t : {} = mandatory" << std::endl;
     std::cout << "\t : [] = optional" << std::endl;
     exit(0);
 }
@@ -88,6 +89,8 @@ void RType::initExecutor(RTypeServer &server)
         std::make_unique<CreatePrivateLobbyExecutor>(server));
     server.getPacketListener().addExecutor(
         std::make_unique<JoinOrCreatePublicLobbyExecutor>(server));
+    server.getPacketListener().addExecutor(
+            std::make_unique<ScoreExecutor>(server));
 }
 
 void RType::networkLoop()
