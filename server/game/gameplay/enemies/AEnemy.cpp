@@ -41,10 +41,10 @@ void AEnemy::addBullet(float spawn_x, float spawn_y, float acc_x, float acc_y)
     auto pos = _registry.get<Position>(e.getId());
 
     sme.id = static_cast<uint16_t>(e.getId());
-    sme.pos_x = static_cast<uint16_t>(pos->x);
-    sme.pos_y = static_cast<uint16_t>(pos->y);
-    sme.vel_x = static_cast<uint16_t>(vel->x);
-    sme.vel_y = static_cast<uint16_t>(vel->y);
+    sme.pos_x = static_cast<int16_t>(pos->x);
+    sme.pos_y = static_cast<int16_t>(pos->y);
+    sme.vel_x = static_cast<int16_t>(vel->x);
+    sme.vel_y = static_cast<int16_t>(vel->y);
 
     auto hitBox = _registry.get<HitBox>(e.getId());
     if (hitBox.has_value()) {

@@ -11,10 +11,10 @@
 #include <cstdint>
 
 struct Pattern {
-    uint16_t min_x;
-    uint16_t min_y;
-    uint16_t max_x;
-    uint16_t max_y;
+    float min_x;
+    float min_y;
+    float max_x;
+    float max_y;
     float progress;
 };
 

@@ -1,5 +1,4 @@
 #include "GameSystems.hpp"
-#include "../components/Healer.hpp"
 #include "ecs/sparse_array/SparseArray.hpp"
 #include "network/packets/Packet.hpp"
 #include "network/packets/impl/LaserActiveUpdatePacket.hpp"
