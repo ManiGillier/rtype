@@ -10,41 +10,62 @@
 
 #include "network/packets/Packet.hpp"
 #include <cstddef>
-#include <iostream>
 #include <memory>
+
+enum class EnemyType { Enemy, Boss };
 
 class NewEnemyPacket : public Packet
 {
-public:
-    NewEnemyPacket(std::size_t id = 0) :
-        Packet(PacketId::NEW_ENEMY), id(id) {}
+  public:
+    NewEnemyPacket(std::size_t id = 0, EnemyType type = EnemyType::Boss)
+        : Packet(PacketId::NEW_ENEMY), id(id), type(type)
+    {
+    }
 
-    enum PacketMode getMode() const {
+    enum PacketMode getMode() const
+    {
         return PacketMode::TCP;
     }
 
-    void serialize() {
+    void serialize()
+    {
         this->write(id);
+        this->write(type);
     }
-    void unserialize() {
+    void unserialize()
+    {
         this->read(id);
+        this->read(type);
     }
 
-    const std::string getName() {
+    const std::string getName()
+    {
         return "NewEnemyPacket";
     }
 
-    PacketDisplay display() const {
+    PacketDisplay display() const
+    {
         return {"Id", this->id};
     }
 
-    std::shared_ptr<Packet> clone() const {
+    std::shared_ptr<Packet> clone() const
+    {
         return make_copy(NewEnemyPacket);
     }
 
-    auto getEntityId() const -> std::size_t { return this->id; }
-private:
+    auto getEntityId() const -> std::size_t
+    {
+        return this->id;
+    }
+
+    auto getType() const -> EnemyType
+    {
+        return type;
+    }
+
+  private:
     std::size_t id;
+    EnemyType type;
 };
 
 #endif /* NEWENEMY_PACKET_HPP */

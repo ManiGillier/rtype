@@ -13,7 +13,6 @@
 #include "../player/Player.hpp"
 #include "ecs/regisrty/Registry.hpp"
 #include "server/game/ticker/Ticker.hpp"
-#include <cstdint>
 #include <memory>
 
 class Game

@@ -16,10 +16,11 @@ option(BUILD_CLIENT "Build client" ON)
 option(BUILD_RCON "Build rcon" ON)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(CPP_CC_FLAGS "-Wall -Werror -Wconversion -Wcast-align -Wunused -Wextra -g3 -Wpedantic -fsanitize=address -Wno-error=sign-conversion -Wno-sign-conversion")
+    # -Werror removed to build server/libconfig
+    set(CPP_CC_FLAGS "-Wall -Wconversion -Wcast-align -Wunused -Wextra -g3 -Wpedantic -fsanitize=address -Wno-error=sign-conversion -Wno-sign-conversion")
     set(RAYLIB_LOG_LEVEL "-DRAYLIB_LOG_LEVEL=LOG_DEBUG")
 else ()
-    set(CPP_CC_FLAGS "-O2")
+    set(CPP_CC_FLAGS "-O3")
     set(RAYLIB_LOG_LEVEL "-DRAYLIB_LOG_LEVEL=LOG_ERROR")
 endif()
 
