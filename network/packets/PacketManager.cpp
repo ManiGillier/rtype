@@ -38,6 +38,7 @@
 #include "network/packets/impl/TestPacket.hpp"
 #include "network/packets/impl/RCONResponse.hpp"
 #include "network/packets/impl/RCONRequest.hpp"
+#include "network/packets/impl/ScorePacket.hpp"
 
 void PacketManager::registerPackets()
 {
@@ -67,6 +68,7 @@ void PacketManager::registerPackets()
     this->packets.push_back(std::make_shared<RegisterPacket>());
     this->packets.push_back(std::make_shared<RCONRequest>());
     this->packets.push_back(std::make_shared<RCONResponse>());
+    this->packets.push_back(std::make_shared<ScorePacket>());
 }
 
 std::shared_ptr<Packet> PacketManager::createPacketById(uint8_t id, Packet::PacketMode mode) const

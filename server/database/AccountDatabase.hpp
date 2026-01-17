@@ -23,6 +23,7 @@
         #define COULD_NOT_SET_BANNED "Could not set account banned status"
         #define COULD_NOT_GET_BANNED_STATUS "Could not get account banned status"
         #define COULD_NOT_GET_BANNED_PLAYERS "Could not get list of banned players"
+        #define COULD_NOT_GET_SCOREBOARD "Could not get scoreboard"
 
 class AccountDatabase {
 private:
@@ -42,7 +43,7 @@ public:
             std::string exception;
     };
     AccountDatabase();
-    bool put(const std::string &username, 
+    bool put(const std::string &username,
              const std::string &password) const;
     bool hasUsername(const std::string &username) const;
     bool hasPassword(const std::string &password) const;
@@ -54,6 +55,7 @@ public:
     void setScore(const std::string &username, int score) const;
     void setBanned(const std::string &username, bool banned) const;
     bool isBanned(const std::string &username) const;
+    std::vector<std::string> getScoreboard() const;
     std::vector<std::string> getAllBans() const;
 };
 
