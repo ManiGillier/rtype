@@ -49,8 +49,8 @@ void Game::loop(int ticks)
     this->_gameStart = std::chrono::steady_clock::now();
 
     this->_isRunning = true;
-    std::this_thread::sleep_for(
-        std::chrono::milliseconds(500)); // TODO: remove this
+    // std::this_thread::sleep_for(
+    //     std::chrono::milliseconds(500)); // TODO: remove this
 
     this->initializeComponents();
     this->initializeSystems();
