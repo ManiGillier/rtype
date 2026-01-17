@@ -22,8 +22,8 @@ public:
 
         this->width = 300;
         this->height = 40;
-        this->y = 300;
-        this->color = {255, 255, 255, 0};
+        this->y = 500;
+        this->color = {0, 0, 0, 75};
         this->text = "Lives";
         this->cColor = {0,0,0,255};
     }

@@ -19,9 +19,9 @@ public:
     {
         this->x = 175;
         this->width = 300;
-        this->y = 100;
+        this->y = 300;
         this->height = 40;
-        this->color = {255, 255, 255, 0};
+        this->color = {0, 0, 0, 75};
         this->text = "Difficulty";
         this->cColor = {0,0,0,255};
         this->alignment = CENTER;
