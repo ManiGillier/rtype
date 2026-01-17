@@ -28,6 +28,8 @@ class NetworkManager
     void queuePosUpdate(PositionData pos);
     void queueDiedEntity(uint16_t toKill);
     void playerDied(std::size_t id);
+    void playerScoreUpsate(std::size_t id, int score);
+    void savePlayersScore();
     void setLastTick(float last);
     float getLastTick() const;
     void flush();

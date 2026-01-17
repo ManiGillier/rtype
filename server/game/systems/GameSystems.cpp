@@ -262,6 +262,10 @@ auto Systems::collision_system(
                         r.set<Health>(j, health_j->pv - damage,
                                       health_j->max_pv);
                     }
+                    if (tag_i->tag == EntityTag::LASER &&
+                        tag_j->tag == EntityTag::BOSS) {
+                        nm.playerScoreUpsate(dep_i->id, 10);
+                    }
                 }
                 if (damager_j.has_value() && health_i.has_value()) {
                     auto dep_j = r.get<Dependence>(j);
@@ -286,6 +290,10 @@ auto Systems::collision_system(
                         int damage = damager_j->damage;
                         r.set<Health>(i, health_i->pv - damage,
                                       health_i->max_pv);
+                    }
+                    if (tag_j->tag == EntityTag::LASER &&
+                        tag_i->tag == EntityTag::BOSS) {
+                        nm.playerScoreUpsate(dep_j->id, 10);
                     }
                 }
             }

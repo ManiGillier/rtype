@@ -31,8 +31,9 @@ void NetworkManager::queueDiedEntity(uint16_t toKill)
 void NetworkManager::playerDied(std::size_t id)
 {
     std::lock_guard<std::mutex> lock(_playersMutex);
-    for (auto it : _players) {
-        if (it->getEntityId().has_value() && it->getEntityId().value().first == id)
+    for (auto &it : _players) {
+        if (it->getEntityId().has_value() &&
+            it->getEntityId().value().first == id)
             it->setEntityId(std::nullopt);
     }
 }
@@ -90,4 +91,22 @@ void NetworkManager::setLastTick(float last)
 float NetworkManager::getLastTick() const
 {
     return this->_lastTick;
+}
+
+void NetworkManager::playerScoreUpsate(std::size_t id, int score)
+{
+    std::lock_guard<std::mutex> lock(_playersMutex);
+    for (auto &it : _players) {
+        if (it->getEntityId().has_value() &&
+            it->getEntityId().value().first == id)
+            it->addScore(score);
+    }
+}
+
+void NetworkManager::savePlayersScore()
+{
+    std::lock_guard<std::mutex> lock(_playersMutex);
+    for (auto &it : _players) {
+            // it->saveScore();
+    }
 }
