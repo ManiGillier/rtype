@@ -163,8 +163,8 @@ auto Game::newEnemy(std::size_t enemy_id, EnemyType type) -> void
     gl::Color color = gl::MAGENTA;
 
     if (type == EnemyType::Boss)
-        color.r /= 2;
-    r.add_component<ElementColor>(enemy, {gl::MAGENTA});
+        color.r = 100;
+    r.add_component<ElementColor>(enemy, {color});
     r.add_component<Health>(enemy, {0, 0});
 }
 

@@ -45,7 +45,8 @@ class NewEnemyPacket : public Packet
 
     PacketDisplay display() const
     {
-        return {"Id", this->id};
+        return {"Id", this->id, "Type",
+                this->type == EnemyType::Boss ? "Boss" : "Normal"};
     }
 
     std::shared_ptr<Packet> clone() const
