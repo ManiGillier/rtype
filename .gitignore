@@ -15,3 +15,4 @@ CPM_modules/
 rtype.cfg
 account_db.*
 /logs
+/docs
