@@ -36,17 +36,17 @@ public:
     }
 
     void serialize() {
-        this->write(static_cast<uint8_t>(this->usernames.size()));
+        this->write(static_cast<uint16_t>(this->usernames.size()));
         for (auto &username : this->usernames) {
             this->write(username);
         }
     }
     void unserialize() {
-        uint8_t size = 0;
+        uint16_t size = 0;
         this->read(size);
         this->usernames.clear();
         this->usernames.reserve(size);
-        for (uint8_t i = 0; i < size; i++) {
+        for (uint16_t i = 0; i < size; i++) {
             std::string username = {};
             this->read(username);
             this->usernames.push_back(username);

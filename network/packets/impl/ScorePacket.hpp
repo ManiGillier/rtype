@@ -26,7 +26,7 @@ class ScorePacket : public Packet {
     void serialize() {
         this->write((uint8_t) request);
         if (request == LIST) {
-            this->write((uint8_t) scores.size());
+            this->write((uint16_t) scores.size());
             for (std::size_t i = 0; i < scores.size(); i++) {
                 auto [username, score] = scores[i];
                 this->write(username);
@@ -37,13 +37,13 @@ class ScorePacket : public Packet {
 
     void unserialize() {
         uint8_t requestType;
-        uint8_t size;
+        uint16_t size;
 
         this->read(requestType);
         this->request = static_cast<ScorePacketType>(requestType);
         if (this->request == LIST) {
             this->read(size);
-            for ([[maybe_unused]] uint8_t i = 0; i < size; i++) {
+            for ([[maybe_unused]] uint16_t i = 0; i < size; i++) {
                 std::string username;
                 int score;
 
