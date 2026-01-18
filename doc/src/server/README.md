@@ -550,6 +550,31 @@ Defines wave progression and difficulty:
 ---
 
 ## 10. Administration (RCON)
+
+### 10.1 Overview
+
+**RCON (Remote Console)** allows administrators 
+to manage the server without direct access.
+
+### 10.2 Authentication
+
+RCON uses a **shared secret** authentication:
+
+1. Server generates `RCON_KEY` on first startup
+2. Key stored in `rtype.cfg`
+3. Admin must provide key with each command
+4. Invalid key = command rejected
+
+### 10.3 Available Commands
+
+| Command | Syntax | Description |
+|---------|--------|-------------|
+| `LIST` | `LIST` | Show all connected players |
+| `KICK` | `KICK <username>` | Disconnect a player immediately |
+| `BAN` | `BAN <username>` | Ban account (prevents future logins) |
+| `UNBAN` | `UNBAN <username>` | Remove ban from account |
+| `BANLIST` | `BANLIST` | List all banned accounts |
+
 ## 11. Login/Registration
 
 ## 12. Error Handling
