@@ -89,6 +89,15 @@ void LobbyManager::leaveLobby(std::shared_ptr<Player> &player)
     this->newLobby(player, false);
 }
 
+void LobbyManager::deleteLobby(const std::string& lobbyId)
+{
+    std::lock_guard<std::mutex> lock(_lobbiesMutex);
+
+    auto it = _lobbies.find(lobbyId);
+    if (it != _lobbies.end())
+        _lobbies.erase(lobbyId);
+}
+
 void LobbyManager::startGame(GameStartConfig config, const std::string &lobbyId)
 {
     std::shared_ptr<Lobby> lobby;
@@ -102,6 +111,7 @@ void LobbyManager::startGame(GameStartConfig config, const std::string &lobbyId)
         lobby = it->second;
     }
     lobby->startGame(config, this->_ticks);
+    this->deleteLobby(lobbyId);
 }
 
 std::shared_ptr<Lobby> LobbyManager::getLobby(const std::string &lobbyId)
