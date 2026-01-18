@@ -8,16 +8,19 @@
 #include "Menu.hpp"
 
 #include "client/network/executor/JoinedLobbyExecutor.hpp"
+#include "client/network/executor/ScorePacketExecutor.hpp"
 #include "gui/Scene.hpp"
 
 #include <client/state_machine/states/settings/Settings.hpp>
 
+#include <cstddef>
 #include <iostream>
 #include <memory>
 
 #include <network/packets/impl/JoinOrCreatePublicLobby.hpp>
 #include <network/packets/impl/JoinLobbyWithCodePacket.hpp>
 #include <network/packets/impl/CreatePrivateLobbyPacket.hpp>
+#include <network/packets/impl/ScorePacket.hpp>
 
 Menu::Menu(ClientManager &cm, Registry &r, Sync &s)
     : State(cm, r, s)
@@ -39,6 +42,11 @@ auto Menu::init_systems() -> void
 
     this->clientManager.getNetworkManager()
         .addExecutor(std::make_unique<JoinedLobbyExecutor>(*this));
+    this->clientManager.getNetworkManager()
+        .addExecutor(std::make_unique<ScoreExecutor>(*this));
+
+    auto packet = create_packet(ScorePacket, ScorePacket::REQUEST);
+    this->clientManager.getNetworkManager().sendPacket(packet);
 }
 
 auto Menu::init_entities() -> void
@@ -77,4 +85,29 @@ auto Menu::getLobbyCode() -> std::string
 auto Menu::settings() -> void
 {
     this->change_state<Settings>();
+}
+
+auto Menu::setScores(std::vector<std::string> scores) -> void
+{
+    this->scores.fill("");
+    int i = 0;
+    for (auto &score : scores) {
+        if ((std::size_t) i >= this->scores.size())
+            break;
+        this->scores[i] = score;
+        i++;
+    }
+}
+
+auto Menu::getScore(int id) -> std::string
+{
+    if ((std::size_t) id >= this->scores.size())
+        return "";
+    return this->scores.at(id);
+}
+
+auto Menu::requestScoresRefresh() -> void
+{
+    auto packet = create_packet(ScorePacket, ScorePacket::REQUEST);
+    this->clientManager.getNetworkManager().sendPacket(packet);
 }

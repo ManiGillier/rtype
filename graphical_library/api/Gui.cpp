@@ -16,6 +16,8 @@ auto gl::Gui::draw() -> void
 {
     for (auto &box : this->boxes)
         box->draw();
+    for (auto &textBox : this->textBoxes)
+        textBox->draw();
     for (auto &button : this->buttons)
         button->draw();
     for (auto &checkbox : this->checkboxes)
@@ -24,8 +26,6 @@ auto gl::Gui::draw() -> void
         inputBox->draw();
     for (auto &keybindSelect : this->keybindSelects)
         keybindSelect->draw();
-    for (auto &textBox : this->textBoxes)
-        textBox->draw();
 }
 
 auto gl::Gui::update() -> void

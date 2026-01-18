@@ -10,6 +10,9 @@
 
 #include "client/state_machine/State.hpp"
 
+#include <array>
+#include <vector>
+
 class Menu : public State {
 public:
     Menu(ClientManager &cm, Registry &r, Sync &s);
@@ -23,8 +26,12 @@ public:
     auto setLobbyCode(std::string code) -> void;
     auto getLobbyCode() -> std::string;
     auto settings() -> void;
+    auto getScore(int id) -> std::string;
+    auto setScores(std::vector<std::string>) -> void;
+    auto requestScoresRefresh() -> void;
 private:
     std::string lobbyCode;
+    std::array<std::string, 10> scores = { "" };
 };
 
 #endif /* CLIENT_MENU_STATE_HPP */

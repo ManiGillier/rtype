@@ -15,6 +15,7 @@
 #include "Text.hpp"
 #include "Play.hpp"
 #include "Settings.hpp"
+#include "ScoreBoard.hpp"
 
 class MenuScene : public GuiScene
 {
@@ -34,6 +35,12 @@ public:
         this->add<JoinLobby>(menu);
 
         this->add<SettingsOpen>(menu);
+
+        this->add<ScoreBox>();
+        this->add<ScoreboardText>();
+        this->add<ScoreboardRefresh>(menu);
+        for (int i = 0; i < 10; i++)
+            this->add<ScoreboardEntry>(menu, i);
     }
 private:
     [[maybe_unused]] Menu &menu;
