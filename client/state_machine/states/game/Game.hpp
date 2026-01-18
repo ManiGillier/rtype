@@ -54,6 +54,12 @@ public:
     auto getCurrentHealth() -> int;
     auto hit() -> void;
     auto getPlayerList() -> std::vector<std::pair<std::string, bool>>;
+
+    auto getChatMessage(int id) -> std::string;
+    auto addChatMessage(std::string message) -> void;
+    auto sendNewMessage() -> void;
+    auto setMessage(std::string message) -> void;
+    auto getMessage() -> std::string;
 private:
     GameStartConfig config;
     int lifeRemaining;
@@ -61,6 +67,8 @@ private:
     std::optional<std::size_t> clientId = std::nullopt;
     uint32_t startTime = 0;
     ClientInputs lastClientInputs = { .byte = 0 };
+    std::array<std::string, 10> messages;
+    std::string messageToSend = "";
 };
 
 #endif /* CLIENT_GAME_STATE_HPP */

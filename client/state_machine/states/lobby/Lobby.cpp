@@ -91,7 +91,7 @@ auto Lobby::getChatMessage(int id) -> std::string
 
 auto Lobby::addChatMessage(std::string message) -> void
 {
-    for (int i = (int) this->messages.size() - 1; i >= 0; i--)
+    for (int i = (int) this->messages.size() - 2; i >= 0; i--)
         this->messages[i + 1] = this->messages[i];
     if (this->messages.size() > 0)
         this->messages[0] = message;
