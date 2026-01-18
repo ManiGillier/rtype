@@ -24,7 +24,7 @@ public:
         this->idleColor = {120, 200, 120, 255};
         this->hoverColor = {180, 255, 180, 255};
         this->pressedColor = {80, 160, 80, 255};
-        this->text = "BACK TO LOBBY";
+        this->text = "BACK TO MENU";
     }
     auto onClick() -> void
     {
