@@ -16,12 +16,14 @@
 
 #include "../Lobby.hpp"
 
+int const START_X = 1600 - 400;
+
 class ChatBox : public Box
 {
 public:
     ChatBox() : Box()
     {
-        this->x = 0;
+        this->x = START_X;
         this->y = 300;
         this->width = 400;
         this->height = 400;
@@ -34,7 +36,7 @@ class ChatText : public TextBox
 public:
     ChatText() : TextBox()
     {
-        this->x = 0;
+        this->x = START_X;
         this->y = 300;
         this->width = 400;
         this->height = 50;
@@ -52,7 +54,7 @@ class ChatInput : public InputBox
 public:
     ChatInput(Lobby &lobby) : InputBox(), lobby(lobby)
     {
-        this->x = 0;
+        this->x = START_X;
         this->y = 700;
         this->width = 350;
         this->height = 50;
@@ -84,7 +86,7 @@ class ChatSend : public Button
 public:
     ChatSend(Lobby &lobby) : Button(), lobby(lobby)
     {
-        this->x = 350;
+        this->x = START_X + 350;
         this->y = 700;
         this->width = 50;
         this->height = 50;
@@ -111,7 +113,7 @@ class ChatEntry : public TextBox
 public:
     ChatEntry(Lobby &lobby, int id) : TextBox(), lobby(lobby), id(id)
     {
-        this->x = 10;
+        this->x = START_X + 10;
         this->height = 35;
         this->y = 700 - this->height * (this->id + 1);
         this->width = 380;
