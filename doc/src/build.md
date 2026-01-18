@@ -5,6 +5,7 @@
 - make
 - cmake => 3.15
 - c++20 compiler
+- git
 - [Raylib dependencies](https://github.com/raysan5/raylib/wiki/raylib-dependencies)
 - PThreads (POSIX threads)
 
@@ -15,6 +16,9 @@
 ## Packages used
 
 - [raylib v5.5](https://github.com/raysan5/raylib)
+- libconfig
+- sqlitecpp
+- zlib
 
 ## Build
 
