@@ -27,7 +27,7 @@ public:
     auto getLobbyCode() -> std::string;
     auto settings() -> void;
     auto getScore(int id) -> std::string;
-    auto setScores(std::vector<std::string>) -> void;
+    auto setScores(std::vector<std::tuple<std::string, int>> scores) -> void;
     auto requestScoresRefresh() -> void;
 private:
     std::string lobbyCode;

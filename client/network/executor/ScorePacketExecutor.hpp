@@ -24,7 +24,7 @@ public:
                  [[maybe_unused]] std::shared_ptr<ClientPollable> con,
                  [[maybe_unused]] std::shared_ptr<ScorePacket> packet)
     {
-        this->state.setScores(packet->getUsernames());
+        this->state.setScores(packet->getScores());
         return true;
     }
 
