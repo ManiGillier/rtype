@@ -55,7 +55,7 @@ public:
     void setScore(const std::string &username, int score) const;
     void setBanned(const std::string &username, bool banned) const;
     bool isBanned(const std::string &username) const;
-    std::vector<std::string> getScoreboard() const;
+    std::vector<std::tuple<std::string, int>> getScoreboard() const;
     std::vector<std::string> getAllBans() const;
 };
 

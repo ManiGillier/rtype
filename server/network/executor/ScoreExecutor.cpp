@@ -22,10 +22,10 @@ bool ScoreExecutor::execute(Server &server, std::shared_ptr<Player> player,
             std::shared_ptr<ScorePacket> sp =
                 create_packet(ScorePacket, ScorePacket::LIST);
             AccountDatabase &db = _rtypeServer.getAccountDatabase();
-            std::vector<std::string> usernames = db.getScoreboard();
+            auto scores = db.getScoreboard();
 
-            for (const std::string &username : usernames)
-                sp->addUsername(username);
+            for (auto [username, score] : scores)
+                sp->addScore(username, score);
             player->sendPacket(sp);
         } catch (const AccountDatabase::DatabaseError &e) {
             return true;

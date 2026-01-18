@@ -25,23 +25,26 @@ AccountDatabase::AccountDatabase()
     }
 }
 
-std::vector<std::string> AccountDatabase::getScoreboard() const
+std::vector<std::tuple<std::string, int>> AccountDatabase::getScoreboard()
+    const
 {
     try {
-        std::vector<std::string> usernames;
+        std::vector<std::tuple<std::string, int>> scoreboard;
 
         SQLite::Statement query(
             db,
-            "SELECT username FROM accounts "
+            "SELECT username, score FROM accounts "
             "ORDER BY score DESC "
             "LIMIT 10"
         );
 
         while (query.executeStep()) {
-            usernames.push_back(query.getColumn(0).getString());
+            std::string username = query.getColumn(0).getString();
+            int score = query.getColumn(1).getInt();
+            scoreboard.emplace_back(username, score);
         }
 
-        return usernames;
+        return scoreboard;
     }
     catch (std::exception &e) {
         LOG_ERR("SQLite error: " << e.what());
