@@ -10,6 +10,8 @@
 #include "client/network/executor/JoinedLobbyExecutor.hpp"
 #include "gui/Scene.hpp"
 
+#include <client/state_machine/states/settings/Settings.hpp>
+
 #include <iostream>
 #include <memory>
 
@@ -70,4 +72,9 @@ auto Menu::setLobbyCode(std::string code) -> void
 auto Menu::getLobbyCode() -> std::string
 {
     return this->lobbyCode;
+}
+
+auto Menu::settings() -> void
+{
+    this->change_state<Settings>();
 }

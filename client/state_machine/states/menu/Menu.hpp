@@ -22,6 +22,7 @@ public:
     auto joinCodeLobby() -> void;
     auto setLobbyCode(std::string code) -> void;
     auto getLobbyCode() -> std::string;
+    auto settings() -> void;
 private:
     std::string lobbyCode;
 };

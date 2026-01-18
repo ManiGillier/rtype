@@ -14,6 +14,7 @@
 
 #include "Text.hpp"
 #include "Play.hpp"
+#include "Settings.hpp"
 
 class MenuScene : public GuiScene
 {
@@ -31,6 +32,8 @@ public:
         this->add<CreatePrivateLobby>(menu);
         this->add<LobbyCode>(menu);
         this->add<JoinLobby>(menu);
+
+        this->add<SettingsOpen>(menu);
     }
 private:
     [[maybe_unused]] Menu &menu;
