@@ -8,6 +8,7 @@
 #include "Menu.hpp"
 
 #include "client/network/executor/JoinedLobbyExecutor.hpp"
+#include "gui/Scene.hpp"
 #include "systems/Systems.hpp"
 
 #include <iostream>
@@ -20,6 +21,12 @@ Menu::Menu(ClientManager &cm, Registry &r, Sync &s)
 auto Menu::init_systems() -> void
 {
     std::cout << "Init systems" << std::endl;
+
+    this->guiScene = std::make_unique<MenuScene>(this->getGraphicalLibrary(),
+                                                 *this);
+    this->guiScene->init();
+
+
     this->registry.reset_update_systems();
     this->registry.reset_render_systems();
 
@@ -28,8 +35,6 @@ auto Menu::init_systems() -> void
     this->registry.add_global_update_system
         (menu, std::ref(this->clientManager.getGui()),
          std::ref(this->clientManager.getNetworkManager()));
-    this->registry.add_global_render_system
-        (menuText, std::ref(this->clientManager.getGui()));
 
     this->clientManager.getNetworkManager()
         .addExecutor(std::make_unique<JoinedLobbyExecutor>(*this));

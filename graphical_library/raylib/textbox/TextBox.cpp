@@ -57,7 +57,7 @@ void TextBox::draw() const {
             this->x + (this->width - textLenght) / 2,
             this->y + (this->height / 2) - 10,
             fontSize,
-            raylib::BLACK
+            rTextColor
         );
     } else {
         DrawText(
@@ -65,7 +65,7 @@ void TextBox::draw() const {
             this->x + (this->width - textLenght) - 10,
             this->y + (this->height / 2) - 10,
             fontSize,
-            raylib::BLACK
+            rTextColor
         );
     }
 }

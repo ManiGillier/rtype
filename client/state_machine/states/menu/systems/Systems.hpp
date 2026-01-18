@@ -17,7 +17,4 @@ auto menu([[maybe_unused]] Registry &r, gl::GraphicalLibrary &gl,
     NetworkManager &networkManager)
 -> void;
 
-auto menuText([[maybe_unused]] Registry &r, gl::GraphicalLibrary &gl)
--> void;
-
 #endif /* CLIENT_LOBBY_STATE_SYSTEMS_HPP */
