@@ -8,23 +8,20 @@
 #ifndef BACKGROUND_HPP
 #define BACKGROUND_HPP
 
-#include <graphical_library/raylib/buttons/Button.hpp>
+#include <graphical_library/raylib/box/Box.hpp>
 #include <iostream>
 
-class Background : public Button
+class Background : public Box
 {
 public:
     Background()
-    : Button()
+    : Box()
     {
         this->x = 175;
         this->y = 300;
         this->width = 300;
         this->height = 120;
-        this->idleColor = {150, 150, 150, 255};
-        this->hoverColor = {150, 150, 150, 255};
-        this->pressedColor = {150, 150, 150, 255};
-        this->text = "";
+        this->color = {150, 150, 150, 255};
     }
 };
 
