@@ -11,8 +11,11 @@
 #include "client/network/executor/NewPlayerExecutor.hpp"
 #include "systems/Systems.hpp"
 
+#include <cstddef>
 #include <iostream>
 #include <memory>
+
+#include <network/packets/impl/TextChatStringPacket.hpp>
 
 #include "gui/LobbyScene.hpp"
 
@@ -77,4 +80,38 @@ auto Lobby::startGame() -> void
 {
     std::shared_ptr<Packet> p = std::make_shared<StartGamePacket>(this->config);
     this->clientManager.getNetworkManager().sendPacket(p);
+}
+
+auto Lobby::getChatMessage(int id) -> std::string
+{
+    if ((std::size_t) id >= this->messages.size())
+        return "";
+    return this->messages.at(id);
+}
+
+auto Lobby::addChatMessage(std::string message) -> void
+{
+    for (int i = (int) this->messages.size() - 1; i >= 0; i--)
+        this->messages[i + 1] = this->messages[i];
+    if (this->messages.size() > 0)
+        this->messages[0] = message;
+}
+
+auto Lobby::sendNewMessage() -> void
+{
+    if (this->messageToSend.empty())
+        return;
+    auto packet = create_packet(TextChatStringPacket, this->messageToSend);
+    this->clientManager.getNetworkManager().sendPacket(packet);
+    this->messageToSend.clear();
+}
+
+auto Lobby::setMessage(std::string message) -> void
+{
+    this->messageToSend = message;
+}
+
+auto Lobby::getMessage() -> std::string
+{
+    return this->messageToSend;
 }

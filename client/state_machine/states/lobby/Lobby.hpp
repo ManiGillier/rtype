@@ -9,6 +9,7 @@
 #define CLIENT_LOBBY_STATE_HPP
 
 #include "client/state_machine/State.hpp"
+#include <array>
 #include <vector>
 
 #include <network/packets/impl/StartGamePacket.hpp>
@@ -25,10 +26,17 @@ public:
     auto setConfig(GameStartConfig config) -> void;
     auto getCode() -> std::string;
     auto startGame() -> void;
+    auto getChatMessage(int id) -> std::string;
+    auto addChatMessage(std::string message) -> void;
+    auto sendNewMessage() -> void;
+    auto setMessage(std::string message) -> void;
+    auto getMessage() -> std::string;
 private:
     GameStartConfig config = { 1, 1 };
     std::string code;
     std::vector<std::string> playerList;
+    std::array<std::string, 10> messages;
+    std::string messageToSend = "";
 };
 
 #endif /* CLIENT_LOBBY_STATE_HPP */
