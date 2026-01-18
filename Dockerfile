@@ -18,4 +18,4 @@ RUN make fclean clean server-release
 EXPOSE 4242
 
 # Run server
-CMD ["./r-type_server", "-p", "4242", "-d"]
+ENTRYPOINT ["./r-type_server", "-p", "4242", "-d"]
