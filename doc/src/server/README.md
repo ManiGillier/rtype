@@ -51,7 +51,7 @@ The server follows a **client-server architecture** where:
 
 ### 1.4 High-Level Architecture
 
-![](./assets/RTyper-server.png)
+![](./assets/rtype-server.png)
 
 ---
 
