@@ -8,14 +8,14 @@
 #ifndef BACKTOLOBBY_BUTTON_HPP
 #define BACKTOLOBBY_BUTTON_HPP
 
+#include "client/state_machine/states/win/Win.hpp"
 #include <graphical_library/raylib/buttons/Button.hpp>
-#include <iostream>
 
 class BackToLobbyButton : public Button
 {
 public:
-    BackToLobbyButton()
-    : Button()
+    BackToLobbyButton(Win &win)
+    : Button(), win(win)
     {
         this->x = 650;
         this->y = 700;
@@ -28,8 +28,10 @@ public:
     }
     auto onClick() -> void
     {
-        std::cout << "Je suis cliqué :o" << std::endl;
+        win.toMenu();
     }
+private:
+Win &win;
 };
 
 #endif /* BACKTOLOBBY_BUTTON_HPP */

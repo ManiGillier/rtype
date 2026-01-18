@@ -10,6 +10,7 @@
 #include <iostream>
 #include <memory>
 
+#include "client/state_machine/states/menu/Menu.hpp"
 #include "gui/WinScene.hpp"
 
 Win::Win(ClientManager &cm, Registry &r, Sync &s)
@@ -21,7 +22,7 @@ auto Win::init_systems() -> void
     std::cout << "Init systems" << std::endl;
 
     this->guiScene =
-        std::make_unique<WinScene>(this->getGraphicalLibrary());
+        std::make_unique<WinScene>(this->getGraphicalLibrary(), *this);
     this->guiScene->init();
 
     this->registry.reset_update_systems();
@@ -47,4 +48,9 @@ auto Win::init_systems() -> void
 auto Win::init_entities() -> void
 {
     std::cout << "Init entities" << std::endl;
+}
+
+void Win::toMenu()
+{
+    this->change_state<Menu>();
 }

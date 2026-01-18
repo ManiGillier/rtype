@@ -8,6 +8,7 @@
 #ifndef WIN_SCENE_HPP
 #define WIN_SCENE_HPP
 
+#include "client/state_machine/states/win/Win.hpp"
 #include "client/state_machine/states/win/gui/BackToLobbyButton.hpp"
 #include "client/state_machine/states/win/gui/DifficultyText.hpp"
 #include "client/state_machine/states/win/gui/DifficultyValue.hpp"
@@ -19,15 +20,17 @@
 class WinScene : public GuiScene
 {
 public:
-    WinScene(gl::GraphicalLibrary &gl)
-    : GuiScene(gl) {}
+    WinScene(gl::GraphicalLibrary &gl, Win &win)
+    : GuiScene(gl), win(win) {}
 
     auto init() -> void
     {
-        this->add<BackToLobbyButton>();
+        this->add<BackToLobbyButton>(win);
         this->add<DifficultyText>();
         this->add<DifficultyValue>();
         this->add<WinText>();
     }
+private:
+    Win &win;
 };
 #endif /* WIN_SCENE_HPP */

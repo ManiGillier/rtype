@@ -16,6 +16,7 @@ public:
 
     auto init_systems() -> void;
     auto init_entities() -> void;
+    auto toMenu() -> void;
 private:
 };
 
