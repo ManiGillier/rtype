@@ -117,6 +117,22 @@ inline void PacketDisplay::add<std::vector<std::string>>(const std::string &key,
     });
 }
 
+template<>
+inline void PacketDisplay::add<std::vector<std::tuple<std::string, int>>>(
+    const std::string &key, 
+    const std::vector<std::tuple<std::string, int>> &value) {
+    fields.emplace_back(key, [value](std::ostream &os) {
+        os << "[";
+        for (std::size_t i = 0; i < value.size(); i++) {
+            const auto &[username, score] = value[i];
+            os << "{" << username << ": " << score << "}";
+            if (i < value.size() - 1)
+                os << ", ";
+        }
+        os << "]";
+    });
+}
+
 class Packet {
     public:
         enum PacketMode {TCP, UDP};

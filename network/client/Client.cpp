@@ -335,7 +335,6 @@ bool ClientPollableUDP::receiveEvent(short)
         uint32_t compressedSize = 0;
         std::size_t bytesToSkip = 0;
         try {
-            std::size_t initialSize = receivedData.size();
             Packet::fromBinary(receivedData, sequenceNum);
             if (receivedData.empty()) {
                 break;

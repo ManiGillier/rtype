@@ -15,12 +15,14 @@
 
 #include <cstddef>
 #include <iostream>
+#include <map>
 #include <memory>
 
 #include <network/packets/impl/JoinOrCreatePublicLobby.hpp>
 #include <network/packets/impl/JoinLobbyWithCodePacket.hpp>
 #include <network/packets/impl/CreatePrivateLobbyPacket.hpp>
 #include <network/packets/impl/ScorePacket.hpp>
+#include <string>
 
 Menu::Menu(ClientManager &cm, Registry &r, Sync &s)
     : State(cm, r, s)
@@ -87,14 +89,14 @@ auto Menu::settings() -> void
     this->change_state<Settings>();
 }
 
-auto Menu::setScores(std::vector<std::string> scores) -> void
+auto Menu::setScores(std::vector<std::tuple<std::string, int>> scores) -> void
 {
     this->scores.fill("");
     int i = 0;
-    for (auto &score : scores) {
+    for (auto &[name, score] : scores) {
         if ((std::size_t) i >= this->scores.size())
             break;
-        this->scores[i] = score;
+        this->scores[i] = name + " -> " + std::to_string(score);
         i++;
     }
 }
