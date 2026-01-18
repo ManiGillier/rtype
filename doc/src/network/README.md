@@ -8,24 +8,24 @@ RéseauType is the network library used by both the client and the server, writt
 Being developed by our own, it provides a high abstraction of common network utils, and makes communication easy and reliable.
 RéseauType allows server-client communication by Packet. 
 Packets are defined inside the library, and are shared by both the server and client, in order for them to be synchronised.
-Developers, who wish to use this library, can add any sort of datas to packets (*).
-Every sent packet is being serialised, and transmited in binary. Those packets can either be transmitted through UDP, or TCP, depending on the implemented type of packet.
+Developers, who wish to use this library, can add any sort of datas to packets, including strings.
+Every sent packet is being serialised, compressed with `zlib`, converted into network byte order, and transmited in binary.
+Those packets can either be transmitted through UDP, or TCP, depending on the implemented type of packet.
 RéseauType supports multi-threading, and such without having a timeout on `poll` (unnecessary loops).
 RéseauType sockets are non-blocking.
+RéseauType client converts received packet from network byte order into its own endianness.
 RéseauType, with its own Client and Server implementation, is able to match a TCP Client to an UDP Client, and recognise them as a single entity and same entity. This demonstrate RéseauType's high network abstraction.
-RéseauType comes with its own logging packet system, logging every received and sent packet. Those can be toggled by setting `Logger:shouldLog` to `true`
-
-(*): except strings, those will be available in a future soon-to-be update.
+RéseauType comes with its own logging packet system, logging every received and sent packet. The logging can be toggled by setting `Logger:shouldLog` to `true`
 
 # Architecture
 
 RéseauType is composed of five parts:
 - [Packets](#packets)
-  Packets are the data being sent from the server to the clients and vice-versa. Serialised in binary, those can be sent either via TCP or UDP.
-- [The Server](#the-server)  
+  Packets are the data being sent from the server to the clients and vice-versa. Serialised in binary, and compressed, those can be sent either via TCP or UDP.
+- [The Server](#the-server) 
   Creates & starts a RéseauType server (TCP/UDP) that can automatically write, receive, and execute packets.
-- [The Client](#the-client)  
-  Creates a client to connect to a RéseauType server (TCP/UDP). It can send, receive, and execute incoming packets from the server.
+- [The Client](#the-client)
+  Creates a client to connect to a RéseauType server (TCP/UDP). It can send, receive, and execute incoming packets from the server. It can also calculate its own PacketLoss.
 - [PollManager](#poll-manager)
   PollManager is being used by both the client and server. It is a generic part of RéseauType, which allows to accept connections, read packets, send packets, and handle disconnections.
 - [Packet Executors](#packet-executors)
@@ -35,7 +35,7 @@ RéseauType is composed of five parts:
 ## Packets
 
 A packet is a serialisable data structure that can be sent between the client and the server using either TCP or UDP.
-Each packet has an ID, is fixed sized, and withholds datas.
+Each packet has an ID, can have a variadic size, and withholds datas.
 A packet does not have a direction, and can be sent by both the server and the client.
 The server and the client needs to handle individually their own behavior on receiving a packet using [Packet Executors](#packet-executors)
 
@@ -134,21 +134,6 @@ The `read` function is a pre-implemented `Packet` method and allows for data typ
 As a result, our packet upon receiving, will read in order the value of `meow`, `woof`, then finally `uwu`, which **MUST** be in the same order that they were **serialized**.
 `meow`, `woof` and `uwu`'s value will then be set to their corresponding received values.
 
-#### Size
-
-This is one of the two's biggest RéseauType's flaw, and will be updated very soon.
-Each packet must declare its data size manually in a `getSize() const` function
-
-If we had to take our previous example, its size would be `sizeof(int) + sizeof(double) + sizeof(int)` which is `sizeof(int) * 2 + sizeof(double)`
-
-Thus, our packet `getSize()` function would have to be implemented as:
-
-```cpp
-int getSize() const {
-   return (int) sizeof(int) * 2 + sizeof(double);
-}
-```
-
 #### Name
 
 This only serves for the `Logger` and as an `identifier` for the user. Each packet must specify its packet name by implementing the following method:
@@ -179,18 +164,24 @@ enum PacketMode getMode() const {
 
 #### Display
 
-This is also something that needs to change and will be soon discarded.
 Each packet needs to implement a `display` method and displays all of its value inside for the logger to display them.
 
 If we had to take our `ExamplePacket`, this would be a way to implement that method:
 
 ```cpp
-void display() {
-   std::cout << "meow=" << this->meow << ", woof=" << this->woof << ", uwu=" << this->uwu;
+PacketDisplay display() const 
+{
+   return {"meow", this->meow, "woof", this->woof, "uwu", this->uwu};
 }
 ```
 
-which would print all of the received values.
+which would print all of the received values the following way
+
+```
+{meow=69, woof=727.420, uwu=67}
+```
+
+The returned `PacketDisplay` must always have a key affiliated with a value or its an undefined behavior.
 
 
 #### Clone
