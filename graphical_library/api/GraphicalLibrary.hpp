@@ -66,8 +66,11 @@ namespace gl {
         virtual auto registerEvent(std::string eventName, Key key = UNDEFINED)
             -> void = 0;
         virtual auto bindKey(std::string eventName, Key key) -> void = 0;
+        virtual auto getEventKey(std::string eventName) -> Key = 0;
         virtual auto isEventStart(std::string eventName) -> bool = 0;
         virtual auto isEventActive(std::string eventName) -> bool = 0;
+        virtual auto convertKey(Key key) -> int = 0;
+        virtual auto convertKey(int key) -> Key = 0;
     };
 }
 

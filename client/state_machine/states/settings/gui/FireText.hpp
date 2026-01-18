@@ -26,11 +26,6 @@ public:
         this->cColor = {0,0,0,255};
         this->alignment = LEFT;
     }
-
-    auto onClick() -> void
-    {
-        std::cerr << this->text << std::endl;
-    }
 };
 
 #endif /* FIRETEXT_HPP */

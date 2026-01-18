@@ -14,8 +14,8 @@
 class FireInput : public KeybindSelect
 {
 public:
-    FireInput()
-    : KeybindSelect()
+    FireInput(gl::GraphicalLibrary &gl)
+    : KeybindSelect(gl)
     {
         this->x = 1250;
         this->y = 640;
@@ -25,11 +25,7 @@ public:
         this->selectedColor = {250, 250, 250, 255};
         this->textColor = {0, 0, 0, 255};
 
-    }
-
-    auto onClick() -> void
-    {
-        std::cerr << "Just clicked the button !" << std::endl;
+        this->keybind = "shoot";
     }
 };
 

@@ -11,81 +11,86 @@ namespace raylib {
     #include <raylib.h>
 }
 
-static std::string keyToString(int key)
+static std::string keyToString(gl::Key key)
 {
     switch (key) {
-        case raylib::KEY_APOSTROPHE: return "APOSTROPHE";
-        case raylib::KEY_COMMA: return "COMMA";
-        case raylib::KEY_MINUS: return "MINUS";
-        case raylib::KEY_PERIOD: return "PERIOD";
-        case raylib::KEY_SLASH: return "SLASH";
-        case raylib::KEY_ZERO: return "0";
-        case raylib::KEY_ONE: return "1";
-        case raylib::KEY_TWO: return "2";
-        case raylib::KEY_THREE: return "3";
-        case raylib::KEY_FOUR: return "4";
-        case raylib::KEY_FIVE: return "5";
-        case raylib::KEY_SIX: return "6";
-        case raylib::KEY_SEVEN: return "7";
-        case raylib::KEY_EIGHT: return "8";
-        case raylib::KEY_NINE: return "9";
-        case raylib::KEY_SEMICOLON: return "SEMICOLON";
-        case raylib::KEY_EQUAL: return "EQUAL";
-        case raylib::KEY_A: return "A";
-        case raylib::KEY_B: return "B";
-        case raylib::KEY_C: return "C";
-        case raylib::KEY_D: return "D";
-        case raylib::KEY_E: return "E";
-        case raylib::KEY_F: return "F";
-        case raylib::KEY_G: return "G";
-        case raylib::KEY_H: return "H";
-        case raylib::KEY_I: return "I";
-        case raylib::KEY_J: return "J";
-        case raylib::KEY_K: return "K";
-        case raylib::KEY_L: return "L";
-        case raylib::KEY_M: return "M";
-        case raylib::KEY_N: return "N";
-        case raylib::KEY_O: return "O";
-        case raylib::KEY_P: return "P";
-        case raylib::KEY_Q: return "Q";
-        case raylib::KEY_R: return "R";
-        case raylib::KEY_S: return "S";
-        case raylib::KEY_T: return "T";
-        case raylib::KEY_U: return "U";
-        case raylib::KEY_V: return "V";
-        case raylib::KEY_W: return "W";
-        case raylib::KEY_X: return "X";
-        case raylib::KEY_Y: return "Y";
-        case raylib::KEY_Z: return "Z";
-        case raylib::KEY_LEFT_BRACKET: return "LEFT_BRACKET";
-        case raylib::KEY_BACKSLASH: return "BACKSLASH";
-        case raylib::KEY_RIGHT_BRACKET: return "RIGHT_BRACKET";
-        case raylib::KEY_GRAVE: return "GRAVE";
-        case raylib::KEY_SPACE: return "SPACE";
-        case raylib::KEY_ESCAPE: return "ESCAPE";
-        case raylib::KEY_ENTER: return "ENTER";
-        case raylib::KEY_TAB: return "TAB";
-        case raylib::KEY_BACKSPACE: return "BACKSPACE";
-        case raylib::KEY_INSERT: return "INSERT";
-        case raylib::KEY_DELETE: return "DELETE";
-        case raylib::KEY_RIGHT: return "RIGHT";
-        case raylib::KEY_LEFT: return "LEFT";
-        case raylib::KEY_DOWN: return "DOWN";
-        case raylib::KEY_UP: return "UP";
-        case raylib::KEY_PAGE_UP: return "PAGE_UP";
-        case raylib::KEY_PAGE_DOWN: return "PAGE_DOWN";
-        case raylib::KEY_HOME: return "HOME";
-        case raylib::KEY_END: return "END";
-        case raylib::KEY_CAPS_LOCK: return "CAPS_LOCK";
-        case raylib::KEY_SCROLL_LOCK: return "SCROLL_LOCK";
-        case raylib::KEY_NUM_LOCK: return "NUM_LOCK";
-        case raylib::KEY_PRINT_SCREEN: return "PRINT_SCREEN";
-        case raylib::KEY_PAUSE: return "PAUSE";
-        default: return "UNKNOWN";
+    case gl::Key::UNDEFINED:
+        return "<\?\?\?>";
+    case gl::Key::A:
+        return "A";
+    case gl::Key::B:
+        return "B";
+    case gl::Key::C:
+        return "C";
+    case gl::Key::D:
+        return "D";
+    case gl::Key::E:
+        return "E";
+    case gl::Key::F:
+        return "F";
+    case gl::Key::G:
+        return "G";
+    case gl::Key::H:
+        return "H";
+    case gl::Key::I:
+        return "I";
+    case gl::Key::J:
+        return "J";
+    case gl::Key::K:
+        return "K";
+    case gl::Key::L:
+        return "L";
+    case gl::Key::M:
+        return "M";
+    case gl::Key::N:
+        return "N";
+    case gl::Key::O:
+        return "O";
+    case gl::Key::P:
+        return "P";
+    case gl::Key::Q:
+        return "Q";
+    case gl::Key::R:
+        return "R";
+    case gl::Key::S:
+        return "S";
+    case gl::Key::T:
+        return "T";
+    case gl::Key::U:
+        return "U";
+    case gl::Key::V:
+        return "V";
+    case gl::Key::W:
+        return "W";
+    case gl::Key::X:
+        return "X";
+    case gl::Key::Y:
+        return "Y";
+    case gl::Key::Z:
+        return "Z";
+    case gl::Key::ARROW_LEFT:
+        return "LEFT";
+    case gl::Key::ARROW_RIGHT:
+        return "RIGHT";
+    case gl::Key::ARROW_UP:
+        return "UP";
+    case gl::Key::ARROW_DOWN:
+        return "DOWN";
+    case gl::Key::ESCAPE:
+        return "ESCAPE";
+    case gl::Key::ENTER:
+        return "ENTER";
+    case gl::Key::SHIFT:
+        return "SHIFT";
+    case gl::Key::SPACE:
+        return "SPACE";
+    default:
+        return "???";
     }
 }
 
-KeybindSelect::KeybindSelect() : gl::KeybindSelect() {}
+KeybindSelect::KeybindSelect(gl::GraphicalLibrary &gl)
+: gl::KeybindSelect(), gl(gl) {}
 
 void KeybindSelect::draw() const {
     raylib::Rectangle boxRect = {
@@ -124,6 +129,7 @@ void KeybindSelect::update()
     int mouseX = raylib::GetMouseX();
     int mouseY = raylib::GetMouseY();
 
+    this->key = this->gl.getEventKey(this->keybind);
     bool overButton = this->x < mouseX && this->x + this->width > mouseX
         && this->y < mouseY && this->y + this->height > mouseY;
     bool pressed = raylib::IsMouseButtonPressed(raylib::MOUSE_BUTTON_LEFT);
@@ -141,10 +147,11 @@ void KeybindSelect::update()
         return;
     if (key == raylib::KEY_ESCAPE)
         this->selected = false;
-    this->key = key;
+    this->key = this->gl.convertKey(key);
+    this->gl.bindKey(this->keybind, this->key);
     this->onKeybindSet();
 }
 
-int KeybindSelect::getKey(void) {
+auto KeybindSelect::getKey(void) -> gl::Key {
     return this->key;
 }

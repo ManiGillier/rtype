@@ -47,7 +47,10 @@ Raylib::Raylib()
     { gl::Key::SHIFT, raylib::KEY_LEFT_SHIFT},
     { gl::Key::SPACE, raylib::KEY_SPACE},
 })
-{}
+{
+    for (auto &[gl_key, r_key] : this->keymap)
+        this->keymap_rev[r_key] = gl_key;
+}
 
 auto Raylib::init() -> void
 {
@@ -278,6 +281,13 @@ auto Raylib::convertKey(gl::Key key) -> int
     return this->keymap.at(key);
 }
 
+auto Raylib::convertKey(int key) -> gl::Key
+{
+    if (!this->keymap_rev.contains(key))
+        return gl::Key::UNDEFINED;
+    return this->keymap_rev.at(key);
+}
+
 std::unique_ptr<gl::GraphicalLibrary> init_raylib()
 {
     return std::make_unique<Raylib>();
@@ -311,4 +321,11 @@ auto Raylib::draw(gl::AnimatedSprite &sprite) -> void
     };
     raylib::DrawTexturePro(rtext, source, dest,
                            { 0.0, 0.0 }, 0.0f, raylib::WHITE);
+}
+
+auto Raylib::getEventKey(std::string eventName) -> gl::Key
+{
+    if (!this->keybinds.contains(eventName))
+        return gl::Key::UNDEFINED;
+    return this->keybinds.at(eventName);
 }

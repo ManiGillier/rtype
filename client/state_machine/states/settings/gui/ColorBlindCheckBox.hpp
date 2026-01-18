@@ -27,11 +27,6 @@ public:
         this->textColor = {255, 255, 255, 255};
         this->size = 75;
     }
-
-    // auto onClick() -> void
-    // {
-    //     std::cerr << this->text << std::endl;
-    // }
 };
 
 #endif /* COLORBIND_HPP */
