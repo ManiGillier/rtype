@@ -9,13 +9,13 @@
 #define BACKTOLOBBY_BUTTON_HPP
 
 #include <graphical_library/raylib/buttons/Button.hpp>
-#include <iostream>
+#include "../Lose.hpp"
 
 class BackToLobbyButton : public Button
 {
 public:
-    BackToLobbyButton()
-    : Button()
+    BackToLobbyButton(Lose &lose)
+    : Button(), lose(lose)
     {
         this->x = 650;
         this->y = 700;
@@ -28,8 +28,10 @@ public:
     }
     auto onClick() -> void
     {
-        std::cout << "Je suis cliqué :o" << std::endl;
+        lose.toMenu();
     }
+    private:
+        Lose &lose;
 };
 
 #endif /* BACKTOLOBBY_BUTTON_HPP */

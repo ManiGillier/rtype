@@ -10,6 +10,9 @@
 #include <iostream>
 #include <memory>
 
+#include "client/manager/ClientManager.hpp"
+#include "client/state_machine/State.hpp"
+#include "client/state_machine/states/menu/Menu.hpp"
 #include "gui/LoseScene.hpp"
 
 Lose::Lose(ClientManager &cm, Registry &r, Sync &s)
@@ -21,7 +24,7 @@ auto Lose::init_systems() -> void
     std::cout << "Init systems" << std::endl;
 
     this->guiScene =
-        std::make_unique<LoseScene>(this->getGraphicalLibrary());
+        std::make_unique<LoseScene>(this->getGraphicalLibrary(), *this);
     this->guiScene->init();
 
     this->registry.reset_update_systems();
@@ -47,4 +50,9 @@ auto Lose::init_systems() -> void
 auto Lose::init_entities() -> void
 {
     std::cout << "Init entities" << std::endl;
+}
+
+void Lose::toMenu()
+{
+    this->change_state<Menu>();
 }

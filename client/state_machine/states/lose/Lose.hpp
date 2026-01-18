@@ -16,7 +16,7 @@ public:
 
     auto init_systems() -> void;
     auto init_entities() -> void;
-private:
+    auto toMenu() -> void;
 };
 
 #endif /* CLIENT_LOSE_STATE_HPP */
