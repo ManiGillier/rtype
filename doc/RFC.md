@@ -141,7 +141,7 @@ This may include the usage of strings of characters, or the usage of a list of o
 A string of character MUST BE written in the following format:  
 - A four bytes unsigned integer containing the number of characters in the string, excluding the NULL byte.  
 - Every characters of the string in order, excluding the NULL byte.
-Every character MUST be represented by a single byte, in the ASCII format [@!RFC20].  
+Every character MUST be represented by a single byte, in the ASCII format [RFC20].  
 
 A string SHOULD NOT be of more than 256 characters.  
 A program receiving a string of more that 256 characters SHOULD discard it.
@@ -293,8 +293,8 @@ This packet MUST have the following data:
 - Index:0x0E  
 - Data description:  
 >  - Unsigned 64 bits integer: The entity unique identifier.  
->  - 32 bits Floating point number [@!IEEE754]: The width of the hitbox in unit.  
->  - 32 bits Floating point number [@!IEEE754]: The height of the hitbox in unit.  
+>  - 32 bits Floating point number [IEEE754]: The width of the hitbox in unit.  
+>  - 32 bits Floating point number [IEEE754]: The height of the hitbox in unit.  
 
 ### Game Over
 
@@ -326,7 +326,7 @@ This packet MUST have the following data:
 >  - A list of:  
 >    - Unsigned 32 bits integer: The laser entity unique identifier  
 >    - Unsigned 8 bits integer: Boolean describing the state of activation of the laser.  
->    - 32 bits Floating point number [@!IEEE754]: The laser size in units.
+>    - 32 bits Floating point number [IEEE754]: The laser size in units.
 
 The unactivated size of the laser is UNDEFINED for both the client and the server.
 
@@ -347,8 +347,8 @@ This packet MUST have the following data:
  - Data description:  
 >   - A list of:  
 >     - Unsigned 32 bits integer: The entity unique identifier.  
->     - 32 bits Floating point number [@!IEEE754]: The position of the entity accross the width.  
->     - 32 bits Floating point number [@!IEEE754]: The position of the entity accross the height.  
+>     - 32 bits Floating point number [IEEE754]: The position of the entity accross the width.  
+>     - 32 bits Floating point number [IEEE754]: The position of the entity accross the height.  
 
 ### Client Inputs
 
