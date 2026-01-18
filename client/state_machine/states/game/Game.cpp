@@ -7,6 +7,7 @@
 
 #include "Game.hpp"
 
+#include "gui/Scene.hpp"
 #include "shared/components/Position.hpp"
 #include "shared/components/Dependence.hpp"
 #include "shared/components/Health.hpp"
@@ -29,11 +30,16 @@
 #include "client/network/executor/LinkPlayersExecutor.hpp"
 #include "client/network/executor/DestroyEntityExecutor.hpp"
 #include "client/network/executor/PlayerHitExecutor.hpp"
+#include "client/network/executor/TextChatStringExecutorGame.hpp"
 
 #include "network/packets/impl/ClientInputsPacket.hpp"
+#include "network/packets/impl/TextChatStringPacket.hpp"
+
+#include "gui/Scene.hpp"
 
 #include "systems/Systems.hpp"
 #include <cstdint>
+#include <memory>
 #include <queue>
 #include <utility>
 
@@ -45,6 +51,10 @@ auto Game::init_systems() -> void
 {
     this->lifeRemaining = this->config.lives == 0 ? 5 : this->config.lives;
     NetworkManager &nm = this->clientManager.getNetworkManager();
+
+    this->guiScene = std::make_unique<GameScene>(this->getGraphicalLibrary(),
+                                                 *this);
+    this->guiScene->init();
 
     this->registry.reset_update_systems();
     this->registry.reset_render_systems();
@@ -109,6 +119,7 @@ auto Game::init_systems() -> void
     nm.addExecutor(std::make_unique<LinkPlayersExecutor>(*this));
     nm.addExecutor(std::make_unique<DestroyEntityExecutor>(*this));
     nm.addExecutor(std::make_unique<PlayerHitExecutor>(*this));
+    nm.addExecutor(std::make_unique<TextChatStringExecutorGame>(*this));
 }
 
 auto Game::init_entities() -> void {}
@@ -321,4 +332,38 @@ auto Game::getPlayerList() -> std::vector<std::pair<std::string, bool>>
     for (auto &player : this->players)
         vector.push_back(player.second);
     return vector;
+}
+
+auto Game::getChatMessage(int id) -> std::string
+{
+    if ((std::size_t) id >= this->messages.size())
+        return "";
+    return this->messages.at(id);
+}
+
+auto Game::addChatMessage(std::string message) -> void
+{
+    for (int i = (int) this->messages.size() - 2; i >= 0; i--)
+        this->messages[i + 1] = this->messages[i];
+    if (this->messages.size() > 0)
+        this->messages[0] = message;
+}
+
+auto Game::sendNewMessage() -> void
+{
+    if (this->messageToSend.empty())
+        return;
+    auto packet = create_packet(TextChatStringPacket, this->messageToSend);
+    this->clientManager.getNetworkManager().sendPacket(packet);
+    this->messageToSend.clear();
+}
+
+auto Game::setMessage(std::string message) -> void
+{
+    this->messageToSend = message;
+}
+
+auto Game::getMessage() -> std::string
+{
+    return this->messageToSend;
 }

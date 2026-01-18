@@ -22,6 +22,8 @@
 #include "client/state_machine/states/lobby/gui/StartButton.hpp"
 #include <graphical_library/raylib/GuiScene.hpp>
 
+#include "Chat.hpp"
+
 #include "../Lobby.hpp"
 
 class LobbyScene : public GuiScene
@@ -45,6 +47,13 @@ public:
         this->add<DifficultyNumber>(this->lobby);
         this->add<StartButton>(this->lobby);
         this->add<RoomCode>(this->lobby.getCode());
+
+        this->add<lobby::ChatBox>();
+        this->add<lobby::ChatText>();
+        this->add<lobby::ChatInput>(lobby);
+        this->add<lobby::ChatSend>(lobby);
+        for (int i = 0; i < 10; i++)
+            this->add<lobby::ChatEntry>(lobby, i);
     }
 private:
     Lobby &lobby;
