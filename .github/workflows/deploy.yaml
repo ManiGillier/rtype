@@ -31,6 +31,7 @@ jobs:
           files: |
             r-type_server
             r-type_client
+            r-type_rcon
       - name: Create Release on Mirror
         id: create_release_mirror
         uses: ncipollo/release-action@v1
