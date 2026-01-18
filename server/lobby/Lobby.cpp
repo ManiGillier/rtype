@@ -16,8 +16,7 @@ bool Lobby::addPlayer(std::shared_ptr<Player> &player)
         std::lock_guard<std::mutex> lock(_playersMutex);
         if (this->_players.size() < MAX_PLAYER) {
             this->_players.push_back(player);
-            
-
+            return true;
         }
     }
     return false;

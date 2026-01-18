@@ -14,13 +14,19 @@ bool JoinLobbyWithCodeExecutor::execute(
     (void)server;
     (void)packet;
 
-    this->_rtypeServer.getLobbyManager().joinLobby(packet->getCode(), player);
-    player->sendPacket(create_packet(JoinedLobbyPacket, player->getLobbyId()));
-    auto lobby = this->_rtypeServer.getLobbyManager().getLobby(player->getLobbyId());
+    auto hasJoined = this->_rtypeServer.getLobbyManager().joinLobby(
+        packet->getCode(), player);
 
-    if (lobby) {
-        LOG("Send new usrName");
-        lobby->sendNewUsrnames();
+    if (hasJoined) {
+        player->sendPacket(
+            create_packet(JoinedLobbyPacket, player->getLobbyId()));
+        auto lobby =
+            this->_rtypeServer.getLobbyManager().getLobby(player->getLobbyId());
+
+        if (lobby) {
+            LOG("Send new usrName");
+            lobby->sendNewUsrnames();
+        }
     }
     return true;
 }
