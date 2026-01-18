@@ -152,7 +152,7 @@ auto Game::newPlayer(std::string name, std::size_t player_id,
     };
 }
 
-auto Game::newEnemy(std::size_t enemy_id) -> void
+auto Game::newEnemy(std::size_t enemy_id, EnemyType type) -> void
 {
     Registry &r = this->registry;
     Entity enemy = r.spawn_entity();
@@ -160,6 +160,10 @@ auto Game::newEnemy(std::size_t enemy_id) -> void
     this->sync.add(enemy.getId(), enemy_id);
     r.add_component<Position>(enemy, {-200, -200});
     r.add_component<HitBox>(enemy, {50, 50});
+    gl::Color color = gl::MAGENTA;
+
+    if (type == EnemyType::Boss)
+        color.r /= 2;
     r.add_component<ElementColor>(enemy, {gl::MAGENTA});
     r.add_component<Health>(enemy, {0, 0});
 }

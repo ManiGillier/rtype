@@ -25,7 +25,7 @@ public:
                  [[maybe_unused]] std::shared_ptr<ClientPollable> con,
                  [[maybe_unused]] std::shared_ptr<NewEnemyPacket> packet)
     {
-        this->state.newEnemy(packet->getEntityId());
+        this->state.newEnemy(packet->getEntityId(), packet->getType());
         return true;
     }
 
