@@ -39,9 +39,9 @@ Three binaries will then be created :
 `./r-type_rcon IP PORT`
 
 Example:  
-`./r-rtype_client gillier.dev 4242`
+`./r-type_client gillier.dev 4242`
 
-If you are running a server or rcon, you can settup the RCON passkey in the `rtype.cfg` file.  
+If you are running a server or rcon, you can setup the RCON passkey in the `rtype.cfg` file.  
 By default it will be randomly generated.
 
 ## Authors
