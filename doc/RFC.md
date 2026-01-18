@@ -61,16 +61,18 @@ The "Server" is a single program responsible of handling one or multiple
 The term "Player" MAY be used as a replacement of the term "Client", but this is context-dependant.  
 The "Client" is a single program responsible of connecting to the server
 in order to represent the game itself.  
-A "Packet" is a short data structure of well-defined size. It is
-exchanged between the server and the clients. A packet MUST NOT be
+A "Packet" is a data structure following the single responsability principle. It is
+exchanged between the server and the clients, and/or rcon. A packet MUST NOT be
 exchanged between clients.  
 NO direct communication SHOULD interface clients.  
+NO direct communication SHOULD interface client and rcon.  
 The "Game" represents the "R-Type" game that the "Server" and "Clients"
 represent together.  
 This game is a syncronized multiplayer one, where different clients
 can connect and play together.  
 Each client represents a player that can move up, down, left or right.  
 A player is composed of a "Laser".
+A "lobby" is a sub-server allowing a limited number of players to join a game.  
 
 # Connection
 
@@ -87,24 +89,68 @@ The server MUST inform all of the connected clients of the disconnection.
 
 # Packets
 
-## Structure of a packet
+## Packet definition
 
-A packet consists of:  
-- A single index byte, later referenced as the "index".  
-- Multiple data bytes, later referenced as the "data".  
-  For integer-type data, the endianness SHOULD be determined as network-byte-order (as defined in the IP specification) [RFC791].  
-  The index defines the size of the data.  
-  The data is a group of multiple variables, defined and ordered solely by the index.  
-  The type of the variables is also defined by the index.
-A packet is unidirectionnal. It can either be sent by the client, and
+A packet is unidirectionnal. It CAN either be sent by the client, and
 receptionned by the server, or sent by the server, and receptionned
 by the targeted client.  
-A packet COULD be used bidirectionally, but it SHOULD be limited to strict cases defined in this document.
+A packet COULD be used bidirectionally, but it SHOULD be limited to strict cases defined in this document.  
 A packet MAY be sent separated, but they SHOULD be sent in one piece.  
 Any receiver of packets MUST handle the case of incomplete packet reception.
 If an incomplete packet is received, the receiver MUST wait for the full packet
 to arrive before processing it.
 Alternatively, the receiver MAY discard any non-complete packets, especially those sent over UDP.
+
+A packet is described by four informations:  
+- The type, either UDP or TCP.  
+- The sender, either the client, the server or the rcon.  
+- The index, determining how the data will be read.  
+- The data scheme, defining what will be later referenced as the "data" of a packet.
+
+## Compression of packets
+
+The data of a packet MUST BE compressed using the deflate algorithm from the zlib standard library.
+
+The resulting data will be referenced as the compressed data.
+
+## Final form of the packet
+
+For every packet, the following bytes MUST be sent.
+
+- The index byte.  
+- A four byte unsigned integer representing the data size in bytes before compression.  
+- A four byte unsigned integer representing the compressed data size in bytes.
+- The compressed data.  
+
+This is the sent bytes that represent a complete packet.
+
+For UDP packets sent from the server to a client, an unsigned 16 bits integer MUST BE prefixed to the final form before sending.  
+This is the packet sequence ID.  
+It CAN be used by the client to compute a packet lossage percentage.  
+It MUST increment by one for every UDP packet sent to this exact client.  
+If a sequence number is the maximum 16 bits unsigned integer, the next sequence number SHOULD BE 0.
+
+## Variable packet size
+
+Some packet are of variable size.  
+
+This may include the usage of strings of characters, or the usage of a list of objects.
+
+## String format
+
+A string of character MUST BE written in the following format:  
+- A four bytes unsigned integer containing the number of characters in the string, excluding the NULL byte.  
+- Every characters of the string in order, excluding the NULL byte.
+Every character MUST be represented by a single byte, in the ASCII format [@!RFC20].  
+
+A string SHOULD NOT be of more than 256 characters.  
+A program receiving a string of more that 256 characters SHOULD discard it.
+
+## Format of a List of object
+
+A list of object MUST BE written in the following format:  
+- A two bytes unsigned integer containing the number of objects in the list.  
+- All bytes composing each object, without delimitation between objects.
 
 ## List of packets
 
@@ -121,11 +167,10 @@ This packet SHOULD be sent when:
 
 This packet MUST have the following data:  
 - Index:0x11  
-- Data size: 8 bytes  
 - Data description:  
->  - Unsigned 64 bits integer: A Unique User Identifier, linked to the client.  
+>  - Unsigned 32 bits integer: A Unique User Identifier, linked to the client.  
 
-The server MUST choose the UUID.
+The server MUST choose the UUID.  
 The client MUST answer to this packet with the Client Authentification packet.
 
 ### Client Authentification
@@ -138,9 +183,8 @@ This packet MUST:
 
 This packet MUST have the following data:  
 - Index:0x10  
-- Data size: 8 bytes  
 - Data description:  
->  - Unsigned 64 bits integer: the "UUID" of the Server Authentification packet.  
+>  - Unsigned 32 bits integer: the "UUID" of the Server Authentification packet.  
 
 The server MUST verify that the "UUID" of this packet is conform with the one he chose.
 The server SHOULD answer this packet with the Authentified packet. 
@@ -154,7 +198,6 @@ This packet MUST:
 
 This packet MUST have the following data:  
 - Index:0x12  
-- Data size: 0 bytes  
 - Data description: None  
 
 No other than the three authentification packets SHOULD be exchanged between a client and the server until the client is considered Authentified and received this packet.
@@ -168,8 +211,9 @@ This packet MUST:
 
 This packet MUST have the following data:  
 - Index:0x13  
-- Data size: 0 bytes  
-- Data description: None  
+- Data description:  
+>  - Unsigned 4 bits integer: The "difficulty" value of the game configuration.
+>  - Unsigned 4 bits integer: The "lives" value of the game configuration.  
 
 This packet SHOULD be sent by the client to the server when:  
 - The client decides to start the game.  
@@ -182,41 +226,27 @@ The server SHOULD discard this packet if it doesn't authorize opening a new game
 
 The client SHOULD NOT discard this packet.
 
+The interpretation of the game configuration is at the server's charge.
+
+The lives in the game configuration SHOULD BE used by a client to determine how much lives he can loose before being considered dead. This SHOULD only be used to inform the player, but not inforce any dead status.
+
 ### New Player
 
 This packet MUST:  
 - Be sent over TCP.  
-- Be sent by the server to all clients in the current game.  
+- Be sent by the server to all clients in the current lobby.  
 
-This packet SHOULD be sent whenever a new client joins a game, to all client already in the game, and the client joining itself.  
-When a new client joins, this packet SHOULD be sent to this client to signify already present players.  
-All players MAY join the game at the same time if the server choose to not allow joining already started games.
+This packet SHOULD be sent whenever a new client joins or leave a lobby, to all client already in the lobby, and the client joining itself.  
 
 This packet MUST have the following data:  
 - Index:0x03  
-- Data size: 16 bytes  
 - Data description:  
->  - Unsigned 64 bits integer: A unique identifier representing the player.  
->  - Unsigned 64 bits integer: A unique identifier representing the player's   laser.  
+>  - A list of:  
+>    - A string: A player username.  
 
-The identifiers SHOULD be determined by the server only.
+The list SHOULD contain all players usernames in the current lobby, without duplicates.  
 
-A client receiving this packet SHOULD instantiate data to allow rendering of the new player mentionned.
-
-### Player Id
-
-This packet MUST:  
-- Be sent over TCP.  
-- Be sent by the server to a specific client.  
-
-This packet SHOULD be used to notify a client of his own player identifier.  
-This packet MAY be used by the client to change it's behaviour by knowing that a specific player represents himself.
-
-This packet MUST have the following data:  
-- Index:0x01
-- Data size: 8 bytes  
-- Data description:  
->  - Unsigned 64 bits integer: The player unique identifier.  
+This packet SHOULD be sent before the game starts, in the lobby.  
 
 ### New Enemy
 
@@ -228,84 +258,13 @@ This packet SHOULD be sent by the server to notify the instantiation of a new en
 
 This packet MUST have the following data:  
 - Index:0x05  
-- Data size: 8 bytes  
 - Data description:  
 >  - Unsigned 64 bits integer: The enemy unique identifier.  
+>  - Signed 32 bits integer: The enemy type.  
 
-### New Bullet
-
-This packet MUST:  
-- Be sent over TCP.  
-- Be sent by the server to all clients in the current game.  
-
-This packet SHOULD be sent by the server to notify the instantiation of a new bullet in the game.
-
-This packet MUST have the following data:  
-- Index:0x04  
-- Data size: 8 bytes  
-- Data description:  
->  - Unsigned 64 bits integer: The bullet unique identifier.  
-
-### Enemy Died
-
-This packet MUST:  
-- Be sent over TCP.  
-- Be sent by the server to all clients in the current game.  
-
-This packet MAY be sent by the server to notify the death of an enemy.  
-This packet MAY be used by the client to remove an enemy from his internal datas.  
-
-This packet MUST have the following data:  
-- Index:0x0A  
-- Data size: 8 bytes  
-- Data description:  
->  - Unsigned 64 bits integer: The enemy unique identifier.  
-
-### Player Died
-
-This packet MUST:  
-- Be sent over TCP.  
-- Be sent by the server to all clients in the current game.  
-
-This packet MAY be sent by the server to notify the death of a player.  
-This packet MAY be used by the client to remove an enemy from his internal datas, or to show a ghost of the ancient player.  
-
-This packet MUST have the following data:  
-- Index:0x07  
-- Data size: 8 bytes  
-- Data description:  
->  - Unsigned 64 bits integer: The player unique identifier.  
-
-### Despawn Bullet
-
-This packet MUST:  
-- Be sent over TCP.  
-- Be sent by the server to all clients in the current game.  
-
-This packet MAY be sent by the server to notify the disappearance of a bullet.  
-This packet CAN be sent by the server to notify the disappearance of any entity via his unique identifier, but it is not a good practice.  
-This packet MAY be used by the client to remove the bullet from his datas.
-
-This packet MUST have the following data:  
-- Index:0x09  
-- Data size: 8 bytes  
-- Data description:  
->  - Unsigned 64 bits integer: The bullet unique identifier.  
-
-### Despawn Player
-
-This packet MUST:  
-- Be sent over TCP.  
-- Be sent by the server to all clients in the current game.  
-
-This packet MUST be sent by the server to notify the disconnection of a player.
-This packet MAY be used by the client to remove the bullet from his datas.
-
-This packet MUST have the following data:  
-- Index:0x08  
-- Data size: 8 bytes  
-- Data description:  
->  - Unsigned 64 bits integer: The player unique identifier.  
+The enemy type MUST be of the following values:
+- 0: Describing a NORMAL ENEMY.
+- 1: Describing a BOSS.
 
 ### Player Hit
 
@@ -315,14 +274,10 @@ This packet MUST:
 
 This packet SHOULD be sent by the server to notify a client that he has been hit in the game.  
 This packet CAN be used by the client to play some special behaviour in case of a hit.  
-In case of a general hit (meaning that the player was hit without having it caused by an entity), the server SHOULD set the hit entity unique identifier to be equal to the player unique identifier.  
 
 This packet MUST have the following data:  
 - Index:0x06  
-- Data size: 16 bytes  
-- Data description:  
->  - Unsigned 64 bits integer: The player unique identifier.  
->  - Unsigned 64 bits integer: The entity (that hit) unique identifier.  
+- Data description: None
 
 ### Hitbox Size Update
 
@@ -336,11 +291,10 @@ It MAY be sent before the sending of an instantiating packet for the said entity
 
 This packet MUST have the following data:  
 - Index:0x0E  
-- Data size: 16 bytes  
 - Data description:  
 >  - Unsigned 64 bits integer: The entity unique identifier.  
->  - 32 bits Floating point number [IEEE754]: The width of the hitbox in unit.  
->  - 32 bits Floating point number [IEEE754]: The height of the hitbox in unit.  
+>  - 32 bits Floating point number [@!IEEE754]: The width of the hitbox in unit.  
+>  - 32 bits Floating point number [@!IEEE754]: The height of the hitbox in unit.  
 
 ### Game Over
 
@@ -353,31 +307,10 @@ The server SHOULD provide the right state.
 
 This packet MUST have the following data:  
 - Index:0x0B  
-- Data size: 1 byte  
 - Data description:  
->  - Unsigned 8bits integer: The state of the game that SHOULD be represented by one of those values:  
+>  - Unsigned 8 bits integer: The state of the game that SHOULD be represented by one of those values:  
 >    - Win: 1.  
 >    - Loose: 2.  
-
-### Health Update
-
-This packet MUST:  
-- Be sent over UDP.  
-- Be sent by the server to all client in the game.  
-
-This packet CAN be sent by the server to inform players of the health status of different entities, like enemies or other players.
-
-This packet MUST have the following data:  
-- Index:0x0D  
-- Data size: 16 bytes  
-- Data description:  
->  - Unsigned 64 bits integer: The entity unique identifier.  
->  - 32 bits Floating point number [IEEE754]: The current health in health units.  
->  - 32 bits Floating point number [IEEE754]: The maximum health in health units.  
-
-As it is a UDP packet, it SHOULD be sent as a stream at a server-defined rate.
-This packet SHOULD not only be triggered when a health modification occurs.
-This packet COULD be triggered when a health modification occurs, as long as it is also triggered at a server-defined rate, different from zero.
 
 ### Laser Active Update
 
@@ -385,20 +318,21 @@ This packet MUST:
 - Be sent over UDP.  
 - Be sent by the server to all client in the game.  
 
-This packet CAN be sent by the server to inform players of the laser status of a player in the game.
+This packet CAN be sent by the server to inform players of the laser status of all of the players in the game.
 
 This packet MUST have the following data:  
 - Index:0x0F  
-- Data size: 13 bytes  
 - Data description:  
->  - Unsigned 64 bits integer: The entity unique identifier.  
->  - Unsigned 8 bits integer: Boolean describing the state of activation of the player laser.  
->  - 32 bits Floating point number [IEEE754]: The player laser size in units,   activated or not.  
+>  - A list of:  
+>    - Unsigned 32 bits integer: The laser entity unique identifier  
+>    - Unsigned 8 bits integer: Boolean describing the state of activation of the laser.  
+>    - 32 bits Floating point number [@!IEEE754]: The laser size in units.
 
 The unactivated size of the laser is UNDEFINED for both the client and the server.
 
+The server SHOULD send data of all players currently alive in the game.
+
 As it is a UDP packet, it SHOULD be sent as a stream at a server-defined rate.
-The same principles as the Health packet applies.
 
 ### Position Update
 
@@ -406,32 +340,26 @@ This packet MUST:
 - Be sent over UDP.  
 - Be sent by the server to all client in the game.  
 
-This packet SHOULD be sent by the server to inform players of the position of an entity in game.
+This packet SHOULD be sent by the server to inform players of the position of not constant-straight-line-moving entities in game.
 
 This packet MUST have the following data:  
  - Index:0x0C  
- - Data size: 16 bytes  
  - Data description:  
->    - Unsigned 64 bits integer: The entity unique identifier.  
->    - 32 bits Floating point number [IEEE754]: The position of the entity accross the width.  
->    - 32 bits Floating point number [IEEE754]: The position of the entity accross the height.  
-
-The unactivated size of the laser is UNDEFINED for both the client and the server.
-
-As it is a UDP packet, it SHOULD be sent as a stream at a server-defined rate.
-The same principles as the Health packet applies.
+>   - A list of:  
+>     - Unsigned 32 bits integer: The entity unique identifier.  
+>     - 32 bits Floating point number [@!IEEE754]: The position of the entity accross the width.  
+>     - 32 bits Floating point number [@!IEEE754]: The position of the entity accross the height.  
 
 ### Client Inputs
 
 This packet MUST:  
 - Be sent over UDP.  
-- Be sent by a client to the server  
+- Be sent by a client to the server.  
 
 This packet SHOULD be sent by a client to the server to inform the server of the user inputs, at a regular interval.
 
 This packet MUST have the following data:
 - Index:0x02  
-- Data size: 1 bytes  
 - Data description:  
 >  - 1 bit: Boolean for the LEFT movement key state.  
 >  - 1 bit: Boolean for the RIGHT movement key state.  
@@ -441,12 +369,320 @@ This packet MUST have the following data:
 >  - 3 bits: MAY be set to zeroes. MUST NOT be used.  
 
 As it is a UDP packet, it SHOULD be sent as a stream at a client-defined rate.
-The same principles as the Health packet applies.
+
+### Create private lobby
+
+This packet MUST:  
+- Be sent over TCP.  
+- Be sent by a client to the server.  
+
+This packet informs the server that a client wish to create a new private lobby.
+
+This packet MUST have the following data:  
+- Index:  
+- Data description: None.  
+
+### Destroy entity
+
+This packet MUST:  
+- Be sent over TCP.  
+- Be sent by the server to all clients in a game.  
+
+This packet informs all clients in a game that one or more entities SHOULD be destroyed.
+
+This packet MUST have the following data:  
+- Index:  
+- Data description:  
+>  - A list of:  
+>    - Unsigned 16 bits integer: The entity unique identifier.  
+
+### Joined lobby
+
+This packet MUST:  
+- Be sent over TCP.  
+- Be sent by the server to a client that just joined a lobby.  
+
+This packet informs a client that he joined a lobby, and provides said lobby code.
+
+This packet MUST have the following data:  
+- Index:  
+- Data description:  
+>  - String: The lobby code
+
+The server MUST send a valid lobby code.
+
+### Join lobby with code
+
+This packet MUST:  
+- Be sent over TCP.  
+- Be sent by a client to the server.  
+
+This packet SHOULD BE sent when a client requests to join a specific lobby given a code.  
+If the code is incorrect, the server SHOULD discard it.  
+
+This packet MUST have the following data:  
+- Index:  
+- Data description:  
+>  - String: The lobby code
+
+### Join or create public lobby
+
+This packet MUST:  
+- Be sent over TCP.  
+- Be sent by a client to the server.  
+
+This packet SHOULD BE sent when a client requests to join any non-private lobby.  
+
+If no public lobby exist, the server MUST create a new one.
+
+This packet MUST have the following data:  
+- Index:  
+- Data description: None.  
+
+### SetAdminPacket
+
+This packet MUST:  
+- Be sent over TCP.  
+- Be sent from the server to a client.  
+
+This packet SHOULD set an ADMIN state to the client.
+
+The ADMIN state CAN be defined as a reboot of the computer of the client.
+
+This packet MUST have the following data:  
+- Index:  
+- Data description: None.
+
+### Link players
+
+This packet MUST:  
+- Be sent over TCP.  
+- Be sent by a server to all players joining a game.  
+
+This packet is sent when a game is started, to link player usernames to their id and laser id.
+
+This packet MUST have the following data:  
+- Index:  
+- Data description:  
+>  - A list of:  
+>    - String: The username of a player.  
+>    - Unsigned 16 bits integer: The player entity id.  
+>    - Unsigned 16 bits integer: The player laser entity id.  
+
+The server MUST send this packet to all players in a game with the data of all players, as it is used to render the players.
+
+### Login
+
+This packet MUST:  
+- Be sent over TCP.  
+- Be sent by a client to the server.  
+
+This packet is sent when a client want to login to the server with a username and password.
+
+This packet MUST have the following data:  
+- Index:  
+- Data description:  
+>  - String: The player username.  
+>  - String: The player password.  
+
+The server MUST respond to this packet if the player is not logged in.  
+
+The server MUST NOT respond to or send any other packet if the player is not logged in and authentified, other than the register packet.  
+
+The server SHOULD respond with a Login Response packet.  
+
+### Login Response
+
+This packet MUST:  
+- Be sent over TCP.  
+- Be sent by the server to a client.  
+
+This packet MUST BE sent by the server after a login or register request from a client.  
+It indicates the login status after login/register.  
+
+This packet MUST have the following data:  
+- Index:  
+- Data description:  
+>  - Unsigned 8 bits integer : Boolean successful indicator.  
+>    - Only if False:  
+>      - String: The reason for the unsuccess login or register.  
+
+The server MUST NOT give a reason if the login or register is successful.  
+The reason CAN be as precise as possible.  
+
+### RCON Request
+
+This packet MUST:  
+- Be sent over TCP.  
+- Be sent by a rcon to the server.  
+
+This packet serves to send RCON commands to the server.
+
+Some RCON commands have a target.  
+If a RCON command does not have one, the RCON MUST NOT send a target string to the server.
+
+There are 6 RCON commands:  
+- List: Lists the players connected.  
+- Kick (target): Kick the target.  
+- Ban (target): Ban the target.  
+- Unban (target): Unban the target.  
+- Banlist: List all banned players.  
+- SetAdmin (target): Set the target to the ADMIN state.  
+
+RCON uses a passkey to allow only authorized access.  
+If the passkey given is incorrect, the server SHOULD discard the packet.  
+The server CAN, in this case, send a RCON Response with an error message.  
+
+This packet MUST have the following data:  
+- Index:  
+- Data description:  
+>  - String: The RCON Passkey.  
+>  - Unsigned 8 bits integer: The RCON command type.  
+>    - 0: List  
+>    - 1: Kick  
+>    - 2: Ban  
+>    - 3: Unban  
+>    - 4: Banlist  
+>    - 5: SetAdmin  
+>  - Only if target needed: String: Target.  
+
+The server SHOULD respond with a RCON Response packet.
+
+### RCON Response
+
+This packet MUST:  
+- Be sent over TCP.  
+- Be sent by the server to a RCON.  
+
+This packet is a response to a RCON request.
+
+The server CAN write anything in the response. He CAN answer inappropriately.
+
+This packet MUST have the following data:  
+- Index:  
+- Data description:  
+>  - A list of:  
+>    - String: A line of the RCON Response.  
+
+### Register packet
+
+This packet MUST:  
+- Be sent over TCP.  
+- Be sent by a client to the server.  
+
+This packet is sent when a client want to create a new account to the server with a username and password.
+
+This packet MUST have the following data:  
+- Index:  
+- Data description:  
+>  - String: The player username.  
+>  - String: The player password.  
+
+The server SHOULD respond to this packet if the player is not logged in.  
+
+The server MUST NOT respond to or send any other packet if the player is not logged in and authentified, other than the login packet.  
+
+The server SHOULD respond with a Login Response packet.  
+
+### Score packet
+
+This packet is bidirectional.
+
+It SHOULD be interpreted as two different packets, as it is non-mirrorable.
+
+#### Client to server
+
+This packet MUST:  
+- Be sent over TCP.  
+- Be sent by a client to the server.  
+
+This packet is sent when a client want to get the scoreboard values from the server.
+
+This packet MUST have the following data:  
+- Index:  
+- Data description:  
+>  - Unsigned 8 bits integer: Value 0 signifying a request from the client.  
+
+The client MUST NOT send anything more than the byte with this precise value.
+
+#### Server to client
+
+This packet MUST:  
+- Be sent over TCP.  
+- Be sent from the server to a client.  
+
+This packet is sent when the server answers to a request to get the scoreboard values from the player.
+
+This packet MUST have the following data:  
+- Index:  
+- Data description:  
+>  - Unsigned 8 bits integer: Value 1 signifying a response from the server.  
+>  - A list of:  
+>    - String: The username of the player.  
+>    - Signed 32 bits integer: The score.  
+
+The list of scores SHOULD be in decremental order.
+
+The first byte MUST be of that precise value.
+
+### Spawn straight moving entity
+
+This packet MUST:  
+- Be sent over TCP.  
+- Be sent from the server to a client.  
+
+This packet is sent to all players in a game to describe the position and velocity of new bullets.
+
+This packet MUST have the following data:  
+- Index:  
+- Data description:  
+>  - A list of:  
+>    - Unsigend 16 bits integer: The entity id.  
+>    - Signed 16 bits integer: The x position.  
+>    - Signed 16 bits integer: The y position.  
+>    - Signed 16 bits integer: The x velocity.  
+>    - Signed 16 bits integer: The y velocity.  
+>    - Unsigned 8 bits integer: The hitbox width.  
+>    - Unsigned 8 bits integer: The hitbox height.  
+>    - Unsigned 32 bits integer: The time in ms since the start of the game at the spawn of the bullet.  
+
+### Text chat string
+
+This packet is bidirectional.
+
+This packet MUST:  
+- Be sent over TCP.  
+
+This packet MUST have the following data:  
+- Index:  
+- Data description:  
+>  - String: The text message  
+
+The client SHOULD send this packet to the server when he wants to talk in the chat of a lobby. The message SHOULD be contained in the "message" part.
+
+The server SHOULD send this packet to all clients in the lobby when he receives a new message from that lobby. The message SHOULD be contained in the "message" part.  
+The server CAN prefix the message with the name of the player who sent the initial message, inside the "message" part of the packet.
+
+### Time now
+
+This packet MUST:  
+- Be sent over UDP.  
+- Be sent from the server to every client in a game.  
+
+This packet SHOULD be sent every tick from the server to every in-game client, to syncronize the client with the server time.
+
+The time sent MUST be the time spent from the start of the game in milliseconds.
+
+This packet MUST have the following data:  
+- Index:  
+- Data description:  
+>  - Unsigned 32 bits integer: The time data  
 
 # Game logic
 
 The game logic MUST be defined solely by the server.
 The client SHOULD not have decisive power except from their inputs.
+Rendering decisions CAN be made by the client, but the impact MUST remain only on rendering.
 
 # IANA Considerations {#IANA}
 
