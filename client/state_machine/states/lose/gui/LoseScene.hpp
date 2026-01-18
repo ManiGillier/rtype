@@ -26,8 +26,8 @@ public:
     auto init() -> void
     {
         this->add<BackToLobbyButton>(lose);
-        this->add<DifficultyText>();
-        this->add<DifficultyValue>();
+        //this->add<DifficultyText>();
+        //this->add<DifficultyValue>();
         this->add<LoseText>();
     }
 private:
