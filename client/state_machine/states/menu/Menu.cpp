@@ -9,6 +9,7 @@
 
 #include "client/network/executor/JoinedLobbyExecutor.hpp"
 #include "client/network/executor/ScorePacketExecutor.hpp"
+#include "client/network/executor/SetAdminExecutor.hpp"
 #include "gui/Scene.hpp"
 
 #include <client/state_machine/states/settings/Settings.hpp>
@@ -46,6 +47,8 @@ auto Menu::init_systems() -> void
         .addExecutor(std::make_unique<JoinedLobbyExecutor>(*this));
     this->clientManager.getNetworkManager()
         .addExecutor(std::make_unique<ScoreExecutor>(*this));
+    this->clientManager.getNetworkManager()
+        .addExecutor(std::make_unique<SetAdminExecutor>());
 
     auto packet = create_packet(ScorePacket, ScorePacket::REQUEST);
     this->clientManager.getNetworkManager().sendPacket(packet);

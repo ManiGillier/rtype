@@ -12,7 +12,7 @@
 
 class RCONRequest : public Packet {
     public:
-        enum RequestType {LIST, KICK, BAN, UNBAN, BANLIST};
+        enum RequestType {LIST, KICK, BAN, UNBAN, BANLIST, SETADMIN};
         RCONRequest(RequestType requestType=LIST, const std::string &rconKey="",
             const std::string &target="") :
             Packet(PacketId::RCON_REQUEST), requestType(requestType),
@@ -25,7 +25,8 @@ class RCONRequest : public Packet {
         void serialize() {
             this->write(rconKey);
             this->write((uint8_t) requestType);
-            if (requestType == KICK || requestType == BAN || requestType == UNBAN)
+            if (requestType == KICK || requestType == BAN || requestType == UNBAN
+                || requestType == SETADMIN)
                 this->write(target);
         }
 
@@ -35,7 +36,8 @@ class RCONRequest : public Packet {
             this->read(rconKey);
             this->read(requestType);
             this->requestType = static_cast<RequestType>(requestType);
-            if (requestType == KICK || requestType == BAN || requestType == UNBAN)
+            if (requestType == KICK || requestType == BAN || requestType == UNBAN
+                || requestType == SETADMIN)
                 this->read(target);
         }
 
@@ -76,6 +78,8 @@ class RCONRequest : public Packet {
                     return "UNBAN";
                 case BANLIST:
                     return "BANLIST";
+                case SETADMIN:
+                    return "SETADMIN";
             }
             return "Unknown";
         }

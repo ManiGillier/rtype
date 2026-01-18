@@ -19,6 +19,7 @@
     #include <rcon/commands/impl/BanCommand.hpp>
     #include <rcon/commands/impl/UnbanCommand.hpp>
     #include <rcon/commands/impl/BanlistCommand.hpp>
+    #include <rcon/commands/impl/SetAdminCommand.hpp>
 
 class CommandManager {
     public:
@@ -43,6 +44,7 @@ class CommandManager {
             commands.push_back(std::make_unique<BanCommand>());
             commands.push_back(std::make_unique<UnbanCommand>());
             commands.push_back(std::make_unique<BanlistCommand>());
+            commands.push_back(std::make_unique<SetAdminCommand>());
         }
 
         void execute(Client &cl, const std::string &line,

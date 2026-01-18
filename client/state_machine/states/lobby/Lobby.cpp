@@ -10,6 +10,7 @@
 #include "client/network/executor/StartGameExecutor.hpp"
 #include "client/network/executor/NewPlayerExecutor.hpp"
 #include "client/network/executor/TextChatStringExecutorLobby.hpp"
+#include "client/network/executor/SetAdminExecutor.hpp"
 #include "systems/Systems.hpp"
 
 #include <cstddef>
@@ -47,6 +48,8 @@ auto Lobby::init_systems() -> void
         .addExecutor(std::make_unique<NewPlayerExecutor>(*this));
     this->clientManager.getNetworkManager()
         .addExecutor(std::make_unique<TextChatStringExecutorLobby>(*this));
+    this->clientManager.getNetworkManager()
+        .addExecutor(std::make_unique<SetAdminExecutor>());
 }
 
 auto Lobby::init_entities() -> void

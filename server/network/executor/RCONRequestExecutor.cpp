@@ -9,6 +9,7 @@
 #include "../server/RTypeServer.hpp"
 #include <network/packets/Packet.hpp>
 #include <network/packets/impl/RCONResponse.hpp>
+#include <network/packets/impl/SetAdminPacket.hpp>
 
 RCONRequestExecutor::RCONRequestExecutor(RTypeServer &server) : _rtypeServer(server) {}
 
@@ -40,6 +41,10 @@ bool RCONRequestExecutor::execute(Server &server,
             break;
         case RCONRequest::BANLIST:
             banlist(player);
+            break;
+        case RCONRequest::SETADMIN:
+            setAdmin(player, packet->getTarget());
+            break;
         default:
             break;
     }
@@ -103,6 +108,22 @@ void RCONRequestExecutor::unban(std::shared_ptr<Player> player,
         }
     } catch (const AccountDatabase::DatabaseError &e) {
         rsp->addResponse(e.what());
+    }
+    player->sendPacket(rsp);
+}
+
+void RCONRequestExecutor::setAdmin(std::shared_ptr<Player> player,
+                                   const std::string &target)
+{
+    std::shared_ptr<Player> p = _rtypeServer.getPlayerByUsername(target);
+    std::shared_ptr<RCONResponse> rsp = std::make_shared<RCONResponse>();
+
+    rsp->clearResponses();
+    if (!p) {
+        rsp->addResponse(NO_SUCH_PLAYER_ONLINE + target + ".");
+    } else {
+        p->sendPacket(create_packet(SetAdminPacket));
+        rsp->addResponse(SUCCESSFULLY_MADE_ADMIN + target + ".");
     }
     player->sendPacket(rsp);
 }

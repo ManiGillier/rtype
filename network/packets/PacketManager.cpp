@@ -40,6 +40,7 @@
 #include "network/packets/impl/RCONRequest.hpp"
 #include "network/packets/impl/ScorePacket.hpp"
 #include "network/packets/impl/TextChatStringPacket.hpp"
+#include "network/packets/impl/SetAdminPacket.hpp"
 
 void PacketManager::registerPackets()
 {
@@ -71,6 +72,7 @@ void PacketManager::registerPackets()
     this->packets.push_back(std::make_shared<RCONResponse>());
     this->packets.push_back(std::make_shared<ScorePacket>());
     this->packets.push_back(std::make_shared<TextChatStringPacket>());
+    this->packets.push_back(std::make_shared<SetAdminPacket>());
 }
 
 std::shared_ptr<Packet> PacketManager::createPacketById(uint8_t id, Packet::PacketMode mode) const

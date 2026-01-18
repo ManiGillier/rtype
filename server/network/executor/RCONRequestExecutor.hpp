@@ -23,6 +23,7 @@
 #define SUCCESSFULLY_KICKED "Succesfully kicked player: "
 #define SUCCESSFULLY_BANNED "Succesfully banned player: "
 #define SUCCESSFULLY_UNBANNED "Succesfully unbanned player: "
+#define SUCCESSFULLY_MADE_ADMIN "Succesfullly made admin: "
 
 class RTypeServer;
 
@@ -42,6 +43,7 @@ class RCONRequestExecutor
     void kick(std::shared_ptr<Player> player, const std::string &target);
     void ban(std::shared_ptr<Player> player, const std::string &target);
     void unban(std::shared_ptr<Player> player, const std::string &target);
+    void setAdmin(std::shared_ptr<Player> player, const std::string &target);
     void banlist(std::shared_ptr<Player> player);
     void list(std::shared_ptr<Player> player);
     RTypeServer &_rtypeServer;
