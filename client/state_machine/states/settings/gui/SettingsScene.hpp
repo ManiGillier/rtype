@@ -8,6 +8,7 @@
 #ifndef SETTINGS_SCENE_HPP
 #define SETTINGS_SCENE_HPP
 
+#include "BackButton.hpp"
 #include "client/state_machine/states/settings/gui/ColorBlindCheckBox.hpp"
 #include "client/state_machine/states/settings/gui/DownInput.hpp"
 #include "client/state_machine/states/settings/gui/DownText.hpp"
@@ -20,13 +21,16 @@
 #include "client/state_machine/states/settings/gui/FireInput.hpp"
 #include "client/state_machine/states/settings/gui/UpInput.hpp"
 #include "client/state_machine/states/settings/gui/UpText.hpp"
+#include "client/state_machine/states/settings/gui/BackButton.hpp"
 #include <graphical_library/raylib/GuiScene.hpp>
+
+#include "../Settings.hpp"
 
 class SettingsScene : public GuiScene
 {
 public:
-    SettingsScene(gl::GraphicalLibrary &gl)
-    : GuiScene(gl), gl(gl) {}
+    SettingsScene(gl::GraphicalLibrary &gl, Settings &state)
+    : GuiScene(gl), gl(gl), state(state) {}
 
     auto init() -> void
     {
@@ -42,8 +46,11 @@ public:
         this->add<RightInput>(this->gl);
         this->add<LeftText>();
         this->add<LeftInput>(this->gl);
+
+        this->add<BackButton>(this->state);
     }
 private:
     gl::GraphicalLibrary &gl;
+    Settings &state;
 };
 #endif /* SETTINGS_SCENE_HPP */
