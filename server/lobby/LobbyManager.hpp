@@ -18,6 +18,7 @@ class LobbyManager
     bool joinPublicLobby(std::shared_ptr<Player> &player);
     void leaveLobby(std::shared_ptr<Player> &player);
     void startGame(GameStartConfig config, const std::string &lobbyId);
+    void deleteLobby(const std::string& lobbyId);
     std::shared_ptr<Lobby> getLobby(const std::string& lobbyId);
 
   private:

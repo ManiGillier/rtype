@@ -98,8 +98,8 @@ void Lobby::setIsInGame(bool iig)
 void Lobby::startGame(GameStartConfig config, int ticks)
 {
     this->_game.loop(config, ticks);
-    LOG("game end");
     this->_inGame = false;
+    LOG("game end");
 }
 
 Game &Lobby::getGame()
