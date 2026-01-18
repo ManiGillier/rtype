@@ -14,7 +14,9 @@
 #include <graphical_library/api/GraphicalLibrary.hpp>
 
 #include <functional>
+#include <map>
 #include <memory>
+#include <string>
 #include <unordered_map>
 #include <vector>
 
@@ -34,6 +36,8 @@ public:
     auto getNetworkManager() -> NetworkManager &
         { return *this->networkManager; }
     auto launch(int argc, char **argv) -> void;
+
+    auto getAnimatedSpriteTemplate(std::string name) -> gl::AnimatedSprite;
 private:
     // auto changeInternalState(std::unique_ptr<IGameState>) -> void;
     auto loop() -> void;
@@ -41,6 +45,8 @@ private:
 private:
     std::unique_ptr<gl::GraphicalLibrary> gui;
     std::unique_ptr<NetworkManager> networkManager;
+
+    std::map<std::string, gl::AnimatedSprite> animatedSprites;
 
     Registry registry;
     Sync sync;

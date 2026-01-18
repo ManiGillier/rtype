@@ -16,3 +16,4 @@ rtype.cfg
 account_db.*
 /logs
 /docs
+/output

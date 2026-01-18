@@ -22,6 +22,7 @@
 #include <network/packets/impl/SpawnStraightMovingEntityPacket.hpp>
 #include <network/packets/impl/ClientInputsPacket.hpp>
 #include <network/packets/impl/StartGamePacket.hpp>
+#include <network/packets/impl/NewEnemyPacket.hpp>
 
 class Game : public State {
 public:
@@ -35,7 +36,7 @@ public:
     auto newPlayers(std::vector<PlayerLink> data) -> void;
     auto newPlayer(std::string name, std::size_t player_id,
                    std::size_t laser_id) -> void;
-    auto newEnemy(std::size_t enemy_id) -> void;
+    auto newEnemy(std::size_t enemy_id, EnemyType type) -> void;
     auto newBullet(std::vector<StraightMovingEntity>) -> void;
     auto destroyEntities(std::vector<uint16_t> ids) -> void;
     auto despawnEntity(std::size_t id) -> void;

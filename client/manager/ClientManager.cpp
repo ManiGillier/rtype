@@ -31,10 +31,67 @@ ClientManager::ClientManager()
 
     this->gui->registerTexture("client/assets/background.jpg", "background");
     this->gui->registerTexture("client/assets/heart.png", "heart");
+    this->gui->registerTexture("client/assets/boss.png", "boss");
+    this->gui->registerTexture("client/assets/player.png", "player");
+    this->gui->registerTexture("client/assets/enemy_alan.png", "enemy");
+    this->gui->registerTexture("client/assets/enemy_shot.png", "shot");
     this->gui->registerSound("client/assets/laser.mp3", "laser");
     this->gui->registerSound("client/assets/new_player.mp3", "new_player");
     this->gui->registerSound("client/assets/despawn_player.mp3",
                              "despawn_player");
+
+    this->animatedSprites["boss"] = {
+        .name = "boss",
+        .verticalChoices = 1,
+        .animationSteps = 1,
+        .finalHeight = 10,
+        .pos = { 0, 0 },
+        .rotation = 0.0,
+        .animationSpeed = 1,
+
+        .verticalIndex = 0,
+        .animationCurrentStep = 0,
+        .timeUntilNextStep = 0
+    };
+    this->animatedSprites["player"] = {
+        .name = "player",
+        .verticalChoices = 3,
+        .animationSteps = 1,
+        .finalHeight = 10,
+        .pos = { 0, 0 },
+        .rotation = 0.0,
+        .animationSpeed = 1,
+
+        .verticalIndex = 0,
+        .animationCurrentStep = 0,
+        .timeUntilNextStep = 0
+    };
+    this->animatedSprites["enemy"] = {
+        .name = "enemy",
+        .verticalChoices = 2,
+        .animationSteps = 3,
+        .finalHeight = 10,
+        .pos = { 0, 0 },
+        .rotation = 0.0,
+        .animationSpeed = 3,
+
+        .verticalIndex = 0,
+        .animationCurrentStep = 0,
+        .timeUntilNextStep = 0
+    };
+    this->animatedSprites["shot"] = {
+        .name = "shot",
+        .verticalChoices = 2,
+        .animationSteps = 2,
+        .finalHeight = 10,
+        .pos = { 0, 0 },
+        .rotation = 0.0,
+        .animationSpeed = 5,
+
+        .verticalIndex = 0,
+        .animationCurrentStep = 0,
+        .timeUntilNextStep = 0
+    };
 
     this->gui->registerEvent("start_game", gl::Key::SPACE);
     this->gui->registerEvent("shoot", gl::Key::SPACE);
@@ -42,6 +99,12 @@ ClientManager::ClientManager()
     this->gui->registerEvent("move_right", gl::Key::ARROW_RIGHT);
     this->gui->registerEvent("move_up", gl::Key::ARROW_UP);
     this->gui->registerEvent("move_down", gl::Key::ARROW_DOWN);
+}
+
+auto ClientManager::getAnimatedSpriteTemplate(std::string name)
+-> gl::AnimatedSprite
+{
+    return this->animatedSprites.at(name);
 }
 
 /*
