@@ -10,6 +10,7 @@
 #include "network/logger/Logger.hpp"
 #include "server/network/executor/GameStartExecutor.hpp"
 #include "server/network/executor/ClientInputsExecutor.hpp"
+#include "server/network/executor/TextChatStringExecutor.hpp"
 #include "server/network/server/RTypeServer.hpp"
 #include <iostream>
 #include <fstream>
@@ -91,6 +92,8 @@ void RType::initExecutor(RTypeServer &server)
         std::make_unique<JoinOrCreatePublicLobbyExecutor>(server));
     server.getPacketListener().addExecutor(
             std::make_unique<ScoreExecutor>(server));
+    server.getPacketListener().addExecutor(
+            std::make_unique<TextChatStringExecutor>(server));
 }
 
 void RType::networkLoop()
