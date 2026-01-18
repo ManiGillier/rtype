@@ -19,16 +19,16 @@ auto renderHealth([[maybe_unused]] Registry &r,
     int const WINDOW_HEIGHT = gl.get_window_size().y;
 
     int const HEART_WIDTH = 50;
-    int const SPACING = 20;
+    int const SPACING = 10;
 
-    int const POS_Y = WINDOW_HEIGHT - 100;
+    int const POS_Y = WINDOW_HEIGHT - HEART_WIDTH - 10;
     int const START_X = WINDOW_WIDTH - (SPACING + HEART_WIDTH) * (MAX_HEALTH + 1);
 
     gl::AnimatedSprite sprite = {
         .name = "heart",
         .verticalChoices = 2,
         .animationSteps = 1,
-        .finalHeight = HEART_WIDTH * 2,
+        .finalHeight = HEART_WIDTH,
         .pos = { START_X, POS_Y },
         .rotation = 0.0,
         .animationSpeed = 0,
