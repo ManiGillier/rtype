@@ -27,6 +27,9 @@ release:
 server:
 	$(call build,$(DEBUG),ON,OFF,OFF)
 
+server-release:
+	$(call build,$(RELEASE),ON,OFF,OFF)
+
 client:
 	$(call build,$(DEBUG),OFF,ON,OFF)
 

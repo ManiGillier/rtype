@@ -1,0 +1,12 @@
+services:
+  server:
+    build: .
+    ports:
+      - "4242:4242"
+    volumes:
+      - "./account_db.db3:/home/mani/rtype/account_db.db3:Z"
+      - "./account_db.db3-shm:/home/mani/rtype/account_db.db3-shm:Z"
+      - "./account_db.db3-wal:/home/mani/rtype/account_db.db3-wal:Z"
+      - "./server/config.cfg:/home/mani/rtype/server/config.cfg:Z"
+      - "./rtype.cfg:/home/mani/rtype/rtype.cfg:Z"
+    restart: always
