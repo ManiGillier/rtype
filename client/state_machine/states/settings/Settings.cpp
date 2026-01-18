@@ -12,6 +12,8 @@
 
 #include "gui/SettingsScene.hpp"
 
+#include "client/state_machine/states/menu/Menu.hpp"
+
 Settings::Settings(ClientManager &cm, Registry &r, Sync &s)
     : State(cm, r, s)
 {}
@@ -21,7 +23,7 @@ auto Settings::init_systems() -> void
     std::cout << "Init systems" << std::endl;
 
     this->guiScene =
-        std::make_unique<SettingsScene>(this->getGraphicalLibrary());
+        std::make_unique<SettingsScene>(this->getGraphicalLibrary(), *this);
     this->guiScene->init();
 
     this->registry.reset_update_systems();
@@ -47,4 +49,9 @@ auto Settings::init_systems() -> void
 auto Settings::init_entities() -> void
 {
     std::cout << "Init entities" << std::endl;
+}
+
+auto Settings::toMenu() -> void
+{
+    this->change_state<Menu>();
 }

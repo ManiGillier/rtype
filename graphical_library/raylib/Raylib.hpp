@@ -62,8 +62,10 @@ public:
     auto bindKey(std::string eventName, gl::Key key) -> void;
     auto isEventStart(std::string eventName) -> bool;
     auto isEventActive(std::string eventName) -> bool;
-protected:
+    auto getEventKey(std::string eventName) -> gl::Key;
     auto convertKey(gl::Key key) -> int;
+    auto convertKey(int key) -> gl::Key;
+protected:
     auto isKeyPressed(gl::Key key) -> bool;
     auto isKeyDown(gl::Key key) -> bool;
 private:
@@ -76,6 +78,7 @@ private:
     std::map<std::string, gl::Key> keybinds;
 
     const std::map<gl::Key, int> keymap;
+    std::map<int, gl::Key> keymap_rev;
 };
 
 #endif // RAYLIB_H_

@@ -9,6 +9,7 @@
 #define CLIENT_KEYBINDSELECT_HPP
 
 #include "Color.hpp"
+#include "Key.hpp"
 #include <string>
 
 namespace gl {
@@ -19,7 +20,7 @@ namespace gl {
         virtual auto update() -> void = 0;
 
         virtual auto onKeybindSet() -> void = 0;
-        virtual auto getKey() -> int = 0;
+        virtual auto getKey() -> Key = 0;
     protected:
         int x;
         int y;
@@ -28,7 +29,8 @@ namespace gl {
         Color idleColor;
         Color selectedColor;
 
-        int key;
+        std::string keybind;
+        gl::Key key = UNDEFINED;
 
         Color textColor = gl::BLACK;
 
