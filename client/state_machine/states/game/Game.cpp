@@ -71,6 +71,7 @@ auto Game::init_systems() -> void
     this->registry.register_component<PlayerId>();
     this->registry.register_component<TextureComp>();
     this->registry.register_component<StraightMovingComp>();
+    this->registry.register_component<gl::AnimatedSprite>();
 
     this->registry.add_render_system<HorizontalTiling, TextureComp>
         (animateTiling, std::ref(this->clientManager.getGui()));
