@@ -16,7 +16,14 @@ public:
 
     auto init_systems() -> void;
     auto init_entities() -> void;
+
+    auto joinRandomLobby() -> void;
+    auto createPrivateLobby() -> void;
+    auto joinCodeLobby() -> void;
+    auto setLobbyCode(std::string code) -> void;
+    auto getLobbyCode() -> std::string;
 private:
+    std::string lobbyCode;
 };
 
 #endif /* CLIENT_MENU_STATE_HPP */

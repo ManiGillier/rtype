@@ -13,6 +13,8 @@
 #include <graphical_library/raylib/buttons/Button.hpp>
 #include <graphical_library/raylib/inputbox/InputBox.hpp>
 
+#include "../Menu.hpp"
+
 class PlayBox : public Box
 {
 public:
@@ -46,7 +48,7 @@ public:
 class JoinRandomLobby : public Button
 {
 public:
-    JoinRandomLobby() : Button()
+    JoinRandomLobby(Menu &menu) : Button(), menu(menu)
     {
         this->x = 140;
         this->y = 380;
@@ -61,12 +63,19 @@ public:
 
         this->text = "Join public lobby";
     }
+
+    auto onClick() -> void
+    {
+        this->menu.joinRandomLobby();
+    }
+private:
+    Menu &menu;
 };
 
 class CreatePrivateLobby : public Button
 {
 public:
-    CreatePrivateLobby() : Button()
+    CreatePrivateLobby(Menu &menu) : Button(), menu(menu)
     {
         this->x = 140;
         this->y = 460;
@@ -81,12 +90,19 @@ public:
 
         this->text = "Create private lobby";
     }
+
+    auto onClick() -> void
+    {
+        this->menu.createPrivateLobby();
+    }
+private:
+    Menu &menu;
 };
 
 class LobbyCode : public InputBox
 {
 public:
-    LobbyCode() : InputBox()
+    LobbyCode(Menu &menu) : InputBox(), menu(menu)
     {
         this->x = 140;
         this->y = 540;
@@ -100,12 +116,25 @@ public:
 
         this->text = "";
     }
+
+    inline auto update() -> void
+    {
+        this->text = this->menu.getLobbyCode();
+        InputBox::update();
+    }
+
+    auto onTextChange() -> void
+    {
+        this->menu.setLobbyCode(this->getText());
+    }
+private:
+    Menu &menu;
 };
 
 class JoinLobby : public Button
 {
 public:
-    JoinLobby() : Button()
+    JoinLobby(Menu &menu) : Button(), menu(menu)
     {
         this->x = 140 + 150;
         this->y = 540;
@@ -120,6 +149,13 @@ public:
 
         this->text = "Join";
     }
+
+    auto onClick() -> void
+    {
+        this->menu.joinCodeLobby();
+    }
+private:
+    Menu &menu;
 };
 
 #endif /* MENU_GUI_PLAY_HPP */

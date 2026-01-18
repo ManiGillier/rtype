@@ -9,10 +9,13 @@
 
 #include "client/network/executor/JoinedLobbyExecutor.hpp"
 #include "gui/Scene.hpp"
-#include "systems/Systems.hpp"
 
 #include <iostream>
 #include <memory>
+
+#include <network/packets/impl/JoinOrCreatePublicLobby.hpp>
+#include <network/packets/impl/JoinLobbyWithCodePacket.hpp>
+#include <network/packets/impl/CreatePrivateLobbyPacket.hpp>
 
 Menu::Menu(ClientManager &cm, Registry &r, Sync &s)
     : State(cm, r, s)
@@ -32,10 +35,6 @@ auto Menu::init_systems() -> void
 
     this->clientManager.getNetworkManager().resetExecutors();
 
-    this->registry.add_global_update_system
-        (menu, std::ref(this->clientManager.getGui()),
-         std::ref(this->clientManager.getNetworkManager()));
-
     this->clientManager.getNetworkManager()
         .addExecutor(std::make_unique<JoinedLobbyExecutor>(*this));
 }
@@ -43,4 +42,32 @@ auto Menu::init_systems() -> void
 auto Menu::init_entities() -> void
 {
     std::cout << "Init entities" << std::endl;
+}
+
+auto Menu::joinRandomLobby() -> void
+{
+    auto packet = create_packet(JoinOrCreatePublicLobbyPacket);
+    this->clientManager.getNetworkManager().sendPacket(packet);
+}
+
+auto Menu::joinCodeLobby() -> void
+{
+    auto packet = create_packet(JoinLobbyWithCodePacket, this->lobbyCode);
+    this->clientManager.getNetworkManager().sendPacket(packet);
+}
+
+auto Menu::createPrivateLobby() -> void
+{
+    auto packet = create_packet(CreatePrivateLobbyPacket);
+    this->clientManager.getNetworkManager().sendPacket(packet);
+}
+
+auto Menu::setLobbyCode(std::string code) -> void
+{
+    this->lobbyCode = code;
+}
+
+auto Menu::getLobbyCode() -> std::string
+{
+    return this->lobbyCode;
 }

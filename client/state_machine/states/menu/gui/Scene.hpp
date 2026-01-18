@@ -27,10 +27,10 @@ public:
 
         this->add<PlayBox>();
         this->add<PlayText>();
-        this->add<JoinRandomLobby>();
-        this->add<CreatePrivateLobby>();
-        this->add<LobbyCode>();
-        this->add<JoinLobby>();
+        this->add<JoinRandomLobby>(menu);
+        this->add<CreatePrivateLobby>(menu);
+        this->add<LobbyCode>(menu);
+        this->add<JoinLobby>(menu);
     }
 private:
     [[maybe_unused]] Menu &menu;
