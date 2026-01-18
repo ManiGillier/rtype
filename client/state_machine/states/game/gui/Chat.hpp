@@ -16,6 +16,7 @@
 
 #include "../Game.hpp"
 
+namespace game {
 class ChatBox : public Box
 {
 public:
@@ -132,5 +133,5 @@ private:
     Game &game;
     int id;
 };
-
+}
 #endif /* GAME_GUI_CHAT_HPP */

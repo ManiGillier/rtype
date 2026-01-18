@@ -48,12 +48,12 @@ public:
         this->add<StartButton>(this->lobby);
         this->add<RoomCode>(this->lobby.getCode());
 
-        this->add<ChatBox>();
-        this->add<ChatText>();
-        this->add<ChatInput>(lobby);
-        this->add<ChatSend>(lobby);
+        this->add<lobby::ChatBox>();
+        this->add<lobby::ChatText>();
+        this->add<lobby::ChatInput>(lobby);
+        this->add<lobby::ChatSend>(lobby);
         for (int i = 0; i < 10; i++)
-            this->add<ChatEntry>(lobby, i);
+            this->add<lobby::ChatEntry>(lobby, i);
     }
 private:
     Lobby &lobby;

@@ -16,6 +16,7 @@
 
 #include "../Lobby.hpp"
 
+namespace lobby {
 int const START_X = 1600 - 400;
 
 class ChatBox : public Box
@@ -134,5 +135,5 @@ private:
     Lobby &lobby;
     int id;
 };
-
+}
 #endif /* LOBBY_GUI_CHAT_HPP */

@@ -22,12 +22,12 @@ public:
 
     auto init() -> void
     {
-        this->add<ChatBox>();
-        this->add<ChatText>();
-        this->add<ChatInput>(game);
-        this->add<ChatSend>(game);
+        this->add<game::ChatBox>();
+        this->add<game::ChatText>();
+        this->add<game::ChatInput>(game);
+        this->add<game::ChatSend>(game);
         for (int i = 0; i < 10; i++)
-            this->add<ChatEntry>(game, i);
+            this->add<game::ChatEntry>(game, i);
      }
 private:
     Game &game;
