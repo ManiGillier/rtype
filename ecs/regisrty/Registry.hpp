@@ -50,7 +50,7 @@ class Registry
 
     template <class Component>
     typename SparseArray<Component>::reference_type
-    add_component(Entity const& to, Component&& c);
+    add_component(Entity const& to, Component c);
 
     template <class Component, typename... Params>
     typename SparseArray<Component>::reference_type
@@ -159,7 +159,7 @@ SparseArray<Component> const& Registry::get_components() const
 
 template <class Component>
 typename SparseArray<Component>::reference_type
-Registry::add_component(Entity const& to, Component&& c)
+Registry::add_component(Entity const& to, Component c)
 {
     auto& components = get_components<Component>();
     size_t id = static_cast<size_t>(to);

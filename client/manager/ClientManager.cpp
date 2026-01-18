@@ -73,7 +73,7 @@ ClientManager::ClientManager()
         .finalHeight = 10,
         .pos = { 0, 0 },
         .rotation = 0.0,
-        .animationSpeed = 1,
+        .animationSpeed = 3,
 
         .verticalIndex = 0,
         .animationCurrentStep = 0,
@@ -81,12 +81,12 @@ ClientManager::ClientManager()
     };
     this->animatedSprites["shot"] = {
         .name = "shot",
-        .verticalChoices = 4,
-        .animationSteps = 1,
+        .verticalChoices = 2,
+        .animationSteps = 2,
         .finalHeight = 10,
         .pos = { 0, 0 },
         .rotation = 0.0,
-        .animationSpeed = 1,
+        .animationSpeed = 5,
 
         .verticalIndex = 0,
         .animationCurrentStep = 0,

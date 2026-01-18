@@ -39,6 +39,7 @@
 
 #include "systems/Systems.hpp"
 #include <cstdint>
+#include <cstdlib>
 #include <memory>
 #include <queue>
 #include <utility>
@@ -79,6 +80,8 @@ auto Game::init_systems() -> void
         (renderHTiledTexture, std::ref(this->clientManager.getGui()));
     this->registry.add_render_system<Position, HitBox, ElementColor>
         (renderSquare, std::ref(this->getGraphicalLibrary()));
+    this->registry.add_render_system<Position, HitBox, gl::AnimatedSprite>
+        (renderAnimatedSprite, std::ref(this->getGraphicalLibrary()));
     this->registry.add_render_system<Laser, Dependence, ElementColor>
         (renderLaser, std::ref(this->getGraphicalLibrary()));
     this->registry.add_render_system<Position, PlayerId>
@@ -140,9 +143,13 @@ auto Game::newPlayer(std::string name, std::size_t player_id,
     this->sync.add(laser.getId(), laser_id);
     r.add_component<Position>(player, {-200, -500});
     r.add_component<HitBox>(player, {20, 20});
-    r.add_component<ElementColor>(player, {gl::WHITE});
+    //r.add_component<ElementColor>(player, {gl::WHITE});
     r.add_component<Health>(player, {0, 0});
     r.add_component<PlayerId>(player, {name});
+    gl::AnimatedSprite playerSprite =
+        this->clientManager.getAnimatedSpriteTemplate("player");
+    playerSprite.verticalIndex = 1;
+    r.add_component<gl::AnimatedSprite>(player, playerSprite);
 
     r.add_component<Dependence>(laser, {player.getId()});
     r.add_component<Laser>(laser, {true, 30});
@@ -161,11 +168,19 @@ auto Game::newEnemy(std::size_t enemy_id, EnemyType type) -> void
     this->sync.add(enemy.getId(), enemy_id);
     r.add_component<Position>(enemy, {-200, -200});
     r.add_component<HitBox>(enemy, {50, 50});
-    gl::Color color = gl::MAGENTA;
 
-    if (type == EnemyType::Boss)
-        color.r = 100;
-    r.add_component<ElementColor>(enemy, {color});
+    gl::AnimatedSprite sprite;
+    switch (type) {
+    case EnemyType::Boss:
+        sprite = this->clientManager.getAnimatedSpriteTemplate("boss");
+        break;
+    case EnemyType::Enemy:
+        sprite = this->clientManager.getAnimatedSpriteTemplate("enemy");
+        sprite.verticalIndex = rand() % 2;
+        break;
+    }
+    r.add_component<gl::AnimatedSprite>(enemy, sprite);
+    //r.add_component<ElementColor>(enemy, {color});
     r.add_component<Health>(enemy, {0, 0});
 }
 
@@ -184,7 +199,7 @@ auto Game::newBullet(std::vector<StraightMovingEntity> entities) -> void
             static_cast<float>(entity.hitbox_x),
             static_cast<float>(entity.hitbox_y)
         });
-        r.add_component<ElementColor>(bullet, {gl::BLUE});
+        //r.add_component<ElementColor>(bullet, {gl::BLUE});
         r.add_component<StraightMovingComp>(bullet, {
             .pos_x_0 = entity.pos_x,
             .pos_y_0 = entity.pos_y,
@@ -192,6 +207,10 @@ auto Game::newBullet(std::vector<StraightMovingEntity> entities) -> void
             .vel_y = entity.vel_y,
             .ms_time = entity.ms_time
         });
+        gl::AnimatedSprite sprite =
+            this->clientManager.getAnimatedSpriteTemplate("shot");
+        sprite.verticalIndex = rand() % 2;
+        r.add_component<gl::AnimatedSprite>(bullet, sprite);
     }
 }
 

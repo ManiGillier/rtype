@@ -298,7 +298,7 @@ auto Raylib::draw(gl::AnimatedSprite &sprite) -> void
     float dt = this->getDeltaTime();
     raylib::Texture rtext = this->textures[sprite.name].second;
     gl::Texture gltext = this->textures[sprite.name].first;
-    gltext.scale = (float) sprite.finalHeight / (float) gltext.size.y
+    gltext.scale = ((float) sprite.finalHeight / (float) gltext.size.y)
         * (float) sprite.verticalChoices;
 
     sprite.timeUntilNextStep -= dt;

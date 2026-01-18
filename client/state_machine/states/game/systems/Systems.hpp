@@ -91,4 +91,11 @@ auto renderPacketLoss([[maybe_unused]] Registry &r,
     NetworkManager &nm
 ) -> void;
 
+auto renderAnimatedSprite([[maybe_unused]] Registry &reg,
+    containers::indexed_zipper<SparseArray<Position>,
+                               SparseArray<HitBox>,
+                               SparseArray<gl::AnimatedSprite>> zip,
+                  gl::GraphicalLibrary &gl)
+-> void;
+
 #endif /* RENDER_SYSTEMS_HPP */
