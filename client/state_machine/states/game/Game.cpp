@@ -30,7 +30,7 @@
 #include "client/network/executor/LinkPlayersExecutor.hpp"
 #include "client/network/executor/DestroyEntityExecutor.hpp"
 #include "client/network/executor/PlayerHitExecutor.hpp"
-//#include "client/network/executor/TextChatStringExecutorGame.hpp"
+#include "client/network/executor/TextChatStringExecutorGame.hpp"
 
 #include "network/packets/impl/ClientInputsPacket.hpp"
 #include "network/packets/impl/TextChatStringPacket.hpp"
@@ -119,6 +119,7 @@ auto Game::init_systems() -> void
     nm.addExecutor(std::make_unique<LinkPlayersExecutor>(*this));
     nm.addExecutor(std::make_unique<DestroyEntityExecutor>(*this));
     nm.addExecutor(std::make_unique<PlayerHitExecutor>(*this));
+    nm.addExecutor(std::make_unique<TextChatStringExecutorGame>(*this));
 }
 
 auto Game::init_entities() -> void {}
