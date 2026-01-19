@@ -99,7 +99,7 @@ public:
             this->text = "";
             return;
         }
-        this->text = std::to_string(this->id) + ". " + score;
+        this->text = std::to_string(this->id + 1) + ". " + score;
     }
 private:
     Menu &menu;
