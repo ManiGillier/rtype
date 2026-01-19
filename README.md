@@ -11,7 +11,7 @@ We also have a custom ECS implementation, great for showing a loooot of bullets 
 
 Play with your friends !
 
-![Screenshot](screenshot.png)
+![Screenshot](./screenshot.png)
 
 ## Documentation
 
