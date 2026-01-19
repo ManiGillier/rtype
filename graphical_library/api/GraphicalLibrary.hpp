@@ -71,6 +71,9 @@ namespace gl {
         virtual auto isEventActive(std::string eventName) -> bool = 0;
         virtual auto convertKey(Key key) -> int = 0;
         virtual auto convertKey(int key) -> Key = 0;
+
+        virtual auto setGrayscale(bool value) -> void = 0;
+        virtual auto getGrayscale() -> bool = 0;
     };
 }
 

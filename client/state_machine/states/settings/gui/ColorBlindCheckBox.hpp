@@ -11,11 +11,13 @@
 #include "graphical_library/api/Color.hpp"
 #include <graphical_library/raylib/checkbox/Checkbox.hpp>
 
+#include <graphical_library/api/GraphicalLibrary.hpp>
+
 class ColorBindMode : public Checkbox
 {
 public:
-    ColorBindMode()
-    : Checkbox()
+    ColorBindMode(gl::GraphicalLibrary &gl)
+    : Checkbox(), gl(gl)
     {
         this->x = 100;
         this->y = 230;
@@ -27,6 +29,21 @@ public:
         this->textColor = {255, 255, 255, 255};
         this->size = 75;
     }
+
+    inline auto update() -> void {
+        this->checked = gl.getGrayscale();
+        Checkbox::update();
+    }
+
+    auto onCheck() -> void {
+        this->gl.setGrayscale(true);
+    }
+
+    auto onUncheck() -> void {
+        this->gl.setGrayscale(false);
+    }
+private:
+    gl::GraphicalLibrary &gl;
 };
 
 #endif /* COLORBIND_HPP */

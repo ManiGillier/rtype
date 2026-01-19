@@ -34,7 +34,7 @@ public:
 
     auto init() -> void
     {
-        this->add<ColorBindMode>();
+        this->add<ColorBindMode>(this->gl);
         // this->add<DeafMode>();
         this->add<FireText>();
         this->add<FireInput>(this->gl);

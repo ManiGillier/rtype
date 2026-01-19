@@ -6,6 +6,7 @@
 */
 
 #include "Raylib.hpp"
+#include "shader/Shader.hpp"
 #include <cstdint>
 #include <iostream>
 #include <memory>
@@ -57,10 +58,13 @@ auto Raylib::init() -> void
     raylib::InitWindow(1600, 900, "TODO: Change title");
     raylib::SetTargetFPS(60);
     raylib::InitAudioDevice();
+    this->grayscaleShader = std::make_unique<Shader>();
+    this->grayscaleShader->load("graphical_library/raylib/assets/grayscale.fs");
 }
 
 auto Raylib::deinit() -> void
 {
+    this->grayscaleShader->unload();
     raylib::CloseWindow();
     raylib::CloseAudioDevice();
 }
@@ -73,6 +77,8 @@ auto Raylib::should_close() -> bool
 auto Raylib::start_new_frame(gl::Color color) -> void
 {
     raylib::BeginDrawing();
+    if (this->isGrayscale)
+        this->grayscaleShader->start();
     raylib::ClearBackground(raylib::Color {
         color.r,
         color.g,
@@ -83,6 +89,7 @@ auto Raylib::start_new_frame(gl::Color color) -> void
 
 auto Raylib::end_frame() -> void
 {
+    this->grayscaleShader->end();
     raylib::EndDrawing();
 }
 
@@ -330,3 +337,14 @@ auto Raylib::getEventKey(std::string eventName) -> gl::Key
         return gl::Key::UNDEFINED;
     return this->keybinds.at(eventName);
 }
+
+auto Raylib::setGrayscale(bool value) -> void
+{
+    this->isGrayscale = value;
+}
+
+auto Raylib::getGrayscale() -> bool
+{
+    return this->isGrayscale;
+}
+

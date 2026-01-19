@@ -8,8 +8,10 @@
 #ifndef RAYLIB_H_
 #define RAYLIB_H_
 
+#include "shader/IShader.hpp"
 #include <filesystem>
 #include <graphical_library/api/GraphicalLibrary.hpp>
+#include <memory>
 #include <queue>
 #include <map>
 #include <string>
@@ -65,10 +67,14 @@ public:
     auto getEventKey(std::string eventName) -> gl::Key;
     auto convertKey(gl::Key key) -> int;
     auto convertKey(int key) -> gl::Key;
+    auto setGrayscale(bool value) -> void;
+    auto getGrayscale() -> bool;
 protected:
     auto isKeyPressed(gl::Key key) -> bool;
     auto isKeyDown(gl::Key key) -> bool;
 private:
+    std::unique_ptr<IShader> grayscaleShader;
+    bool isGrayscale = false;
     std::queue<std::pair<std::string, std::filesystem::path>> texturesToLoad;
     std::map<std::string, std::pair<gl::Texture, raylib::Texture>> textures;
 
