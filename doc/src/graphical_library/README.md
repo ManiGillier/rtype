@@ -224,5 +224,3 @@ auto Menu::init_systems() -> void
     this->clientManager.getNetworkManager().resetExecutors();
 }
 ```
-
-SOON tm
