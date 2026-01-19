@@ -41,7 +41,7 @@
       </address>
     </author>
 
-    <date year="2026" month="January" day="18"/>
+    <date year="2026" month="January" day="19"/>
 
     <area>General</area>
     
@@ -225,7 +225,7 @@ A program receiving a string of more that 256 characters <bcp14>SHOULD</bcp14> d
 - A client just connected over TCP and UDP</t>
 
 <t>This packet <bcp14>MUST</bcp14> have the following data:<br />
-- Index:0x11<br />
+- Index:0x01<br />
 - Data description:<br />
 &gt;  - Unsigned 32 bits integer: A Unique User Identifier, linked to the client.</t>
 
@@ -242,7 +242,7 @@ The client <bcp14>MUST</bcp14> answer to this packet with the Client Authentific
 - Be sent by the client to the server.</t>
 
 <t>This packet <bcp14>MUST</bcp14> have the following data:<br />
-- Index:0x10<br />
+- Index:0x02<br />
 - Data description:<br />
 &gt;  - Unsigned 32 bits integer: the "UUID" of the Server Authentification packet.</t>
 
@@ -258,7 +258,7 @@ The server <bcp14>SHOULD</bcp14> answer this packet with the Authentified packet
 - Be sent by the server to the client.</t>
 
 <t>This packet <bcp14>MUST</bcp14> have the following data:<br />
-- Index:0x12<br />
+- Index:0x03<br />
 - Data description: None</t>
 
 <t>No other than the three authentification packets <bcp14>SHOULD</bcp14> be exchanged between a client and the server until the client is considered Authentified and received this packet.</t>
@@ -272,7 +272,7 @@ The server <bcp14>SHOULD</bcp14> answer this packet with the Authentified packet
 - Be sent over TCP.</t>
 
 <t>This packet <bcp14>MUST</bcp14> have the following data:<br />
-- Index:0x13<br />
+- Index:0x04<br />
 - Data description:<br />
 &gt;  - Unsigned 4 bits integer: The "difficulty" value of the game configuration.
 &gt;  - Unsigned 4 bits integer: The "lives" value of the game configuration.</t>
@@ -293,6 +293,28 @@ The server <bcp14>SHOULD</bcp14> discard this packet if it doesn't authorize ope
 <t>The lives in the game configuration <bcp14>SHOULD</bcp14> BE used by a client to determine how much lives he can loose before being considered dead. This <bcp14>SHOULD</bcp14> only be used to inform the player, but not inforce any dead status.</t>
 
 </section>
+<section anchor="lobby-config-packet"><name>Lobby Config packet</name>
+
+<t>This packet is bidirectional.</t>
+
+<t>This packet <bcp14>MUST</bcp14>:<br />
+- Be sent over TCP.</t>
+
+<t>This packet <bcp14>MUST</bcp14> have the following data:<br />
+- Index:0x05<br />
+- Data description:<br />
+&gt;  - Unsigned 4 bits integer: The "difficulty" value of the game configuration.
+&gt;  - Unsigned 4 bits integer: The "lives" value of the game configuration.</t>
+
+<t>This packet <bcp14>SHOULD</bcp14> be sent by the client to the server when:<br />
+- The client modifies it's configuration inside a lobby.</t>
+
+<t>This packet <bcp14>SHOULD</bcp14> be sent by the server to all of the authentified clients in a lobby when:<br />
+- A client from the same lobby sent this very same packet to update the general configuration.</t>
+
+<t>The server <bcp14>SHOULD</bcp14> discard this packet when sent by a player already inside of a game.</t>
+
+</section>
 <section anchor="new-player"><name>New Player</name>
 
 <t>This packet <bcp14>MUST</bcp14>:<br />
@@ -302,7 +324,7 @@ The server <bcp14>SHOULD</bcp14> discard this packet if it doesn't authorize ope
 <t>This packet <bcp14>SHOULD</bcp14> be sent whenever a new client joins or leave a lobby, to all client already in the lobby, and the client joining itself.</t>
 
 <t>This packet <bcp14>MUST</bcp14> have the following data:<br />
-- Index:0x03<br />
+- Index:0x06<br />
 - Data description:<br />
 &gt;  - A list of:<br />
 &gt;    - A string: A player username.</t>
@@ -321,7 +343,7 @@ The server <bcp14>SHOULD</bcp14> discard this packet if it doesn't authorize ope
 <t>This packet <bcp14>SHOULD</bcp14> be sent by the server to notify the instantiation of a new enemy in the game.</t>
 
 <t>This packet <bcp14>MUST</bcp14> have the following data:<br />
-- Index:0x05<br />
+- Index:0x07<br />
 - Data description:<br />
 &gt;  - Unsigned 64 bits integer: The enemy unique identifier.<br />
 &gt;  - Signed 32 bits integer: The enemy type.</t>
@@ -341,7 +363,7 @@ The server <bcp14>SHOULD</bcp14> discard this packet if it doesn't authorize ope
 This packet CAN be used by the client to play some special behaviour in case of a hit.</t>
 
 <t>This packet <bcp14>MUST</bcp14> have the following data:<br />
-- Index:0x06<br />
+- Index:0x08<br />
 - Data description: None</t>
 
 </section>
@@ -356,7 +378,7 @@ It <bcp14>MAY</bcp14> be sent right after sending the instantiating packet of an
 It <bcp14>MAY</bcp14> be sent before the sending of an instantiating packet for the said entity.</t>
 
 <t>This packet <bcp14>MUST</bcp14> have the following data:<br />
-- Index:0x0E<br />
+- Index:0x09<br />
 - Data description:<br />
 &gt;  - Unsigned 64 bits integer: The entity unique identifier.<br />
 &gt;  - 32 bits Floating point number [IEEE754]: The width of the hitbox in unit.<br />
@@ -373,7 +395,7 @@ It <bcp14>MAY</bcp14> be sent before the sending of an instantiating packet for 
 The server <bcp14>SHOULD</bcp14> provide the right state.</t>
 
 <t>This packet <bcp14>MUST</bcp14> have the following data:<br />
-- Index:0x0B<br />
+- Index:0x0A<br />
 - Data description:<br />
 &gt;  - Unsigned 8 bits integer: The state of the game that <bcp14>SHOULD</bcp14> be represented by one of those values:<br />
 &gt;    - Win: 1.<br />
@@ -389,7 +411,7 @@ The server <bcp14>SHOULD</bcp14> provide the right state.</t>
 <t>This packet CAN be sent by the server to inform players of the laser status of all of the players in the game.</t>
 
 <t>This packet <bcp14>MUST</bcp14> have the following data:<br />
-- Index:0x0F<br />
+- Index:0x0B<br />
 - Data description:<br />
 &gt;  - A list of:<br />
 &gt;    - Unsigned 32 bits integer: The laser entity unique identifier<br />
@@ -429,7 +451,7 @@ The server <bcp14>SHOULD</bcp14> provide the right state.</t>
 <t>This packet <bcp14>SHOULD</bcp14> be sent by a client to the server to inform the server of the user inputs, at a regular interval.</t>
 
 <t>This packet <bcp14>MUST</bcp14> have the following data:
-- Index:0x02<br />
+- Index:0x0D<br />
 - Data description:<br />
 &gt;  - 1 bit: Boolean for the LEFT movement key state.<br />
 &gt;  - 1 bit: Boolean for the RIGHT movement key state.<br />
@@ -450,7 +472,7 @@ The server <bcp14>SHOULD</bcp14> provide the right state.</t>
 <t>This packet informs the server that a client wish to create a new private lobby.</t>
 
 <t>This packet <bcp14>MUST</bcp14> have the following data:<br />
-- Index:<br />
+- Index:0x0E<br />
 - Data description: None.</t>
 
 </section>
@@ -463,7 +485,7 @@ The server <bcp14>SHOULD</bcp14> provide the right state.</t>
 <t>This packet informs all clients in a game that one or more entities <bcp14>SHOULD</bcp14> be destroyed.</t>
 
 <t>This packet <bcp14>MUST</bcp14> have the following data:<br />
-- Index:<br />
+- Index:0x0F<br />
 - Data description:<br />
 &gt;  - A list of:<br />
 &gt;    - Unsigned 16 bits integer: The entity unique identifier.</t>
@@ -478,7 +500,7 @@ The server <bcp14>SHOULD</bcp14> provide the right state.</t>
 <t>This packet informs a client that he joined a lobby, and provides said lobby code.</t>
 
 <t>This packet <bcp14>MUST</bcp14> have the following data:<br />
-- Index:<br />
+- Index:0x10<br />
 - Data description:<br />
 &gt;  - String: The lobby code</t>
 
@@ -495,7 +517,7 @@ The server <bcp14>SHOULD</bcp14> provide the right state.</t>
 If the code is incorrect, the server <bcp14>SHOULD</bcp14> discard it.</t>
 
 <t>This packet <bcp14>MUST</bcp14> have the following data:<br />
-- Index:<br />
+- Index:0x11<br />
 - Data description:<br />
 &gt;  - String: The lobby code</t>
 
@@ -511,7 +533,7 @@ If the code is incorrect, the server <bcp14>SHOULD</bcp14> discard it.</t>
 <t>If no public lobby exist, the server <bcp14>MUST</bcp14> create a new one.</t>
 
 <t>This packet <bcp14>MUST</bcp14> have the following data:<br />
-- Index:<br />
+- Index:0x12<br />
 - Data description: None.</t>
 
 </section>
@@ -526,7 +548,7 @@ If the code is incorrect, the server <bcp14>SHOULD</bcp14> discard it.</t>
 <t>The ADMIN state CAN be defined as a reboot of the computer of the client.</t>
 
 <t>This packet <bcp14>MUST</bcp14> have the following data:<br />
-- Index:<br />
+- Index:0x13<br />
 - Data description: None.</t>
 
 </section>
@@ -539,7 +561,7 @@ If the code is incorrect, the server <bcp14>SHOULD</bcp14> discard it.</t>
 <t>This packet is sent when a game is started, to link player usernames to their id and laser id.</t>
 
 <t>This packet <bcp14>MUST</bcp14> have the following data:<br />
-- Index:<br />
+- Index:0x14<br />
 - Data description:<br />
 &gt;  - A list of:<br />
 &gt;    - String: The username of a player.<br />
@@ -558,7 +580,7 @@ If the code is incorrect, the server <bcp14>SHOULD</bcp14> discard it.</t>
 <t>This packet is sent when a client want to login to the server with a username and password.</t>
 
 <t>This packet <bcp14>MUST</bcp14> have the following data:<br />
-- Index:<br />
+- Index:0x15<br />
 - Data description:<br />
 &gt;  - String: The player username.<br />
 &gt;  - String: The player password.</t>
@@ -580,7 +602,7 @@ If the code is incorrect, the server <bcp14>SHOULD</bcp14> discard it.</t>
 It indicates the login status after login/register.</t>
 
 <t>This packet <bcp14>MUST</bcp14> have the following data:<br />
-- Index:<br />
+- Index:0x16<br />
 - Data description:<br />
 &gt;  - Unsigned 8 bits integer : Boolean successful indicator.<br />
 &gt;    - Only if False:<br />
@@ -614,7 +636,7 @@ If the passkey given is incorrect, the server <bcp14>SHOULD</bcp14> discard the 
 The server CAN, in this case, send a RCON Response with an error message.</t>
 
 <t>This packet <bcp14>MUST</bcp14> have the following data:<br />
-- Index:<br />
+- Index:0x17<br />
 - Data description:<br />
 &gt;  - String: The RCON Passkey.<br />
 &gt;  - Unsigned 8 bits integer: The RCON command type.<br />
@@ -640,7 +662,7 @@ The server CAN, in this case, send a RCON Response with an error message.</t>
 <t>The server CAN write anything in the response. He CAN answer inappropriately.</t>
 
 <t>This packet <bcp14>MUST</bcp14> have the following data:<br />
-- Index:<br />
+- Index:0x18<br />
 - Data description:<br />
 &gt;  - A list of:<br />
 &gt;    - String: A line of the RCON Response.</t>
@@ -655,7 +677,7 @@ The server CAN, in this case, send a RCON Response with an error message.</t>
 <t>This packet is sent when a client want to create a new account to the server with a username and password.</t>
 
 <t>This packet <bcp14>MUST</bcp14> have the following data:<br />
-- Index:<br />
+- Index:0x19<br />
 - Data description:<br />
 &gt;  - String: The player username.<br />
 &gt;  - String: The player password.</t>
@@ -682,7 +704,7 @@ The server CAN, in this case, send a RCON Response with an error message.</t>
 <t>This packet is sent when a client want to get the scoreboard values from the server.</t>
 
 <t>This packet <bcp14>MUST</bcp14> have the following data:<br />
-- Index:<br />
+- Index:0x1A<br />
 - Data description:<br />
 &gt;  - Unsigned 8 bits integer: Value 0 signifying a request from the client.</t>
 
@@ -698,7 +720,7 @@ The server CAN, in this case, send a RCON Response with an error message.</t>
 <t>This packet is sent when the server answers to a request to get the scoreboard values from the player.</t>
 
 <t>This packet <bcp14>MUST</bcp14> have the following data:<br />
-- Index:<br />
+- Index:0x1A<br />
 - Data description:<br />
 &gt;  - Unsigned 8 bits integer: Value 1 signifying a response from the server.<br />
 &gt;  - A list of:<br />
@@ -720,7 +742,7 @@ The server CAN, in this case, send a RCON Response with an error message.</t>
 <t>This packet is sent to all players in a game to describe the position and velocity of new bullets.</t>
 
 <t>This packet <bcp14>MUST</bcp14> have the following data:<br />
-- Index:<br />
+- Index:0x1B<br />
 - Data description:<br />
 &gt;  - A list of:<br />
 &gt;    - Unsigend 16 bits integer: The entity id.<br />
@@ -741,7 +763,7 @@ The server CAN, in this case, send a RCON Response with an error message.</t>
 - Be sent over TCP.</t>
 
 <t>This packet <bcp14>MUST</bcp14> have the following data:<br />
-- Index:<br />
+- Index:0x1C<br />
 - Data description:<br />
 &gt;  - String: The text message</t>
 
@@ -762,7 +784,7 @@ The server CAN prefix the message with the name of the player who sent the initi
 <t>The time sent <bcp14>MUST</bcp14> be the time spent from the start of the game in milliseconds.</t>
 
 <t>This packet <bcp14>MUST</bcp14> have the following data:<br />
-- Index:<br />
+- Index:0x1D<br />
 - Data description:<br />
 &gt;  - Unsigned 32 bits integer: The time data</t>
 
@@ -851,139 +873,142 @@ Rendering decisions CAN be made by the client, but the impact <bcp14>MUST</bcp14
   </back>
 
 <!-- ##markdown-source:
-H4sIAAAAAAAAA9U87XIbuZH/5yn65KpLciUxlrNfUaWSkyV5rZwt6fSRra2t
-rStwpkliPQQYACOKm9p3uWe5J7vqbgAzQw5lWrazd39scQZoNPq7G405ODgo
-9MIdQXCNDy+eP//j8xeFD8pU/6Vqa5BfYFGqcAT4sCh8M55r77U1YbXAI9Cm
-wgWaCk0olEN1BN+iQafqIuhQ4xFco6rr1cGt0818MVM1fK/MO6zgytlgS1vD
-mV+gU6ZEX6jx2OH9EVwf3K4WWNTKTI8ATfEMKhXwCF48f/HlweGLg8OvC9WE
-mXVHxQFo44/g7Qi+1XWt0RUARs3xCN4qozsPca50fQRzZfRoKk//HRc6YDkb
-YZPgXI/grIa/KqOCzpCu1UoZbF/QX+eVIzK0gB0PGmF98BMPOsD6QMuggXXe
-juB1g6GD7IOeY3qWcaWHo1mDYQDE6xFc2ekUQwfT183Udp9GQLNmakeL+LgL
-ylg3V0Hf41EBAHBze/r1UaHNpH18cHAAauyDU2UoituZ9lDZspmjCVChL50e
-o4cwQxhro9wKDIalde9gkfjbeKxAGx6jTUC3cBhU0NaAnfBTYTdM1RxhriqE
-8Yqfe6UrEEb7UXFOC060QQ9lrdGEg2APPLp7dKBMBfInPZTXUNr5vDG65LX8
-qOC9zHVV1VgUz+DcBGerpqS3RfHsGVzj3xvtkLbm4Y0y00ZNkfaM8A5XsLSu
-8rD39u7mdm9f/oeLS/77+uw/786vz07p75vXx2/e5D+KOOLm9eXdm9P2r3bm
-yeXbt2cXpzL54vIWeo+KvbfH3+/t8wb3Lq9uzy8vjt/sCTm7rFAOIVgYd0iM
-FShfJB4xC16eXP3Pfx9+Af/4x79cvzp5cXj4x19+iT++Ofz6i19+geUMjaxm
-Tb2KP8MMV4VaLFA5gqLqGkq10EHVfh+UBz+zSwMzdDgqin/7gSjz4xH8aVwu
-Dr/4c3xAG+49TDTrPWSabT7ZmCxEHHg0sEymZu/5GqX7+B5/3/ud6N55+Ke/
-1NogHBx+85c/Fyw9J9YEfAhFcRxYeM8aZ69QGTg3PujQBCRxvz07eW1sbacr
-+O3Z1Tn9/B0T2CFoD4rU5icsQ1GqusYK9kQ39kYALIhTq2oaGCzM1TsEBfOm
-DnpRqxU60aClDjNQMHWoQr0CPV/ULNMkD66cke6Hhln17Bm8tUHfi4Ksa/dS
-eSgJCFa0nKpru4SFw1J7FE3UrMQT62gDRU/dhtV/A9e0PaAVtTUGqyKOLYWe
-oMb2PiKbXYa9R3evcRlRzmsxBaMdSg+JcueBXt2eXMEPZOJ+hH+Fu9Mr+OH6
-1cnXX33zI4wVIUlSH2wgdwXKr0zprLGNJwDFMzjNO/ZiE/Zu2ODsyapem2mN
-tOrUqTk49AtrvB7XzPaZMlWtzRSsQbAuEQKLvRO2VT4zOKCbw94V02gP3h5/
-TzrNNFS0jMNFrUrmZ7KeMkPg7O3DuAliG7RPNDwQF61MSKuk4bvgXhJbykDY
-Byt2mTdOjLKuQkePHS4cesKKBjBvdfBYT2jFY9i7UuU7TOtVKijwwTUsiDCx
-JFoMn4ALMhEJNda1DsRNbUqi2AiYmQU+lDNlpljBGMMS0XQwE06SDAlx2aD9
-3jpwpTUjOIYFYwPJLsEYB+DFybSBi0uotMNyzadAtDlscieqxI+YwzgLfpFF
-36o57rWEFSebFYZJHGZKCJ5lkf1EkqmiwxU7RbIyAl37yCLmvki6/hmrnoJa
-g/vkABxCpScTdOxTBXRRKpMEg9ekOb1FzlQ5S1vr7EFBhM6oE5S5vUdoFvtQ
-2aXZhxongTTE6eksiPDEGSzP84UlXbATULD3Rnl0eyOSr9qOx6skzs04xwVJ
-shTUeq7JlJlmPqbdTSJctqU/WfJrTJSo7idR6ik2uM2iJCJDdiDZqDgIusqw
-Bu22FUyersoSF0HcaAbgwfIcfY8GFtYFGOPEkleP+kRBuRPROs7YHH8PlfaZ
-EcSLFQQKGtlk5Vd5GxGPk+OL3sQshC2EfTbs9Muh8iKX55N2aDvd7xPD8gvy
-IfkdVvtdxZT9vzN2WWM1RTZUEm44VIRIWVpXkQVYiR9zOFUUdiXLE5T40USV
-IfpK/Mr0jSMzMkl+04uqS6HIeTFVXjyOGIrW2xVFth7aQ2O06Di5LlWzbSLS
-oiY1IMvNyhfDWVmbt1s4JBkQj5fDXd4DE7M7LT0WKrXTivg+KDfFdm9RZwTH
-E7Y1yYOMW2zJyYmv0CGZpDFmJQmW7LMm46U8+hh4VxtxZ2+x6KwYd48L5RSz
-XxwSrjrL8BDSGIOw0FgyG49Z1ErU91E9hQ/CU3agogyEEb3XhsxBjQETApk6
-I5ZUMzBE+7RGFMy8Ii+zVDqkgAYmTV3HeQUFQM7pe0xquXC2RE/OCnQYFcd1
-QGc4ZyLC9iFHLVWuYn0y1hys4eX3Af0CS83BR5hZH4lEkQ7FKqO+4LVR/XgF
-E9s4yEmbpdwQigPgaGK1wP0kjhTyWEdh0CgP8JS6uzykK6YdtY0ESe5JplLm
-/7APFVIAog1RYmaXolbk4Je6ronZDlXVzhLfX86QLIzolZnCkrxBmlCrgA4c
-ssspJfJhJ0dz98T2CylGMfKek3/xMaNcJP3Ny3VmCJtfnrEroUlYQeNT7FHh
-hBYHVU+t02E2h4mzc371c63HwHURYmOtx0651UgWcejJb5rp+sbXd9BZlEYK
-+q+0UTWwyYpWKcpc8co6wHukYJafCE/acGm8Chj1IyoVJbktc3iAkP5YpIQe
-QGO8noo2B5wyqaN/znRgJumfCU5cJYp92dL6KYDXCNBfYxRxX6cSmeXbGNGK
-ULJxDFx3UJ3wgnxQX69GQkSS/GROeGBmaxRwUu+OfW53cvgVjHXweUdJfBYO
-J/pBLCUzpWVipBRpljbTHHBF5KMYevx7Q6IB56cxQSG/kQ1112HQErQtyiCz
-GNfWezVFWKAr0QQ1xQgmesBS6hgEiYzsJEtSSwqIgaFYdHwg/9u6EHb1GcsY
-NMU9cF2qmWfirPNd5NRQ9rYOIfqAl2fwXKT/b8ppRZlGQkr/jEVxY+f5CZU2
-7ATu00Aa0crEXK1ou3VTiXdomCx2wv7LTNnTlzNF5St0Eqn0hlFg6DmXsmNK
-vL2gdcOzQWwq2V4B14OWhWHpdAhoUpbbKqhMP1pXlE2KcaamxBYy7XKQ2uKe
-wAsm+4APtOs04+LuzZuOvp8xszuTo2mJ20jR6nYoxRqEbGaytomc5uyRZu0n
-HI9vTs7P4/Y5zX7x/EfmWSZkW64hoHYCcwl2lYEXX37VwTyGGDk3JacqEX3L
-kjQ3rM1NqyTvq6PHeCWIMfvf9NhPGPYF4kO5HJb2g5kcRS+BJgSidSVPwsAk
-9aGpSJmVzNjnINk2FKFy6CYpZspgexKd9rlow9tnIGkjHDdhRlZ6EpPUovhu
-hqYN6dtAX0d62AW/p5IKxaWK7UonHepVCvZjQk6lGtHpNhTs2ruOMfbelppc
-cd8OSmREJO5kTqNUBmo9vDDjZTeIymHPSxwIrxPC0QD2Ia4FrlQUTdyOqP3U
-+NDJMtKCvO+706tNBGGm7nFNjsjZCdxz8t5Hzx8OD/nnKblKCfk4vKVBfwY4
-gLskYX940XNTR3AMd0b/vUG48+jgvBLuEitqzccv/f2KOe2nUeXMMrFnCHd3
-4qbWE2Fl/DLRrt0fJ240TeoQG9LVDd6ebRv0CE+V6SystslwWgWgAPgOJSrj
-kCztfZhC4IN1bckyQodt8HNwSjTaG23KHQXvQ3LXFepE+NatfbioPH+qqLTY
-JyfxfopuCMs9Oj1ZdQpSHYDtdqQkyVFSFhIKT4gcpNmjLtyodYnVQwLWYohV
-xk7Eqvtqd1kqreOS3Xsk9yOty0dw+cUWLl8QGaEoLizYmMkpEeAwc4h8ijaw
-E9+xbZsVUNWtTXZ205ig664QC1+9rpA0p8eVVLWgjLvLxKj9N1TUAip15qzn
-ti8wvaLFB5n6p9L4Dztq0hdrisRVWyqV6rKpw2oP7lXd9KpVLP162jglVYod
-4NX6Hv37Qa1vd81lPWJzOu6sY94rLHWFXgpBxKJuwW2HlTquvC3Dqa5gpEpc
-x5uaoRERlWoTFVorZlkiWb4Vo3UjtRYI9qwJhToJ91yfVjXVLSi3ILGWUHGg
-4PgIXD2haKmy6M1vQjzGpnSXQicJYA0uBWavxNyJjAfAxrHDB+mbgsEV8dBh
-yW88x8fTtCjLV3J2A/PbhC1FaqojRqn4g1z6mTflLALkOp2BmkOImBGPkbbd
-MRQVV4ZYmOIyfOicosJgUymXE2fmi5QTjQ3yqkSuqBEgrg03PtqVC1yCHKJ9
-ouCQq/VRZNMJZeP4TITPHt6nFyRlyEcSzPYUN1pNlX8HNZJpUgJrv79gRxYl
-PZAx/UMuBiXVyHTs9kT79/w99i8nSPGJPJNkjALPqECNp4JoNhiS1SSqxEyI
-N5mOYdKEYfp2Up1mUZMXQ/9eW9Q/QRHz4fd7dJSif5SYM4Pz1ecXmCfZUWOD
-RFik/FSIDDrrvsgUEvZdVR7wljuKwJc7usCvhnyW4NFIdK1zYD1Ks2+2BKLt
-XCpbZ7lpH+UaRDR37RbYPXrqBnt+BKdSHBcbe3F5/fb4DZxdnL39ngqMh2vv
-X17e3ESbIfYCXuvwCRPKgdOZp7C9NboUYc8QZopqsmhgpkOP56nemE6AHisr
-8qmtp1pbPHyAMc7UvZYDhXzSomiRj7EoXz0StQrtX+swtg9wQw7ybkHdfp9P
-DZ+kfh1PFOkXhXDGmKPnuqRPVdjOURifZIOaUBGtDVd6WmymCQ3L51akMmFF
-xBUhlTUGYHcsXAJt48nXAPB0sMV9dbLG003E2ceZCN7gdhuRjMOr2sYtWG1C
-Kpn9cH52dvb1l1/8KNCWugqzPj+I140Rqf1wgDNknm2FyCLLScvl/WeIMB4V
-1O5xz1Yx7Uo9WwwJXtlq0IlfNRzGLpy917GQLmLLB+5PF5KXOwrJNwMysnHW
-LztpFXWtEs2tVZNYIowOoY1QvtPmCA5H7YM3FJoewYvMT+4mgeOSznA/xAZt
-K/B8MGejqX6UsSlYimSpGWeJfFnz22Qrjfwk8cCrDw8JtxecbjPi28zAAJR1
-CXlpbU3dlVXrzHsNIqpMjY09WnUE4IMsQiR0PK4kO+BjAtWYuBRW8r7HGu3h
-7uL07NX5xdkp29+xjbWrwdLKaChpJcveHmR3IuYYT1K7ImVda6w+9pR/ckdU
-e+i33+/3kFNTL4cpqObcAJQ6qVPThxMTwCGS9dL0+Wvox44uek1FFgllO+G8
-kfJPco0H1NNONu6AOnkP5pZ9LUuklhzkCSoDHZ05kd9blGZQa96rNu/xmx8u
-113qhHYBVZbOeqlss3f9nAuIt812ONZez82iCf7JEqZ2K7BvytTwxLUQMPXF
-TOJhMmk647svGuRw2tTcLR/Q3Q/WLbeKUdfubiv3Rrt7SIxobWGK796cvbrl
-vkpuAaC7C+LG3zPt+vzb10+Zd3f1hEmnl99dPGHazevLy9uB4X9gkTxqg2Pm
-38/oLMXknUZfzoTkKPrJ9jFePxmwjyfcL0/dyuQQpMLw5PBwRxEWsfQ9YZ11
-8ISl9jNuIhHkpFjQQ/GJgcEjWV3W5lP0wdlV1PvPk9SpYX+RCDM4WmiU2vEp
-icqmv2V/Jchj9WkJtEvUtNZ49H7zz9T+q2WJ/Di5W6N1r/LAB90/ySpqS+Uz
-0329ZtGfJxXMmHJ4SUr5BZS2emqs+jjFb2KR8jZV/3ipzdNMjrgUJRHrOCUi
-x6d8EplgfE4lb8vwuZrcTnXUZOVDt5Od6zkTXUY8pa1cyS6ku4tjUFvxJQDq
-k+WDz17X52bzzFNLQE/jSqa1dcl2LZpxnTb1f4zksbG3b1cJ5jnFnT3MAR+0
-D5uN8T0DTUb085nlGwzH1Vybq4FD111J+UgT5TZikl9WBo5P355fxFxts/EG
-e+9jVpycbbwFNbY212dic2QOxwZ7eD4F8WKdQJt3Kcn4CBnse7OUtKRTnG0u
-zfeEMV3i4YMN7mi33N+zfgaT7k9oB1qO5GN2+s9zbF0lT2jFxmzGdbSrD4xb
-i65QVx86sVd5kOnD9r97lrvGpTaKyK0oA/k5342VEDOdZzput+/WZ5JQ2al+
-rOfp00SKfsiULZVMrAmF9d4AuUuaGcYeW3lPd6E/u4ceOEjcNibjNMRNuUpY
-rbep6W6djGhD1YGaLslT89cgJEohOtDkoo5c6pCum51AS8dkp9Nhf71nx+FU
-+5DhbWlmSJhEJrEIwbXcm+z1QWQBy28/cWw4HBgkz9mfJgchKoob3fRLm40+
-VfxKFzTd+DSVnPnGk1uaG8ueApAf/T7B+kyRypZqJLR5qm9KuhY0aeqEsu2a
-tkvqb9ATeKVqKj6nmsqaUMuFu5zzNiZC3aTZVimlgI8dJUOK8rhJcrIIGeN0
-JhAnRcerfL70TX9azxeDs1xdn1xe8JcT0D/92FTx1aL3WC9+LB1JpHS8MF2t
-VaZzPzBVUfkCQX/ITDos5EA2X3HojuFmHdZVHssXYLkwQmMyaWNyIHBSE/r6
-+rd8b5auLnzVR0MoQs3YR/yv7xXrcwuxkOg/dPkOfisr/e5IfraHypGMynSG
-vExdf50Rd2bcGyO/B+DUGSt2Y2PFtxOTo+JRKW7sgLvB0AGWKNEJ4ZiTTISG
-7hIqttZUwslfFeC2n9whVfENWe87iUqaIXnMrhlLmHXNYP/6636+y0in3PuJ
-q1Gcow0Vy2oAnaMqAfKdm39CFsRYXMmeRzsdlvXEOLVPRKPzPPI0PziMopQf
-vBDBaY9GkpDkJ18cJQFpn3151IpDxDHZtygLBrHC6qjdW5a397uzPid6TaO9
-V5/MlRHUoZBJpW8RYDsu+ar+eQ1ZTLolwk1pYRYv2ohDFwgjeC0ZTWw61kYt
-Fs4uHN11qD9xHW6HaJzemXxk1aNra+H7wcivG6T2UmS6Ld5s9rP+P49Z19Th
-/0/UKuHFpwtZb0q+aL1bW/h5t2zf/wYS3xdqP2GRb1zn7IzqNnNNNp4uGIqR
-yedQHG+4j2nz+CSCP41e1hNRxpbcm/Q4rJdhPouIb/U9f+O+9OdAr/VkJaWL
-XiAfNm8Zda8QtRFVMpntRUCayheLY5at21CU9544dZOtuED+/OWsHq+6yQ2b
-dS9zExl2414sg/wK3Dtc515Ux3XBekp5p7OzzuBHTriZQv2eYbrMS099T8Pp
-XoBccla1XGaNzniinZf74f1+URWGpAduFmpJuaQ0A0C3D+CJJeanCNLWAhM3
-2cvHHvrtDGSO77G2JdWxqLcBlzBu6hrD0IXIz3haRcr72GlVr0R380iB7iFv
-bscJqw+d8JAptvMKAxMeDcRjs2C/aWK3OW0fxE4tVPSRHhKUObWe0hX72P/k
-Qq9pLt3+YDGPL0ROsqO9pZv6JSmIZLO/9h2s3cMt/kJczMvWvEu3eWqtlNsN
-FsmAU5OLMnKYE1T9Lvfrz9Il8XiaQ+DTaq0tipcZ2juje3HMHiyUC9t7ugYq
-zGutyvGUMSIZ79H5GP4mTKK9UeHj0NxIkeNHLnhsApfr3ZsGHpYzC/kTcPy9
-JFWnifvpItXmwv2vnkSrfEvCbexyJ1nb6P8ZsMDy9Yu2y2zLActa64fMCpQs
-b4WpzYHcm0rfzbGdT6p1W/0y7RIEna9+sS77HBRFWy9PF/0dbSg4mQD6nq3H
-0prq8xj/HSwRH4DwB7S4MZqSgVI2N82/8+7SaZ63NdKNr242PhrQ4lyTo8uA
-nmqbC0v5Mz7wp9QSdXRqwxoV13zSwjvlKfSFtVjR7H5iNjEtfqSKvpap0jcf
-HH0910hxypp4dkOfdOGvxx5fHNNH4vgum3x2Cf7xjJ7+kr5MgnObPk1COUY3
-HqRxI/puKNxg2Thykxuw0psEL3+Y089sU1dMEzWZ0HVlIV4EFGXjnHIgwwpF
-370dq/Jd8b/iCIar7VkAAA==
+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
+Q/G/eIYEMRhdAAA=
 
 -->
 
