@@ -132,4 +132,95 @@ You can instanciate it in a cpp file using the following :
 std::make_unique<Raylib>();
 ```
 
-SOON tm
+## Elements
+
+The library features several graphical utilities such as `Button`, `TextBox`, `InputBox`, `KeybindSelect`, and `CheckBox` which can be created later on by only using a few parameters like the pos, the size, the color and the action the element needs to apply.
+
+## GUI Creation
+
+Using the elements creating new GUIs menu is easier, it can be done by creating a new folder in `client/state_machine/states/` using the GUI's name as folder name.
+Once donc you need to add a .ccp and a .hpp using the GUI's name. then a gui folder containing every elements wanted as .hpp files as well as a file named `[GUI's name]Scene.hpp` holding every initializations like `this->add<Element>()`.
+Then you need to create the scene in your initial hpp and cpp and your GUI is good to go.
+For exemple creating a menu which would have a singular button I would create a folder called menu/ containing :
+### gui/MenuScene.hpp :
+```cpp
+#include <graphical_library/raylib/GuiScene.hpp>
+
+class MenuScene : public GuiScene
+{
+public:
+    MenuScene(gl::GraphicalLibrary &gl)
+    : GuiScene(gl) {}
+
+    auto init() -> void
+    {
+        this->add<MenuButton>();
+    }
+};
+```
+
+### gui/MenuButton.hpp :
+```cpp
+class MenuButton : public Button
+{
+public:
+    MenuButton()
+    : Button()
+    {
+        this->x = 650;
+        this->y = 700;
+        this->width = 300;
+        this->height = 55;
+        this->idleColor = {120, 200, 120, 255};
+        this->hoverColor = {180, 255, 180, 255};
+        this->pressedColor = {80, 160, 80, 255};
+        this->text = "Click me !";
+    }
+    auto onClick() -> void
+    {
+        std::cout << "You clicked me !" << std::endl;
+    }
+};
+
+```
+
+### Menu.hpp :
+```cpp
+#include "client/state_machine/State.hpp"
+
+class Menu : public State {
+public:
+    Menu(ClientManager &cm, Registry &r, Sync &s);
+
+    auto init_systems() -> void;
+    auto init_entities() -> void
+};
+```
+
+### Menu.cpp :
+```cpp
+#include "Menu.hpp"
+#include <iostream>
+#include <memory>
+#include "client/manager/ClientManager.hpp"
+#include "client/state_machine/State.hpp"
+#include "gui/MenuScene.hpp"
+
+Menu::Menu(ClientManager &cm, Registry &r, Sync &s)
+    : State(cm, r, s)
+{}
+
+auto Menu::init_systems() -> void
+{
+    std::cout << "Init systems" << std::endl;
+
+    this->guiScene =
+        std::make_unique<MenuScene>(this->getGraphicalLibrary(), *this);
+    this->guiScene->init();
+
+    this->registry.reset_update_systems();
+    this->registry.reset_render_systems();
+
+    this->clientManager.getNetworkManager().resetExecutors();
+}
+```
