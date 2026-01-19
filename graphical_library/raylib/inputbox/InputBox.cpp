@@ -58,6 +58,10 @@ void InputBox::update()
         this->selected = true;
     if (!overButton && pressed)
         this->selected = false;
+    if (this->selected && raylib::IsKeyPressed(raylib::KEY_ENTER)) {
+        this->selected = false;
+        this->onValidation();
+    }
     if (!this->selected)
         return;
 

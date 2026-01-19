@@ -19,6 +19,7 @@ namespace gl {
         virtual auto update() -> void = 0;
 
         virtual auto onTextChange() -> void = 0;
+        virtual auto onValidation() -> void = 0;
         virtual auto getText() -> std::string = 0;
     protected:
         int x;

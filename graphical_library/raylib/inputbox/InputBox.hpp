@@ -17,6 +17,7 @@ public:
     auto update() -> void;
 
     inline virtual auto onTextChange() -> void {}
+    inline virtual auto onValidation() -> void {}
     auto getText() -> std::string;
 };
 #endif // MYINPUTBOX_HPP
