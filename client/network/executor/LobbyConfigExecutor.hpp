@@ -24,7 +24,7 @@ public:
                  [[maybe_unused]] std::shared_ptr<ClientPollable> con,
                  [[maybe_unused]] std::shared_ptr<LobbyConfigPacket> packet)
     {
-        this->state.setConfig(packet->getConfig());
+        this->state.forceSetConfig(packet->getConfig());
         return true;
     }
 

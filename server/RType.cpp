@@ -7,8 +7,10 @@
 
 #include "RType.hpp"
 #include "./error/ArgsError.hpp"
+#include "network/executor/LobbyConfigExecutor.hpp"
 #include "network/logger/Logger.hpp"
 #include "server/network/executor/GameStartExecutor.hpp"
+#include "server/network/executor/LobbyConfigExecutor.hpp"
 #include "server/network/executor/ClientInputsExecutor.hpp"
 #include "server/network/executor/TextChatStringExecutor.hpp"
 #include "server/network/server/RTypeServer.hpp"
@@ -76,6 +78,8 @@ void RType::initExecutor(RTypeServer &server)
 {
     server.getPacketListener().addExecutor(
         std::make_unique<GameStartExecutor>(server));
+    server.getPacketListener().addExecutor(
+        std::make_unique<LobbyConfigExecutor>(server));
     server.getPacketListener().addExecutor(
         std::make_unique<ClientInputsExecutor>(server));
     server.getPacketListener().addExecutor(
