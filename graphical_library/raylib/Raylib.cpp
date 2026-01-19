@@ -55,7 +55,7 @@ Raylib::Raylib()
 
 auto Raylib::init() -> void
 {
-    raylib::InitWindow(1600, 900, "TODO: Change title");
+    raylib::InitWindow(1600, 900, "Rayane's TYPEing");
     raylib::SetTargetFPS(60);
     raylib::InitAudioDevice();
     this->grayscaleShader = std::make_unique<Shader>();
