@@ -13,6 +13,8 @@
 #include "client/state_machine/states/menu/Menu.hpp"
 #include "gui/WinScene.hpp"
 
+#include "client/network/executor/SetAdminExecutor.hpp"
+
 Win::Win(ClientManager &cm, Registry &r, Sync &s)
     : State(cm, r, s)
 {}
@@ -29,6 +31,9 @@ auto Win::init_systems() -> void
     this->registry.reset_render_systems();
 
     this->clientManager.getNetworkManager().resetExecutors();
+
+    this->clientManager.getNetworkManager()
+        .addExecutor(std::make_unique<SetAdminExecutor>());
 
     // this->registry.add_global_update_system
     //     (gameStart, std::ref(this->clientManager.getGui()),

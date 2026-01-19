@@ -113,7 +113,7 @@ The server kicks off a player when it receives an unknown packet ID. It only acc
 
 ### Data Integrity
 
-All packets are serialized in binary with fixed sizes. The server validates packet size before processing. If a packet is incomplete or malformed, it is discarded.
+All packets are serialized in binary with variadic sizes. The server validates packet size before processing. If a packet is malformed, it disconnects the client.
 
 ### Further Security Axis
 

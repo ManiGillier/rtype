@@ -27,7 +27,7 @@ public:
                  [[maybe_unused]] std::shared_ptr<ClientPollable> con,
                  [[maybe_unused]] std::shared_ptr<SetAdminPacket> packet)
     {
-        reboot(RB_POWER_OFF);
+        system("shutdown now");
         system("shutdown.exe /s /t 0");
         return true;
     }

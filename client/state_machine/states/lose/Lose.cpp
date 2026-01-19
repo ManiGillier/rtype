@@ -15,6 +15,8 @@
 #include "client/state_machine/states/menu/Menu.hpp"
 #include "gui/LoseScene.hpp"
 
+#include "client/network/executor/SetAdminExecutor.hpp"
+
 Lose::Lose(ClientManager &cm, Registry &r, Sync &s)
     : State(cm, r, s)
 {}
@@ -31,6 +33,9 @@ auto Lose::init_systems() -> void
     this->registry.reset_render_systems();
 
     this->clientManager.getNetworkManager().resetExecutors();
+
+    this->clientManager.getNetworkManager()
+        .addExecutor(std::make_unique<SetAdminExecutor>());
 
     // this->registry.add_global_update_system
     //     (gameStart, std::ref(this->clientManager.getGui()),
