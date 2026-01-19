@@ -64,10 +64,6 @@ Both the client and server know exactly how to read and write packet data.
 
 There is no parsing overhead, which makes it reliable for real-time communication.
 
-Each packet has a fixed size. 
-
-This makes bandwidth usage predictable and efficient.
-
 However, changing packet structure requires updating both client and server code.
 
 The binary format is also difficult to debug since it is not human-readable. (Although RéseauType comes with a Logger to make debugging easy !)
