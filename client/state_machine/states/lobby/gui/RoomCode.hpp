@@ -17,7 +17,7 @@ public:
     RoomCode(std::string code)
     : TextBox()
     {
-        this->width = 120;
+        this->width = 150;
         this->height = 60;
         this->x = 740;
         this->y = 50;
