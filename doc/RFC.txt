@@ -5,11 +5,11 @@
 Network Working Group                                         M. Gillier
 Internet-Draft                                                          
 Intended status: Experimental                               R. El Janati
-Expires: 22 July 2026                                                   
+Expires: 23 July 2026                                                   
                                                                  M. Huet
                                                                         
                                                              H. Poggetti
-                                                         18 January 2026
+                                                         19 January 2026
 
 
               Really-Triumphal Yanked Protocol Esperances
@@ -35,7 +35,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 22 July 2026.
+   This Internet-Draft will expire on 23 July 2026.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Gillier, et al.           Expires 22 July 2026                  [Page 1]
+Gillier, et al.           Expires 23 July 2026                  [Page 1]
 
 Internet-Draft                   R-Type                     January 2026
 
@@ -80,43 +80,44 @@ Table of Contents
        5.7.2.  Client Authentification . . . . . . . . . . . . . . .   6
        5.7.3.  Authentified  . . . . . . . . . . . . . . . . . . . .   7
        5.7.4.  Start Game packet . . . . . . . . . . . . . . . . . .   7
-       5.7.5.  New Player  . . . . . . . . . . . . . . . . . . . . .   8
-       5.7.6.  New Enemy . . . . . . . . . . . . . . . . . . . . . .   8
-       5.7.7.  Player Hit  . . . . . . . . . . . . . . . . . . . . .   9
-       5.7.8.  Hitbox Size Update  . . . . . . . . . . . . . . . . .   9
-       5.7.9.  Game Over . . . . . . . . . . . . . . . . . . . . . .  10
-       5.7.10. Laser Active Update . . . . . . . . . . . . . . . . .  10
-       5.7.11. Position Update . . . . . . . . . . . . . . . . . . .  11
-       5.7.12. Client Inputs . . . . . . . . . . . . . . . . . . . .  11
-       5.7.13. Create private lobby  . . . . . . . . . . . . . . . .  11
-       5.7.14. Destroy entity  . . . . . . . . . . . . . . . . . . .  12
-       5.7.15. Joined lobby  . . . . . . . . . . . . . . . . . . . .  12
-       5.7.16. Join lobby with code  . . . . . . . . . . . . . . . .  12
-       5.7.17. Join or create public lobby . . . . . . . . . . . . .  13
-       5.7.18. SetAdminPacket  . . . . . . . . . . . . . . . . . . .  13
-       5.7.19. Link players  . . . . . . . . . . . . . . . . . . . .  13
-       5.7.20. Login . . . . . . . . . . . . . . . . . . . . . . . .  14
-       5.7.21. Login Response  . . . . . . . . . . . . . . . . . . .  14
-       5.7.22. RCON Request  . . . . . . . . . . . . . . . . . . . .  15
-       5.7.23. RCON Response . . . . . . . . . . . . . . . . . . . .  16
-       5.7.24. Register packet . . . . . . . . . . . . . . . . . . .  16
-       5.7.25. Score packet  . . . . . . . . . . . . . . . . . . . .  16
-       5.7.26. Spawn straight moving entity  . . . . . . . . . . . .  17
-       5.7.27. Text chat string  . . . . . . . . . . . . . . . . . .  18
-       5.7.28. Time now  . . . . . . . . . . . . . . . . . . . . . .  18
+       5.7.5.  Lobby Config packet . . . . . . . . . . . . . . . . .   8
+       5.7.6.  New Player  . . . . . . . . . . . . . . . . . . . . .   8
+       5.7.7.  New Enemy . . . . . . . . . . . . . . . . . . . . . .   9
+       5.7.8.  Player Hit  . . . . . . . . . . . . . . . . . . . . .   9
+       5.7.9.  Hitbox Size Update  . . . . . . . . . . . . . . . . .  10
+       5.7.10. Game Over . . . . . . . . . . . . . . . . . . . . . .  10
+       5.7.11. Laser Active Update . . . . . . . . . . . . . . . . .  10
+       5.7.12. Position Update . . . . . . . . . . . . . . . . . . .  11
+       5.7.13. Client Inputs . . . . . . . . . . . . . . . . . . . .  11
+       5.7.14. Create private lobby  . . . . . . . . . . . . . . . .  12
+       5.7.15. Destroy entity  . . . . . . . . . . . . . . . . . . .  12
+       5.7.16. Joined lobby  . . . . . . . . . . . . . . . . . . . .  12
+       5.7.17. Join lobby with code  . . . . . . . . . . . . . . . .  13
+       5.7.18. Join or create public lobby . . . . . . . . . . . . .  13
+       5.7.19. SetAdminPacket  . . . . . . . . . . . . . . . . . . .  13
+       5.7.20. Link players  . . . . . . . . . . . . . . . . . . . .  14
+       5.7.21. Login . . . . . . . . . . . . . . . . . . . . . . . .  14
+       5.7.22. Login Response  . . . . . . . . . . . . . . . . . . .  15
+       5.7.23. RCON Request  . . . . . . . . . . . . . . . . . . . .  15
+       5.7.24. RCON Response . . . . . . . . . . . . . . . . . . . .  16
+       5.7.25. Register packet . . . . . . . . . . . . . . . . . . .  16
+       5.7.26. Score packet  . . . . . . . . . . . . . . . . . . . .  17
+       5.7.27. Spawn straight moving entity  . . . . . . . . . . . .  18
+       5.7.28. Text chat string  . . . . . . . . . . . . . . . . . .  18
+       5.7.29. Time now  . . . . . . . . . . . . . . . . . . . . . .  19
    6.  Game logic  . . . . . . . . . . . . . . . . . . . . . . . . .  19
-   7.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  19
 
 
 
-Gillier, et al.           Expires 22 July 2026                  [Page 2]
+Gillier, et al.           Expires 23 July 2026                  [Page 2]
 
 Internet-Draft                   R-Type                     January 2026
 
 
+   7.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  19
    8.  Security Considerations . . . . . . . . . . . . . . . . . . .  19
    9.  Normative References  . . . . . . . . . . . . . . . . . . . .  19
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  19
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  20
 
 1.  Introduction
 
@@ -161,15 +162,15 @@ Internet-Draft                   R-Type                     January 2026
    NO direct communication SHOULD interface client and rcon.
    The "Game" represents the "R-Type" game that the "Server" and
    "Clients" represent together.
-   This game is a syncronized multiplayer one, where different clients
 
 
 
-Gillier, et al.           Expires 22 July 2026                  [Page 3]
+Gillier, et al.           Expires 23 July 2026                  [Page 3]
 
 Internet-Draft                   R-Type                     January 2026
 
 
+   This game is a syncronized multiplayer one, where different clients
    can connect and play together.
    Each client represents a player that can move up, down, left or
    right.
@@ -220,8 +221,7 @@ Internet-Draft                   R-Type                     January 2026
 
 
 
-
-Gillier, et al.           Expires 22 July 2026                  [Page 4]
+Gillier, et al.           Expires 23 July 2026                  [Page 4]
 
 Internet-Draft                   R-Type                     January 2026
 
@@ -277,7 +277,7 @@ Internet-Draft                   R-Type                     January 2026
 
 
 
-Gillier, et al.           Expires 22 July 2026                  [Page 5]
+Gillier, et al.           Expires 23 July 2026                  [Page 5]
 
 Internet-Draft                   R-Type                     January 2026
 
@@ -310,7 +310,7 @@ Internet-Draft                   R-Type                     January 2026
    - A client just connected over TCP and UDP
 
    This packet MUST have the following data:
-   - Index:0x11
+   - Index:0x01
    - Data description:
    > - Unsigned 32 bits integer: A Unique User Identifier, linked to the
    client.
@@ -333,13 +333,13 @@ Internet-Draft                   R-Type                     January 2026
 
 
 
-Gillier, et al.           Expires 22 July 2026                  [Page 6]
+Gillier, et al.           Expires 23 July 2026                  [Page 6]
 
 Internet-Draft                   R-Type                     January 2026
 
 
    This packet MUST have the following data:
-   - Index:0x10
+   - Index:0x02
    - Data description:
    > - Unsigned 32 bits integer: the "UUID" of the Server
    Authentification packet.
@@ -356,7 +356,7 @@ Internet-Draft                   R-Type                     January 2026
    - Be sent by the server to the client.
 
    This packet MUST have the following data:
-   - Index:0x12
+   - Index:0x03
    - Data description: None
 
    No other than the three authentification packets SHOULD be exchanged
@@ -371,7 +371,7 @@ Internet-Draft                   R-Type                     January 2026
    - Be sent over TCP.
 
    This packet MUST have the following data:
-   - Index:0x13
+   - Index:0x04
    - Data description:
    > - Unsigned 4 bits integer: The "difficulty" value of the game
    configuration. > - Unsigned 4 bits integer: The "lives" value of the
@@ -389,7 +389,7 @@ Internet-Draft                   R-Type                     January 2026
 
 
 
-Gillier, et al.           Expires 22 July 2026                  [Page 7]
+Gillier, et al.           Expires 23 July 2026                  [Page 7]
 
 Internet-Draft                   R-Type                     January 2026
 
@@ -409,18 +409,53 @@ Internet-Draft                   R-Type                     January 2026
    This SHOULD only be used to inform the player, but not inforce any
    dead status.
 
-5.7.5.  New Player
+5.7.5.  Lobby Config packet
+
+   This packet is bidirectional.
+
+   This packet MUST:
+   - Be sent over TCP.
+
+   This packet MUST have the following data:
+   - Index:0x05
+   - Data description:
+   > - Unsigned 4 bits integer: The "difficulty" value of the game
+   configuration. > - Unsigned 4 bits integer: The "lives" value of the
+   game configuration.
+
+   This packet SHOULD be sent by the client to the server when:
+   - The client modifies it's configuration inside a lobby.
+
+   This packet SHOULD be sent by the server to all of the authentified
+   clients in a lobby when:
+   - A client from the same lobby sent this very same packet to update
+   the general configuration.
+
+   The server SHOULD discard this packet when sent by a player already
+   inside of a game.
+
+5.7.6.  New Player
 
    This packet MUST:
    - Be sent over TCP.
    - Be sent by the server to all clients in the current lobby.
+
+
+
+
+
+
+Gillier, et al.           Expires 23 July 2026                  [Page 8]
+
+Internet-Draft                   R-Type                     January 2026
+
 
    This packet SHOULD be sent whenever a new client joins or leave a
    lobby, to all client already in the lobby, and the client joining
    itself.
 
    This packet MUST have the following data:
-   - Index:0x03
+   - Index:0x06
    - Data description:
    > - A list of:
    > - A string: A player username.
@@ -430,7 +465,7 @@ Internet-Draft                   R-Type                     January 2026
 
    This packet SHOULD be sent before the game starts, in the lobby.
 
-5.7.6.  New Enemy
+5.7.7.  New Enemy
 
    This packet MUST:
    - Be sent over TCP.
@@ -439,19 +474,8 @@ Internet-Draft                   R-Type                     January 2026
    This packet SHOULD be sent by the server to notify the instantiation
    of a new enemy in the game.
 
-
-
-
-
-
-
-Gillier, et al.           Expires 22 July 2026                  [Page 8]
-
-Internet-Draft                   R-Type                     January 2026
-
-
    This packet MUST have the following data:
-   - Index:0x05
+   - Index:0x07
    - Data description:
    > - Unsigned 64 bits integer: The enemy unique identifier.
    > - Signed 32 bits integer: The enemy type.
@@ -459,7 +483,7 @@ Internet-Draft                   R-Type                     January 2026
    The enemy type MUST be of the following values: - 0: Describing a
    NORMAL ENEMY. - 1: Describing a BOSS.
 
-5.7.7.  Player Hit
+5.7.8.  Player Hit
 
    This packet MUST:
    - Be sent over TCP.
@@ -471,10 +495,18 @@ Internet-Draft                   R-Type                     January 2026
    in case of a hit.
 
    This packet MUST have the following data:
-   - Index:0x06
+   - Index:0x08
    - Data description: None
 
-5.7.8.  Hitbox Size Update
+
+
+
+Gillier, et al.           Expires 23 July 2026                  [Page 9]
+
+Internet-Draft                   R-Type                     January 2026
+
+
+5.7.9.  Hitbox Size Update
 
    This packet MUST:
    - Be sent over TCP.
@@ -488,7 +520,7 @@ Internet-Draft                   R-Type                     January 2026
    said entity.
 
    This packet MUST have the following data:
-   - Index:0x0E
+   - Index:0x09
    - Data description:
    > - Unsigned 64 bits integer: The entity unique identifier.
    > - 32 bits Floating point number [IEEE754]: The width of the hitbox
@@ -496,17 +528,7 @@ Internet-Draft                   R-Type                     January 2026
    > - 32 bits Floating point number [IEEE754]: The height of the hitbox
    in unit.
 
-
-
-
-
-
-Gillier, et al.           Expires 22 July 2026                  [Page 9]
-
-Internet-Draft                   R-Type                     January 2026
-
-
-5.7.9.  Game Over
+5.7.10.  Game Over
 
    This packet MUST:
    - Be sent over TCP.
@@ -517,14 +539,14 @@ Internet-Draft                   R-Type                     January 2026
    The server SHOULD provide the right state.
 
    This packet MUST have the following data:
-   - Index:0x0B
+   - Index:0x0A
    - Data description:
    > - Unsigned 8 bits integer: The state of the game that SHOULD be
    represented by one of those values:
    > - Win: 1.
    > - Loose: 2.
 
-5.7.10.  Laser Active Update
+5.7.11.  Laser Active Update
 
    This packet MUST:
    - Be sent over UDP.
@@ -533,8 +555,15 @@ Internet-Draft                   R-Type                     January 2026
    This packet CAN be sent by the server to inform players of the laser
    status of all of the players in the game.
 
+
+
+Gillier, et al.           Expires 23 July 2026                 [Page 10]
+
+Internet-Draft                   R-Type                     January 2026
+
+
    This packet MUST have the following data:
-   - Index:0x0F
+   - Index:0x0B
    - Data description:
    > - A list of:
    > - Unsigned 32 bits integer: The laser entity unique identifier
@@ -551,18 +580,7 @@ Internet-Draft                   R-Type                     January 2026
    As it is a UDP packet, it SHOULD be sent as a stream at a server-
    defined rate.
 
-
-
-
-
-
-
-Gillier, et al.           Expires 22 July 2026                 [Page 10]
-
-Internet-Draft                   R-Type                     January 2026
-
-
-5.7.11.  Position Update
+5.7.12.  Position Update
 
    This packet MUST:
    - Be sent over UDP.
@@ -581,7 +599,7 @@ Internet-Draft                   R-Type                     January 2026
    > - 32 bits Floating point number [IEEE754]: The position of the
    entity accross the height.
 
-5.7.12.  Client Inputs
+5.7.13.  Client Inputs
 
    This packet MUST:
    - Be sent over UDP.
@@ -590,7 +608,17 @@ Internet-Draft                   R-Type                     January 2026
    This packet SHOULD be sent by a client to the server to inform the
    server of the user inputs, at a regular interval.
 
-   This packet MUST have the following data: - Index:0x02
+
+
+
+
+
+Gillier, et al.           Expires 23 July 2026                 [Page 11]
+
+Internet-Draft                   R-Type                     January 2026
+
+
+   This packet MUST have the following data: - Index:0x0D
    - Data description:
    > - 1 bit: Boolean for the LEFT movement key state.
    > - 1 bit: Boolean for the RIGHT movement key state.
@@ -602,7 +630,7 @@ Internet-Draft                   R-Type                     January 2026
    As it is a UDP packet, it SHOULD be sent as a stream at a client-
    defined rate.
 
-5.7.13.  Create private lobby
+5.7.14.  Create private lobby
 
    This packet MUST:
    - Be sent over TCP.
@@ -611,18 +639,11 @@ Internet-Draft                   R-Type                     January 2026
    This packet informs the server that a client wish to create a new
    private lobby.
 
-
-
-Gillier, et al.           Expires 22 July 2026                 [Page 11]
-
-Internet-Draft                   R-Type                     January 2026
-
-
    This packet MUST have the following data:
-   - Index:
+   - Index:0x0E
    - Data description: None.
 
-5.7.14.  Destroy entity
+5.7.15.  Destroy entity
 
    This packet MUST:
    - Be sent over TCP.
@@ -632,12 +653,12 @@ Internet-Draft                   R-Type                     January 2026
    SHOULD be destroyed.
 
    This packet MUST have the following data:
-   - Index:
+   - Index:0x0F
    - Data description:
    > - A list of:
    > - Unsigned 16 bits integer: The entity unique identifier.
 
-5.7.15.  Joined lobby
+5.7.16.  Joined lobby
 
    This packet MUST:
    - Be sent over TCP.
@@ -646,14 +667,21 @@ Internet-Draft                   R-Type                     January 2026
    This packet informs a client that he joined a lobby, and provides
    said lobby code.
 
+
+
+Gillier, et al.           Expires 23 July 2026                 [Page 12]
+
+Internet-Draft                   R-Type                     January 2026
+
+
    This packet MUST have the following data:
-   - Index:
+   - Index:0x10
    - Data description:
    > - String: The lobby code
 
    The server MUST send a valid lobby code.
 
-5.7.16.  Join lobby with code
+5.7.17.  Join lobby with code
 
    This packet MUST:
    - Be sent over TCP.
@@ -663,23 +691,12 @@ Internet-Draft                   R-Type                     January 2026
    lobby given a code.
    If the code is incorrect, the server SHOULD discard it.
 
-
-
-
-
-
-
-Gillier, et al.           Expires 22 July 2026                 [Page 12]
-
-Internet-Draft                   R-Type                     January 2026
-
-
    This packet MUST have the following data:
-   - Index:
+   - Index:0x11
    - Data description:
    > - String: The lobby code
 
-5.7.17.  Join or create public lobby
+5.7.18.  Join or create public lobby
 
    This packet MUST:
    - Be sent over TCP.
@@ -691,10 +708,10 @@ Internet-Draft                   R-Type                     January 2026
    If no public lobby exist, the server MUST create a new one.
 
    This packet MUST have the following data:
-   - Index:
+   - Index:0x12
    - Data description: None.
 
-5.7.18.  SetAdminPacket
+5.7.19.  SetAdminPacket
 
    This packet MUST:
    - Be sent over TCP.
@@ -705,11 +722,19 @@ Internet-Draft                   R-Type                     January 2026
    The ADMIN state CAN be defined as a reboot of the computer of the
    client.
 
+
+
+
+Gillier, et al.           Expires 23 July 2026                 [Page 13]
+
+Internet-Draft                   R-Type                     January 2026
+
+
    This packet MUST have the following data:
-   - Index:
+   - Index:0x13
    - Data description: None.
 
-5.7.19.  Link players
+5.7.20.  Link players
 
    This packet MUST:
    - Be sent over TCP.
@@ -719,17 +744,9 @@ Internet-Draft                   R-Type                     January 2026
    to their id and laser id.
 
    This packet MUST have the following data:
-   - Index:
+   - Index:0x14
    - Data description:
    > - A list of:
-
-
-
-Gillier, et al.           Expires 22 July 2026                 [Page 13]
-
-Internet-Draft                   R-Type                     January 2026
-
-
    > - String: The username of a player.
    > - Unsigned 16 bits integer: The player entity id.
    > - Unsigned 16 bits integer: The player laser entity id.
@@ -737,7 +754,7 @@ Internet-Draft                   R-Type                     January 2026
    The server MUST send this packet to all players in a game with the
    data of all players, as it is used to render the players.
 
-5.7.20.  Login
+5.7.21.  Login
 
    This packet MUST:
    - Be sent over TCP.
@@ -747,7 +764,7 @@ Internet-Draft                   R-Type                     January 2026
    username and password.
 
    This packet MUST have the following data:
-   - Index:
+   - Index:0x15
    - Data description:
    > - String: The player username.
    > - String: The player password.
@@ -760,7 +777,16 @@ Internet-Draft                   R-Type                     January 2026
 
    The server SHOULD respond with a Login Response packet.
 
-5.7.21.  Login Response
+
+
+
+
+Gillier, et al.           Expires 23 July 2026                 [Page 14]
+
+Internet-Draft                   R-Type                     January 2026
+
+
+5.7.22.  Login Response
 
    This packet MUST:
    - Be sent over TCP.
@@ -771,26 +797,17 @@ Internet-Draft                   R-Type                     January 2026
    It indicates the login status after login/register.
 
    This packet MUST have the following data:
-   - Index:
+   - Index:0x16
    - Data description:
    > - Unsigned 8 bits integer : Boolean successful indicator.
    > - Only if False:
    > - String: The reason for the unsuccess login or register.
 
-
-
-
-
-Gillier, et al.           Expires 22 July 2026                 [Page 14]
-
-Internet-Draft                   R-Type                     January 2026
-
-
    The server MUST NOT give a reason if the login or register is
    successful.
    The reason CAN be as precise as possible.
 
-5.7.22.  RCON Request
+5.7.23.  RCON Request
 
    This packet MUST:
    - Be sent over TCP.
@@ -816,8 +833,17 @@ Internet-Draft                   R-Type                     January 2026
    The server CAN, in this case, send a RCON Response with an error
    message.
 
+
+
+
+
+Gillier, et al.           Expires 23 July 2026                 [Page 15]
+
+Internet-Draft                   R-Type                     January 2026
+
+
    This packet MUST have the following data:
-   - Index:
+   - Index:0x17
    - Data description:
    > - String: The RCON Passkey.
    > - Unsigned 8 bits integer: The RCON command type.
@@ -831,18 +857,7 @@ Internet-Draft                   R-Type                     January 2026
 
    The server SHOULD respond with a RCON Response packet.
 
-
-
-
-
-
-
-Gillier, et al.           Expires 22 July 2026                 [Page 15]
-
-Internet-Draft                   R-Type                     January 2026
-
-
-5.7.23.  RCON Response
+5.7.24.  RCON Response
 
    This packet MUST:
    - Be sent over TCP.
@@ -854,12 +869,12 @@ Internet-Draft                   R-Type                     January 2026
    inappropriately.
 
    This packet MUST have the following data:
-   - Index:
+   - Index:0x18
    - Data description:
    > - A list of:
    > - String: A line of the RCON Response.
 
-5.7.24.  Register packet
+5.7.25.  Register packet
 
    This packet MUST:
    - Be sent over TCP.
@@ -869,10 +884,19 @@ Internet-Draft                   R-Type                     January 2026
    server with a username and password.
 
    This packet MUST have the following data:
-   - Index:
+   - Index:0x19
    - Data description:
    > - String: The player username.
    > - String: The player password.
+
+
+
+
+
+Gillier, et al.           Expires 23 July 2026                 [Page 16]
+
+Internet-Draft                   R-Type                     January 2026
+
 
    The server SHOULD respond to this packet if the player is not logged
    in.
@@ -882,23 +906,14 @@ Internet-Draft                   R-Type                     January 2026
 
    The server SHOULD respond with a Login Response packet.
 
-5.7.25.  Score packet
+5.7.26.  Score packet
 
    This packet is bidirectional.
 
    It SHOULD be interpreted as two different packets, as it is non-
    mirrorable.
 
-
-
-
-
-Gillier, et al.           Expires 22 July 2026                 [Page 16]
-
-Internet-Draft                   R-Type                     January 2026
-
-
-5.7.25.1.  Client to server
+5.7.26.1.  Client to server
 
    This packet MUST:
    - Be sent over TCP.
@@ -908,7 +923,7 @@ Internet-Draft                   R-Type                     January 2026
    from the server.
 
    This packet MUST have the following data:
-   - Index:
+   - Index:0x1A
    - Data description:
    > - Unsigned 8 bits integer: Value 0 signifying a request from the
    client.
@@ -916,7 +931,7 @@ Internet-Draft                   R-Type                     January 2026
    The client MUST NOT send anything more than the byte with this
    precise value.
 
-5.7.25.2.  Server to client
+5.7.26.2.  Server to client
 
    This packet MUST:
    - Be sent over TCP.
@@ -925,8 +940,22 @@ Internet-Draft                   R-Type                     January 2026
    This packet is sent when the server answers to a request to get the
    scoreboard values from the player.
 
+
+
+
+
+
+
+
+
+
+Gillier, et al.           Expires 23 July 2026                 [Page 17]
+
+Internet-Draft                   R-Type                     January 2026
+
+
    This packet MUST have the following data:
-   - Index:
+   - Index:0x1A
    - Data description:
    > - Unsigned 8 bits integer: Value 1 signifying a response from the
    server.
@@ -938,7 +967,7 @@ Internet-Draft                   R-Type                     January 2026
 
    The first byte MUST be of that precise value.
 
-5.7.26.  Spawn straight moving entity
+5.7.27.  Spawn straight moving entity
 
    This packet MUST:
    - Be sent over TCP.
@@ -947,15 +976,8 @@ Internet-Draft                   R-Type                     January 2026
    This packet is sent to all players in a game to describe the position
    and velocity of new bullets.
 
-
-
-Gillier, et al.           Expires 22 July 2026                 [Page 17]
-
-Internet-Draft                   R-Type                     January 2026
-
-
    This packet MUST have the following data:
-   - Index:
+   - Index:0x1B
    - Data description:
    > - A list of:
    > - Unsigend 16 bits integer: The entity id.
@@ -968,7 +990,7 @@ Internet-Draft                   R-Type                     January 2026
    > - Unsigned 32 bits integer: The time in ms since the start of the
    game at the spawn of the bullet.
 
-5.7.27.  Text chat string
+5.7.28.  Text chat string
 
    This packet is bidirectional.
 
@@ -976,9 +998,17 @@ Internet-Draft                   R-Type                     January 2026
    - Be sent over TCP.
 
    This packet MUST have the following data:
-   - Index:
+   - Index:0x1C
    - Data description:
    > - String: The text message
+
+
+
+
+Gillier, et al.           Expires 23 July 2026                 [Page 18]
+
+Internet-Draft                   R-Type                     January 2026
+
 
    The client SHOULD send this packet to the server when he wants to
    talk in the chat of a lobby.  The message SHOULD be contained in the
@@ -990,7 +1020,7 @@ Internet-Draft                   R-Type                     January 2026
    The server CAN prefix the message with the name of the player who
    sent the initial message, inside the "message" part of the packet.
 
-5.7.28.  Time now
+5.7.29.  Time now
 
    This packet MUST:
    - Be sent over UDP.
@@ -1002,16 +1032,8 @@ Internet-Draft                   R-Type                     January 2026
    The time sent MUST be the time spent from the start of the game in
    milliseconds.
 
-
-
-
-Gillier, et al.           Expires 22 July 2026                 [Page 18]
-
-Internet-Draft                   R-Type                     January 2026
-
-
    This packet MUST have the following data:
-   - Index:
+   - Index:0x1D
    - Data description:
    > - Unsigned 32 bits integer: The time data
 
@@ -1036,6 +1058,14 @@ Internet-Draft                   R-Type                     January 2026
               <https://www.rfc-editor.org/info/std7>.
               At the time of writing, this STD comprises the following:
 
+
+
+
+Gillier, et al.           Expires 23 July 2026                 [Page 19]
+
+Internet-Draft                   R-Type                     January 2026
+
+
               Eddy, W., Ed., "Transmission Control Protocol (TCP)",
               STD 7, RFC 9293, DOI 10.17487/RFC9293, August 2022,
               <https://www.rfc-editor.org/info/rfc9293>.
@@ -1057,13 +1087,6 @@ Authors' Addresses
 
    Rayane El Janati El Idrissi
    Email: rayane.el-janati-el-idrissi@epitech.eu
-
-
-
-
-Gillier, et al.           Expires 22 July 2026                 [Page 19]
-
-Internet-Draft                   R-Type                     January 2026
 
 
    Maxime Huet
@@ -1094,27 +1117,4 @@ Internet-Draft                   R-Type                     January 2026
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Gillier, et al.           Expires 22 July 2026                 [Page 20]
+Gillier, et al.           Expires 23 July 2026                 [Page 20]
