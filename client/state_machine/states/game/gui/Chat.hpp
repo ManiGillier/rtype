@@ -76,6 +76,12 @@ public:
     {
         this->game.setMessage(this->text);
     }
+
+    auto onValidation() -> void
+    {
+        this->game.setMessage(this->text);
+        this->game.sendNewMessage();
+    }
 private:
     Game &game;
 };

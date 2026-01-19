@@ -78,6 +78,12 @@ public:
     {
         this->lobby.setMessage(this->text);
     }
+
+    auto onValidation() -> void
+    {
+        this->lobby.setMessage(this->text);
+        this->lobby.sendNewMessage();
+    }
 private:
     Lobby &lobby;
 };
