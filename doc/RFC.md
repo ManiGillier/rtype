@@ -230,6 +230,27 @@ The interpretation of the game configuration is at the server's charge.
 
 The lives in the game configuration SHOULD BE used by a client to determine how much lives he can loose before being considered dead. This SHOULD only be used to inform the player, but not inforce any dead status.
 
+### Lobby Config packet
+
+This packet is bidirectional.
+
+This packet MUST:  
+- Be sent over TCP.  
+
+This packet MUST have the following data:  
+- Index:0x13  
+- Data description:  
+>  - Unsigned 4 bits integer: The "difficulty" value of the game configuration.
+>  - Unsigned 4 bits integer: The "lives" value of the game configuration.  
+
+This packet SHOULD be sent by the client to the server when:  
+- The client modifies it's configuration inside a lobby.  
+
+This packet SHOULD be sent by the server to all of the authentified clients in a lobby when:  
+- A client from the same lobby sent this very same packet to update the general configuration.  
+
+The server SHOULD discard this packet when sent by a player already inside of a game.  
+
 ### New Player
 
 This packet MUST:  

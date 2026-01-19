@@ -11,6 +11,7 @@
 #include "client/network/executor/NewPlayerExecutor.hpp"
 #include "client/network/executor/TextChatStringExecutorLobby.hpp"
 #include "client/network/executor/SetAdminExecutor.hpp"
+#include "client/network/executor/LobbyConfigExecutor.hpp"
 #include "systems/Systems.hpp"
 
 #include <cstddef>
@@ -18,6 +19,7 @@
 #include <memory>
 
 #include <network/packets/impl/TextChatStringPacket.hpp>
+#include <network/packets/impl/LobbyConfigPacket.hpp>
 
 #include "gui/LobbyScene.hpp"
 
@@ -49,6 +51,8 @@ auto Lobby::init_systems() -> void
     this->clientManager.getNetworkManager()
         .addExecutor(std::make_unique<TextChatStringExecutorLobby>(*this));
     this->clientManager.getNetworkManager()
+        .addExecutor(std::make_unique<LobbyConfigExecutor>(*this));
+    this->clientManager.getNetworkManager()
         .addExecutor(std::make_unique<SetAdminExecutor>());
 }
 
@@ -73,6 +77,16 @@ auto Lobby::getConfig() -> GameStartConfig
 }
 
 auto Lobby::setConfig(GameStartConfig config) -> void
+{
+    if (config.difficuly == this->config.difficuly
+        && config.lives == this->config.lives)
+        return;
+    this->config = config;
+    std::shared_ptr<Packet> p = std::make_shared<LobbyConfigPacket>(this->config);
+    this->clientManager.getNetworkManager().sendPacket(p);
+}
+
+auto Lobby::forceSetConfig(GameStartConfig config) -> void
 {
     this->config = config;
 }

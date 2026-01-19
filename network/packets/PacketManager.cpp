@@ -41,6 +41,7 @@
 #include "network/packets/impl/ScorePacket.hpp"
 #include "network/packets/impl/TextChatStringPacket.hpp"
 #include "network/packets/impl/SetAdminPacket.hpp"
+#include "network/packets/impl/LobbyConfigPacket.hpp"
 
 void PacketManager::registerPackets()
 {
@@ -73,6 +74,7 @@ void PacketManager::registerPackets()
     this->packets.push_back(std::make_shared<ScorePacket>());
     this->packets.push_back(std::make_shared<TextChatStringPacket>());
     this->packets.push_back(std::make_shared<SetAdminPacket>());
+    this->packets.push_back(std::make_shared<LobbyConfigPacket>());
 }
 
 std::shared_ptr<Packet> PacketManager::createPacketById(uint8_t id, Packet::PacketMode mode) const

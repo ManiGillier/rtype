@@ -24,6 +24,7 @@ public:
     auto getPlayerList() -> std::vector<std::string>;
     auto getConfig() -> GameStartConfig;
     auto setConfig(GameStartConfig config) -> void;
+    auto forceSetConfig(GameStartConfig config) -> void;
     auto getCode() -> std::string;
     auto startGame() -> void;
     auto getChatMessage(int id) -> std::string;
