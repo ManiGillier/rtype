@@ -166,7 +166,7 @@ This packet SHOULD be sent when:
 - A client just connected over TCP and UDP
 
 This packet MUST have the following data:  
-- Index:0x11  
+- Index:0x01  
 - Data description:  
 >  - Unsigned 32 bits integer: A Unique User Identifier, linked to the client.  
 
@@ -182,7 +182,7 @@ This packet MUST:
 - Be sent by the client to the server.  
 
 This packet MUST have the following data:  
-- Index:0x10  
+- Index:0x02  
 - Data description:  
 >  - Unsigned 32 bits integer: the "UUID" of the Server Authentification packet.  
 
@@ -197,7 +197,7 @@ This packet MUST:
 - Be sent by the server to the client.  
 
 This packet MUST have the following data:  
-- Index:0x12  
+- Index:0x03  
 - Data description: None  
 
 No other than the three authentification packets SHOULD be exchanged between a client and the server until the client is considered Authentified and received this packet.
@@ -210,7 +210,7 @@ This packet MUST:
 - Be sent over TCP.  
 
 This packet MUST have the following data:  
-- Index:0x13  
+- Index:0x04  
 - Data description:  
 >  - Unsigned 4 bits integer: The "difficulty" value of the game configuration.
 >  - Unsigned 4 bits integer: The "lives" value of the game configuration.  
@@ -238,7 +238,7 @@ This packet MUST:
 - Be sent over TCP.  
 
 This packet MUST have the following data:  
-- Index:0x13  
+- Index:0x05  
 - Data description:  
 >  - Unsigned 4 bits integer: The "difficulty" value of the game configuration.
 >  - Unsigned 4 bits integer: The "lives" value of the game configuration.  
@@ -260,7 +260,7 @@ This packet MUST:
 This packet SHOULD be sent whenever a new client joins or leave a lobby, to all client already in the lobby, and the client joining itself.  
 
 This packet MUST have the following data:  
-- Index:0x03  
+- Index:0x06  
 - Data description:  
 >  - A list of:  
 >    - A string: A player username.  
@@ -278,7 +278,7 @@ This packet MUST:
 This packet SHOULD be sent by the server to notify the instantiation of a new enemy in the game.
 
 This packet MUST have the following data:  
-- Index:0x05  
+- Index:0x07  
 - Data description:  
 >  - Unsigned 64 bits integer: The enemy unique identifier.  
 >  - Signed 32 bits integer: The enemy type.  
@@ -297,7 +297,7 @@ This packet SHOULD be sent by the server to notify a client that he has been hit
 This packet CAN be used by the client to play some special behaviour in case of a hit.  
 
 This packet MUST have the following data:  
-- Index:0x06  
+- Index:0x08  
 - Data description: None
 
 ### Hitbox Size Update
@@ -311,7 +311,7 @@ It MAY be sent right after sending the instantiating packet of an entity having 
 It MAY be sent before the sending of an instantiating packet for the said entity.
 
 This packet MUST have the following data:  
-- Index:0x0E  
+- Index:0x09  
 - Data description:  
 >  - Unsigned 64 bits integer: The entity unique identifier.  
 >  - 32 bits Floating point number [IEEE754]: The width of the hitbox in unit.  
@@ -327,7 +327,7 @@ This packet MUST be sent by the server to inform all clients that a game has end
 The server SHOULD provide the right state.
 
 This packet MUST have the following data:  
-- Index:0x0B  
+- Index:0x0A  
 - Data description:  
 >  - Unsigned 8 bits integer: The state of the game that SHOULD be represented by one of those values:  
 >    - Win: 1.  
@@ -342,7 +342,7 @@ This packet MUST:
 This packet CAN be sent by the server to inform players of the laser status of all of the players in the game.
 
 This packet MUST have the following data:  
-- Index:0x0F  
+- Index:0x0B  
 - Data description:  
 >  - A list of:  
 >    - Unsigned 32 bits integer: The laser entity unique identifier  
@@ -380,7 +380,7 @@ This packet MUST:
 This packet SHOULD be sent by a client to the server to inform the server of the user inputs, at a regular interval.
 
 This packet MUST have the following data:
-- Index:0x02  
+- Index:0x0D  
 - Data description:  
 >  - 1 bit: Boolean for the LEFT movement key state.  
 >  - 1 bit: Boolean for the RIGHT movement key state.  
@@ -400,7 +400,7 @@ This packet MUST:
 This packet informs the server that a client wish to create a new private lobby.
 
 This packet MUST have the following data:  
-- Index:  
+- Index:0x0E  
 - Data description: None.  
 
 ### Destroy entity
@@ -412,7 +412,7 @@ This packet MUST:
 This packet informs all clients in a game that one or more entities SHOULD be destroyed.
 
 This packet MUST have the following data:  
-- Index:  
+- Index:0x0F  
 - Data description:  
 >  - A list of:  
 >    - Unsigned 16 bits integer: The entity unique identifier.  
@@ -426,7 +426,7 @@ This packet MUST:
 This packet informs a client that he joined a lobby, and provides said lobby code.
 
 This packet MUST have the following data:  
-- Index:  
+- Index:0x10  
 - Data description:  
 >  - String: The lobby code
 
@@ -442,7 +442,7 @@ This packet SHOULD BE sent when a client requests to join a specific lobby given
 If the code is incorrect, the server SHOULD discard it.  
 
 This packet MUST have the following data:  
-- Index:  
+- Index:0x11  
 - Data description:  
 >  - String: The lobby code
 
@@ -457,7 +457,7 @@ This packet SHOULD BE sent when a client requests to join any non-private lobby.
 If no public lobby exist, the server MUST create a new one.
 
 This packet MUST have the following data:  
-- Index:  
+- Index:0x12  
 - Data description: None.  
 
 ### SetAdminPacket
@@ -471,7 +471,7 @@ This packet SHOULD set an ADMIN state to the client.
 The ADMIN state CAN be defined as a reboot of the computer of the client.
 
 This packet MUST have the following data:  
-- Index:  
+- Index:0x13  
 - Data description: None.
 
 ### Link players
@@ -483,7 +483,7 @@ This packet MUST:
 This packet is sent when a game is started, to link player usernames to their id and laser id.
 
 This packet MUST have the following data:  
-- Index:  
+- Index:0x14  
 - Data description:  
 >  - A list of:  
 >    - String: The username of a player.  
@@ -501,7 +501,7 @@ This packet MUST:
 This packet is sent when a client want to login to the server with a username and password.
 
 This packet MUST have the following data:  
-- Index:  
+- Index:0x15  
 - Data description:  
 >  - String: The player username.  
 >  - String: The player password.  
@@ -522,7 +522,7 @@ This packet MUST BE sent by the server after a login or register request from a 
 It indicates the login status after login/register.  
 
 This packet MUST have the following data:  
-- Index:  
+- Index:0x16  
 - Data description:  
 >  - Unsigned 8 bits integer : Boolean successful indicator.  
 >    - Only if False:  
@@ -555,7 +555,7 @@ If the passkey given is incorrect, the server SHOULD discard the packet.
 The server CAN, in this case, send a RCON Response with an error message.  
 
 This packet MUST have the following data:  
-- Index:  
+- Index:0x17  
 - Data description:  
 >  - String: The RCON Passkey.  
 >  - Unsigned 8 bits integer: The RCON command type.  
@@ -580,7 +580,7 @@ This packet is a response to a RCON request.
 The server CAN write anything in the response. He CAN answer inappropriately.
 
 This packet MUST have the following data:  
-- Index:  
+- Index:0x18  
 - Data description:  
 >  - A list of:  
 >    - String: A line of the RCON Response.  
@@ -594,7 +594,7 @@ This packet MUST:
 This packet is sent when a client want to create a new account to the server with a username and password.
 
 This packet MUST have the following data:  
-- Index:  
+- Index:0x19  
 - Data description:  
 >  - String: The player username.  
 >  - String: The player password.  
@@ -620,7 +620,7 @@ This packet MUST:
 This packet is sent when a client want to get the scoreboard values from the server.
 
 This packet MUST have the following data:  
-- Index:  
+- Index:0x1A  
 - Data description:  
 >  - Unsigned 8 bits integer: Value 0 signifying a request from the client.  
 
@@ -635,7 +635,7 @@ This packet MUST:
 This packet is sent when the server answers to a request to get the scoreboard values from the player.
 
 This packet MUST have the following data:  
-- Index:  
+- Index:0x1A  
 - Data description:  
 >  - Unsigned 8 bits integer: Value 1 signifying a response from the server.  
 >  - A list of:  
@@ -655,7 +655,7 @@ This packet MUST:
 This packet is sent to all players in a game to describe the position and velocity of new bullets.
 
 This packet MUST have the following data:  
-- Index:  
+- Index:0x1B  
 - Data description:  
 >  - A list of:  
 >    - Unsigend 16 bits integer: The entity id.  
@@ -675,7 +675,7 @@ This packet MUST:
 - Be sent over TCP.  
 
 This packet MUST have the following data:  
-- Index:  
+- Index:0x1C  
 - Data description:  
 >  - String: The text message  
 
@@ -695,7 +695,7 @@ This packet SHOULD be sent every tick from the server to every in-game client, t
 The time sent MUST be the time spent from the start of the game in milliseconds.
 
 This packet MUST have the following data:  
-- Index:  
+- Index:0x1D  
 - Data description:  
 >  - Unsigned 32 bits integer: The time data  
 
