@@ -80,7 +80,7 @@ He can choose between creating or joining a random lobby, creating a private one
 
 He can also see the scoreboard of the game, with the top 10 players on the server.
 
-## Settings state
+### Settings state
 
 Here you can choose your keybinds, or toggle the red-daltonian filter.
 
