@@ -72,7 +72,7 @@ bool PacketReader::readPacket(void)
             PacketLogger::PacketMethod::RECEIVED, this->_fd);
         } catch (const Packet::PacketException &e) {
             LOG_ERR(e.what());
-            return false;
+            return true;
         }
         readData.erase(readData.begin(), std::next(readData.begin(),
             static_cast<std::ptrdiff_t>(compressedSize)));
