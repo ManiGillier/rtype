@@ -327,6 +327,11 @@ bool ServerUDPPollable::receiveEvent(short)
         try {
             Packet::fromBinary(receivedData, originalSize);
             Packet::fromBinary(receivedData, compressedSize);
+            if (originalSize > MAX_PACKET_SIZE || compressedSize > MAX_PACKET_SIZE) {
+                LOG_ERR("UDP packet size too large");
+                receivedData.clear();
+                break;
+            }
             if (receivedData.size() < compressedSize) {
                 receivedData.clear();
                 return true;

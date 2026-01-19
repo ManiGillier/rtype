@@ -11,6 +11,7 @@
     #include <optional>
     #include <queue>
     #define BUFFER_SIZE 8192
+    #define MAX_PACKET_SIZE 1048576
     #include "Packet.hpp"
 
 class PacketReader {
