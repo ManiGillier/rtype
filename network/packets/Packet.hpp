@@ -63,7 +63,8 @@ enum PacketId {
     LINK_PLAYERS_PACKET,
     SCORE_PACKET,
     TEXT_CHAT_STRING_PACKET,
-    SET_ADMIN
+    SET_ADMIN,
+    LOBBY_CONFIG_PACKET
 };
 
 class PacketDisplay {
