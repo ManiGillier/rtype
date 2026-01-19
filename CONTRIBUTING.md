@@ -13,11 +13,10 @@ read the documentation in `./doc` unsing `mdbook`
 Follow the conventional commits guidelines to make reviews easier and to make the git logs more valuable
 
 ```
-[TYPE](scope) Message
+[TYPE] Message
 ```
 - Prefix with a type:
     `build ci docs add feat fix refactor test`
-- Append an optional (scope) such as (server), (client), …
 - Use the imperative voice: "Fix bug" rather than "Fixed bug" or "Fixes bug."
 - Keep it short (under 72 characters).
 

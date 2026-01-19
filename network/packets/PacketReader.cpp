@@ -50,6 +50,13 @@ bool PacketReader::readPacket(void)
             uint32_t compSize = 0;
             Packet::fromBinary(readData, origSize);
             Packet::fromBinary(readData, compSize);
+            if (origSize > MAX_PACKET_SIZE || compSize > MAX_PACKET_SIZE) {
+                LOG_ERR("Packet size too large, disconnecting " << this->_fd);
+                currentPacket = nullptr;
+                originalSize = -1;
+                compressedSize = -1;
+                return false;
+            }
             this->originalSize = (int32_t) origSize;
             this->compressedSize = (int32_t) compSize;
         }
@@ -65,6 +72,7 @@ bool PacketReader::readPacket(void)
             PacketLogger::PacketMethod::RECEIVED, this->_fd);
         } catch (const Packet::PacketException &e) {
             LOG_ERR(e.what());
+            return false;
         }
         readData.erase(readData.begin(), std::next(readData.begin(),
             static_cast<std::ptrdiff_t>(compressedSize)));
